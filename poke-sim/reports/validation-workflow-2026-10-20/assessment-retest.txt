@@ -1,0 +1,37 @@
+Γ£ö FLY-ASSESS-001 player Tackle (0.8229ms)
+Γ£ö FLY-ASSESS-002 player Gust (0.1163ms)
+Γ£ö FLY-ASSESS-003 player Twister (0.0829ms)
+Γ£ö FLY-ASSESS-004 player Sky Uppercut (0.0662ms)
+Γ£ö FLY-ASSESS-005 player Thunder (0.0609ms)
+Γ£ö FLY-ASSESS-006 player Hurricane (0.0572ms)
+Γ£ö FLY-ASSESS-007 player Smack Down (0.0509ms)
+Γ£ö FLY-ASSESS-008 player Thousand Arrows (0.0693ms)
+Γ£ö FLY-ASSESS-009 player Tackle (0.0767ms)
+Γ£ö FLY-ASSESS-010 player Tackle (0.1074ms)
+Γ£ö FLY-ASSESS-011 player Tackle (0.0629ms)
+Γ£ö FLY-ASSESS-012 player Tackle (0.1168ms)
+Γ£ö FLY-ASSESS-013 opponent Tackle (0.0657ms)
+Γ£ö FLY-ASSESS-014 opponent Gust (0.0579ms)
+Γ£ö FLY-ASSESS-015 opponent Twister (0.0428ms)
+Γ£ö FLY-ASSESS-016 opponent Sky Uppercut (0.033ms)
+Γ£ö FLY-ASSESS-017 opponent Thunder (0.0775ms)
+Γ£ö FLY-ASSESS-018 opponent Hurricane (0.0492ms)
+Γ£ö FLY-ASSESS-019 opponent Smack Down (0.0286ms)
+Γ£ö FLY-ASSESS-020 opponent Thousand Arrows (0.0242ms)
+Γ£ö FLY-ASSESS-021 opponent Tackle (0.0312ms)
+Γ£ö FLY-ASSESS-022 opponent Tackle (0.029ms)
+Γ£ö FLY-ASSESS-023 opponent Tackle (0.0265ms)
+Γ£ö FLY-ASSESS-024 opponent Tackle (0.0264ms)
+Γ£ö production Fly rejection false (191.9341ms)
+Γ£ö admission removal mutant caught false (171.6414ms)
+Γ£ö production Fly rejection true (174.719ms)
+Γ£ö admission removal mutant caught true (180.0365ms)
+Γ£ö assessment receipt source binding (43.4553ms)
+Γä╣ tests 29
+Γä╣ suites 0
+Γä╣ pass 29
+Γä╣ fail 0
+Γä╣ cancelled 0
+Γä╣ skipped 0
+Γä╣ todo 0
+Γä╣ duration_ms 5544.9872

@@ -1,9 +1,52 @@
 # Project Status
 
-Reviewed: 2026-10-17. This file owns current release facts and priorities.
+Reviewed: 2026-10-21. This file owns current development checkpoint facts.
 [ROADMAP.md](ROADMAP.md) owns milestones; [AGENTS.md](AGENTS.md) owns policy.
-The full prior status was preserved in [the October 8 archive](docs/archive/STATUS_PRE_ALIGNMENT_2026-10-08.md).
-Historical candidate observations are not current deployment instructions.
+Competitive release remains **NO-GO**. No merge, deployment, live database or
+repository security change is authorized.
+
+## Current development candidate
+
+Ordering source `380e8a3d1682897359b2b2e4d2fdc6a6946f6e4d` passed all six hosted jobs in [39570651808](https://github.com/TheYfactora12/Pokemon-Champions-Sim-Planner/actions/runs/39570651808), completed 2026-10-21T09:03:12Z. Its lifecycle publication `53516bdf6573a0009b32b51298c4ce84119cd983` is separately checking in [39574827433](https://github.com/TheYfactora12/Pokemon-Champions-Sim-Planner/actions/runs/39574827433). Neither is deployed.
+
+Local activation runtime `2f3411e4b9f86cc22d44ea1abfd9004b029ca7ec` is engine 1.1.48 / v2.2.248-eviolite-activation. It integrates exact-species eligibility, effective item activation and offensive Body Press Defense separation. The pinned reference focused checks pass 201 activation plus 226 ordering assertions. Independent integration review confirms executable mechanics match the isolated reviewed candidate; six fresh v13 bounded captures and 36 unsupported-input controls passed. Aggregate, clean-checkout and exact-head hosted activation checks remain pending. See [scope and evidence](docs/release/EVIOLITE_ACTIVATION_2026-10-21.md).
+
+Bundle is 11,533,142 bytes, SHA256 `bcb7a36d7317af58ef9517f54f9f6398eb702b1acca8690841ea6e9531d311e1`, 1,194 bytes below the unchanged cap. Historical comments were relocated verbatim to documentation; no executable statement changed in that size correction.
+
+Production last observed remains v2.2.216-beta-feedback at scheduled-news commit `ed8e11ca263bf4d06d95a8811aed3b83c9b9edfe`, bundle SHA256 `c6f77f54100b857521014dc3c2b5848ad58c6ff1234267653f3e556799b50808`. Existing deployment [39545921411](https://github.com/TheYfactora12/Pokemon-Champions-Sim-Planner/actions/runs/39545921411) passed. This is identity verification, not remote E2E. CI browser evidence uses localhost. Private preview approval remains pending.
+
+Open: Eviolite Magic Room, Embargo, transformation/species lifecycle, consumption-event timing, singles and current-client parity; Fly/Eject Button; broader paired-format coverage; official eligibility. Workflow 349252390 remains disabled; last seed health parsed 9/15 without full discovery. M-C candidate inventory 392 forms, 537 moves, 166 items and 23,756 pairs is reference coverage only. No universal accuracy percentage is established. No merge, preview publication, production deployment, credentials or settings change is included.
+
+## Historical development checkpoints
+
+The sections below retain their original checkpoint scope; pending statements in
+these historical sections do not override the current checkpoint above.
+
+## Draft review candidate
+
+v2.2.230-proof / engine 1.1.31 is the review follow-up to
+[draft PR279](https://github.com/TheYfactora12/Pokemon-Champions-Sim-Planner/pull/279).
+The [competitive readiness register](docs/release/COMPETITIVE_READINESS_2026-10-20.md)
+owns current defects, severity, evidence, owners, retest and the Wednesday decision.
+The [season/accuracy workflow](docs/release/SEASON_AND_ACCURACY_WORKFLOW.md) defines
+intake through independently verified release. Competitive release remains **NO-GO**.
+
+The [Amnesia repair receipt](docs/release/AMNESIA_REPAIR_2026-10-20.md) records its separate 30-case reviewed regression and remaining boundaries.
+
+This candidate repairs Rough Skin effective contact protection and strengthens
+checker sensitivity, replay multiplicity/artifact binding, runtime parity and
+recurring GitHub gates. Development checks do not certify current-client rules,
+full mechanics, competitive policy quality or live Supabase. Scoped independent review and final local gates pass;
+methodology checkpoint d48b9aa passed all seven hosted checks;
+Amnesia checkpoint 991f4fd64cfe308e4f36de3aee56e06a7c497ded also passed all seven hosted checks. The current R1–R5 repair passed scoped checks, battle audit, methodology and fresh browser capture; one aggregate link failure passed its targeted retest. Exact-head hosted checks remain pending; no merge/deployment authorized.
+
+The [R1–R5 repair receipt](docs/release/EVIDENCE_BOUNDARIES_2026-10-20.md) records downstream outcome quarantine, parsed evidence binding, replay completeness and pinned browser CI. Scoped independent controls pass; original-auditor exact-head closure remains pending.
+
+The v225 candidate and its evidence are preserved in
+[the historical candidate receipt](docs/archive/STATUS_V225_CANDIDATE_2026-10-20.md).
+PR279 retains the current move/PP/Fly, default-policy, pivot, switch-out and earlier
+repairs. PR278 stays open pending authorized integration; recommended sequence is
+279 as consolidated superset, then separately authorized supersession of278.
 
 ## Current verified release
 
@@ -181,3 +224,7 @@ artifacts. Never treat historical runbooks or model prompts as current approval.
 
 Do not add paid services, premium work, LLM orchestration or new schedulers to
 this release queue. Optional ideas remain deferred, not deleted or completed.
+
+## Isolated Eviolite activation follow-up (2026-10-21)
+
+Bounded activation and Body Press repair passes 201 pinned-reference checks and retains 226 ordering checks. Source/custom-game evidence only. Bundle exceeds existing cap by 2,978 bytes; publication held pending integrated gates. See [evidence](docs/release/EVIOLITE_ACTIVATION_2026-10-21.md).

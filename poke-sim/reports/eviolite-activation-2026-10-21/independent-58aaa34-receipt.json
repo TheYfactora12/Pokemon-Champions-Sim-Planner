@@ -1,0 +1,48 @@
+{
+  "target": "58aaa34e2047391b9874ac6e0702f3bfde42e852",
+  "artifacts": [
+    {
+      "sha256": "87e298221a2bff185cfba0c6162690474ed1da82c11a45101eef0de8d596fbaf",
+      "path": "C:\\Users\\The Rig\\Documents\\Codex\\2026-10-20\\task\\eviolite-58aaa34-evidence\\independent.json"
+    },
+    {
+      "sha256": "bd035e789aae1216f293cd9b63cecc2a15a7a950b646f1cd1c8feae609a0d4d0",
+      "path": "C:\\Users\\The Rig\\Documents\\Codex\\2026-10-20\\task\\eviolite-58aaa34-evidence\\preserved-adapter.mjs"
+    },
+    {
+      "sha256": "da8e8f764407108d667e6249c18cd220a912347011e406379bcef2f27877e0fa",
+      "path": "C:\\Users\\The Rig\\Documents\\Codex\\2026-10-20\\task\\eviolite-58aaa34-tests.log"
+    },
+    {
+      "sha256": "e79a729ba38a79960c8e5f1acd8efee8df454eeb733ecd057ca4f154aa4c7e19",
+      "path": "C:\\Users\\The Rig\\Documents\\Codex\\2026-10-20\\task\\eviolite-58aaa34-independent.mjs"
+    },
+    {
+      "sha256": "53035173eeabfd88d826fc4652522fae6091cf87b1eca1adbbce39ce30804f60",
+      "path": "C:\\Users\\The Rig\\Documents\\Codex\\2026-10-20\\task\\eviolite-58aaa34-independent.log"
+    },
+    {
+      "sha256": "7d376f5390f292c2018b7d53ef8175287b8fc4092e7d27972f6351c85a2fc26e",
+      "path": "C:\\Users\\The Rig\\Documents\\Codex\\2026-10-20\\task\\eviolite-58aaa34-gates.log"
+    },
+    {
+      "sha256": "46ab8d10f3ed117ec35547326946757663367263c06d805d288bcc1255f81f32",
+      "path": "C:\\Users\\The Rig\\Documents\\Codex\\2026-10-20\\task\\eviolite-58aaa34-eligibility.log"
+    },
+    {
+      "sha256": "bc84b598686e434af76e15de6ffbaf313e88a3f3817d839f71d34d647800bc8b",
+      "path": "C:\\Users\\The Rig\\Documents\\Codex\\2026-10-20\\task\\EVIOLITE_ACTIVATION_RETEST_58AAA34.md"
+    }
+  ],
+  "status": [],
+  "reference": "9b136a8c8cdb860a8ab96fa063f906604e352547",
+  "additionalAgreement": 40,
+  "preservedFixed": 8,
+  "base": "c9d071da34821ca559daf8dfb5d1800026589acc",
+  "timestampUtc": "2026-10-21T08:35:46.8652241Z",
+  "bundleBytes": 11537314,
+  "overBudget": 2978,
+  "missingExportFailures": 2,
+  "focusedPass": 427,
+  "oldFailures": 8
+}

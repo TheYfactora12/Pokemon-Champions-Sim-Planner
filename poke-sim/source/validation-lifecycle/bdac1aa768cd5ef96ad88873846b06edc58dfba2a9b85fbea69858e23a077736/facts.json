@@ -1,0 +1,551 @@
+{
+  "schema_version": "validation-lifecycle-facts-v1",
+  "fingerprint_version": "aggregate-inputs-v2",
+  "candidate_commit": "430368455dd52d6393cc1c3330613c0a2209ecc1",
+  "source_digest": "3635c6b19b4cbcdd15f501409a53c98bdc3b2c6747d4b6bb6da90bc619536f44",
+  "observed_at": "2026-10-20T23:43:51.612Z",
+  "scope": "Bounded reference validation and draft CI; excludes official/client certification and deployment",
+  "publication": {
+    "commit": "430368455dd52d6393cc1c3330613c0a2209ecc1",
+    "url": "https://github.com/TheYfactora12/Pokemon-Champions-Sim-Planner/pull/279",
+    "observed_at": "2026-10-20T23:43:51.613Z",
+    "evidence": {
+      "path": "source/validation-lifecycle/bdac1aa768cd5ef96ad88873846b06edc58dfba2a9b85fbea69858e23a077736/remote.json",
+      "sha256": "67fb0ceb3eb8e42abbccdd896a7f4a067adb4470766276de8ab044da9c1cde3e"
+    }
+  },
+  "hosted": {
+    "conclusion": "success",
+    "createdAt": "2026-10-20T23:22:15Z",
+    "headSha": "430368455dd52d6393cc1c3330613c0a2209ecc1",
+    "jobs": [
+      {
+        "completedAt": "2026-10-20T23:29:13Z",
+        "conclusion": "success",
+        "databaseId": 118943478647,
+        "name": "Accuracy methodology and readiness report",
+        "startedAt": "2026-10-20T23:22:18Z",
+        "status": "completed",
+        "steps": [
+          {
+            "completedAt": "2026-10-20T23:22:20Z",
+            "conclusion": "success",
+            "name": "Set up job",
+            "number": 1,
+            "startedAt": "2026-10-20T23:22:19Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-10-20T23:22:35Z",
+            "conclusion": "success",
+            "name": "Run actions/checkout@v7",
+            "number": 2,
+            "startedAt": "2026-10-20T23:22:20Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-10-20T23:22:40Z",
+            "conclusion": "success",
+            "name": "Run actions/setup-node@v6",
+            "number": 3,
+            "startedAt": "2026-10-20T23:22:35Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-10-20T23:22:43Z",
+            "conclusion": "success",
+            "name": "Install existing locked dependencies",
+            "number": 4,
+            "startedAt": "2026-10-20T23:22:40Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-10-20T23:27:22Z",
+            "conclusion": "success",
+            "name": "Run references, information boundaries and negative controls",
+            "number": 5,
+            "startedAt": "2026-10-20T23:22:43Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-10-20T23:27:34Z",
+            "conclusion": "success",
+            "name": "Require dated tracker and lifecycle refresh",
+            "number": 6,
+            "startedAt": "2026-10-20T23:27:22Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-10-20T23:29:10Z",
+            "conclusion": "success",
+            "name": "Run shipped-mechanics invariants (not client accuracy)",
+            "number": 7,
+            "startedAt": "2026-10-20T23:27:34Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-10-20T23:29:10Z",
+            "conclusion": "success",
+            "name": "Report competitive readiness separately",
+            "number": 8,
+            "startedAt": "2026-10-20T23:29:10Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-10-20T23:29:11Z",
+            "conclusion": "success",
+            "name": "Retain exact-head evidence and failures",
+            "number": 9,
+            "startedAt": "2026-10-20T23:29:10Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-10-20T23:29:11Z",
+            "conclusion": "success",
+            "name": "Post Run actions/setup-node@v6",
+            "number": 17,
+            "startedAt": "2026-10-20T23:29:11Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-10-20T23:29:11Z",
+            "conclusion": "success",
+            "name": "Post Run actions/checkout@v7",
+            "number": 18,
+            "startedAt": "2026-10-20T23:29:11Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-10-20T23:29:11Z",
+            "conclusion": "success",
+            "name": "Complete job",
+            "number": 19,
+            "startedAt": "2026-10-20T23:29:11Z",
+            "status": "completed"
+          }
+        ],
+        "url": "https://github.com/TheYfactora12/Pokemon-Champions-Sim-Planner/actions/runs/39514557728/job/118943478647"
+      },
+      {
+        "completedAt": "2026-10-20T23:22:30Z",
+        "conclusion": "success",
+        "databaseId": 118943478917,
+        "name": "Detect Engine/Data Changes",
+        "startedAt": "2026-10-20T23:22:19Z",
+        "status": "completed",
+        "steps": [
+          {
+            "completedAt": "2026-10-20T23:22:21Z",
+            "conclusion": "success",
+            "name": "Set up job",
+            "number": 1,
+            "startedAt": "2026-10-20T23:22:20Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-10-20T23:22:27Z",
+            "conclusion": "success",
+            "name": "Run actions/checkout@v7",
+            "number": 2,
+            "startedAt": "2026-10-20T23:22:21Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-10-20T23:22:28Z",
+            "conclusion": "success",
+            "name": "Run dorny/paths-filter@v4",
+            "number": 3,
+            "startedAt": "2026-10-20T23:22:27Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-10-20T23:22:28Z",
+            "conclusion": "success",
+            "name": "Post Run actions/checkout@v7",
+            "number": 6,
+            "startedAt": "2026-10-20T23:22:28Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-10-20T23:22:28Z",
+            "conclusion": "success",
+            "name": "Complete job",
+            "number": 7,
+            "startedAt": "2026-10-20T23:22:28Z",
+            "status": "completed"
+          }
+        ],
+        "url": "https://github.com/TheYfactora12/Pokemon-Champions-Sim-Planner/actions/runs/39514557728/job/118943478917"
+      },
+      {
+        "completedAt": "2026-10-20T23:22:56Z",
+        "conclusion": "success",
+        "databaseId": 118943478979,
+        "name": "Candidate browser replay evidence",
+        "startedAt": "2026-10-20T23:22:18Z",
+        "status": "completed",
+        "steps": [
+          {
+            "completedAt": "2026-10-20T23:22:20Z",
+            "conclusion": "success",
+            "name": "Set up job",
+            "number": 1,
+            "startedAt": "2026-10-20T23:22:19Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-10-20T23:22:26Z",
+            "conclusion": "success",
+            "name": "Run actions/checkout@v7",
+            "number": 2,
+            "startedAt": "2026-10-20T23:22:20Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-10-20T23:22:30Z",
+            "conclusion": "success",
+            "name": "Run actions/setup-node@v6",
+            "number": 3,
+            "startedAt": "2026-10-20T23:22:26Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-10-20T23:22:34Z",
+            "conclusion": "success",
+            "name": "Install locked test dependencies",
+            "number": 4,
+            "startedAt": "2026-10-20T23:22:30Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-10-20T23:22:34Z",
+            "conclusion": "success",
+            "name": "Set isolated browser cache",
+            "number": 5,
+            "startedAt": "2026-10-20T23:22:34Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-10-20T23:22:45Z",
+            "conclusion": "success",
+            "name": "Install pinned Chromium revision",
+            "number": 6,
+            "startedAt": "2026-10-20T23:22:34Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-10-20T23:22:53Z",
+            "conclusion": "success",
+            "name": "Verify actual candidate browser responses and paired replays",
+            "number": 7,
+            "startedAt": "2026-10-20T23:22:45Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-10-20T23:22:54Z",
+            "conclusion": "success",
+            "name": "Retain browser evidence and failures",
+            "number": 8,
+            "startedAt": "2026-10-20T23:22:53Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-10-20T23:22:54Z",
+            "conclusion": "success",
+            "name": "Post Run actions/setup-node@v6",
+            "number": 15,
+            "startedAt": "2026-10-20T23:22:54Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-10-20T23:22:55Z",
+            "conclusion": "success",
+            "name": "Post Run actions/checkout@v7",
+            "number": 16,
+            "startedAt": "2026-10-20T23:22:54Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-10-20T23:22:55Z",
+            "conclusion": "success",
+            "name": "Complete job",
+            "number": 17,
+            "startedAt": "2026-10-20T23:22:55Z",
+            "status": "completed"
+          }
+        ],
+        "url": "https://github.com/TheYfactora12/Pokemon-Champions-Sim-Planner/actions/runs/39514557728/job/118943478979"
+      },
+      {
+        "completedAt": "2026-10-20T23:22:38Z",
+        "conclusion": "success",
+        "databaseId": 118943478990,
+        "name": "Syntax Check",
+        "startedAt": "2026-10-20T23:22:19Z",
+        "status": "completed",
+        "steps": [
+          {
+            "completedAt": "2026-10-20T23:22:22Z",
+            "conclusion": "success",
+            "name": "Set up job",
+            "number": 1,
+            "startedAt": "2026-10-20T23:22:20Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-10-20T23:22:28Z",
+            "conclusion": "success",
+            "name": "Run actions/checkout@v7",
+            "number": 2,
+            "startedAt": "2026-10-20T23:22:22Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-10-20T23:22:34Z",
+            "conclusion": "success",
+            "name": "Run actions/setup-node@v6",
+            "number": 3,
+            "startedAt": "2026-10-20T23:22:28Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-10-20T23:22:35Z",
+            "conclusion": "success",
+            "name": "Check all JS source files",
+            "number": 4,
+            "startedAt": "2026-10-20T23:22:34Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-10-20T23:22:35Z",
+            "conclusion": "success",
+            "name": "Post Run actions/setup-node@v6",
+            "number": 7,
+            "startedAt": "2026-10-20T23:22:35Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-10-20T23:22:35Z",
+            "conclusion": "success",
+            "name": "Post Run actions/checkout@v7",
+            "number": 8,
+            "startedAt": "2026-10-20T23:22:35Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-10-20T23:22:35Z",
+            "conclusion": "success",
+            "name": "Complete job",
+            "number": 9,
+            "startedAt": "2026-10-20T23:22:35Z",
+            "status": "completed"
+          }
+        ],
+        "url": "https://github.com/TheYfactora12/Pokemon-Champions-Sim-Planner/actions/runs/39514557728/job/118943478990"
+      },
+      {
+        "completedAt": "2026-10-20T23:33:53Z",
+        "conclusion": "success",
+        "databaseId": 118943607020,
+        "name": "Test Suite",
+        "startedAt": "2026-10-20T23:22:41Z",
+        "status": "completed",
+        "steps": [
+          {
+            "completedAt": "2026-10-20T23:22:43Z",
+            "conclusion": "success",
+            "name": "Set up job",
+            "number": 1,
+            "startedAt": "2026-10-20T23:22:42Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-10-20T23:22:57Z",
+            "conclusion": "success",
+            "name": "Run actions/checkout@v7",
+            "number": 2,
+            "startedAt": "2026-10-20T23:22:43Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-10-20T23:23:01Z",
+            "conclusion": "success",
+            "name": "Run actions/setup-node@v6",
+            "number": 3,
+            "startedAt": "2026-10-20T23:22:57Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-10-20T23:23:05Z",
+            "conclusion": "success",
+            "name": "Install locked dependencies",
+            "number": 4,
+            "startedAt": "2026-10-20T23:23:01Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-10-20T23:33:50Z",
+            "conclusion": "success",
+            "name": "Run all test suites (auto-discovered, with exclusions)",
+            "number": 5,
+            "startedAt": "2026-10-20T23:23:05Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-10-20T23:33:50Z",
+            "conclusion": "skipped",
+            "name": "Clean up isolated Supabase test data",
+            "number": 6,
+            "startedAt": "2026-10-20T23:33:50Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-10-20T23:33:50Z",
+            "conclusion": "success",
+            "name": "Post Run actions/setup-node@v6",
+            "number": 11,
+            "startedAt": "2026-10-20T23:33:50Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-10-20T23:33:50Z",
+            "conclusion": "success",
+            "name": "Post Run actions/checkout@v7",
+            "number": 12,
+            "startedAt": "2026-10-20T23:33:50Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-10-20T23:33:50Z",
+            "conclusion": "success",
+            "name": "Complete job",
+            "number": 13,
+            "startedAt": "2026-10-20T23:33:50Z",
+            "status": "completed"
+          }
+        ],
+        "url": "https://github.com/TheYfactora12/Pokemon-Champions-Sim-Planner/actions/runs/39514557728/job/118943607020"
+      },
+      {
+        "completedAt": "2026-10-20T23:42:29Z",
+        "conclusion": "success",
+        "databaseId": 118947646437,
+        "name": "Battle Audit / Mechanics fixtures, parity, golden traces, and seeded stress",
+        "startedAt": "2026-10-20T23:33:57Z",
+        "status": "completed",
+        "steps": [
+          {
+            "completedAt": "2026-10-20T23:33:58Z",
+            "conclusion": "success",
+            "name": "Set up job",
+            "number": 1,
+            "startedAt": "2026-10-20T23:33:58Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-10-20T23:34:04Z",
+            "conclusion": "success",
+            "name": "Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+            "number": 2,
+            "startedAt": "2026-10-20T23:33:58Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-10-20T23:34:10Z",
+            "conclusion": "success",
+            "name": "Run actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38",
+            "number": 3,
+            "startedAt": "2026-10-20T23:34:04Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-10-20T23:34:13Z",
+            "conclusion": "success",
+            "name": "Install dependencies",
+            "number": 4,
+            "startedAt": "2026-10-20T23:34:10Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-10-20T23:42:26Z",
+            "conclusion": "success",
+            "name": "Run declared battle audit",
+            "number": 5,
+            "startedAt": "2026-10-20T23:34:13Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-10-20T23:42:27Z",
+            "conclusion": "success",
+            "name": "Upload battle evidence",
+            "number": 6,
+            "startedAt": "2026-10-20T23:42:26Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-10-20T23:42:27Z",
+            "conclusion": "success",
+            "name": "Post Run actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38",
+            "number": 11,
+            "startedAt": "2026-10-20T23:42:27Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-10-20T23:42:27Z",
+            "conclusion": "success",
+            "name": "Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+            "number": 12,
+            "startedAt": "2026-10-20T23:42:27Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-10-20T23:42:27Z",
+            "conclusion": "success",
+            "name": "Complete job",
+            "number": 13,
+            "startedAt": "2026-10-20T23:42:27Z",
+            "status": "completed"
+          }
+        ],
+        "url": "https://github.com/TheYfactora12/Pokemon-Champions-Sim-Planner/actions/runs/39514557728/job/118947646437"
+      }
+    ],
+    "status": "completed",
+    "updatedAt": "2026-10-20T23:42:30Z",
+    "url": "https://github.com/TheYfactora12/Pokemon-Champions-Sim-Planner/actions/runs/39514557728",
+    "evidence": {
+      "path": "source/validation-lifecycle/bdac1aa768cd5ef96ad88873846b06edc58dfba2a9b85fbea69858e23a077736/hosted.json",
+      "sha256": "d58896200d36b2d013ecbca13021e27f55f2872d0c7e8978820a9653ed091ab7"
+    }
+  },
+  "local": {
+    "status": "passed",
+    "fast_files": 275,
+    "offline_db_files": 12,
+    "failures": 0,
+    "executed_at": null,
+    "date_limitation": "Retained aggregate logs lack execution timestamp; observation time is not execution time",
+    "evidence": {
+      "path": "source/validation-lifecycle/bdac1aa768cd5ef96ad88873846b06edc58dfba2a9b85fbea69858e23a077736/local.json",
+      "sha256": "aab9fc62339091defe366371aa31039c2c7b5dd6b3e6f1585b8279c8eeb8a428"
+    }
+  },
+  "review": {
+    "status": "passed_bounded_scope",
+    "reviewed_at": "2026-10-20T23:04:41.602Z",
+    "runtime_source_commit": "066b49a2fd3e326f4fde5027ee6a2c02195cdfff",
+    "cases": 6,
+    "evidence": {
+      "path": "source/validation-lifecycle/bdac1aa768cd5ef96ad88873846b06edc58dfba2a9b85fbea69858e23a077736/review.json",
+      "sha256": "b2a0603839d4cbcae681fb81cad71378c4f765cc0ecb207784bfc75506ef1867"
+    }
+  },
+  "merge": {
+    "status": "not_performed",
+    "authorization": "not_authorized"
+  },
+  "deployment": {
+    "status": "not_performed",
+    "authorization": "not_authorized"
+  }
+}

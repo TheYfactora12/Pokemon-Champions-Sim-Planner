@@ -1,0 +1,33 @@
+✔ current capture local RESOURCE-STRUGGLE-CAPTURE (299.4363ms)
+✔ current capture local REST-ELECTRIC-CAPTURE (126.0933ms)
+✔ current capture local ENCORE-QUEUE-CAPTURE (135.4617ms)
+✔ current capture local RED-CARD-CAPTURE (148.4532ms)
+✔ current capture local WHITE-HERB-CAPTURE (111.9674ms)
+✔ current capture local DAMAGE-ROLL-CAPTURE (127.3745ms)
+✔ capture catalog returns isolated copies (0.3394ms)
+✔ current capture exact-reference RESOURCE-STRUGGLE-CAPTURE (377.0095ms)
+✔ current capture exact-reference REST-ELECTRIC-CAPTURE (5.3909ms)
+✔ current capture exact-reference ENCORE-QUEUE-CAPTURE (15.47ms)
+✔ current capture exact-reference RED-CARD-CAPTURE (4.8097ms)
+✔ current capture exact-reference WHITE-HERB-CAPTURE (3.6079ms)
+✔ current capture exact-reference DAMAGE-ROLL-CAPTURE (3.3225ms)
+✔ six envelopes bind separately executed observations (2071.0764ms)
+✔ serialized initial state is executed, not reconstructed from catalog (134.9384ms)
+✔ unsupported RNG controls are rejected rather than silently replaced (1.426ms)
+✔ fixed mapping rejects ignored fields struggle (5.4762ms)
+✔ fixed mapping rejects ignored fields rest (4.5718ms)
+✔ fixed mapping rejects ignored fields encore (5.8275ms)
+✔ fixed mapping rejects ignored fields redcard (3.6656ms)
+✔ fixed mapping rejects ignored fields whiteherb (3.5267ms)
+✔ fixed mapping rejects ignored fields discrete (14.9276ms)
+✔ independent target-slot-one calculation differs; contradictory capture is rejected (1202.984ms)
+✔ versioned assertion metadata preserves the fixed case behavior (117.2458ms)
+✔ assertion metadata rejects unrelated IDs and invalid versions before loading (1.6956ms)
+ℹ tests 25
+ℹ suites 0
+ℹ pass 25
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 5324.6417

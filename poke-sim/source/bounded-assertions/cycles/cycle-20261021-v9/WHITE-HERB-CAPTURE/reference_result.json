@@ -1,0 +1,50 @@
+{
+  "schema_version": "bounded-result-v1",
+  "assertion_id": "WHITE-HERB-CAPTURE.current-runtime.v9",
+  "case_id": "WHITE-HERB-CAPTURE",
+  "scope": {
+    "oracle_kind": "shared_reference",
+    "format": "gen9championsdoublescustomgame",
+    "regulation_id": null,
+    "client_version": null,
+    "boundaries": [
+      "synthetic initial atk-2 def-1 spa+3 stages",
+      "negative stages reset and positive stage retained"
+    ]
+  },
+  "role": "reference_result",
+  "status": "complete",
+  "inputs_sha256": "041ca6a9c4e47fd0947178fc2499552e8bd42b3a5d0c07cceda641370b43e184",
+  "contract_sha256": "c2e92ed68102b20410520822f3bf5ef6eb16fd1bb7a94dd9a53d10779be83918",
+  "dependencies": {
+    "engine": "0304d9bba218821edc6f773eaa37a66719c22c738ab3323505cb4fdcfef5c463",
+    "data": "dd258aec23104c305658a95eeb20c8af71204ef43311d7033d00f33a64943409",
+    "runner": "7324e992dc86371999bd2686edb4e2c649ea1d9b2e655ad3850ac5121608df08",
+    "test": "3d7cfd2e383fa6e32f8dc626c9a9bef27ac9b25d298e90646014bf95b1e524e1",
+    "checker": "d18159d8291af83e8fbd6bebac7fade9aa89c9400bb0641538b8bccd88de25a1",
+    "reference": "de66162a28b270bdf17ea17a804a7ec65c6d2f286815ae17eaa3336273405f61"
+  },
+  "executed_at": "2026-10-21T02:51:51.211Z",
+  "observations": {
+    "attack_stage": {
+      "pointer": "/observations/attack_stage/value",
+      "unit": "stage",
+      "value": 0
+    },
+    "defense_stage": {
+      "pointer": "/observations/defense_stage/value",
+      "unit": "stage",
+      "value": 0
+    },
+    "special_attack_stage": {
+      "pointer": "/observations/special_attack_stage/value",
+      "unit": "stage",
+      "value": 3
+    },
+    "item_consumed": {
+      "pointer": "/observations/item_consumed/value",
+      "unit": "value",
+      "value": true
+    }
+  }
+}

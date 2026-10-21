@@ -1,0 +1,14 @@
+{
+  "baseline": "1610d1a0bb8f96bbbee4e36904e97b008b281237",
+  "scope": "internal ordering evidence; final independent6case review; not client parity",
+  "files": {
+    "integrated-invariants-repro.log": "d30a12c19caba90f0c6e4b2704213b22e139829a2e67ee7caeed68f11ec14269",
+    "item-speed-browser.log": "952e4a0ada0a3b630c780690562067adfc980544621b5183400e5b72edcc998b",
+    "item-speed-evidence.log": "912319e2a75fb8c506e8e9e5e7dd61bda8cce47c4a6d2c339e9689925b967497",
+    "item-speed-final-invariants.log": "ac20ef59045618bf32a8828868a901ef5d0d6ccd82085721c816f0c0b6035e03",
+    "item-speed-goldens.log": "39518aa8508f53868cee4506f534f7bfe5f40f009291118d4a7def9fa58caf28",
+    "item-speed-invariants.log": "ac20ef59045618bf32a8828868a901ef5d0d6ccd82085721c816f0c0b6035e03",
+    "item-speed-validator.log": "9401cb94ef3bf9e658f4bdd49137d4d93ef554561ffe2ef79350c06f6b39ae9a",
+    "register-contract-tests.log": "3ded929630a7206ce0fb2c52d30f019d1140b6a568cbcdcae66d7cc1a3ed3980"
+  }
+}

@@ -1,0 +1,196 @@
+Γ£û Rest Leaf Guard player/0/sun (504.4248ms)
+Γ£ö Rest Leaf Guard player/0/clear (127.8251ms)
+Γ£ö Rest Leaf Guard player/0/sun-gas (139.4735ms)
+Γ£û Rest Leaf Guard player/0/sun-gas-shield (155.0502ms)
+Γ£ö Rest Leaf Guard player/0/sun-gas-shield-consumed (116.9869ms)
+Γ£û Rest Leaf Guard player/1/sun (131.5496ms)
+Γ£ö Rest Leaf Guard player/1/clear (132.8069ms)
+Γ£ö Rest Leaf Guard player/1/sun-gas (133.3782ms)
+Γ£û Rest Leaf Guard player/1/sun-gas-shield (130.9829ms)
+Γ£ö Rest Leaf Guard player/1/sun-gas-shield-consumed (131.9493ms)
+Γ£û Rest Leaf Guard opponent/0/sun (131.3744ms)
+Γ£ö Rest Leaf Guard opponent/0/clear (133.071ms)
+Γ£ö Rest Leaf Guard opponent/0/sun-gas (133.3841ms)
+Γ£û Rest Leaf Guard opponent/0/sun-gas-shield (133.4569ms)
+Γ£ö Rest Leaf Guard opponent/0/sun-gas-shield-consumed (135.9229ms)
+Γ£û Rest Leaf Guard opponent/1/sun (135.3421ms)
+Γ£ö Rest Leaf Guard opponent/1/clear (152.8106ms)
+Γ£ö Rest Leaf Guard opponent/1/sun-gas (116.2651ms)
+Γ£û Rest Leaf Guard opponent/1/sun-gas-shield (130.9307ms)
+Γ£ö Rest Leaf Guard opponent/1/sun-gas-shield-consumed (133.962ms)
+Γä╣ tests 20
+Γä╣ suites 0
+Γä╣ pass 12
+Γä╣ fail 8
+Γä╣ cancelled 0
+Γä╣ skipped 0
+Γä╣ todo 0
+Γä╣ duration_ms 3213.1572
+
+Γ£û failing tests:
+
+test at poke-sim\tests\rest_reference_tests.mjs:92:3
+Γ£û Rest Leaf Guard player/0/sun (504.4248ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  'sleep' !== null
+  
+      at TestContext.<anonymous> (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-14/task-2/champions-moves-repair/poke-sim/tests/rest_reference_tests.mjs:96:9)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1201:25)
+      at Test.start (node:internal/test_runner/test:1096:17)
+      at startSubtestAfterBootstrap (node:internal/test_runner/harness:385:17) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 'sleep',
+    expected: null,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at poke-sim\tests\rest_reference_tests.mjs:92:3
+Γ£û Rest Leaf Guard player/0/sun-gas-shield (155.0502ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  'sleep' !== null
+  
+      at TestContext.<anonymous> (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-14/task-2/champions-moves-repair/poke-sim/tests/rest_reference_tests.mjs:96:9)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1201:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:831:18)
+      at Test.postRun (node:internal/test_runner/test:1330:19)
+      at Test.run (node:internal/test_runner/test:1258:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:831:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 'sleep',
+    expected: null,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at poke-sim\tests\rest_reference_tests.mjs:92:3
+Γ£û Rest Leaf Guard player/1/sun (131.5496ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  'sleep' !== null
+  
+      at TestContext.<anonymous> (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-14/task-2/champions-moves-repair/poke-sim/tests/rest_reference_tests.mjs:96:9)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1201:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:831:18)
+      at Test.postRun (node:internal/test_runner/test:1330:19)
+      at Test.run (node:internal/test_runner/test:1258:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:831:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 'sleep',
+    expected: null,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at poke-sim\tests\rest_reference_tests.mjs:92:3
+Γ£û Rest Leaf Guard player/1/sun-gas-shield (130.9829ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  'sleep' !== null
+  
+      at TestContext.<anonymous> (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-14/task-2/champions-moves-repair/poke-sim/tests/rest_reference_tests.mjs:96:9)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1201:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:831:18)
+      at Test.postRun (node:internal/test_runner/test:1330:19)
+      at Test.run (node:internal/test_runner/test:1258:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:831:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 'sleep',
+    expected: null,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at poke-sim\tests\rest_reference_tests.mjs:92:3
+Γ£û Rest Leaf Guard opponent/0/sun (131.3744ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  'sleep' !== null
+  
+      at TestContext.<anonymous> (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-14/task-2/champions-moves-repair/poke-sim/tests/rest_reference_tests.mjs:96:9)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1201:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:831:18)
+      at Test.postRun (node:internal/test_runner/test:1330:19)
+      at Test.run (node:internal/test_runner/test:1258:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:831:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 'sleep',
+    expected: null,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at poke-sim\tests\rest_reference_tests.mjs:92:3
+Γ£û Rest Leaf Guard opponent/0/sun-gas-shield (133.4569ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  'sleep' !== null
+  
+      at TestContext.<anonymous> (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-14/task-2/champions-moves-repair/poke-sim/tests/rest_reference_tests.mjs:96:9)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1201:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:831:18)
+      at Test.postRun (node:internal/test_runner/test:1330:19)
+      at Test.run (node:internal/test_runner/test:1258:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:831:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 'sleep',
+    expected: null,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at poke-sim\tests\rest_reference_tests.mjs:92:3
+Γ£û Rest Leaf Guard opponent/1/sun (135.3421ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  'sleep' !== null
+  
+      at TestContext.<anonymous> (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-14/task-2/champions-moves-repair/poke-sim/tests/rest_reference_tests.mjs:96:9)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1201:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:831:18)
+      at Test.postRun (node:internal/test_runner/test:1330:19)
+      at Test.run (node:internal/test_runner/test:1258:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:831:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 'sleep',
+    expected: null,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at poke-sim\tests\rest_reference_tests.mjs:92:3
+Γ£û Rest Leaf Guard opponent/1/sun-gas-shield (130.9307ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  'sleep' !== null
+  
+      at TestContext.<anonymous> (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-14/task-2/champions-moves-repair/poke-sim/tests/rest_reference_tests.mjs:96:9)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1201:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:831:18)
+      at Test.postRun (node:internal/test_runner/test:1330:19)
+      at Test.run (node:internal/test_runner/test:1258:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:831:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 'sleep',
+    expected: null,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }

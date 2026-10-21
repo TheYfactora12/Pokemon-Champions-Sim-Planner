@@ -1,0 +1,15 @@
+EVIO reference: upstream 9b136a8c8cdb860a8ab96fa063f906604e352547
+Γ£ö EVIO-ORDER-221 player/Ice Beam/sand/65/0 (995.5566ms)
+Γ£ö EVIO-NEG original fractional-stage defect is detected (204.0168ms)
+Γ£ö EVIO-NEG rounding stage to nearest instead of truncation is detected (191.097ms)
+Γ£ö EVIO-NEG combining sand and item modifiers is detected (195.3952ms)
+Γ£ö EVIO-NEG dropping item modifier is detected (197.1522ms)
+Γ£ö EVIO invalid oracle inputs reject (1.3449ms)
+Γä╣ tests 6
+Γä╣ suites 0
+Γä╣ pass 6
+Γä╣ fail 0
+Γä╣ cancelled 0
+Γä╣ skipped 0
+Γä╣ todo 0
+Γä╣ duration_ms 2643.4431

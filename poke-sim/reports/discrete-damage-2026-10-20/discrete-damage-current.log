@@ -1,0 +1,11 @@
+Γ£ö Champions damage has sixteen independent discrete percentage buckets (304.1832ms)
+Γ£ö discrete damage executed reference gen9championsdoublescustomgame (467.8246ms)
+Γ£ö discrete damage executed reference gen9championsvgc2026regmc (131.769ms)
+Γä╣ tests 3
+Γä╣ suites 0
+Γä╣ pass 3
+Γä╣ fail 0
+Γä╣ cancelled 0
+Γä╣ skipped 0
+Γä╣ todo 0
+Γä╣ duration_ms 1113.107

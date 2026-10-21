@@ -1,0 +1,2614 @@
+{
+  "local_result": {
+    "observations": {
+      "executed_move": "Will-O-Wisp",
+      "willowisp_pp_spent": 2,
+      "flamethrower_pp_spent": 0,
+      "lock_move": "willowisp"
+    },
+    "raw": {
+      "log": [
+        "--- Turn 1 ---",
+        "Whimsicott used Protect!",
+        "Arcanine used Will-O-Wisp!",
+        "Blastoise was burned by Arcanine's Will-O-Wisp!",
+        "Venusaur used Amnesia!",
+        "Venusaur's Special Defense sharply rose!",
+        "Blastoise used Iron Defense!",
+        "Iron Defense had no effect on Arcanine!",
+        "Blastoise is hurt by its burn! [9 dmg]",
+        "--- Turn 2 ---",
+        "Whimsicott used Encore!",
+        "Arcanine got an Encore!",
+        "Arcanine used Will-O-Wisp!",
+        "Whimsicott was burned by Arcanine's Will-O-Wisp!",
+        "Venusaur used Amnesia!",
+        "Venusaur's Special Defense sharply rose!",
+        "Blastoise used Iron Defense!",
+        "Iron Defense had no effect on Arcanine!",
+        "Whimsicott is hurt by its burn! [8 dmg]",
+        "Blastoise is hurt by its burn! [9 dmg]"
+      ],
+      "turnLog": [
+        {
+          "turn": 1,
+          "initial": {
+            "active": {
+              "player": [
+                "Whimsicott",
+                "Blastoise"
+              ],
+              "opponent": [
+                "Arcanine",
+                "Venusaur"
+              ]
+            },
+            "bench": {
+              "player": [],
+              "opponent": []
+            },
+            "active_keys": {
+              "player": [
+                "player:active:0:Whimsicott",
+                "player:active:1:Blastoise"
+              ],
+              "opponent": [
+                "opponent:active:0:Arcanine",
+                "opponent:active:1:Venusaur"
+              ]
+            },
+            "bench_keys": {
+              "player": [],
+              "opponent": []
+            },
+            "active_stable_keys": {
+              "player": [
+                "player:slot:0:Whimsicott",
+                "player:slot:1:Blastoise"
+              ],
+              "opponent": [
+                "opponent:slot:0:Arcanine",
+                "opponent:slot:1:Venusaur"
+              ]
+            },
+            "bench_stable_keys": {
+              "player": [],
+              "opponent": []
+            },
+            "hp_pct": {
+              "player:active:0:Whimsicott": 1,
+              "player:active:1:Blastoise": 1,
+              "opponent:active:0:Arcanine": 1,
+              "opponent:active:1:Venusaur": 1
+            },
+            "hp_pct_stable": {
+              "player:slot:0:Whimsicott": 1,
+              "player:slot:1:Blastoise": 1,
+              "opponent:slot:0:Arcanine": 1,
+              "opponent:slot:1:Venusaur": 1
+            },
+            "score_state": {
+              "player": {
+                "active": [
+                  "Whimsicott",
+                  "Blastoise"
+                ],
+                "bench": [],
+                "active_keys": [
+                  "player:active:0:Whimsicott",
+                  "player:active:1:Blastoise"
+                ],
+                "bench_keys": [],
+                "active_stable_keys": [
+                  "player:slot:0:Whimsicott",
+                  "player:slot:1:Blastoise"
+                ],
+                "bench_stable_keys": [],
+                "alive_count": 2,
+                "hp_total": 2,
+                "max_count": 2
+              },
+              "opponent": {
+                "active": [
+                  "Arcanine",
+                  "Venusaur"
+                ],
+                "bench": [],
+                "active_keys": [
+                  "opponent:active:0:Arcanine",
+                  "opponent:active:1:Venusaur"
+                ],
+                "bench_keys": [],
+                "active_stable_keys": [
+                  "opponent:slot:0:Arcanine",
+                  "opponent:slot:1:Venusaur"
+                ],
+                "bench_stable_keys": [],
+                "alive_count": 2,
+                "hp_total": 2,
+                "max_count": 2
+              }
+            },
+            "roster": {
+              "player": [
+                {
+                  "key": "player:active:0:Whimsicott",
+                  "stableKey": "player:slot:0:Whimsicott",
+                  "teamSlot": 0,
+                  "zone": "active",
+                  "zoneIndex": 0,
+                  "side": "player",
+                  "status": "active",
+                  "displayName": "Whimsicott",
+                  "species": "Whimsicott",
+                  "types": [
+                    "Grass",
+                    "Fairy"
+                  ],
+                  "hp": 100,
+                  "hp_current": 135,
+                  "substitute_hp": 0,
+                  "perish_song_turns": 0,
+                  "hp_max": 135,
+                  "hpLabel": "100%",
+                  "level": 50,
+                  "item": "",
+                  "itemConsumed": false,
+                  "electric_charge": false,
+                  "mc_syrup_turns": 0,
+                  "mc_trap_turns": 0,
+                  "mc_partially_trapped": false,
+                  "ability": "Prankster",
+                  "moves": [
+                    "Protect",
+                    "Encore"
+                  ],
+                  "move_pp": {
+                    "Protect": {
+                      "current": 8,
+                      "max": 8
+                    },
+                    "Encore": {
+                      "current": 8,
+                      "max": 8
+                    }
+                  },
+                  "baseStatsLabel": "60/67/85/77/75/116",
+                  "calculatedStats": "135/87/105/97/95/136"
+                },
+                {
+                  "key": "player:active:1:Blastoise",
+                  "stableKey": "player:slot:1:Blastoise",
+                  "teamSlot": 1,
+                  "zone": "active",
+                  "zoneIndex": 1,
+                  "side": "player",
+                  "status": "active",
+                  "displayName": "Blastoise",
+                  "species": "Blastoise",
+                  "types": [
+                    "Water"
+                  ],
+                  "hp": 100,
+                  "hp_current": 154,
+                  "substitute_hp": 0,
+                  "perish_song_turns": 0,
+                  "hp_max": 154,
+                  "hpLabel": "100%",
+                  "level": 50,
+                  "item": "",
+                  "itemConsumed": false,
+                  "electric_charge": false,
+                  "mc_syrup_turns": 0,
+                  "mc_trap_turns": 0,
+                  "mc_partially_trapped": false,
+                  "ability": "Torrent",
+                  "moves": [
+                    "Iron Defense"
+                  ],
+                  "move_pp": {
+                    "Iron Defense": {
+                      "current": 16,
+                      "max": 16
+                    }
+                  },
+                  "baseStatsLabel": "79/83/100/85/105/78",
+                  "calculatedStats": "154/103/120/105/125/98"
+                }
+              ],
+              "opponent": [
+                {
+                  "key": "opponent:active:0:Arcanine",
+                  "stableKey": "opponent:slot:0:Arcanine",
+                  "teamSlot": 0,
+                  "zone": "active",
+                  "zoneIndex": 0,
+                  "side": "opponent",
+                  "status": "active",
+                  "displayName": "Arcanine",
+                  "species": "Arcanine",
+                  "types": [
+                    "Fire"
+                  ],
+                  "hp": 100,
+                  "hp_current": 165,
+                  "substitute_hp": 0,
+                  "perish_song_turns": 0,
+                  "hp_max": 165,
+                  "hpLabel": "100%",
+                  "level": 50,
+                  "item": "",
+                  "itemConsumed": false,
+                  "electric_charge": false,
+                  "mc_syrup_turns": 0,
+                  "mc_trap_turns": 0,
+                  "mc_partially_trapped": false,
+                  "ability": "Flash Fire",
+                  "moves": [
+                    "Will-O-Wisp",
+                    "Flamethrower"
+                  ],
+                  "move_pp": {
+                    "Will-O-Wisp": {
+                      "current": 16,
+                      "max": 16
+                    },
+                    "Flamethrower": {
+                      "current": 16,
+                      "max": 16
+                    }
+                  },
+                  "baseStatsLabel": "90/110/80/100/80/95",
+                  "calculatedStats": "165/130/100/120/100/115"
+                },
+                {
+                  "key": "opponent:active:1:Venusaur",
+                  "stableKey": "opponent:slot:1:Venusaur",
+                  "teamSlot": 1,
+                  "zone": "active",
+                  "zoneIndex": 1,
+                  "side": "opponent",
+                  "status": "active",
+                  "displayName": "Venusaur",
+                  "species": "Venusaur",
+                  "types": [
+                    "Grass",
+                    "Poison"
+                  ],
+                  "hp": 100,
+                  "hp_current": 155,
+                  "substitute_hp": 0,
+                  "perish_song_turns": 0,
+                  "hp_max": 155,
+                  "hpLabel": "100%",
+                  "level": 50,
+                  "item": "",
+                  "itemConsumed": false,
+                  "electric_charge": false,
+                  "mc_syrup_turns": 0,
+                  "mc_trap_turns": 0,
+                  "mc_partially_trapped": false,
+                  "ability": "Overgrow",
+                  "moves": [
+                    "Amnesia"
+                  ],
+                  "move_pp": {
+                    "Amnesia": {
+                      "current": 20,
+                      "max": 20
+                    }
+                  },
+                  "baseStatsLabel": "80/82/83/100/100/80",
+                  "calculatedStats": "155/102/103/120/120/100"
+                }
+              ]
+            },
+            "status": {},
+            "status_stable": {},
+            "stat_boosts": {},
+            "stat_boosts_stable": {},
+            "field": {
+              "weather": null,
+              "weather_turns": 0,
+              "gravity_turns": 0,
+              "terrain": null,
+              "terrain_turns": 0,
+              "trick_room": 0
+            },
+            "speed_control": {
+              "player": {
+                "tailwind_turns": 0,
+                "screens": {
+                  "reflect": 0,
+                  "light": 0,
+                  "aurora": 0
+                }
+              },
+              "opponent": {
+                "tailwind_turns": 0,
+                "screens": {
+                  "reflect": 0,
+                  "light": 0,
+                  "aurora": 0
+                }
+              }
+            },
+            "speed_order": [
+              "Whimsicott",
+              "Arcanine",
+              "Venusaur",
+              "Blastoise"
+            ],
+            "speed_order_keys": [
+              "player:active:0:Whimsicott",
+              "opponent:active:0:Arcanine",
+              "opponent:active:1:Venusaur",
+              "player:active:1:Blastoise"
+            ],
+            "speed_order_stable_keys": [
+              "player:slot:0:Whimsicott",
+              "opponent:slot:0:Arcanine",
+              "opponent:slot:1:Venusaur",
+              "player:slot:1:Blastoise"
+            ],
+            "speed_order_details": [
+              {
+                "side": "player",
+                "key": "player:active:0:Whimsicott",
+                "stableKey": "player:slot:0:Whimsicott",
+                "pokemon": "Whimsicott",
+                "stat_format": "champions",
+                "nature": "Hardy",
+                "speed_points": 0,
+                "species_base_speed": 116,
+                "base_speed": 136,
+                "calculated_speed": 136,
+                "speed_stage": 0,
+                "effective_speed": 136,
+                "item": "",
+                "ability": "Prankster",
+                "status": "",
+                "tailwind": false,
+                "trick_room": false,
+                "weather": "none",
+                "exact_speed_tie": false
+              },
+              {
+                "side": "opponent",
+                "key": "opponent:active:0:Arcanine",
+                "stableKey": "opponent:slot:0:Arcanine",
+                "pokemon": "Arcanine",
+                "stat_format": "champions",
+                "nature": "Hardy",
+                "speed_points": 0,
+                "species_base_speed": 95,
+                "base_speed": 115,
+                "calculated_speed": 115,
+                "speed_stage": 0,
+                "effective_speed": 115,
+                "item": "",
+                "ability": "Flash Fire",
+                "status": "",
+                "tailwind": false,
+                "trick_room": false,
+                "weather": "none",
+                "exact_speed_tie": false
+              },
+              {
+                "side": "opponent",
+                "key": "opponent:active:1:Venusaur",
+                "stableKey": "opponent:slot:1:Venusaur",
+                "pokemon": "Venusaur",
+                "stat_format": "champions",
+                "nature": "Hardy",
+                "speed_points": 0,
+                "species_base_speed": 80,
+                "base_speed": 100,
+                "calculated_speed": 100,
+                "speed_stage": 0,
+                "effective_speed": 100,
+                "item": "",
+                "ability": "Overgrow",
+                "status": "",
+                "tailwind": false,
+                "trick_room": false,
+                "weather": "none",
+                "exact_speed_tie": false
+              },
+              {
+                "side": "player",
+                "key": "player:active:1:Blastoise",
+                "stableKey": "player:slot:1:Blastoise",
+                "pokemon": "Blastoise",
+                "stat_format": "champions",
+                "nature": "Hardy",
+                "speed_points": 0,
+                "species_base_speed": 78,
+                "base_speed": 98,
+                "calculated_speed": 98,
+                "speed_stage": 0,
+                "effective_speed": 98,
+                "item": "",
+                "ability": "Torrent",
+                "status": "",
+                "tailwind": false,
+                "trick_room": false,
+                "weather": "none",
+                "exact_speed_tie": false
+              }
+            ],
+            "legal_options": {},
+            "position_score": 0.5,
+            "win_probability": null
+          },
+          "playerHP": [
+            1,
+            1
+          ],
+          "oppHP": [
+            1,
+            1
+          ],
+          "activePair": [
+            "Whimsicott",
+            "Blastoise",
+            "Arcanine",
+            "Venusaur"
+          ],
+          "action": "Whimsicott:Protect | Blastoise:Iron Defense | Arcanine:Will-O-Wisp | Venusaur:Amnesia",
+          "positionScore": 0.5,
+          "pre": {
+            "active": {
+              "player": [
+                "Whimsicott",
+                "Blastoise"
+              ],
+              "opponent": [
+                "Arcanine",
+                "Venusaur"
+              ]
+            },
+            "bench": {
+              "player": [],
+              "opponent": []
+            },
+            "active_keys": {
+              "player": [
+                "player:active:0:Whimsicott",
+                "player:active:1:Blastoise"
+              ],
+              "opponent": [
+                "opponent:active:0:Arcanine",
+                "opponent:active:1:Venusaur"
+              ]
+            },
+            "bench_keys": {
+              "player": [],
+              "opponent": []
+            },
+            "active_stable_keys": {
+              "player": [
+                "player:slot:0:Whimsicott",
+                "player:slot:1:Blastoise"
+              ],
+              "opponent": [
+                "opponent:slot:0:Arcanine",
+                "opponent:slot:1:Venusaur"
+              ]
+            },
+            "bench_stable_keys": {
+              "player": [],
+              "opponent": []
+            },
+            "hp_pct": {
+              "player:active:0:Whimsicott": 1,
+              "player:active:1:Blastoise": 1,
+              "opponent:active:0:Arcanine": 1,
+              "opponent:active:1:Venusaur": 1
+            },
+            "hp_pct_stable": {
+              "player:slot:0:Whimsicott": 1,
+              "player:slot:1:Blastoise": 1,
+              "opponent:slot:0:Arcanine": 1,
+              "opponent:slot:1:Venusaur": 1
+            },
+            "score_state": {
+              "player": {
+                "active": [
+                  "Whimsicott",
+                  "Blastoise"
+                ],
+                "bench": [],
+                "active_keys": [
+                  "player:active:0:Whimsicott",
+                  "player:active:1:Blastoise"
+                ],
+                "bench_keys": [],
+                "active_stable_keys": [
+                  "player:slot:0:Whimsicott",
+                  "player:slot:1:Blastoise"
+                ],
+                "bench_stable_keys": [],
+                "alive_count": 2,
+                "hp_total": 2,
+                "max_count": 2
+              },
+              "opponent": {
+                "active": [
+                  "Arcanine",
+                  "Venusaur"
+                ],
+                "bench": [],
+                "active_keys": [
+                  "opponent:active:0:Arcanine",
+                  "opponent:active:1:Venusaur"
+                ],
+                "bench_keys": [],
+                "active_stable_keys": [
+                  "opponent:slot:0:Arcanine",
+                  "opponent:slot:1:Venusaur"
+                ],
+                "bench_stable_keys": [],
+                "alive_count": 2,
+                "hp_total": 2,
+                "max_count": 2
+              }
+            },
+            "roster": {
+              "player": [
+                {
+                  "key": "player:active:0:Whimsicott",
+                  "stableKey": "player:slot:0:Whimsicott",
+                  "teamSlot": 0,
+                  "zone": "active",
+                  "zoneIndex": 0,
+                  "side": "player",
+                  "status": "active",
+                  "displayName": "Whimsicott",
+                  "species": "Whimsicott",
+                  "types": [
+                    "Grass",
+                    "Fairy"
+                  ],
+                  "hp": 100,
+                  "hp_current": 135,
+                  "substitute_hp": 0,
+                  "perish_song_turns": 0,
+                  "hp_max": 135,
+                  "hpLabel": "100%",
+                  "level": 50,
+                  "item": "",
+                  "itemConsumed": false,
+                  "electric_charge": false,
+                  "mc_syrup_turns": 0,
+                  "mc_trap_turns": 0,
+                  "mc_partially_trapped": false,
+                  "ability": "Prankster",
+                  "moves": [
+                    "Protect",
+                    "Encore"
+                  ],
+                  "move_pp": {
+                    "Protect": {
+                      "current": 8,
+                      "max": 8
+                    },
+                    "Encore": {
+                      "current": 8,
+                      "max": 8
+                    }
+                  },
+                  "baseStatsLabel": "60/67/85/77/75/116",
+                  "calculatedStats": "135/87/105/97/95/136"
+                },
+                {
+                  "key": "player:active:1:Blastoise",
+                  "stableKey": "player:slot:1:Blastoise",
+                  "teamSlot": 1,
+                  "zone": "active",
+                  "zoneIndex": 1,
+                  "side": "player",
+                  "status": "active",
+                  "displayName": "Blastoise",
+                  "species": "Blastoise",
+                  "types": [
+                    "Water"
+                  ],
+                  "hp": 100,
+                  "hp_current": 154,
+                  "substitute_hp": 0,
+                  "perish_song_turns": 0,
+                  "hp_max": 154,
+                  "hpLabel": "100%",
+                  "level": 50,
+                  "item": "",
+                  "itemConsumed": false,
+                  "electric_charge": false,
+                  "mc_syrup_turns": 0,
+                  "mc_trap_turns": 0,
+                  "mc_partially_trapped": false,
+                  "ability": "Torrent",
+                  "moves": [
+                    "Iron Defense"
+                  ],
+                  "move_pp": {
+                    "Iron Defense": {
+                      "current": 16,
+                      "max": 16
+                    }
+                  },
+                  "baseStatsLabel": "79/83/100/85/105/78",
+                  "calculatedStats": "154/103/120/105/125/98"
+                }
+              ],
+              "opponent": [
+                {
+                  "key": "opponent:active:0:Arcanine",
+                  "stableKey": "opponent:slot:0:Arcanine",
+                  "teamSlot": 0,
+                  "zone": "active",
+                  "zoneIndex": 0,
+                  "side": "opponent",
+                  "status": "active",
+                  "displayName": "Arcanine",
+                  "species": "Arcanine",
+                  "types": [
+                    "Fire"
+                  ],
+                  "hp": 100,
+                  "hp_current": 165,
+                  "substitute_hp": 0,
+                  "perish_song_turns": 0,
+                  "hp_max": 165,
+                  "hpLabel": "100%",
+                  "level": 50,
+                  "item": "",
+                  "itemConsumed": false,
+                  "electric_charge": false,
+                  "mc_syrup_turns": 0,
+                  "mc_trap_turns": 0,
+                  "mc_partially_trapped": false,
+                  "ability": "Flash Fire",
+                  "moves": [
+                    "Will-O-Wisp",
+                    "Flamethrower"
+                  ],
+                  "move_pp": {
+                    "Will-O-Wisp": {
+                      "current": 16,
+                      "max": 16
+                    },
+                    "Flamethrower": {
+                      "current": 16,
+                      "max": 16
+                    }
+                  },
+                  "baseStatsLabel": "90/110/80/100/80/95",
+                  "calculatedStats": "165/130/100/120/100/115"
+                },
+                {
+                  "key": "opponent:active:1:Venusaur",
+                  "stableKey": "opponent:slot:1:Venusaur",
+                  "teamSlot": 1,
+                  "zone": "active",
+                  "zoneIndex": 1,
+                  "side": "opponent",
+                  "status": "active",
+                  "displayName": "Venusaur",
+                  "species": "Venusaur",
+                  "types": [
+                    "Grass",
+                    "Poison"
+                  ],
+                  "hp": 100,
+                  "hp_current": 155,
+                  "substitute_hp": 0,
+                  "perish_song_turns": 0,
+                  "hp_max": 155,
+                  "hpLabel": "100%",
+                  "level": 50,
+                  "item": "",
+                  "itemConsumed": false,
+                  "electric_charge": false,
+                  "mc_syrup_turns": 0,
+                  "mc_trap_turns": 0,
+                  "mc_partially_trapped": false,
+                  "ability": "Overgrow",
+                  "moves": [
+                    "Amnesia"
+                  ],
+                  "move_pp": {
+                    "Amnesia": {
+                      "current": 20,
+                      "max": 20
+                    }
+                  },
+                  "baseStatsLabel": "80/82/83/100/100/80",
+                  "calculatedStats": "155/102/103/120/120/100"
+                }
+              ]
+            },
+            "status": {},
+            "status_stable": {},
+            "stat_boosts": {},
+            "stat_boosts_stable": {},
+            "field": {
+              "weather": null,
+              "weather_turns": 0,
+              "gravity_turns": 0,
+              "terrain": null,
+              "terrain_turns": 0,
+              "trick_room": 0
+            },
+            "speed_control": {
+              "player": {
+                "tailwind_turns": 0,
+                "screens": {
+                  "reflect": 0,
+                  "light": 0,
+                  "aurora": 0
+                }
+              },
+              "opponent": {
+                "tailwind_turns": 0,
+                "screens": {
+                  "reflect": 0,
+                  "light": 0,
+                  "aurora": 0
+                }
+              }
+            },
+            "speed_order": [
+              "Whimsicott",
+              "Arcanine",
+              "Venusaur",
+              "Blastoise"
+            ],
+            "speed_order_keys": [
+              "player:active:0:Whimsicott",
+              "opponent:active:0:Arcanine",
+              "opponent:active:1:Venusaur",
+              "player:active:1:Blastoise"
+            ],
+            "speed_order_stable_keys": [
+              "player:slot:0:Whimsicott",
+              "opponent:slot:0:Arcanine",
+              "opponent:slot:1:Venusaur",
+              "player:slot:1:Blastoise"
+            ],
+            "speed_order_details": [
+              {
+                "side": "player",
+                "key": "player:active:0:Whimsicott",
+                "stableKey": "player:slot:0:Whimsicott",
+                "pokemon": "Whimsicott",
+                "stat_format": "champions",
+                "nature": "Hardy",
+                "speed_points": 0,
+                "species_base_speed": 116,
+                "base_speed": 136,
+                "calculated_speed": 136,
+                "speed_stage": 0,
+                "effective_speed": 136,
+                "item": "",
+                "ability": "Prankster",
+                "status": "",
+                "tailwind": false,
+                "trick_room": false,
+                "weather": "none",
+                "exact_speed_tie": false
+              },
+              {
+                "side": "opponent",
+                "key": "opponent:active:0:Arcanine",
+                "stableKey": "opponent:slot:0:Arcanine",
+                "pokemon": "Arcanine",
+                "stat_format": "champions",
+                "nature": "Hardy",
+                "speed_points": 0,
+                "species_base_speed": 95,
+                "base_speed": 115,
+                "calculated_speed": 115,
+                "speed_stage": 0,
+                "effective_speed": 115,
+                "item": "",
+                "ability": "Flash Fire",
+                "status": "",
+                "tailwind": false,
+                "trick_room": false,
+                "weather": "none",
+                "exact_speed_tie": false
+              },
+              {
+                "side": "opponent",
+                "key": "opponent:active:1:Venusaur",
+                "stableKey": "opponent:slot:1:Venusaur",
+                "pokemon": "Venusaur",
+                "stat_format": "champions",
+                "nature": "Hardy",
+                "speed_points": 0,
+                "species_base_speed": 80,
+                "base_speed": 100,
+                "calculated_speed": 100,
+                "speed_stage": 0,
+                "effective_speed": 100,
+                "item": "",
+                "ability": "Overgrow",
+                "status": "",
+                "tailwind": false,
+                "trick_room": false,
+                "weather": "none",
+                "exact_speed_tie": false
+              },
+              {
+                "side": "player",
+                "key": "player:active:1:Blastoise",
+                "stableKey": "player:slot:1:Blastoise",
+                "pokemon": "Blastoise",
+                "stat_format": "champions",
+                "nature": "Hardy",
+                "speed_points": 0,
+                "species_base_speed": 78,
+                "base_speed": 98,
+                "calculated_speed": 98,
+                "speed_stage": 0,
+                "effective_speed": 98,
+                "item": "",
+                "ability": "Torrent",
+                "status": "",
+                "tailwind": false,
+                "trick_room": false,
+                "weather": "none",
+                "exact_speed_tie": false
+              }
+            ],
+            "legal_options": {
+              "Whimsicott": [
+                "Protect -> Arcanine",
+                "Encore -> Arcanine"
+              ],
+              "Blastoise": [
+                "Iron Defense -> Arcanine"
+              ]
+            },
+            "position_score": 0.5,
+            "win_probability": null
+          },
+          "actions": {
+            "player": [
+              {
+                "actor": "Whimsicott",
+                "actor_key": "player:slot:0:Whimsicott",
+                "kind": "move",
+                "move": "Protect",
+                "target": "Arcanine",
+                "target_key": "opponent:slot:0:Arcanine",
+                "target_side": "opponent"
+              },
+              {
+                "actor": "Blastoise",
+                "actor_key": "player:slot:1:Blastoise",
+                "kind": "move",
+                "move": "Iron Defense",
+                "target": "Arcanine",
+                "target_key": "opponent:slot:0:Arcanine",
+                "target_side": "opponent"
+              }
+            ],
+            "opponent": [
+              {
+                "actor": "Arcanine",
+                "actor_key": "opponent:slot:0:Arcanine",
+                "kind": "move",
+                "move": "Will-O-Wisp",
+                "target": "Blastoise",
+                "target_key": "player:slot:1:Blastoise",
+                "target_side": "player"
+              },
+              {
+                "actor": "Venusaur",
+                "actor_key": "opponent:slot:1:Venusaur",
+                "kind": "move",
+                "move": "Amnesia",
+                "target": "Whimsicott",
+                "target_key": "player:slot:0:Whimsicott",
+                "target_side": "player"
+              }
+            ]
+          },
+          "events": [
+            {
+              "type": "log",
+              "text": "Whimsicott used Protect!",
+              "actor": "Whimsicott",
+              "actor_key": "player:slot:0:Whimsicott",
+              "side": "player",
+              "move": "Protect",
+              "target": "Arcanine",
+              "target_key": "opponent:slot:0:Arcanine",
+              "target_side": "opponent",
+              "log_index": 0,
+              "called_by": null
+            },
+            {
+              "type": "log",
+              "text": "Arcanine used Will-O-Wisp!",
+              "actor": "Arcanine",
+              "actor_key": "opponent:slot:0:Arcanine",
+              "side": "opponent",
+              "move": "Will-O-Wisp",
+              "target": "Blastoise",
+              "target_key": "player:slot:1:Blastoise",
+              "target_side": "player",
+              "log_index": 1,
+              "called_by": null
+            },
+            {
+              "type": "status",
+              "text": "Blastoise was burned by Arcanine's Will-O-Wisp!"
+            },
+            {
+              "type": "log",
+              "text": "Venusaur used Amnesia!",
+              "actor": "Venusaur",
+              "actor_key": "opponent:slot:1:Venusaur",
+              "side": "opponent",
+              "move": "Amnesia",
+              "target": "Venusaur",
+              "target_key": "opponent:slot:1:Venusaur",
+              "target_side": "opponent",
+              "log_index": 3,
+              "called_by": null
+            },
+            {
+              "type": "log",
+              "text": "Venusaur's Special Defense sharply rose!"
+            },
+            {
+              "type": "log",
+              "text": "Blastoise used Iron Defense!",
+              "actor": "Blastoise",
+              "actor_key": "player:slot:1:Blastoise",
+              "side": "player",
+              "move": "Iron Defense",
+              "target": "Arcanine",
+              "target_key": "opponent:slot:0:Arcanine",
+              "target_side": "opponent",
+              "log_index": 5,
+              "called_by": null
+            },
+            {
+              "type": "log",
+              "text": "Iron Defense had no effect on Arcanine!"
+            },
+            {
+              "type": "damage",
+              "text": "Blastoise is hurt by its burn! [9 dmg]"
+            }
+          ],
+          "damage_events": [],
+          "effect_events": [
+            {
+              "actor": "Blastoise",
+              "actor_key": "player:slot:1:Blastoise",
+              "side": "player",
+              "move": "Burn",
+              "effect_kind": "status-damage",
+              "hp_before": 154,
+              "hp_after": 145,
+              "hp_delta": -9,
+              "max_hp": 154,
+              "source": "engine status rule",
+              "move_context": "",
+              "rule": {
+                "numerator": 1,
+                "denominator": 16,
+                "basis": "max_hp",
+                "rounding": "down"
+              },
+              "damage_applied": 9
+            }
+          ],
+          "post": {
+            "active": {
+              "player": [
+                "Whimsicott",
+                "Blastoise"
+              ],
+              "opponent": [
+                "Arcanine",
+                "Venusaur"
+              ]
+            },
+            "bench": {
+              "player": [],
+              "opponent": []
+            },
+            "active_keys": {
+              "player": [
+                "player:active:0:Whimsicott",
+                "player:active:1:Blastoise"
+              ],
+              "opponent": [
+                "opponent:active:0:Arcanine",
+                "opponent:active:1:Venusaur"
+              ]
+            },
+            "bench_keys": {
+              "player": [],
+              "opponent": []
+            },
+            "active_stable_keys": {
+              "player": [
+                "player:slot:0:Whimsicott",
+                "player:slot:1:Blastoise"
+              ],
+              "opponent": [
+                "opponent:slot:0:Arcanine",
+                "opponent:slot:1:Venusaur"
+              ]
+            },
+            "bench_stable_keys": {
+              "player": [],
+              "opponent": []
+            },
+            "hp_pct": {
+              "player:active:0:Whimsicott": 1,
+              "player:active:1:Blastoise": 0.942,
+              "opponent:active:0:Arcanine": 1,
+              "opponent:active:1:Venusaur": 1
+            },
+            "hp_pct_stable": {
+              "player:slot:0:Whimsicott": 1,
+              "player:slot:1:Blastoise": 0.942,
+              "opponent:slot:0:Arcanine": 1,
+              "opponent:slot:1:Venusaur": 1
+            },
+            "score_state": {
+              "player": {
+                "active": [
+                  "Whimsicott",
+                  "Blastoise"
+                ],
+                "bench": [],
+                "active_keys": [
+                  "player:active:0:Whimsicott",
+                  "player:active:1:Blastoise"
+                ],
+                "bench_keys": [],
+                "active_stable_keys": [
+                  "player:slot:0:Whimsicott",
+                  "player:slot:1:Blastoise"
+                ],
+                "bench_stable_keys": [],
+                "alive_count": 2,
+                "hp_total": 1.9415584415584415,
+                "max_count": 2
+              },
+              "opponent": {
+                "active": [
+                  "Arcanine",
+                  "Venusaur"
+                ],
+                "bench": [],
+                "active_keys": [
+                  "opponent:active:0:Arcanine",
+                  "opponent:active:1:Venusaur"
+                ],
+                "bench_keys": [],
+                "active_stable_keys": [
+                  "opponent:slot:0:Arcanine",
+                  "opponent:slot:1:Venusaur"
+                ],
+                "bench_stable_keys": [],
+                "alive_count": 2,
+                "hp_total": 2,
+                "max_count": 2
+              }
+            },
+            "roster": {
+              "player": [
+                {
+                  "key": "player:active:0:Whimsicott",
+                  "stableKey": "player:slot:0:Whimsicott",
+                  "teamSlot": 0,
+                  "zone": "active",
+                  "zoneIndex": 0,
+                  "side": "player",
+                  "status": "active",
+                  "displayName": "Whimsicott",
+                  "species": "Whimsicott",
+                  "types": [
+                    "Grass",
+                    "Fairy"
+                  ],
+                  "hp": 100,
+                  "hp_current": 135,
+                  "substitute_hp": 0,
+                  "perish_song_turns": 0,
+                  "hp_max": 135,
+                  "hpLabel": "100%",
+                  "level": 50,
+                  "item": "",
+                  "itemConsumed": false,
+                  "electric_charge": false,
+                  "mc_syrup_turns": 0,
+                  "mc_trap_turns": 0,
+                  "mc_partially_trapped": false,
+                  "ability": "Prankster",
+                  "moves": [
+                    "Protect",
+                    "Encore"
+                  ],
+                  "move_pp": {
+                    "Protect": {
+                      "current": 7,
+                      "max": 8
+                    },
+                    "Encore": {
+                      "current": 8,
+                      "max": 8
+                    }
+                  },
+                  "baseStatsLabel": "60/67/85/77/75/116",
+                  "calculatedStats": "135/87/105/97/95/136"
+                },
+                {
+                  "key": "player:active:1:Blastoise",
+                  "stableKey": "player:slot:1:Blastoise",
+                  "teamSlot": 1,
+                  "zone": "active",
+                  "zoneIndex": 1,
+                  "side": "player",
+                  "status": "active",
+                  "displayName": "Blastoise",
+                  "species": "Blastoise",
+                  "types": [
+                    "Water"
+                  ],
+                  "hp": 94,
+                  "hp_current": 145,
+                  "substitute_hp": 0,
+                  "perish_song_turns": 0,
+                  "hp_max": 154,
+                  "hpLabel": "94%",
+                  "level": 50,
+                  "item": "",
+                  "itemConsumed": false,
+                  "electric_charge": false,
+                  "mc_syrup_turns": 0,
+                  "mc_trap_turns": 0,
+                  "mc_partially_trapped": false,
+                  "ability": "Torrent",
+                  "moves": [
+                    "Iron Defense"
+                  ],
+                  "move_pp": {
+                    "Iron Defense": {
+                      "current": 15,
+                      "max": 16
+                    }
+                  },
+                  "baseStatsLabel": "79/83/100/85/105/78",
+                  "calculatedStats": "154/103/120/105/125/98"
+                }
+              ],
+              "opponent": [
+                {
+                  "key": "opponent:active:0:Arcanine",
+                  "stableKey": "opponent:slot:0:Arcanine",
+                  "teamSlot": 0,
+                  "zone": "active",
+                  "zoneIndex": 0,
+                  "side": "opponent",
+                  "status": "active",
+                  "displayName": "Arcanine",
+                  "species": "Arcanine",
+                  "types": [
+                    "Fire"
+                  ],
+                  "hp": 100,
+                  "hp_current": 165,
+                  "substitute_hp": 0,
+                  "perish_song_turns": 0,
+                  "hp_max": 165,
+                  "hpLabel": "100%",
+                  "level": 50,
+                  "item": "",
+                  "itemConsumed": false,
+                  "electric_charge": false,
+                  "mc_syrup_turns": 0,
+                  "mc_trap_turns": 0,
+                  "mc_partially_trapped": false,
+                  "ability": "Flash Fire",
+                  "moves": [
+                    "Will-O-Wisp",
+                    "Flamethrower"
+                  ],
+                  "move_pp": {
+                    "Will-O-Wisp": {
+                      "current": 15,
+                      "max": 16
+                    },
+                    "Flamethrower": {
+                      "current": 16,
+                      "max": 16
+                    }
+                  },
+                  "baseStatsLabel": "90/110/80/100/80/95",
+                  "calculatedStats": "165/130/100/120/100/115"
+                },
+                {
+                  "key": "opponent:active:1:Venusaur",
+                  "stableKey": "opponent:slot:1:Venusaur",
+                  "teamSlot": 1,
+                  "zone": "active",
+                  "zoneIndex": 1,
+                  "side": "opponent",
+                  "status": "active",
+                  "displayName": "Venusaur",
+                  "species": "Venusaur",
+                  "types": [
+                    "Grass",
+                    "Poison"
+                  ],
+                  "hp": 100,
+                  "hp_current": 155,
+                  "substitute_hp": 0,
+                  "perish_song_turns": 0,
+                  "hp_max": 155,
+                  "hpLabel": "100%",
+                  "level": 50,
+                  "item": "",
+                  "itemConsumed": false,
+                  "electric_charge": false,
+                  "mc_syrup_turns": 0,
+                  "mc_trap_turns": 0,
+                  "mc_partially_trapped": false,
+                  "ability": "Overgrow",
+                  "moves": [
+                    "Amnesia"
+                  ],
+                  "move_pp": {
+                    "Amnesia": {
+                      "current": 19,
+                      "max": 20
+                    }
+                  },
+                  "baseStatsLabel": "80/82/83/100/100/80",
+                  "calculatedStats": "155/102/103/120/120/100"
+                }
+              ]
+            },
+            "status": {
+              "player:active:1:Blastoise": "burn"
+            },
+            "status_stable": {
+              "player:slot:1:Blastoise": "burn"
+            },
+            "stat_boosts": {
+              "opponent:active:1:Venusaur": {
+                "atk": 0,
+                "def": 0,
+                "spa": 0,
+                "spd": 2,
+                "spe": 0,
+                "acc": 0,
+                "eva": 0
+              }
+            },
+            "stat_boosts_stable": {
+              "opponent:slot:1:Venusaur": {
+                "atk": 0,
+                "def": 0,
+                "spa": 0,
+                "spd": 2,
+                "spe": 0,
+                "acc": 0,
+                "eva": 0
+              }
+            },
+            "field": {
+              "weather": null,
+              "weather_turns": 0,
+              "gravity_turns": 0,
+              "terrain": null,
+              "terrain_turns": 0,
+              "trick_room": 0
+            },
+            "speed_control": {
+              "player": {
+                "tailwind_turns": 0,
+                "screens": {
+                  "reflect": 0,
+                  "light": 0,
+                  "aurora": 0
+                }
+              },
+              "opponent": {
+                "tailwind_turns": 0,
+                "screens": {
+                  "reflect": 0,
+                  "light": 0,
+                  "aurora": 0
+                }
+              }
+            },
+            "speed_order": [
+              "Whimsicott",
+              "Arcanine",
+              "Venusaur",
+              "Blastoise"
+            ],
+            "speed_order_keys": [
+              "player:active:0:Whimsicott",
+              "opponent:active:0:Arcanine",
+              "opponent:active:1:Venusaur",
+              "player:active:1:Blastoise"
+            ],
+            "speed_order_stable_keys": [
+              "player:slot:0:Whimsicott",
+              "opponent:slot:0:Arcanine",
+              "opponent:slot:1:Venusaur",
+              "player:slot:1:Blastoise"
+            ],
+            "speed_order_details": [
+              {
+                "side": "player",
+                "key": "player:active:0:Whimsicott",
+                "stableKey": "player:slot:0:Whimsicott",
+                "pokemon": "Whimsicott",
+                "stat_format": "champions",
+                "nature": "Hardy",
+                "speed_points": 0,
+                "species_base_speed": 116,
+                "base_speed": 136,
+                "calculated_speed": 136,
+                "speed_stage": 0,
+                "effective_speed": 136,
+                "item": "",
+                "ability": "Prankster",
+                "status": "",
+                "tailwind": false,
+                "trick_room": false,
+                "weather": "none",
+                "exact_speed_tie": false
+              },
+              {
+                "side": "opponent",
+                "key": "opponent:active:0:Arcanine",
+                "stableKey": "opponent:slot:0:Arcanine",
+                "pokemon": "Arcanine",
+                "stat_format": "champions",
+                "nature": "Hardy",
+                "speed_points": 0,
+                "species_base_speed": 95,
+                "base_speed": 115,
+                "calculated_speed": 115,
+                "speed_stage": 0,
+                "effective_speed": 115,
+                "item": "",
+                "ability": "Flash Fire",
+                "status": "",
+                "tailwind": false,
+                "trick_room": false,
+                "weather": "none",
+                "exact_speed_tie": false
+              },
+              {
+                "side": "opponent",
+                "key": "opponent:active:1:Venusaur",
+                "stableKey": "opponent:slot:1:Venusaur",
+                "pokemon": "Venusaur",
+                "stat_format": "champions",
+                "nature": "Hardy",
+                "speed_points": 0,
+                "species_base_speed": 80,
+                "base_speed": 100,
+                "calculated_speed": 100,
+                "speed_stage": 0,
+                "effective_speed": 100,
+                "item": "",
+                "ability": "Overgrow",
+                "status": "",
+                "tailwind": false,
+                "trick_room": false,
+                "weather": "none",
+                "exact_speed_tie": false
+              },
+              {
+                "side": "player",
+                "key": "player:active:1:Blastoise",
+                "stableKey": "player:slot:1:Blastoise",
+                "pokemon": "Blastoise",
+                "stat_format": "champions",
+                "nature": "Hardy",
+                "speed_points": 0,
+                "species_base_speed": 78,
+                "base_speed": 98,
+                "calculated_speed": 98,
+                "speed_stage": 0,
+                "effective_speed": 98,
+                "item": "",
+                "ability": "Torrent",
+                "status": "burn",
+                "tailwind": false,
+                "trick_room": false,
+                "weather": "none",
+                "exact_speed_tie": false
+              }
+            ],
+            "legal_options": {},
+            "position_score": 0.491,
+            "win_probability": null
+          },
+          "delta": {
+            "position_score": -0.009,
+            "win_probability": null,
+            "primary_cause": "position_lost",
+            "explanation": ""
+          }
+        },
+        {
+          "turn": 2,
+          "playerHP": [
+            1,
+            0.942
+          ],
+          "oppHP": [
+            1,
+            1
+          ],
+          "activePair": [
+            "Whimsicott",
+            "Blastoise",
+            "Arcanine",
+            "Venusaur"
+          ],
+          "action": "Whimsicott:Encore | Blastoise:Iron Defense | Arcanine:Flamethrower | Venusaur:Amnesia",
+          "positionScore": 0.491,
+          "pre": {
+            "active": {
+              "player": [
+                "Whimsicott",
+                "Blastoise"
+              ],
+              "opponent": [
+                "Arcanine",
+                "Venusaur"
+              ]
+            },
+            "bench": {
+              "player": [],
+              "opponent": []
+            },
+            "active_keys": {
+              "player": [
+                "player:active:0:Whimsicott",
+                "player:active:1:Blastoise"
+              ],
+              "opponent": [
+                "opponent:active:0:Arcanine",
+                "opponent:active:1:Venusaur"
+              ]
+            },
+            "bench_keys": {
+              "player": [],
+              "opponent": []
+            },
+            "active_stable_keys": {
+              "player": [
+                "player:slot:0:Whimsicott",
+                "player:slot:1:Blastoise"
+              ],
+              "opponent": [
+                "opponent:slot:0:Arcanine",
+                "opponent:slot:1:Venusaur"
+              ]
+            },
+            "bench_stable_keys": {
+              "player": [],
+              "opponent": []
+            },
+            "hp_pct": {
+              "player:active:0:Whimsicott": 1,
+              "player:active:1:Blastoise": 0.942,
+              "opponent:active:0:Arcanine": 1,
+              "opponent:active:1:Venusaur": 1
+            },
+            "hp_pct_stable": {
+              "player:slot:0:Whimsicott": 1,
+              "player:slot:1:Blastoise": 0.942,
+              "opponent:slot:0:Arcanine": 1,
+              "opponent:slot:1:Venusaur": 1
+            },
+            "score_state": {
+              "player": {
+                "active": [
+                  "Whimsicott",
+                  "Blastoise"
+                ],
+                "bench": [],
+                "active_keys": [
+                  "player:active:0:Whimsicott",
+                  "player:active:1:Blastoise"
+                ],
+                "bench_keys": [],
+                "active_stable_keys": [
+                  "player:slot:0:Whimsicott",
+                  "player:slot:1:Blastoise"
+                ],
+                "bench_stable_keys": [],
+                "alive_count": 2,
+                "hp_total": 1.9415584415584415,
+                "max_count": 2
+              },
+              "opponent": {
+                "active": [
+                  "Arcanine",
+                  "Venusaur"
+                ],
+                "bench": [],
+                "active_keys": [
+                  "opponent:active:0:Arcanine",
+                  "opponent:active:1:Venusaur"
+                ],
+                "bench_keys": [],
+                "active_stable_keys": [
+                  "opponent:slot:0:Arcanine",
+                  "opponent:slot:1:Venusaur"
+                ],
+                "bench_stable_keys": [],
+                "alive_count": 2,
+                "hp_total": 2,
+                "max_count": 2
+              }
+            },
+            "roster": {
+              "player": [
+                {
+                  "key": "player:active:0:Whimsicott",
+                  "stableKey": "player:slot:0:Whimsicott",
+                  "teamSlot": 0,
+                  "zone": "active",
+                  "zoneIndex": 0,
+                  "side": "player",
+                  "status": "active",
+                  "displayName": "Whimsicott",
+                  "species": "Whimsicott",
+                  "types": [
+                    "Grass",
+                    "Fairy"
+                  ],
+                  "hp": 100,
+                  "hp_current": 135,
+                  "substitute_hp": 0,
+                  "perish_song_turns": 0,
+                  "hp_max": 135,
+                  "hpLabel": "100%",
+                  "level": 50,
+                  "item": "",
+                  "itemConsumed": false,
+                  "electric_charge": false,
+                  "mc_syrup_turns": 0,
+                  "mc_trap_turns": 0,
+                  "mc_partially_trapped": false,
+                  "ability": "Prankster",
+                  "moves": [
+                    "Protect",
+                    "Encore"
+                  ],
+                  "move_pp": {
+                    "Protect": {
+                      "current": 7,
+                      "max": 8
+                    },
+                    "Encore": {
+                      "current": 8,
+                      "max": 8
+                    }
+                  },
+                  "baseStatsLabel": "60/67/85/77/75/116",
+                  "calculatedStats": "135/87/105/97/95/136"
+                },
+                {
+                  "key": "player:active:1:Blastoise",
+                  "stableKey": "player:slot:1:Blastoise",
+                  "teamSlot": 1,
+                  "zone": "active",
+                  "zoneIndex": 1,
+                  "side": "player",
+                  "status": "active",
+                  "displayName": "Blastoise",
+                  "species": "Blastoise",
+                  "types": [
+                    "Water"
+                  ],
+                  "hp": 94,
+                  "hp_current": 145,
+                  "substitute_hp": 0,
+                  "perish_song_turns": 0,
+                  "hp_max": 154,
+                  "hpLabel": "94%",
+                  "level": 50,
+                  "item": "",
+                  "itemConsumed": false,
+                  "electric_charge": false,
+                  "mc_syrup_turns": 0,
+                  "mc_trap_turns": 0,
+                  "mc_partially_trapped": false,
+                  "ability": "Torrent",
+                  "moves": [
+                    "Iron Defense"
+                  ],
+                  "move_pp": {
+                    "Iron Defense": {
+                      "current": 15,
+                      "max": 16
+                    }
+                  },
+                  "baseStatsLabel": "79/83/100/85/105/78",
+                  "calculatedStats": "154/103/120/105/125/98"
+                }
+              ],
+              "opponent": [
+                {
+                  "key": "opponent:active:0:Arcanine",
+                  "stableKey": "opponent:slot:0:Arcanine",
+                  "teamSlot": 0,
+                  "zone": "active",
+                  "zoneIndex": 0,
+                  "side": "opponent",
+                  "status": "active",
+                  "displayName": "Arcanine",
+                  "species": "Arcanine",
+                  "types": [
+                    "Fire"
+                  ],
+                  "hp": 100,
+                  "hp_current": 165,
+                  "substitute_hp": 0,
+                  "perish_song_turns": 0,
+                  "hp_max": 165,
+                  "hpLabel": "100%",
+                  "level": 50,
+                  "item": "",
+                  "itemConsumed": false,
+                  "electric_charge": false,
+                  "mc_syrup_turns": 0,
+                  "mc_trap_turns": 0,
+                  "mc_partially_trapped": false,
+                  "ability": "Flash Fire",
+                  "moves": [
+                    "Will-O-Wisp",
+                    "Flamethrower"
+                  ],
+                  "move_pp": {
+                    "Will-O-Wisp": {
+                      "current": 15,
+                      "max": 16
+                    },
+                    "Flamethrower": {
+                      "current": 16,
+                      "max": 16
+                    }
+                  },
+                  "baseStatsLabel": "90/110/80/100/80/95",
+                  "calculatedStats": "165/130/100/120/100/115"
+                },
+                {
+                  "key": "opponent:active:1:Venusaur",
+                  "stableKey": "opponent:slot:1:Venusaur",
+                  "teamSlot": 1,
+                  "zone": "active",
+                  "zoneIndex": 1,
+                  "side": "opponent",
+                  "status": "active",
+                  "displayName": "Venusaur",
+                  "species": "Venusaur",
+                  "types": [
+                    "Grass",
+                    "Poison"
+                  ],
+                  "hp": 100,
+                  "hp_current": 155,
+                  "substitute_hp": 0,
+                  "perish_song_turns": 0,
+                  "hp_max": 155,
+                  "hpLabel": "100%",
+                  "level": 50,
+                  "item": "",
+                  "itemConsumed": false,
+                  "electric_charge": false,
+                  "mc_syrup_turns": 0,
+                  "mc_trap_turns": 0,
+                  "mc_partially_trapped": false,
+                  "ability": "Overgrow",
+                  "moves": [
+                    "Amnesia"
+                  ],
+                  "move_pp": {
+                    "Amnesia": {
+                      "current": 19,
+                      "max": 20
+                    }
+                  },
+                  "baseStatsLabel": "80/82/83/100/100/80",
+                  "calculatedStats": "155/102/103/120/120/100"
+                }
+              ]
+            },
+            "status": {
+              "player:active:1:Blastoise": "burn"
+            },
+            "status_stable": {
+              "player:slot:1:Blastoise": "burn"
+            },
+            "stat_boosts": {
+              "opponent:active:1:Venusaur": {
+                "atk": 0,
+                "def": 0,
+                "spa": 0,
+                "spd": 2,
+                "spe": 0,
+                "acc": 0,
+                "eva": 0
+              }
+            },
+            "stat_boosts_stable": {
+              "opponent:slot:1:Venusaur": {
+                "atk": 0,
+                "def": 0,
+                "spa": 0,
+                "spd": 2,
+                "spe": 0,
+                "acc": 0,
+                "eva": 0
+              }
+            },
+            "field": {
+              "weather": null,
+              "weather_turns": 0,
+              "gravity_turns": 0,
+              "terrain": null,
+              "terrain_turns": 0,
+              "trick_room": 0
+            },
+            "speed_control": {
+              "player": {
+                "tailwind_turns": 0,
+                "screens": {
+                  "reflect": 0,
+                  "light": 0,
+                  "aurora": 0
+                }
+              },
+              "opponent": {
+                "tailwind_turns": 0,
+                "screens": {
+                  "reflect": 0,
+                  "light": 0,
+                  "aurora": 0
+                }
+              }
+            },
+            "speed_order": [
+              "Whimsicott",
+              "Arcanine",
+              "Venusaur",
+              "Blastoise"
+            ],
+            "speed_order_keys": [
+              "player:active:0:Whimsicott",
+              "opponent:active:0:Arcanine",
+              "opponent:active:1:Venusaur",
+              "player:active:1:Blastoise"
+            ],
+            "speed_order_stable_keys": [
+              "player:slot:0:Whimsicott",
+              "opponent:slot:0:Arcanine",
+              "opponent:slot:1:Venusaur",
+              "player:slot:1:Blastoise"
+            ],
+            "speed_order_details": [
+              {
+                "side": "player",
+                "key": "player:active:0:Whimsicott",
+                "stableKey": "player:slot:0:Whimsicott",
+                "pokemon": "Whimsicott",
+                "stat_format": "champions",
+                "nature": "Hardy",
+                "speed_points": 0,
+                "species_base_speed": 116,
+                "base_speed": 136,
+                "calculated_speed": 136,
+                "speed_stage": 0,
+                "effective_speed": 136,
+                "item": "",
+                "ability": "Prankster",
+                "status": "",
+                "tailwind": false,
+                "trick_room": false,
+                "weather": "none",
+                "exact_speed_tie": false
+              },
+              {
+                "side": "opponent",
+                "key": "opponent:active:0:Arcanine",
+                "stableKey": "opponent:slot:0:Arcanine",
+                "pokemon": "Arcanine",
+                "stat_format": "champions",
+                "nature": "Hardy",
+                "speed_points": 0,
+                "species_base_speed": 95,
+                "base_speed": 115,
+                "calculated_speed": 115,
+                "speed_stage": 0,
+                "effective_speed": 115,
+                "item": "",
+                "ability": "Flash Fire",
+                "status": "",
+                "tailwind": false,
+                "trick_room": false,
+                "weather": "none",
+                "exact_speed_tie": false
+              },
+              {
+                "side": "opponent",
+                "key": "opponent:active:1:Venusaur",
+                "stableKey": "opponent:slot:1:Venusaur",
+                "pokemon": "Venusaur",
+                "stat_format": "champions",
+                "nature": "Hardy",
+                "speed_points": 0,
+                "species_base_speed": 80,
+                "base_speed": 100,
+                "calculated_speed": 100,
+                "speed_stage": 0,
+                "effective_speed": 100,
+                "item": "",
+                "ability": "Overgrow",
+                "status": "",
+                "tailwind": false,
+                "trick_room": false,
+                "weather": "none",
+                "exact_speed_tie": false
+              },
+              {
+                "side": "player",
+                "key": "player:active:1:Blastoise",
+                "stableKey": "player:slot:1:Blastoise",
+                "pokemon": "Blastoise",
+                "stat_format": "champions",
+                "nature": "Hardy",
+                "speed_points": 0,
+                "species_base_speed": 78,
+                "base_speed": 98,
+                "calculated_speed": 98,
+                "speed_stage": 0,
+                "effective_speed": 98,
+                "item": "",
+                "ability": "Torrent",
+                "status": "burn",
+                "tailwind": false,
+                "trick_room": false,
+                "weather": "none",
+                "exact_speed_tie": false
+              }
+            ],
+            "legal_options": {
+              "Whimsicott": [
+                "Protect -> Arcanine",
+                "Encore -> Arcanine"
+              ],
+              "Blastoise": [
+                "Iron Defense -> Arcanine"
+              ]
+            },
+            "position_score": 0.491,
+            "win_probability": null
+          },
+          "actions": {
+            "player": [
+              {
+                "actor": "Whimsicott",
+                "actor_key": "player:slot:0:Whimsicott",
+                "kind": "move",
+                "move": "Encore",
+                "target": "Arcanine",
+                "target_key": "opponent:slot:0:Arcanine",
+                "target_side": "opponent"
+              },
+              {
+                "actor": "Blastoise",
+                "actor_key": "player:slot:1:Blastoise",
+                "kind": "move",
+                "move": "Iron Defense",
+                "target": "Arcanine",
+                "target_key": "opponent:slot:0:Arcanine",
+                "target_side": "opponent"
+              }
+            ],
+            "opponent": [
+              {
+                "actor": "Arcanine",
+                "actor_key": "opponent:slot:0:Arcanine",
+                "kind": "move",
+                "move": "Flamethrower",
+                "target": "Whimsicott",
+                "target_key": "player:slot:0:Whimsicott",
+                "target_side": "player"
+              },
+              {
+                "actor": "Venusaur",
+                "actor_key": "opponent:slot:1:Venusaur",
+                "kind": "move",
+                "move": "Amnesia",
+                "target": "Whimsicott",
+                "target_key": "player:slot:0:Whimsicott",
+                "target_side": "player"
+              }
+            ]
+          },
+          "events": [
+            {
+              "type": "log",
+              "text": "Whimsicott used Encore!",
+              "actor": "Whimsicott",
+              "actor_key": "player:slot:0:Whimsicott",
+              "side": "player",
+              "move": "Encore",
+              "target": "Arcanine",
+              "target_key": "opponent:slot:0:Arcanine",
+              "target_side": "opponent",
+              "log_index": 0,
+              "called_by": null
+            },
+            {
+              "type": "log",
+              "text": "Arcanine got an Encore!"
+            },
+            {
+              "type": "log",
+              "text": "Arcanine used Will-O-Wisp!",
+              "actor": "Arcanine",
+              "actor_key": "opponent:slot:0:Arcanine",
+              "side": "opponent",
+              "move": "Will-O-Wisp",
+              "target": "Whimsicott",
+              "target_key": "player:slot:0:Whimsicott",
+              "target_side": "player",
+              "log_index": 2,
+              "called_by": null
+            },
+            {
+              "type": "status",
+              "text": "Whimsicott was burned by Arcanine's Will-O-Wisp!"
+            },
+            {
+              "type": "log",
+              "text": "Venusaur used Amnesia!",
+              "actor": "Venusaur",
+              "actor_key": "opponent:slot:1:Venusaur",
+              "side": "opponent",
+              "move": "Amnesia",
+              "target": "Venusaur",
+              "target_key": "opponent:slot:1:Venusaur",
+              "target_side": "opponent",
+              "log_index": 4,
+              "called_by": null
+            },
+            {
+              "type": "log",
+              "text": "Venusaur's Special Defense sharply rose!"
+            },
+            {
+              "type": "log",
+              "text": "Blastoise used Iron Defense!",
+              "actor": "Blastoise",
+              "actor_key": "player:slot:1:Blastoise",
+              "side": "player",
+              "move": "Iron Defense",
+              "target": "Arcanine",
+              "target_key": "opponent:slot:0:Arcanine",
+              "target_side": "opponent",
+              "log_index": 6,
+              "called_by": null
+            },
+            {
+              "type": "log",
+              "text": "Iron Defense had no effect on Arcanine!"
+            },
+            {
+              "type": "damage",
+              "text": "Whimsicott is hurt by its burn! [8 dmg]"
+            },
+            {
+              "type": "damage",
+              "text": "Blastoise is hurt by its burn! [9 dmg]"
+            }
+          ],
+          "damage_events": [],
+          "effect_events": [
+            {
+              "actor": "Arcanine",
+              "actor_key": "opponent:slot:0:Arcanine",
+              "side": "opponent",
+              "move": "Encore",
+              "effect_kind": "encore-requeue",
+              "hp_before": 165,
+              "hp_after": 165,
+              "hp_delta": 0,
+              "max_hp": 165,
+              "source": "pokemon-showdown move metadata + engine rule",
+              "move_context": "Target repeats its last move for its next 3 turns.",
+              "replacement_move": "Will-O-Wisp",
+              "priority": 0
+            },
+            {
+              "actor": "Whimsicott",
+              "actor_key": "player:slot:0:Whimsicott",
+              "side": "player",
+              "move": "Burn",
+              "effect_kind": "status-damage",
+              "hp_before": 135,
+              "hp_after": 127,
+              "hp_delta": -8,
+              "max_hp": 135,
+              "source": "engine status rule",
+              "move_context": "",
+              "rule": {
+                "numerator": 1,
+                "denominator": 16,
+                "basis": "max_hp",
+                "rounding": "down"
+              },
+              "damage_applied": 8
+            },
+            {
+              "actor": "Blastoise",
+              "actor_key": "player:slot:1:Blastoise",
+              "side": "player",
+              "move": "Burn",
+              "effect_kind": "status-damage",
+              "hp_before": 145,
+              "hp_after": 136,
+              "hp_delta": -9,
+              "max_hp": 154,
+              "source": "engine status rule",
+              "move_context": "",
+              "rule": {
+                "numerator": 1,
+                "denominator": 16,
+                "basis": "max_hp",
+                "rounding": "down"
+              },
+              "damage_applied": 9
+            }
+          ],
+          "post": {
+            "active": {
+              "player": [
+                "Whimsicott",
+                "Blastoise"
+              ],
+              "opponent": [
+                "Arcanine",
+                "Venusaur"
+              ]
+            },
+            "bench": {
+              "player": [],
+              "opponent": []
+            },
+            "active_keys": {
+              "player": [
+                "player:active:0:Whimsicott",
+                "player:active:1:Blastoise"
+              ],
+              "opponent": [
+                "opponent:active:0:Arcanine",
+                "opponent:active:1:Venusaur"
+              ]
+            },
+            "bench_keys": {
+              "player": [],
+              "opponent": []
+            },
+            "active_stable_keys": {
+              "player": [
+                "player:slot:0:Whimsicott",
+                "player:slot:1:Blastoise"
+              ],
+              "opponent": [
+                "opponent:slot:0:Arcanine",
+                "opponent:slot:1:Venusaur"
+              ]
+            },
+            "bench_stable_keys": {
+              "player": [],
+              "opponent": []
+            },
+            "hp_pct": {
+              "player:active:0:Whimsicott": 0.941,
+              "player:active:1:Blastoise": 0.883,
+              "opponent:active:0:Arcanine": 1,
+              "opponent:active:1:Venusaur": 1
+            },
+            "hp_pct_stable": {
+              "player:slot:0:Whimsicott": 0.941,
+              "player:slot:1:Blastoise": 0.883,
+              "opponent:slot:0:Arcanine": 1,
+              "opponent:slot:1:Venusaur": 1
+            },
+            "score_state": {
+              "player": {
+                "active": [
+                  "Whimsicott",
+                  "Blastoise"
+                ],
+                "bench": [],
+                "active_keys": [
+                  "player:active:0:Whimsicott",
+                  "player:active:1:Blastoise"
+                ],
+                "bench_keys": [],
+                "active_stable_keys": [
+                  "player:slot:0:Whimsicott",
+                  "player:slot:1:Blastoise"
+                ],
+                "bench_stable_keys": [],
+                "alive_count": 2,
+                "hp_total": 1.8238576238576238,
+                "max_count": 2
+              },
+              "opponent": {
+                "active": [
+                  "Arcanine",
+                  "Venusaur"
+                ],
+                "bench": [],
+                "active_keys": [
+                  "opponent:active:0:Arcanine",
+                  "opponent:active:1:Venusaur"
+                ],
+                "bench_keys": [],
+                "active_stable_keys": [
+                  "opponent:slot:0:Arcanine",
+                  "opponent:slot:1:Venusaur"
+                ],
+                "bench_stable_keys": [],
+                "alive_count": 2,
+                "hp_total": 2,
+                "max_count": 2
+              }
+            },
+            "roster": {
+              "player": [
+                {
+                  "key": "player:active:0:Whimsicott",
+                  "stableKey": "player:slot:0:Whimsicott",
+                  "teamSlot": 0,
+                  "zone": "active",
+                  "zoneIndex": 0,
+                  "side": "player",
+                  "status": "active",
+                  "displayName": "Whimsicott",
+                  "species": "Whimsicott",
+                  "types": [
+                    "Grass",
+                    "Fairy"
+                  ],
+                  "hp": 94,
+                  "hp_current": 127,
+                  "substitute_hp": 0,
+                  "perish_song_turns": 0,
+                  "hp_max": 135,
+                  "hpLabel": "94%",
+                  "level": 50,
+                  "item": "",
+                  "itemConsumed": false,
+                  "electric_charge": false,
+                  "mc_syrup_turns": 0,
+                  "mc_trap_turns": 0,
+                  "mc_partially_trapped": false,
+                  "ability": "Prankster",
+                  "moves": [
+                    "Protect",
+                    "Encore"
+                  ],
+                  "move_pp": {
+                    "Protect": {
+                      "current": 7,
+                      "max": 8
+                    },
+                    "Encore": {
+                      "current": 7,
+                      "max": 8
+                    }
+                  },
+                  "baseStatsLabel": "60/67/85/77/75/116",
+                  "calculatedStats": "135/87/105/97/95/136"
+                },
+                {
+                  "key": "player:active:1:Blastoise",
+                  "stableKey": "player:slot:1:Blastoise",
+                  "teamSlot": 1,
+                  "zone": "active",
+                  "zoneIndex": 1,
+                  "side": "player",
+                  "status": "active",
+                  "displayName": "Blastoise",
+                  "species": "Blastoise",
+                  "types": [
+                    "Water"
+                  ],
+                  "hp": 88,
+                  "hp_current": 136,
+                  "substitute_hp": 0,
+                  "perish_song_turns": 0,
+                  "hp_max": 154,
+                  "hpLabel": "88%",
+                  "level": 50,
+                  "item": "",
+                  "itemConsumed": false,
+                  "electric_charge": false,
+                  "mc_syrup_turns": 0,
+                  "mc_trap_turns": 0,
+                  "mc_partially_trapped": false,
+                  "ability": "Torrent",
+                  "moves": [
+                    "Iron Defense"
+                  ],
+                  "move_pp": {
+                    "Iron Defense": {
+                      "current": 14,
+                      "max": 16
+                    }
+                  },
+                  "baseStatsLabel": "79/83/100/85/105/78",
+                  "calculatedStats": "154/103/120/105/125/98"
+                }
+              ],
+              "opponent": [
+                {
+                  "key": "opponent:active:0:Arcanine",
+                  "stableKey": "opponent:slot:0:Arcanine",
+                  "teamSlot": 0,
+                  "zone": "active",
+                  "zoneIndex": 0,
+                  "side": "opponent",
+                  "status": "active",
+                  "displayName": "Arcanine",
+                  "species": "Arcanine",
+                  "types": [
+                    "Fire"
+                  ],
+                  "hp": 100,
+                  "hp_current": 165,
+                  "substitute_hp": 0,
+                  "perish_song_turns": 0,
+                  "hp_max": 165,
+                  "hpLabel": "100%",
+                  "level": 50,
+                  "item": "",
+                  "itemConsumed": false,
+                  "electric_charge": false,
+                  "mc_syrup_turns": 0,
+                  "mc_trap_turns": 0,
+                  "mc_partially_trapped": false,
+                  "ability": "Flash Fire",
+                  "moves": [
+                    "Will-O-Wisp",
+                    "Flamethrower"
+                  ],
+                  "move_pp": {
+                    "Will-O-Wisp": {
+                      "current": 14,
+                      "max": 16
+                    },
+                    "Flamethrower": {
+                      "current": 16,
+                      "max": 16
+                    }
+                  },
+                  "baseStatsLabel": "90/110/80/100/80/95",
+                  "calculatedStats": "165/130/100/120/100/115"
+                },
+                {
+                  "key": "opponent:active:1:Venusaur",
+                  "stableKey": "opponent:slot:1:Venusaur",
+                  "teamSlot": 1,
+                  "zone": "active",
+                  "zoneIndex": 1,
+                  "side": "opponent",
+                  "status": "active",
+                  "displayName": "Venusaur",
+                  "species": "Venusaur",
+                  "types": [
+                    "Grass",
+                    "Poison"
+                  ],
+                  "hp": 100,
+                  "hp_current": 155,
+                  "substitute_hp": 0,
+                  "perish_song_turns": 0,
+                  "hp_max": 155,
+                  "hpLabel": "100%",
+                  "level": 50,
+                  "item": "",
+                  "itemConsumed": false,
+                  "electric_charge": false,
+                  "mc_syrup_turns": 0,
+                  "mc_trap_turns": 0,
+                  "mc_partially_trapped": false,
+                  "ability": "Overgrow",
+                  "moves": [
+                    "Amnesia"
+                  ],
+                  "move_pp": {
+                    "Amnesia": {
+                      "current": 18,
+                      "max": 20
+                    }
+                  },
+                  "baseStatsLabel": "80/82/83/100/100/80",
+                  "calculatedStats": "155/102/103/120/120/100"
+                }
+              ]
+            },
+            "status": {
+              "player:active:0:Whimsicott": "burn",
+              "player:active:1:Blastoise": "burn"
+            },
+            "status_stable": {
+              "player:slot:0:Whimsicott": "burn",
+              "player:slot:1:Blastoise": "burn"
+            },
+            "stat_boosts": {
+              "opponent:active:1:Venusaur": {
+                "atk": 0,
+                "def": 0,
+                "spa": 0,
+                "spd": 4,
+                "spe": 0,
+                "acc": 0,
+                "eva": 0
+              }
+            },
+            "stat_boosts_stable": {
+              "opponent:slot:1:Venusaur": {
+                "atk": 0,
+                "def": 0,
+                "spa": 0,
+                "spd": 4,
+                "spe": 0,
+                "acc": 0,
+                "eva": 0
+              }
+            },
+            "field": {
+              "weather": null,
+              "weather_turns": 0,
+              "gravity_turns": 0,
+              "terrain": null,
+              "terrain_turns": 0,
+              "trick_room": 0
+            },
+            "speed_control": {
+              "player": {
+                "tailwind_turns": 0,
+                "screens": {
+                  "reflect": 0,
+                  "light": 0,
+                  "aurora": 0
+                }
+              },
+              "opponent": {
+                "tailwind_turns": 0,
+                "screens": {
+                  "reflect": 0,
+                  "light": 0,
+                  "aurora": 0
+                }
+              }
+            },
+            "speed_order": [
+              "Whimsicott",
+              "Arcanine",
+              "Venusaur",
+              "Blastoise"
+            ],
+            "speed_order_keys": [
+              "player:active:0:Whimsicott",
+              "opponent:active:0:Arcanine",
+              "opponent:active:1:Venusaur",
+              "player:active:1:Blastoise"
+            ],
+            "speed_order_stable_keys": [
+              "player:slot:0:Whimsicott",
+              "opponent:slot:0:Arcanine",
+              "opponent:slot:1:Venusaur",
+              "player:slot:1:Blastoise"
+            ],
+            "speed_order_details": [
+              {
+                "side": "player",
+                "key": "player:active:0:Whimsicott",
+                "stableKey": "player:slot:0:Whimsicott",
+                "pokemon": "Whimsicott",
+                "stat_format": "champions",
+                "nature": "Hardy",
+                "speed_points": 0,
+                "species_base_speed": 116,
+                "base_speed": 136,
+                "calculated_speed": 136,
+                "speed_stage": 0,
+                "effective_speed": 136,
+                "item": "",
+                "ability": "Prankster",
+                "status": "burn",
+                "tailwind": false,
+                "trick_room": false,
+                "weather": "none",
+                "exact_speed_tie": false
+              },
+              {
+                "side": "opponent",
+                "key": "opponent:active:0:Arcanine",
+                "stableKey": "opponent:slot:0:Arcanine",
+                "pokemon": "Arcanine",
+                "stat_format": "champions",
+                "nature": "Hardy",
+                "speed_points": 0,
+                "species_base_speed": 95,
+                "base_speed": 115,
+                "calculated_speed": 115,
+                "speed_stage": 0,
+                "effective_speed": 115,
+                "item": "",
+                "ability": "Flash Fire",
+                "status": "",
+                "tailwind": false,
+                "trick_room": false,
+                "weather": "none",
+                "exact_speed_tie": false
+              },
+              {
+                "side": "opponent",
+                "key": "opponent:active:1:Venusaur",
+                "stableKey": "opponent:slot:1:Venusaur",
+                "pokemon": "Venusaur",
+                "stat_format": "champions",
+                "nature": "Hardy",
+                "speed_points": 0,
+                "species_base_speed": 80,
+                "base_speed": 100,
+                "calculated_speed": 100,
+                "speed_stage": 0,
+                "effective_speed": 100,
+                "item": "",
+                "ability": "Overgrow",
+                "status": "",
+                "tailwind": false,
+                "trick_room": false,
+                "weather": "none",
+                "exact_speed_tie": false
+              },
+              {
+                "side": "player",
+                "key": "player:active:1:Blastoise",
+                "stableKey": "player:slot:1:Blastoise",
+                "pokemon": "Blastoise",
+                "stat_format": "champions",
+                "nature": "Hardy",
+                "speed_points": 0,
+                "species_base_speed": 78,
+                "base_speed": 98,
+                "calculated_speed": 98,
+                "speed_stage": 0,
+                "effective_speed": 98,
+                "item": "",
+                "ability": "Torrent",
+                "status": "burn",
+                "tailwind": false,
+                "trick_room": false,
+                "weather": "none",
+                "exact_speed_tie": false
+              }
+            ],
+            "legal_options": {},
+            "position_score": 0.477,
+            "win_probability": null
+          },
+          "delta": {
+            "position_score": -0.014,
+            "win_probability": null,
+            "primary_cause": "position_lost",
+            "explanation": ""
+          },
+          "swingTurn": true
+        }
+      ]
+    }
+  },
+  "reference_result": {
+    "observations": {
+      "executed_move": "Will-O-Wisp",
+      "willowisp_pp_spent": 2,
+      "flamethrower_pp_spent": 0,
+      "lock_move": "willowisp"
+    },
+    "raw": {
+      "log": [
+        "|t:|1792535220",
+        "|gametype|doubles",
+        "|player|p1|Player 1||",
+        "|player|p2|Player 2||",
+        "|gen|9",
+        "|tier|[Gen 9 Champions] Doubles Custom Game",
+        "|clearpoke",
+        "|poke|p1|Whimsicott, L50, M|",
+        "|poke|p1|Blastoise, L50, M|",
+        "|poke|p2|Arcanine, L50, F|",
+        "|poke|p2|Venusaur, L50, M|",
+        "|teampreview",
+        "|",
+        "|t:|1792535220",
+        "|teamsize|p1|2",
+        "|teamsize|p2|2",
+        "|start",
+        "|split|p1",
+        "|switch|p1a: p1m1|Whimsicott, L50, M|135/135",
+        "|switch|p1a: p1m1|Whimsicott, L50, M|135/135",
+        "|split|p1",
+        "|switch|p1b: p1m2|Blastoise, L50, M|154/154",
+        "|switch|p1b: p1m2|Blastoise, L50, M|154/154",
+        "|split|p2",
+        "|switch|p2a: p2m1|Arcanine, L50, F|165/165",
+        "|switch|p2a: p2m1|Arcanine, L50, F|165/165",
+        "|split|p2",
+        "|switch|p2b: p2m2|Venusaur, L50, M|155/155",
+        "|switch|p2b: p2m2|Venusaur, L50, M|155/155",
+        "|turn|1",
+        "|",
+        "|t:|1792535220",
+        "|move|p1a: p1m1|Protect|p1a: p1m1",
+        "|-singleturn|p1a: p1m1|Protect",
+        "|move|p2a: p2m1|Will-O-Wisp|p1b: p1m2",
+        "|-status|p1b: p1m2|brn",
+        "|move|p2b: p2m2|Amnesia|p2b: p2m2",
+        "|-boost|p2b: p2m2|spd|2",
+        "|move|p1b: p1m2|Iron Defense|p1b: p1m2",
+        "|-boost|p1b: p1m2|def|2",
+        "|",
+        "|split|p1",
+        "|-damage|p1b: p1m2|145/154 brn|[from] brn",
+        "|-damage|p1b: p1m2|145/154 brn|[from] brn",
+        "|upkeep",
+        "|turn|2",
+        "|",
+        "|t:|1792535220",
+        "|move|p1a: p1m1|Encore|p2a: p2m1",
+        "|-start|p2a: p2m1|Encore",
+        "|move|p2a: p2m1|Will-O-Wisp|p1a: p1m1",
+        "|-status|p1a: p1m1|brn",
+        "|move|p2b: p2m2|Amnesia|p2b: p2m2",
+        "|-boost|p2b: p2m2|spd|2",
+        "|move|p1b: p1m2|Iron Defense|p1b: p1m2",
+        "|-boost|p1b: p1m2|def|2",
+        "|",
+        "|split|p1",
+        "|-damage|p1a: p1m1|127/135 brn|[from] brn",
+        "|-damage|p1a: p1m1|127/135 brn|[from] brn",
+        "|split|p1",
+        "|-damage|p1b: p1m2|136/154 brn|[from] brn",
+        "|-damage|p1b: p1m2|136/154 brn|[from] brn",
+        "|upkeep",
+        "|turn|3"
+      ],
+      "mod": "champions",
+      "format_mod": "champions"
+    }
+  }
+}

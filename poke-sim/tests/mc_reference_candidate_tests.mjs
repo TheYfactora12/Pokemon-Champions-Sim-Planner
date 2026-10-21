@@ -1,0 +1,16 @@
+import {test} from 'node:test';import assert from 'node:assert/strict';import fs from 'node:fs';import os from 'node:os';import path from 'node:path';
+import {PIN,verifyReference,differences,csv,writeCandidate} from '../tools/prepare-mc-reference-candidate.mjs';
+const healthy={pin:PIN,mod:'champions',formatMod:'champions',fingerprint:'a'.repeat(64),expectedFingerprint:'a'.repeat(64)};
+test('exact reference contract accepts',()=>assert.doesNotThrow(()=>verifyReference(healthy)));
+for(const [name,delta] of Object.entries({wrongpin:{pin:'efe4948570d5e8189751792136d26e71710c6c66'},wrongmod:{mod:'gen9'},wrongformat:{formatMod:'championsregmb'},wrongfingerprint:{fingerprint:'b'.repeat(64)},missingfingerprint:{expectedFingerprint:null}}))test(`reject ${name}`,()=>assert.throws(()=>verifyReference({...healthy,...delta})));
+test('bidirectional differences retain removals and additions',()=>assert.deepEqual(differences(['a','b'],['b','c']),{missing:['a'],extra:['c']}));
+test('duplicate pair identities reject',()=>assert.throws(()=>differences(['a','a'],[])));
+test('CSV quotes and guards spreadsheet prefixes',()=>{const text=csv([{id:'\t=SUM(1)',name:'a"b'}]);assert.ok(text.includes("'\t=SUM"));assert.ok(text.includes('a""b'));});
+test('existing output cannot be overwritten',()=>{const dir=fs.mkdtempSync(path.join(os.tmpdir(),'mc-candidate-test-'));try{assert.throws(()=>writeCandidate({},dir),/already exists/);}finally{fs.rmdirSync(dir);}});
+import {verifyPrevious} from '../tools/prepare-mc-reference-candidate.mjs';
+import {canonical,sha256} from '../tools/regulation-watch-core.mjs';
+const base=new URL('../reports/move-register/',import.meta.url);
+const previous=()=>{const pointer=JSON.parse(fs.readFileSync(new URL('latest-candidate.json',base)));return JSON.parse(fs.readFileSync(new URL(pointer.path,base)));};
+test('predecessor validation reports historical scope or explicit v2',()=>{const r=previous();assert.equal(verifyPrevious(r),r.provenance_contract==='move-register-provenance-v2'?'current-provenance-v2-validator':'historical-consistency-only-not-provenance-v2');});
+test('changed predecessor bytes cannot retain identity',()=>{const r=previous();r.moves[0].name='changed';assert.throws(()=>verifyPrevious(r),/identity mismatch/);});
+test('rehashing dangling predecessor pairs cannot legitimize joins',()=>{const r=previous();r.species_move_pairs[0].move_id='missing';r.species_move_pairs[0].pair_id=r.species_move_pairs[0].species_id+':missing';const {identity,generator_sha256,...data}=r;r.identity=sha256(canonical({data,generator:generator_sha256}));assert.throws(()=>verifyPrevious(r),/validation|join/);});

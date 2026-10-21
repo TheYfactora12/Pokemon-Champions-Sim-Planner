@@ -1,0 +1,35 @@
+{
+  "schema_version": "bounded-contract-v1",
+  "assertion_id": "RESOURCE-STRUGGLE-CAPTURE.current-runtime.v5",
+  "case_id": "RESOURCE-STRUGGLE-CAPTURE",
+  "scope": {
+    "oracle_kind": "shared_reference",
+    "format": "gen9championsdoublescustomgame",
+    "regulation_id": null,
+    "client_version": null,
+    "boundaries": [
+      "player slot0, no PP, target isolated to opposing slot0",
+      "ordinary physical damage and rounded maxHP recoil; no random-target claim"
+    ]
+  },
+  "fields": [
+    {
+      "field": "target_hp_loss",
+      "type": "number",
+      "unit": "HP",
+      "expected": 29
+    },
+    {
+      "field": "user_hp_loss",
+      "type": "number",
+      "unit": "HP",
+      "expected": 59
+    },
+    {
+      "field": "amnesia_pp_spent",
+      "type": "number",
+      "unit": "PP",
+      "expected": 0
+    }
+  ]
+}

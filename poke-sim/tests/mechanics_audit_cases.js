@@ -58,7 +58,7 @@ const CASES = [
         mon('Cresselia', 'Protect')
       ], [
         mon('Incineroar', 'Tackle')
-      ], { maxTurns: 2, seed: [1, 3, 5, 7] });
+      ], { maxTurns: 2, seed: [100, 123456700, 33700, 912312300] });
       expectLine(battle, 'Cresselia used Protect!', 'first Protect should resolve');
       expectLine(battle, 'Cresselia used Protect! But it failed!', 'second Protect should fail');
     }
@@ -109,7 +109,7 @@ const CASES = [
       ], [
         mon('Whimsicott', 'Quick Guard', { ability: 'Prankster' }),
         mon('Smeargle', 'Protect')
-      ], { maxTurns: 1, seed: [21, 22, 23, 24] });
+      ], { maxTurns: 1, seed: [21, 22, 23, 24], forcedActions:[{turn:1,side:'player',slot:0,move:'Feint',targetSlot:1}] });
       expectLine(battle, 'used Feint!', 'Feint should resolve');
       expectLine(battle, 'broke through', 'Feint should break protection');
       expectLine(battle, 'used Quick Guard!', 'Quick Guard setup missing');

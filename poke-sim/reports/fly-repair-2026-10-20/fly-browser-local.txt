@@ -1,0 +1,5 @@
+
+> pokemon-champions-sim-planner@1.0.0 test:browser
+> node tools/run-browser-audit.mjs
+
+{"directory":"C:\\Users\\The Rig\\Documents\\Codex\\2026-10-14\\task-2\\champions-moves-repair\\poke-sim\\artifacts\\browser-replay-t9DIEH","games":2,"pairs":3,"turns":16,"mismatch_pairs":0,"page_errors":[]}

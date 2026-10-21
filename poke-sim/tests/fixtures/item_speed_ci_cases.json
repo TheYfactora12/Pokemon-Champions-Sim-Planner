@@ -1,0 +1,1407 @@
+{
+  "source_commit": "1610d1a0bb8f96bbbee4e36904e97b008b281237",
+  "cases": [
+    {
+      "run_id": "doubles-00465",
+      "player": {
+        "name": "Hyungwoo Shin \u2014 Champions Arena",
+        "label": "1ST CHAMPIONS ARENA",
+        "style": "sun",
+        "description": "Mega Charizard-Y Sun with Coil Milotic secret weapon. Champions Arena winner April 2026. Rental: SQMPYRW6BP",
+        "champion_pack_id": "champions_arena_1st_v1",
+        "format": "champions",
+        "formatid": "champions-vgc-2026-regma",
+        "gametype": "doubles",
+        "ruleset": [
+          "Species Clause",
+          "Item Clause",
+          "Bring 6 Pick 4",
+          "Level 50"
+        ],
+        "provenance": {
+          "roster_source": "Victory Road Champions Arena coverage",
+          "spread_source": "Victory Road Champions Arena coverage",
+          "author": "Hyungwoo Shin",
+          "url": "https://victoryroad.pro/champions-regulations/",
+          "status": "testing_archetype_adjusted"
+        },
+        "legality_status": "legal",
+        "legality_notes": "Champion sun testing archetype adjusted from Champions Arena coverage so all moves pass the current Showdown-backed species/form legality gate; do not treat as an exact tournament paste.",
+        "assumption_register": [
+          "2026-06-23 legality repair: Milotic Hypnosis, Incineroar Parting Shot, and Sneasler Fake Out were replaced for current generated legality.",
+          "Original source remains linked for review, but this shipped row is an adjusted testing archetype."
+        ],
+        "members": [
+          {
+            "name": "Charizard-Mega-Y",
+            "item": "Charizardite Y",
+            "ability": "Drought",
+            "nature": "Modest",
+            "evs": {
+              "hp": 6,
+              "atk": 0,
+              "def": 16,
+              "spa": 30,
+              "spd": 0,
+              "spe": 14
+            },
+            "moves": [
+              "Heat Wave",
+              "Weather Ball",
+              "Solar Beam",
+              "Protect"
+            ],
+            "role": "Sun Setter / Spread Attacker"
+          },
+          {
+            "name": "Milotic",
+            "item": "Leftovers",
+            "ability": "Competitive",
+            "nature": "Bold",
+            "evs": {
+              "hp": 31,
+              "atk": 0,
+              "def": 21,
+              "spa": 1,
+              "spd": 12,
+              "spe": 1
+            },
+            "moves": [
+              "Muddy Water",
+              "Coil",
+              "Haze",
+              "Recover"
+            ],
+            "role": "Utility / Secret Weapon"
+          },
+          {
+            "name": "Incineroar",
+            "item": "Chople Berry",
+            "ability": "Intimidate",
+            "nature": "Serious",
+            "evs": {
+              "hp": 32,
+              "atk": 0,
+              "def": 11,
+              "spa": 0,
+              "spd": 16,
+              "spe": 7
+            },
+            "moves": [
+              "Throat Chop",
+              "U-turn",
+              "Fake Out",
+              "Flare Blitz"
+            ],
+            "role": "Support / Pivot"
+          },
+          {
+            "name": "Sneasler",
+            "item": "White Herb",
+            "ability": "Unburden",
+            "nature": "Adamant",
+            "evs": {
+              "hp": 2,
+              "atk": 32,
+              "def": 0,
+              "spa": 0,
+              "spd": 0,
+              "spe": 32
+            },
+            "moves": [
+              "Taunt",
+              "Close Combat",
+              "Dire Claw",
+              "Protect"
+            ],
+            "role": "Unburden Sweeper"
+          },
+          {
+            "name": "Garchomp",
+            "item": "Sitrus Berry",
+            "ability": "Rough Skin",
+            "nature": "Adamant",
+            "evs": {
+              "hp": 24,
+              "atk": 19,
+              "def": 0,
+              "spa": 0,
+              "spd": 1,
+              "spe": 22
+            },
+            "moves": [
+              "Dragon Claw",
+              "Rock Slide",
+              "Earthquake",
+              "Protect"
+            ],
+            "role": "Physical Sweeper"
+          },
+          {
+            "name": "Venusaur",
+            "item": "Focus Sash",
+            "ability": "Chlorophyll",
+            "nature": "Modest",
+            "evs": {
+              "hp": 2,
+              "atk": 0,
+              "def": 0,
+              "spa": 32,
+              "spd": 0,
+              "spe": 32
+            },
+            "moves": [
+              "Energy Ball",
+              "Sludge Bomb",
+              "Sleep Powder",
+              "Protect"
+            ],
+            "role": "Chlorophyll Sweeper"
+          }
+        ]
+      },
+      "opponent": {
+        "name": "lukasjoel1 \u2014 Sand + Mega Gengar ZGG",
+        "label": "ZGG CUP",
+        "style": "sand_trap",
+        "description": "Tyranitar Sand Stream + Garchomp Sand Veil + Mega Gengar Shadow Tag trap core. lukasjoel1 ZGG #1 $200 Rank #2 13-2-0.",
+        "champion_pack_id": "lukasjoel1_champions_regma_v1",
+        "format": "champions",
+        "formatid": "champions-vgc-2026-regma",
+        "gametype": "doubles",
+        "ruleset": [
+          "Species Clause",
+          "Item Clause",
+          "Bring 6 Pick 4",
+          "Level 50"
+        ],
+        "source": "preloaded",
+        "origin": {
+          "url": "https://play.limitlesstcg.com/tournament/69c44a46d478313a15a329c7/player/lukasjoel1/teamlist",
+          "player": "lukasjoel1",
+          "event": "ZGG #1 Pokemon Champions VGC $200 (Rank #2, 13-2-0)"
+        },
+        "provenance": {
+          "roster_source": "pikalytics_top_teams",
+          "spread_source": "archetype_default",
+          "author": "lukasjoel1",
+          "url": "https://play.limitlesstcg.com/tournament/69c44a46d478313a15a329c7/player/lukasjoel1/teamlist",
+          "status": "roster-verified-spreads-inferred"
+        },
+        "legality_status": "legal_inferred",
+        "legality_notes": "Mega Gengar legal in Reg M-A via Gengarite. Shadow Tag + sand core. Source: Pikalytics Top Teams.",
+        "assumption_register": [
+          "Roster (species/items/abilities/moves) verified from open team list.",
+          "EVs, natures, and Tera types not disclosed by source; archetype-default spreads applied.",
+          "Mega activation consumes team's once-per-match Mega slot."
+        ],
+        "members": [
+          {
+            "name": "Garchomp",
+            "item": "Bright Powder",
+            "ability": "Sand Veil",
+            "nature": "Jolly",
+            "nature_source": "archetype_default",
+            "evs": {
+              "hp": 1,
+              "atk": 32,
+              "def": 0,
+              "spa": 0,
+              "spd": 0,
+              "spe": 32
+            },
+            "ev_source": "archetype_default",
+            "moves": [
+              "Earthquake",
+              "Dragon Claw",
+              "Rock Slide",
+              "Protect"
+            ],
+            "role": "Sand Attacker"
+          },
+          {
+            "name": "Tyranitar",
+            "item": "Shuca Berry",
+            "ability": "Sand Stream",
+            "nature": "Adamant",
+            "nature_source": "archetype_default",
+            "evs": {
+              "hp": 1,
+              "atk": 32,
+              "def": 0,
+              "spa": 0,
+              "spd": 0,
+              "spe": 32
+            },
+            "ev_source": "archetype_default",
+            "moves": [
+              "Rock Slide",
+              "Low Kick",
+              "Ice Punch",
+              "Protect"
+            ],
+            "role": "Sand Setter"
+          },
+          {
+            "name": "Gengar-Mega",
+            "item": "Gengarite",
+            "ability": "Shadow Tag",
+            "nature": "Timid",
+            "nature_source": "archetype_default",
+            "evs": {
+              "hp": 1,
+              "atk": 0,
+              "def": 0,
+              "spa": 32,
+              "spd": 0,
+              "spe": 32
+            },
+            "ev_source": "archetype_default",
+            "moves": [
+              "Shadow Ball",
+              "Sludge Wave",
+              "Focus Blast",
+              "Protect"
+            ],
+            "role": "Mega Trapper"
+          },
+          {
+            "name": "Whimsicott",
+            "item": "Mental Herb",
+            "ability": "Prankster",
+            "nature": "Timid",
+            "nature_source": "archetype_default",
+            "evs": {
+              "hp": 32,
+              "atk": 0,
+              "def": 1,
+              "spa": 0,
+              "spd": 32,
+              "spe": 0
+            },
+            "ev_source": "archetype_default",
+            "moves": [
+              "Moonblast",
+              "Protect",
+              "Tailwind",
+              "Fake Tears"
+            ],
+            "role": "Prankster Support"
+          },
+          {
+            "name": "Rotom-Wash",
+            "item": "Leftovers",
+            "ability": "Levitate",
+            "nature": "Bold",
+            "nature_source": "archetype_default",
+            "evs": {
+              "hp": 32,
+              "atk": 0,
+              "def": 32,
+              "spa": 0,
+              "spd": 1,
+              "spe": 0
+            },
+            "ev_source": "archetype_default",
+            "moves": [
+              "Hydro Pump",
+              "Volt Switch",
+              "Will-O-Wisp",
+              "Protect"
+            ],
+            "role": "Burn Pivot"
+          },
+          {
+            "name": "Sneasler",
+            "item": "White Herb",
+            "ability": "Unburden",
+            "nature": "Jolly",
+            "nature_source": "archetype_default",
+            "evs": {
+              "hp": 1,
+              "atk": 32,
+              "def": 0,
+              "spa": 0,
+              "spd": 0,
+              "spe": 32
+            },
+            "ev_source": "archetype_default",
+            "moves": [
+              "Close Combat",
+              "Dire Claw",
+              "Fake Out",
+              "Protect"
+            ],
+            "role": "Unburden Sweeper"
+          }
+        ]
+      },
+      "options": {
+        "format": "doubles",
+        "rulesetId": "champions_custom_practice",
+        "maxTurns": 60,
+        "seed": [
+          1137902082,
+          2480958303,
+          14298041,
+          812432133
+        ],
+        "playerBring": [
+          "Venusaur",
+          "Garchomp",
+          "Sneasler",
+          "Incineroar"
+        ],
+        "opponentBring": [
+          "Sneasler",
+          "Rotom-Wash",
+          "Whimsicott",
+          "Gengar-Mega"
+        ]
+      }
+    },
+    {
+      "run_id": "doubles-01037",
+      "player": {
+        "name": "Froslass's Team",
+        "label": "CUSTOM",
+        "style": "custom",
+        "description": "Imported via Showdown paste",
+        "members": [
+          {
+            "name": "Froslass",
+            "item": "Froslassite",
+            "ability": "Snow Cloak",
+            "level": 50,
+            "nature": "Timid",
+            "evs": {
+              "hp": 2,
+              "atk": 0,
+              "def": 0,
+              "spa": 32,
+              "spd": 0,
+              "spe": 32
+            },
+            "moves": [
+              "Blizzard",
+              "Shadow Ball",
+              "Aurora Veil",
+              "Protect"
+            ],
+            "role": ""
+          },
+          {
+            "name": "Glaceon",
+            "item": "Shell Bell",
+            "ability": "Ice Body",
+            "level": 50,
+            "nature": "Modest",
+            "evs": {
+              "hp": 0,
+              "atk": 0,
+              "def": 32,
+              "spa": 32,
+              "spd": 2,
+              "spe": 0
+            },
+            "moves": [
+              "Blizzard",
+              "Freeze-Dry",
+              "Protect",
+              "Calm Mind"
+            ],
+            "role": ""
+          },
+          {
+            "name": "Ninetales-Alola",
+            "item": "Focus Sash",
+            "ability": "Snow Warning",
+            "level": 50,
+            "nature": "Modest",
+            "evs": {
+              "hp": 2,
+              "atk": 0,
+              "def": 0,
+              "spa": 32,
+              "spd": 0,
+              "spe": 32
+            },
+            "moves": [
+              "Aurora Veil",
+              "Blizzard",
+              "Moonblast",
+              "Encore"
+            ],
+            "role": ""
+          },
+          {
+            "name": "Milotic",
+            "item": "Leftovers",
+            "ability": "Competitive",
+            "level": 50,
+            "nature": "Calm",
+            "evs": {
+              "hp": 0,
+              "atk": 0,
+              "def": 0,
+              "spa": 32,
+              "spd": 32,
+              "spe": 2
+            },
+            "moves": [
+              "Blizzard",
+              "Scald",
+              "Weather Ball",
+              "Life Dew"
+            ],
+            "role": ""
+          },
+          {
+            "name": "Sneasler",
+            "item": "Sitrus Berry",
+            "ability": "Unburden",
+            "level": 50,
+            "nature": "Jolly",
+            "evs": {
+              "hp": 2,
+              "atk": 32,
+              "def": 0,
+              "spa": 0,
+              "spd": 0,
+              "spe": 32
+            },
+            "moves": [
+              "Fake Out",
+              "Dire Claw",
+              "Close Combat",
+              "Rock Tomb"
+            ],
+            "role": ""
+          },
+          {
+            "name": "Farigiraf",
+            "item": "Choice Scarf",
+            "ability": "Cud Chew",
+            "level": 50,
+            "nature": "Modest",
+            "evs": {
+              "hp": 32,
+              "atk": 0,
+              "def": 0,
+              "spa": 32,
+              "spd": 2,
+              "spe": 0
+            },
+            "moves": [
+              "Hyper Voice",
+              "Psychic",
+              "Trick Room",
+              "Protect"
+            ],
+            "role": ""
+          }
+        ]
+      },
+      "opponent": {
+        "name": "Prro-T \u2014 Floette Aerodactyl Pressure",
+        "label": "MAY REPLAY",
+        "style": "fast_pressure",
+        "description": "May 8, 2026 Champions Bo3 replay-preview roster with Floette-Eternal / Aerodactyl / Incineroar / Garchomp / Sneasler / Basculegion.",
+        "champion_pack_id": "prro_t_floette_aerodactyl_may2026_v1",
+        "format": "champions",
+        "formatid": "champions-vgc-2026-regma",
+        "gametype": "doubles",
+        "ruleset": [
+          "Species Clause",
+          "Item Clause",
+          "Bring 6 Pick 4",
+          "Level 50"
+        ],
+        "source": "preloaded",
+        "origin": {
+          "url": "https://replay.pokemonshowdown.com/gen9championsvgc2026regma-2604413910",
+          "player": "Prro-T",
+          "event": "Pok\u00e9mon Showdown replay preview (Bo3 Game 2, May 8, 2026)"
+        },
+        "provenance": {
+          "roster_source": "pokemon_showdown_replay_preview",
+          "spread_source": "archetype_default",
+          "author": "Prro-T",
+          "url": "https://replay.pokemonshowdown.com/gen9championsvgc2026regma-2604413910",
+          "status": "species-verified-sets-inferred"
+        },
+        "legality_status": "legal_inferred",
+        "legality_notes": "Six species verified from the replay preview team line. Full sets are inferred because replay preview does not expose items, moves, or spreads.",
+        "assumption_register": [
+          "Only the six species were verified from the replay preview.",
+          "Repo canonical naming normalizes replay-preview Floette-Eternal to Floette (Eternal Flower).",
+          "Items, abilities, moves, EVs, natures, and Tera types were inferred from current Reg M-A archetypes."
+        ],
+        "members": [
+          {
+            "name": "Floette (Eternal Flower)",
+            "item": "Fairy Feather",
+            "ability": "Flower Veil",
+            "nature": "Timid",
+            "nature_source": "archetype_default",
+            "evs": {
+              "hp": 1,
+              "atk": 0,
+              "def": 0,
+              "spa": 32,
+              "spd": 0,
+              "spe": 32
+            },
+            "ev_source": "archetype_default",
+            "moves": [
+              "Light of Ruin",
+              "Dazzling Gleam",
+              "Moonblast",
+              "Protect"
+            ],
+            "role": "Fairy Breaker"
+          },
+          {
+            "name": "Aerodactyl",
+            "item": "Focus Sash",
+            "ability": "Unnerve",
+            "nature": "Jolly",
+            "nature_source": "archetype_default",
+            "evs": {
+              "hp": 1,
+              "atk": 32,
+              "def": 0,
+              "spa": 0,
+              "spd": 0,
+              "spe": 32
+            },
+            "ev_source": "archetype_default",
+            "moves": [
+              "Tailwind",
+              "Dual Wingbeat",
+              "Rock Slide",
+              "Protect"
+            ],
+            "role": "Speed Control"
+          },
+          {
+            "name": "Incineroar",
+            "item": "Chople Berry",
+            "ability": "Intimidate",
+            "nature": "Careful",
+            "nature_source": "archetype_default",
+            "evs": {
+              "hp": 32,
+              "atk": 1,
+              "def": 0,
+              "spa": 0,
+              "spd": 32,
+              "spe": 0
+            },
+            "ev_source": "archetype_default",
+            "moves": [
+              "Fake Out",
+              "Parting Shot",
+              "Flare Blitz",
+              "Darkest Lariat"
+            ],
+            "role": "Pivot"
+          },
+          {
+            "name": "Garchomp",
+            "item": "Soft Sand",
+            "ability": "Rough Skin",
+            "nature": "Jolly",
+            "nature_source": "archetype_default",
+            "evs": {
+              "hp": 1,
+              "atk": 32,
+              "def": 0,
+              "spa": 0,
+              "spd": 0,
+              "spe": 32
+            },
+            "ev_source": "archetype_default",
+            "moves": [
+              "Earthquake",
+              "Dragon Claw",
+              "Rock Slide",
+              "Protect"
+            ],
+            "role": "Physical Pressure"
+          },
+          {
+            "name": "Sneasler",
+            "item": "White Herb",
+            "ability": "Unburden",
+            "nature": "Jolly",
+            "nature_source": "archetype_default",
+            "evs": {
+              "hp": 1,
+              "atk": 32,
+              "def": 0,
+              "spa": 0,
+              "spd": 0,
+              "spe": 32
+            },
+            "ev_source": "archetype_default",
+            "moves": [
+              "Close Combat",
+              "Dire Claw",
+              "Fake Out",
+              "Protect"
+            ],
+            "role": "Unburden Sweeper"
+          },
+          {
+            "name": "Basculegion",
+            "item": "Choice Scarf",
+            "ability": "Adaptability",
+            "nature": "Adamant",
+            "nature_source": "archetype_default",
+            "evs": {
+              "hp": 1,
+              "atk": 32,
+              "def": 0,
+              "spa": 0,
+              "spd": 0,
+              "spe": 32
+            },
+            "ev_source": "archetype_default",
+            "moves": [
+              "Wave Crash",
+              "Last Respects",
+              "Aqua Jet",
+              "Flip Turn"
+            ],
+            "role": "Scarf Cleaner"
+          }
+        ]
+      },
+      "options": {
+        "format": "doubles",
+        "rulesetId": "champions_custom_practice",
+        "maxTurns": 60,
+        "seed": [
+          4108281061,
+          1943949852,
+          4240106398,
+          667436860
+        ],
+        "playerBring": [
+          "Farigiraf",
+          "Sneasler",
+          "Milotic",
+          "Ninetales-Alola"
+        ],
+        "opponentBring": [
+          "Basculegion",
+          "Sneasler",
+          "Garchomp",
+          "Incineroar"
+        ]
+      }
+    },
+    {
+      "run_id": "doubles-01917",
+      "player": {
+        "name": "lukasjoel1 \u2014 Sand + Mega Gengar ZGG",
+        "label": "ZGG CUP",
+        "style": "sand_trap",
+        "description": "Tyranitar Sand Stream + Garchomp Sand Veil + Mega Gengar Shadow Tag trap core. lukasjoel1 ZGG #1 $200 Rank #2 13-2-0.",
+        "champion_pack_id": "lukasjoel1_champions_regma_v1",
+        "format": "champions",
+        "formatid": "champions-vgc-2026-regma",
+        "gametype": "doubles",
+        "ruleset": [
+          "Species Clause",
+          "Item Clause",
+          "Bring 6 Pick 4",
+          "Level 50"
+        ],
+        "source": "preloaded",
+        "origin": {
+          "url": "https://play.limitlesstcg.com/tournament/69c44a46d478313a15a329c7/player/lukasjoel1/teamlist",
+          "player": "lukasjoel1",
+          "event": "ZGG #1 Pokemon Champions VGC $200 (Rank #2, 13-2-0)"
+        },
+        "provenance": {
+          "roster_source": "pikalytics_top_teams",
+          "spread_source": "archetype_default",
+          "author": "lukasjoel1",
+          "url": "https://play.limitlesstcg.com/tournament/69c44a46d478313a15a329c7/player/lukasjoel1/teamlist",
+          "status": "roster-verified-spreads-inferred"
+        },
+        "legality_status": "legal_inferred",
+        "legality_notes": "Mega Gengar legal in Reg M-A via Gengarite. Shadow Tag + sand core. Source: Pikalytics Top Teams.",
+        "assumption_register": [
+          "Roster (species/items/abilities/moves) verified from open team list.",
+          "EVs, natures, and Tera types not disclosed by source; archetype-default spreads applied.",
+          "Mega activation consumes team's once-per-match Mega slot."
+        ],
+        "members": [
+          {
+            "name": "Garchomp",
+            "item": "Bright Powder",
+            "ability": "Sand Veil",
+            "nature": "Jolly",
+            "nature_source": "archetype_default",
+            "evs": {
+              "hp": 1,
+              "atk": 32,
+              "def": 0,
+              "spa": 0,
+              "spd": 0,
+              "spe": 32
+            },
+            "ev_source": "archetype_default",
+            "moves": [
+              "Earthquake",
+              "Dragon Claw",
+              "Rock Slide",
+              "Protect"
+            ],
+            "role": "Sand Attacker"
+          },
+          {
+            "name": "Tyranitar",
+            "item": "Shuca Berry",
+            "ability": "Sand Stream",
+            "nature": "Adamant",
+            "nature_source": "archetype_default",
+            "evs": {
+              "hp": 1,
+              "atk": 32,
+              "def": 0,
+              "spa": 0,
+              "spd": 0,
+              "spe": 32
+            },
+            "ev_source": "archetype_default",
+            "moves": [
+              "Rock Slide",
+              "Low Kick",
+              "Ice Punch",
+              "Protect"
+            ],
+            "role": "Sand Setter"
+          },
+          {
+            "name": "Gengar-Mega",
+            "item": "Gengarite",
+            "ability": "Shadow Tag",
+            "nature": "Timid",
+            "nature_source": "archetype_default",
+            "evs": {
+              "hp": 1,
+              "atk": 0,
+              "def": 0,
+              "spa": 32,
+              "spd": 0,
+              "spe": 32
+            },
+            "ev_source": "archetype_default",
+            "moves": [
+              "Shadow Ball",
+              "Sludge Wave",
+              "Focus Blast",
+              "Protect"
+            ],
+            "role": "Mega Trapper"
+          },
+          {
+            "name": "Whimsicott",
+            "item": "Mental Herb",
+            "ability": "Prankster",
+            "nature": "Timid",
+            "nature_source": "archetype_default",
+            "evs": {
+              "hp": 32,
+              "atk": 0,
+              "def": 1,
+              "spa": 0,
+              "spd": 32,
+              "spe": 0
+            },
+            "ev_source": "archetype_default",
+            "moves": [
+              "Moonblast",
+              "Protect",
+              "Tailwind",
+              "Fake Tears"
+            ],
+            "role": "Prankster Support"
+          },
+          {
+            "name": "Rotom-Wash",
+            "item": "Leftovers",
+            "ability": "Levitate",
+            "nature": "Bold",
+            "nature_source": "archetype_default",
+            "evs": {
+              "hp": 32,
+              "atk": 0,
+              "def": 32,
+              "spa": 0,
+              "spd": 1,
+              "spe": 0
+            },
+            "ev_source": "archetype_default",
+            "moves": [
+              "Hydro Pump",
+              "Volt Switch",
+              "Will-O-Wisp",
+              "Protect"
+            ],
+            "role": "Burn Pivot"
+          },
+          {
+            "name": "Sneasler",
+            "item": "White Herb",
+            "ability": "Unburden",
+            "nature": "Jolly",
+            "nature_source": "archetype_default",
+            "evs": {
+              "hp": 1,
+              "atk": 32,
+              "def": 0,
+              "spa": 0,
+              "spd": 0,
+              "spe": 32
+            },
+            "ev_source": "archetype_default",
+            "moves": [
+              "Close Combat",
+              "Dire Claw",
+              "Fake Out",
+              "Protect"
+            ],
+            "role": "Unburden Sweeper"
+          }
+        ]
+      },
+      "opponent": {
+        "name": "Hyungwoo Shin \u2014 Champions Arena",
+        "label": "1ST CHAMPIONS ARENA",
+        "style": "sun",
+        "description": "Mega Charizard-Y Sun with Coil Milotic secret weapon. Champions Arena winner April 2026. Rental: SQMPYRW6BP",
+        "champion_pack_id": "champions_arena_1st_v1",
+        "format": "champions",
+        "formatid": "champions-vgc-2026-regma",
+        "gametype": "doubles",
+        "ruleset": [
+          "Species Clause",
+          "Item Clause",
+          "Bring 6 Pick 4",
+          "Level 50"
+        ],
+        "provenance": {
+          "roster_source": "Victory Road Champions Arena coverage",
+          "spread_source": "Victory Road Champions Arena coverage",
+          "author": "Hyungwoo Shin",
+          "url": "https://victoryroad.pro/champions-regulations/",
+          "status": "testing_archetype_adjusted"
+        },
+        "legality_status": "legal",
+        "legality_notes": "Champion sun testing archetype adjusted from Champions Arena coverage so all moves pass the current Showdown-backed species/form legality gate; do not treat as an exact tournament paste.",
+        "assumption_register": [
+          "2026-06-23 legality repair: Milotic Hypnosis, Incineroar Parting Shot, and Sneasler Fake Out were replaced for current generated legality.",
+          "Original source remains linked for review, but this shipped row is an adjusted testing archetype."
+        ],
+        "members": [
+          {
+            "name": "Charizard-Mega-Y",
+            "item": "Charizardite Y",
+            "ability": "Drought",
+            "nature": "Modest",
+            "evs": {
+              "hp": 6,
+              "atk": 0,
+              "def": 16,
+              "spa": 30,
+              "spd": 0,
+              "spe": 14
+            },
+            "moves": [
+              "Heat Wave",
+              "Weather Ball",
+              "Solar Beam",
+              "Protect"
+            ],
+            "role": "Sun Setter / Spread Attacker"
+          },
+          {
+            "name": "Milotic",
+            "item": "Leftovers",
+            "ability": "Competitive",
+            "nature": "Bold",
+            "evs": {
+              "hp": 31,
+              "atk": 0,
+              "def": 21,
+              "spa": 1,
+              "spd": 12,
+              "spe": 1
+            },
+            "moves": [
+              "Muddy Water",
+              "Coil",
+              "Haze",
+              "Recover"
+            ],
+            "role": "Utility / Secret Weapon"
+          },
+          {
+            "name": "Incineroar",
+            "item": "Chople Berry",
+            "ability": "Intimidate",
+            "nature": "Serious",
+            "evs": {
+              "hp": 32,
+              "atk": 0,
+              "def": 11,
+              "spa": 0,
+              "spd": 16,
+              "spe": 7
+            },
+            "moves": [
+              "Throat Chop",
+              "U-turn",
+              "Fake Out",
+              "Flare Blitz"
+            ],
+            "role": "Support / Pivot"
+          },
+          {
+            "name": "Sneasler",
+            "item": "White Herb",
+            "ability": "Unburden",
+            "nature": "Adamant",
+            "evs": {
+              "hp": 2,
+              "atk": 32,
+              "def": 0,
+              "spa": 0,
+              "spd": 0,
+              "spe": 32
+            },
+            "moves": [
+              "Taunt",
+              "Close Combat",
+              "Dire Claw",
+              "Protect"
+            ],
+            "role": "Unburden Sweeper"
+          },
+          {
+            "name": "Garchomp",
+            "item": "Sitrus Berry",
+            "ability": "Rough Skin",
+            "nature": "Adamant",
+            "evs": {
+              "hp": 24,
+              "atk": 19,
+              "def": 0,
+              "spa": 0,
+              "spd": 1,
+              "spe": 22
+            },
+            "moves": [
+              "Dragon Claw",
+              "Rock Slide",
+              "Earthquake",
+              "Protect"
+            ],
+            "role": "Physical Sweeper"
+          },
+          {
+            "name": "Venusaur",
+            "item": "Focus Sash",
+            "ability": "Chlorophyll",
+            "nature": "Modest",
+            "evs": {
+              "hp": 2,
+              "atk": 0,
+              "def": 0,
+              "spa": 32,
+              "spd": 0,
+              "spe": 32
+            },
+            "moves": [
+              "Energy Ball",
+              "Sludge Bomb",
+              "Sleep Powder",
+              "Protect"
+            ],
+            "role": "Chlorophyll Sweeper"
+          }
+        ]
+      },
+      "options": {
+        "format": "doubles",
+        "rulesetId": "champions_custom_practice",
+        "maxTurns": 60,
+        "seed": [
+          1137902082,
+          2480958303,
+          14298041,
+          812432133
+        ],
+        "playerBring": [
+          "Sneasler",
+          "Rotom-Wash",
+          "Whimsicott",
+          "Gengar-Mega"
+        ],
+        "opponentBring": [
+          "Venusaur",
+          "Garchomp",
+          "Sneasler",
+          "Incineroar"
+        ]
+      }
+    },
+    {
+      "run_id": "doubles-02885",
+      "player": {
+        "name": "Prro-T \u2014 Floette Aerodactyl Pressure",
+        "label": "MAY REPLAY",
+        "style": "fast_pressure",
+        "description": "May 8, 2026 Champions Bo3 replay-preview roster with Floette-Eternal / Aerodactyl / Incineroar / Garchomp / Sneasler / Basculegion.",
+        "champion_pack_id": "prro_t_floette_aerodactyl_may2026_v1",
+        "format": "champions",
+        "formatid": "champions-vgc-2026-regma",
+        "gametype": "doubles",
+        "ruleset": [
+          "Species Clause",
+          "Item Clause",
+          "Bring 6 Pick 4",
+          "Level 50"
+        ],
+        "source": "preloaded",
+        "origin": {
+          "url": "https://replay.pokemonshowdown.com/gen9championsvgc2026regma-2604413910",
+          "player": "Prro-T",
+          "event": "Pok\u00e9mon Showdown replay preview (Bo3 Game 2, May 8, 2026)"
+        },
+        "provenance": {
+          "roster_source": "pokemon_showdown_replay_preview",
+          "spread_source": "archetype_default",
+          "author": "Prro-T",
+          "url": "https://replay.pokemonshowdown.com/gen9championsvgc2026regma-2604413910",
+          "status": "species-verified-sets-inferred"
+        },
+        "legality_status": "legal_inferred",
+        "legality_notes": "Six species verified from the replay preview team line. Full sets are inferred because replay preview does not expose items, moves, or spreads.",
+        "assumption_register": [
+          "Only the six species were verified from the replay preview.",
+          "Repo canonical naming normalizes replay-preview Floette-Eternal to Floette (Eternal Flower).",
+          "Items, abilities, moves, EVs, natures, and Tera types were inferred from current Reg M-A archetypes."
+        ],
+        "members": [
+          {
+            "name": "Floette (Eternal Flower)",
+            "item": "Fairy Feather",
+            "ability": "Flower Veil",
+            "nature": "Timid",
+            "nature_source": "archetype_default",
+            "evs": {
+              "hp": 1,
+              "atk": 0,
+              "def": 0,
+              "spa": 32,
+              "spd": 0,
+              "spe": 32
+            },
+            "ev_source": "archetype_default",
+            "moves": [
+              "Light of Ruin",
+              "Dazzling Gleam",
+              "Moonblast",
+              "Protect"
+            ],
+            "role": "Fairy Breaker"
+          },
+          {
+            "name": "Aerodactyl",
+            "item": "Focus Sash",
+            "ability": "Unnerve",
+            "nature": "Jolly",
+            "nature_source": "archetype_default",
+            "evs": {
+              "hp": 1,
+              "atk": 32,
+              "def": 0,
+              "spa": 0,
+              "spd": 0,
+              "spe": 32
+            },
+            "ev_source": "archetype_default",
+            "moves": [
+              "Tailwind",
+              "Dual Wingbeat",
+              "Rock Slide",
+              "Protect"
+            ],
+            "role": "Speed Control"
+          },
+          {
+            "name": "Incineroar",
+            "item": "Chople Berry",
+            "ability": "Intimidate",
+            "nature": "Careful",
+            "nature_source": "archetype_default",
+            "evs": {
+              "hp": 32,
+              "atk": 1,
+              "def": 0,
+              "spa": 0,
+              "spd": 32,
+              "spe": 0
+            },
+            "ev_source": "archetype_default",
+            "moves": [
+              "Fake Out",
+              "Parting Shot",
+              "Flare Blitz",
+              "Darkest Lariat"
+            ],
+            "role": "Pivot"
+          },
+          {
+            "name": "Garchomp",
+            "item": "Soft Sand",
+            "ability": "Rough Skin",
+            "nature": "Jolly",
+            "nature_source": "archetype_default",
+            "evs": {
+              "hp": 1,
+              "atk": 32,
+              "def": 0,
+              "spa": 0,
+              "spd": 0,
+              "spe": 32
+            },
+            "ev_source": "archetype_default",
+            "moves": [
+              "Earthquake",
+              "Dragon Claw",
+              "Rock Slide",
+              "Protect"
+            ],
+            "role": "Physical Pressure"
+          },
+          {
+            "name": "Sneasler",
+            "item": "White Herb",
+            "ability": "Unburden",
+            "nature": "Jolly",
+            "nature_source": "archetype_default",
+            "evs": {
+              "hp": 1,
+              "atk": 32,
+              "def": 0,
+              "spa": 0,
+              "spd": 0,
+              "spe": 32
+            },
+            "ev_source": "archetype_default",
+            "moves": [
+              "Close Combat",
+              "Dire Claw",
+              "Fake Out",
+              "Protect"
+            ],
+            "role": "Unburden Sweeper"
+          },
+          {
+            "name": "Basculegion",
+            "item": "Choice Scarf",
+            "ability": "Adaptability",
+            "nature": "Adamant",
+            "nature_source": "archetype_default",
+            "evs": {
+              "hp": 1,
+              "atk": 32,
+              "def": 0,
+              "spa": 0,
+              "spd": 0,
+              "spe": 32
+            },
+            "ev_source": "archetype_default",
+            "moves": [
+              "Wave Crash",
+              "Last Respects",
+              "Aqua Jet",
+              "Flip Turn"
+            ],
+            "role": "Scarf Cleaner"
+          }
+        ]
+      },
+      "opponent": {
+        "name": "Froslass's Team",
+        "label": "CUSTOM",
+        "style": "custom",
+        "description": "Imported via Showdown paste",
+        "members": [
+          {
+            "name": "Froslass",
+            "item": "Froslassite",
+            "ability": "Snow Cloak",
+            "level": 50,
+            "nature": "Timid",
+            "evs": {
+              "hp": 2,
+              "atk": 0,
+              "def": 0,
+              "spa": 32,
+              "spd": 0,
+              "spe": 32
+            },
+            "moves": [
+              "Blizzard",
+              "Shadow Ball",
+              "Aurora Veil",
+              "Protect"
+            ],
+            "role": ""
+          },
+          {
+            "name": "Glaceon",
+            "item": "Shell Bell",
+            "ability": "Ice Body",
+            "level": 50,
+            "nature": "Modest",
+            "evs": {
+              "hp": 0,
+              "atk": 0,
+              "def": 32,
+              "spa": 32,
+              "spd": 2,
+              "spe": 0
+            },
+            "moves": [
+              "Blizzard",
+              "Freeze-Dry",
+              "Protect",
+              "Calm Mind"
+            ],
+            "role": ""
+          },
+          {
+            "name": "Ninetales-Alola",
+            "item": "Focus Sash",
+            "ability": "Snow Warning",
+            "level": 50,
+            "nature": "Modest",
+            "evs": {
+              "hp": 2,
+              "atk": 0,
+              "def": 0,
+              "spa": 32,
+              "spd": 0,
+              "spe": 32
+            },
+            "moves": [
+              "Aurora Veil",
+              "Blizzard",
+              "Moonblast",
+              "Encore"
+            ],
+            "role": ""
+          },
+          {
+            "name": "Milotic",
+            "item": "Leftovers",
+            "ability": "Competitive",
+            "level": 50,
+            "nature": "Calm",
+            "evs": {
+              "hp": 0,
+              "atk": 0,
+              "def": 0,
+              "spa": 32,
+              "spd": 32,
+              "spe": 2
+            },
+            "moves": [
+              "Blizzard",
+              "Scald",
+              "Weather Ball",
+              "Life Dew"
+            ],
+            "role": ""
+          },
+          {
+            "name": "Sneasler",
+            "item": "Sitrus Berry",
+            "ability": "Unburden",
+            "level": 50,
+            "nature": "Jolly",
+            "evs": {
+              "hp": 2,
+              "atk": 32,
+              "def": 0,
+              "spa": 0,
+              "spd": 0,
+              "spe": 32
+            },
+            "moves": [
+              "Fake Out",
+              "Dire Claw",
+              "Close Combat",
+              "Rock Tomb"
+            ],
+            "role": ""
+          },
+          {
+            "name": "Farigiraf",
+            "item": "Choice Scarf",
+            "ability": "Cud Chew",
+            "level": 50,
+            "nature": "Modest",
+            "evs": {
+              "hp": 32,
+              "atk": 0,
+              "def": 0,
+              "spa": 32,
+              "spd": 2,
+              "spe": 0
+            },
+            "moves": [
+              "Hyper Voice",
+              "Psychic",
+              "Trick Room",
+              "Protect"
+            ],
+            "role": ""
+          }
+        ]
+      },
+      "options": {
+        "format": "doubles",
+        "rulesetId": "champions_custom_practice",
+        "maxTurns": 60,
+        "seed": [
+          4108281061,
+          1943949852,
+          4240106398,
+          667436860
+        ],
+        "playerBring": [
+          "Basculegion",
+          "Sneasler",
+          "Garchomp",
+          "Incineroar"
+        ],
+        "opponentBring": [
+          "Farigiraf",
+          "Sneasler",
+          "Milotic",
+          "Ninetales-Alola"
+        ]
+      }
+    }
+  ]
+}

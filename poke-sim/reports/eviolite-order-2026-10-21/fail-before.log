@@ -1,0 +1,2900 @@
+Γ£û EVIO-ORDER-001 player/U-turn/snow/31/-6 (718.5505ms)
+Γ£û EVIO-ORDER-002 player/U-turn/none/31/-6 (145.0118ms)
+Γ£û EVIO-ORDER-003 player/Ice Beam/sand/31/-6 (135.0033ms)
+Γ£û EVIO-ORDER-004 player/Ice Beam/none/31/-6 (156.9116ms)
+Γ£û EVIO-ORDER-005 player/Psyshock/snow/31/-6 (114.6664ms)
+Γ£û EVIO-ORDER-006 player/U-turn/snow/31/-1 (128.2933ms)
+Γ£û EVIO-ORDER-007 player/U-turn/none/31/-1 (129.8806ms)
+Γ£û EVIO-ORDER-008 player/Ice Beam/sand/31/-1 (132.2059ms)
+Γ£û EVIO-ORDER-009 player/Ice Beam/none/31/-1 (128.4293ms)
+Γ£û EVIO-ORDER-010 player/Psyshock/snow/31/-1 (125.6766ms)
+Γ£ö EVIO-ORDER-011 player/U-turn/snow/31/0 (124.7726ms)
+Γ£ö EVIO-ORDER-012 player/U-turn/none/31/0 (142.7495ms)
+Γ£ö EVIO-ORDER-013 player/Ice Beam/sand/31/0 (151.8629ms)
+Γ£ö EVIO-ORDER-014 player/Ice Beam/none/31/0 (140.5845ms)
+Γ£ö EVIO-ORDER-015 player/Psyshock/snow/31/0 (129.7012ms)
+Γ£ö EVIO-ORDER-016 player/U-turn/snow/31/1 (133.4737ms)
+Γ£ö EVIO-ORDER-017 player/U-turn/none/31/1 (139.5171ms)
+Γ£û EVIO-ORDER-018 player/Ice Beam/sand/31/1 (137.3723ms)
+Γ£ö EVIO-ORDER-019 player/Ice Beam/none/31/1 (180.4881ms)
+Γ£ö EVIO-ORDER-020 player/Psyshock/snow/31/1 (117.1095ms)
+Γ£ö EVIO-ORDER-021 player/U-turn/snow/31/6 (136.8321ms)
+Γ£ö EVIO-ORDER-022 player/U-turn/none/31/6 (131.6491ms)
+Γ£ö EVIO-ORDER-023 player/Ice Beam/sand/31/6 (132.974ms)
+Γ£ö EVIO-ORDER-024 player/Ice Beam/none/31/6 (125.8403ms)
+Γ£ö EVIO-ORDER-025 player/Psyshock/snow/31/6 (135.4156ms)
+Γ£û EVIO-ORDER-026 player/U-turn/snow/95/-6 (143.5499ms)
+Γ£û EVIO-ORDER-027 player/U-turn/none/95/-6 (133.2268ms)
+Γ£û EVIO-ORDER-028 player/Ice Beam/sand/95/-6 (131.2748ms)
+Γ£û EVIO-ORDER-029 player/Ice Beam/none/95/-6 (133.5836ms)
+Γ£û EVIO-ORDER-030 player/Psyshock/snow/95/-6 (131.6797ms)
+Γ£û EVIO-ORDER-031 player/U-turn/snow/95/-1 (127.8233ms)
+Γ£û EVIO-ORDER-032 player/U-turn/none/95/-1 (133.9472ms)
+Γ£ö EVIO-ORDER-033 player/Ice Beam/sand/95/-1 (131.5515ms)
+Γ£û EVIO-ORDER-034 player/Ice Beam/none/95/-1 (177.6624ms)
+Γ£ö EVIO-ORDER-035 player/Psyshock/snow/95/-1 (117.2955ms)
+Γ£ö EVIO-ORDER-036 player/U-turn/snow/95/0 (135.049ms)
+Γ£ö EVIO-ORDER-037 player/U-turn/none/95/0 (127.4182ms)
+Γ£ö EVIO-ORDER-038 player/Ice Beam/sand/95/0 (135.6046ms)
+Γ£ö EVIO-ORDER-039 player/Ice Beam/none/95/0 (127.1127ms)
+Γ£ö EVIO-ORDER-040 player/Psyshock/snow/95/0 (130.3056ms)
+Γ£ö EVIO-ORDER-041 player/U-turn/snow/95/1 (129.9147ms)
+Γ£ö EVIO-ORDER-042 player/U-turn/none/95/1 (126.8251ms)
+Γ£û EVIO-ORDER-043 player/Ice Beam/sand/95/1 (129.3708ms)
+Γ£ö EVIO-ORDER-044 player/Ice Beam/none/95/1 (131.63ms)
+Γ£ö EVIO-ORDER-045 player/Psyshock/snow/95/1 (129.1312ms)
+Γ£ö EVIO-ORDER-046 player/U-turn/snow/95/6 (134.2191ms)
+Γ£ö EVIO-ORDER-047 player/U-turn/none/95/6 (137.363ms)
+Γ£ö EVIO-ORDER-048 player/Ice Beam/sand/95/6 (131.3242ms)
+Γ£ö EVIO-ORDER-049 player/Ice Beam/none/95/6 (171.5355ms)
+Γ£ö EVIO-ORDER-050 player/Psyshock/snow/95/6 (110.9142ms)
+Γ£ö EVIO-ORDER-051 player/U-turn/snow/97/-6 (126.1742ms)
+Γ£ö EVIO-ORDER-052 player/U-turn/none/97/-6 (129.629ms)
+Γ£ö EVIO-ORDER-053 player/Ice Beam/sand/97/-6 (131.0186ms)
+Γ£ö EVIO-ORDER-054 player/Ice Beam/none/97/-6 (123.3052ms)
+Γ£ö EVIO-ORDER-055 player/Psyshock/snow/97/-6 (142.7066ms)
+Γ£ö EVIO-ORDER-056 player/U-turn/snow/97/-1 (133.0264ms)
+Γ£û EVIO-ORDER-057 player/U-turn/none/97/-1 (126.3768ms)
+Γ£ö EVIO-ORDER-058 player/Ice Beam/sand/97/-1 (131.185ms)
+Γ£û EVIO-ORDER-059 player/Ice Beam/none/97/-1 (125.7784ms)
+Γ£ö EVIO-ORDER-060 player/Psyshock/snow/97/-1 (128.044ms)
+Γ£ö EVIO-ORDER-061 player/U-turn/snow/97/0 (137.0263ms)
+Γ£ö EVIO-ORDER-062 player/U-turn/none/97/0 (131.6421ms)
+Γ£ö EVIO-ORDER-063 player/Ice Beam/sand/97/0 (127.1776ms)
+Γ£ö EVIO-ORDER-064 player/Ice Beam/none/97/0 (169.4471ms)
+Γ£ö EVIO-ORDER-065 player/Psyshock/snow/97/0 (118.7451ms)
+Γ£ö EVIO-ORDER-066 player/U-turn/snow/97/1 (129.2895ms)
+Γ£ö EVIO-ORDER-067 player/U-turn/none/97/1 (123.9561ms)
+Γ£ö EVIO-ORDER-068 player/Ice Beam/sand/97/1 (129.8053ms)
+Γ£ö EVIO-ORDER-069 player/Ice Beam/none/97/1 (129.3042ms)
+Γ£ö EVIO-ORDER-070 player/Psyshock/snow/97/1 (125.7884ms)
+Γ£ö EVIO-ORDER-071 player/U-turn/snow/97/6 (123.4613ms)
+Γ£ö EVIO-ORDER-072 player/U-turn/none/97/6 (127.0071ms)
+Γ£ö EVIO-ORDER-073 player/Ice Beam/sand/97/6 (134.1448ms)
+Γ£ö EVIO-ORDER-074 player/Ice Beam/none/97/6 (126.4804ms)
+Γ£ö EVIO-ORDER-075 player/Psyshock/snow/97/6 (127.5308ms)
+Γ£û EVIO-ORDER-076 player/U-turn/snow/255/-6 (133.9912ms)
+Γ£û EVIO-ORDER-077 player/U-turn/none/255/-6 (128.6672ms)
+Γ£ö EVIO-ORDER-078 player/Ice Beam/sand/255/-6 (125.8363ms)
+Γ£û EVIO-ORDER-079 player/Ice Beam/none/255/-6 (174.9838ms)
+Γ£ö EVIO-ORDER-080 player/Psyshock/snow/255/-6 (111.6152ms)
+Γ£ö EVIO-ORDER-081 player/U-turn/snow/255/-1 (127.0805ms)
+Γ£ö EVIO-ORDER-082 player/U-turn/none/255/-1 (133.2362ms)
+Γ£ö EVIO-ORDER-083 player/Ice Beam/sand/255/-1 (127.7992ms)
+Γ£ö EVIO-ORDER-084 player/Ice Beam/none/255/-1 (138.2334ms)
+Γ£ö EVIO-ORDER-085 player/Psyshock/snow/255/-1 (131.3485ms)
+Γ£ö EVIO-ORDER-086 player/U-turn/snow/255/0 (125.8534ms)
+Γ£ö EVIO-ORDER-087 player/U-turn/none/255/0 (133.317ms)
+Γ£ö EVIO-ORDER-088 player/Ice Beam/sand/255/0 (125.2605ms)
+Γ£ö EVIO-ORDER-089 player/Ice Beam/none/255/0 (125.8862ms)
+Γ£ö EVIO-ORDER-090 player/Psyshock/snow/255/0 (127.3771ms)
+Γ£ö EVIO-ORDER-091 player/U-turn/snow/255/1 (123.0781ms)
+Γ£ö EVIO-ORDER-092 player/U-turn/none/255/1 (126.1555ms)
+Γ£ö EVIO-ORDER-093 player/Ice Beam/sand/255/1 (175.2755ms)
+Γ£ö EVIO-ORDER-094 player/Ice Beam/none/255/1 (110.2726ms)
+Γ£ö EVIO-ORDER-095 player/Psyshock/snow/255/1 (125.3069ms)
+Γ£ö EVIO-ORDER-096 player/U-turn/snow/255/6 (120.5605ms)
+Γ£ö EVIO-ORDER-097 player/U-turn/none/255/6 (122.4482ms)
+Γ£ö EVIO-ORDER-098 player/Ice Beam/sand/255/6 (122.7614ms)
+Γ£ö EVIO-ORDER-099 player/Ice Beam/none/255/6 (129.4097ms)
+Γ£ö EVIO-ORDER-100 player/Psyshock/snow/255/6 (122.9976ms)
+Γ£û EVIO-ORDER-101 opponent/U-turn/snow/31/-6 (122.7832ms)
+Γ£û EVIO-ORDER-102 opponent/U-turn/none/31/-6 (120.8002ms)
+Γ£û EVIO-ORDER-103 opponent/Ice Beam/sand/31/-6 (130.102ms)
+Γ£û EVIO-ORDER-104 opponent/Ice Beam/none/31/-6 (122.2782ms)
+Γ£û EVIO-ORDER-105 opponent/Psyshock/snow/31/-6 (122.5612ms)
+Γ£û EVIO-ORDER-106 opponent/U-turn/snow/31/-1 (130.0358ms)
+Γ£û EVIO-ORDER-107 opponent/U-turn/none/31/-1 (168.0987ms)
+Γ£û EVIO-ORDER-108 opponent/Ice Beam/sand/31/-1 (115.3522ms)
+Γ£û EVIO-ORDER-109 opponent/Ice Beam/none/31/-1 (130.4336ms)
+Γ£û EVIO-ORDER-110 opponent/Psyshock/snow/31/-1 (127.0737ms)
+Γ£ö EVIO-ORDER-111 opponent/U-turn/snow/31/0 (128.6611ms)
+Γ£ö EVIO-ORDER-112 opponent/U-turn/none/31/0 (131.3178ms)
+Γ£ö EVIO-ORDER-113 opponent/Ice Beam/sand/31/0 (131.6974ms)
+Γ£ö EVIO-ORDER-114 opponent/Ice Beam/none/31/0 (125.7869ms)
+Γ£ö EVIO-ORDER-115 opponent/Psyshock/snow/31/0 (133.3832ms)
+Γ£ö EVIO-ORDER-116 opponent/U-turn/snow/31/1 (124.7229ms)
+Γ£ö EVIO-ORDER-117 opponent/U-turn/none/31/1 (128.8105ms)
+Γ£û EVIO-ORDER-118 opponent/Ice Beam/sand/31/1 (124.9093ms)
+Γ£ö EVIO-ORDER-119 opponent/Ice Beam/none/31/1 (119.3979ms)
+Γ£ö EVIO-ORDER-120 opponent/Psyshock/snow/31/1 (126.1298ms)
+Γ£ö EVIO-ORDER-121 opponent/U-turn/snow/31/6 (166.6227ms)
+Γ£ö EVIO-ORDER-122 opponent/U-turn/none/31/6 (112.5685ms)
+Γ£ö EVIO-ORDER-123 opponent/Ice Beam/sand/31/6 (128.5369ms)
+Γ£ö EVIO-ORDER-124 opponent/Ice Beam/none/31/6 (126.4894ms)
+Γ£ö EVIO-ORDER-125 opponent/Psyshock/snow/31/6 (130.9587ms)
+Γ£û EVIO-ORDER-126 opponent/U-turn/snow/95/-6 (129.952ms)
+Γ£û EVIO-ORDER-127 opponent/U-turn/none/95/-6 (126.6602ms)
+Γ£û EVIO-ORDER-128 opponent/Ice Beam/sand/95/-6 (124.603ms)
+Γ£û EVIO-ORDER-129 opponent/Ice Beam/none/95/-6 (125.6916ms)
+Γ£û EVIO-ORDER-130 opponent/Psyshock/snow/95/-6 (125.6783ms)
+Γ£û EVIO-ORDER-131 opponent/U-turn/snow/95/-1 (130.8411ms)
+Γ£û EVIO-ORDER-132 opponent/U-turn/none/95/-1 (140.7789ms)
+Γ£ö EVIO-ORDER-133 opponent/Ice Beam/sand/95/-1 (129.6605ms)
+Γ£û EVIO-ORDER-134 opponent/Ice Beam/none/95/-1 (129.2587ms)
+Γ£ö EVIO-ORDER-135 opponent/Psyshock/snow/95/-1 (170.6617ms)
+Γ£ö EVIO-ORDER-136 opponent/U-turn/snow/95/0 (110.1035ms)
+Γ£ö EVIO-ORDER-137 opponent/U-turn/none/95/0 (126.1457ms)
+Γ£ö EVIO-ORDER-138 opponent/Ice Beam/sand/95/0 (121.4476ms)
+Γ£ö EVIO-ORDER-139 opponent/Ice Beam/none/95/0 (130.3039ms)
+Γ£ö EVIO-ORDER-140 opponent/Psyshock/snow/95/0 (129.4402ms)
+Γ£ö EVIO-ORDER-141 opponent/U-turn/snow/95/1 (133.5012ms)
+Γ£ö EVIO-ORDER-142 opponent/U-turn/none/95/1 (125.5542ms)
+Γ£û EVIO-ORDER-143 opponent/Ice Beam/sand/95/1 (121.7918ms)
+Γ£ö EVIO-ORDER-144 opponent/Ice Beam/none/95/1 (124.3752ms)
+Γ£ö EVIO-ORDER-145 opponent/Psyshock/snow/95/1 (139.231ms)
+Γ£ö EVIO-ORDER-146 opponent/U-turn/snow/95/6 (126.3549ms)
+Γ£ö EVIO-ORDER-147 opponent/U-turn/none/95/6 (117.9561ms)
+Γ£ö EVIO-ORDER-148 opponent/Ice Beam/sand/95/6 (126.2225ms)
+Γ£ö EVIO-ORDER-149 opponent/Ice Beam/none/95/6 (161.7829ms)
+Γ£ö EVIO-ORDER-150 opponent/Psyshock/snow/95/6 (109.1126ms)
+Γ£ö EVIO-ORDER-151 opponent/U-turn/snow/97/-6 (126.2038ms)
+Γ£ö EVIO-ORDER-152 opponent/U-turn/none/97/-6 (123.5226ms)
+Γ£ö EVIO-ORDER-153 opponent/Ice Beam/sand/97/-6 (128.4628ms)
+Γ£ö EVIO-ORDER-154 opponent/Ice Beam/none/97/-6 (123.2356ms)
+Γ£ö EVIO-ORDER-155 opponent/Psyshock/snow/97/-6 (128.5698ms)
+Γ£ö EVIO-ORDER-156 opponent/U-turn/snow/97/-1 (125.1383ms)
+Γ£û EVIO-ORDER-157 opponent/U-turn/none/97/-1 (125.4014ms)
+Γ£ö EVIO-ORDER-158 opponent/Ice Beam/sand/97/-1 (124.4412ms)
+Γ£û EVIO-ORDER-159 opponent/Ice Beam/none/97/-1 (127.9291ms)
+Γ£ö EVIO-ORDER-160 opponent/Psyshock/snow/97/-1 (126.6498ms)
+Γ£ö EVIO-ORDER-161 opponent/U-turn/snow/97/0 (124.9114ms)
+Γ£ö EVIO-ORDER-162 opponent/U-turn/none/97/0 (126.8391ms)
+Γ£ö EVIO-ORDER-163 opponent/Ice Beam/sand/97/0 (177.2373ms)
+Γ£ö EVIO-ORDER-164 opponent/Ice Beam/none/97/0 (112.1642ms)
+Γ£ö EVIO-ORDER-165 opponent/Psyshock/snow/97/0 (126.2544ms)
+Γ£ö EVIO-ORDER-166 opponent/U-turn/snow/97/1 (125.0022ms)
+Γ£ö EVIO-ORDER-167 opponent/U-turn/none/97/1 (123.6375ms)
+Γ£ö EVIO-ORDER-168 opponent/Ice Beam/sand/97/1 (122.1809ms)
+Γ£ö EVIO-ORDER-169 opponent/Ice Beam/none/97/1 (126.8399ms)
+Γ£ö EVIO-ORDER-170 opponent/Psyshock/snow/97/1 (126.6556ms)
+Γ£ö EVIO-ORDER-171 opponent/U-turn/snow/97/6 (129.3605ms)
+Γ£ö EVIO-ORDER-172 opponent/U-turn/none/97/6 (125.0299ms)
+Γ£ö EVIO-ORDER-173 opponent/Ice Beam/sand/97/6 (129.4481ms)
+Γ£ö EVIO-ORDER-174 opponent/Ice Beam/none/97/6 (126.8905ms)
+Γ£ö EVIO-ORDER-175 opponent/Psyshock/snow/97/6 (133.53ms)
+Γ£û EVIO-ORDER-176 opponent/U-turn/snow/255/-6 (132.2221ms)
+Γ£û EVIO-ORDER-177 opponent/U-turn/none/255/-6 (172.1336ms)
+Γ£ö EVIO-ORDER-178 opponent/Ice Beam/sand/255/-6 (112.5562ms)
+Γ£û EVIO-ORDER-179 opponent/Ice Beam/none/255/-6 (127.829ms)
+Γ£ö EVIO-ORDER-180 opponent/Psyshock/snow/255/-6 (120.1134ms)
+Γ£ö EVIO-ORDER-181 opponent/U-turn/snow/255/-1 (128.1441ms)
+Γ£ö EVIO-ORDER-182 opponent/U-turn/none/255/-1 (125.3542ms)
+Γ£ö EVIO-ORDER-183 opponent/Ice Beam/sand/255/-1 (124.4761ms)
+Γ£ö EVIO-ORDER-184 opponent/Ice Beam/none/255/-1 (127.8411ms)
+Γ£ö EVIO-ORDER-185 opponent/Psyshock/snow/255/-1 (125.7643ms)
+Γ£ö EVIO-ORDER-186 opponent/U-turn/snow/255/0 (129.5947ms)
+Γ£ö EVIO-ORDER-187 opponent/U-turn/none/255/0 (124.1766ms)
+Γ£ö EVIO-ORDER-188 opponent/Ice Beam/sand/255/0 (130.2087ms)
+Γ£ö EVIO-ORDER-189 opponent/Ice Beam/none/255/0 (135.7493ms)
+Γ£ö EVIO-ORDER-190 opponent/Psyshock/snow/255/0 (129.7765ms)
+Γ£ö EVIO-ORDER-191 opponent/U-turn/snow/255/1 (176.2353ms)
+Γ£ö EVIO-ORDER-192 opponent/U-turn/none/255/1 (115.2612ms)
+Γ£ö EVIO-ORDER-193 opponent/Ice Beam/sand/255/1 (127.8048ms)
+Γ£ö EVIO-ORDER-194 opponent/Ice Beam/none/255/1 (125.3845ms)
+Γ£ö EVIO-ORDER-195 opponent/Psyshock/snow/255/1 (125.5949ms)
+Γ£ö EVIO-ORDER-196 opponent/U-turn/snow/255/6 (125.8921ms)
+Γ£ö EVIO-ORDER-197 opponent/U-turn/none/255/6 (125.6392ms)
+Γ£ö EVIO-ORDER-198 opponent/Ice Beam/sand/255/6 (126.2955ms)
+Γ£ö EVIO-ORDER-199 opponent/Ice Beam/none/255/6 (124.888ms)
+Γ£ö EVIO-ORDER-200 opponent/Psyshock/snow/255/6 (122.1439ms)
+Γ£ö EVIO-ORDER-201 player/U-turn/none/95/-1 (128.2231ms)
+Γ£ö EVIO-ORDER-202 player/U-turn/none/95/-1 (124.7577ms)
+Γ£û EVIO-ORDER-203 player/U-turn/none/95/-1 (134.2262ms)
+Γ£û EVIO-ORDER-204 player/U-turn/none/95/-1 (131.8261ms)
+Γ£ö EVIO-ORDER-205 player/U-turn/snow/95/-1 (181.843ms)
+Γ£ö EVIO-ORDER-206 player/U-turn/snow/95/-1 (110.4269ms)
+Γ£û EVIO-ORDER-207 player/U-turn/snow/95/-1 (128.115ms)
+Γ£û EVIO-ORDER-208 player/U-turn/snow/95/-1 (128.3622ms)
+Γ£ö EVIO-ORDER-209 player/U-turn/sand/95/-1 (125.3773ms)
+Γ£ö EVIO-ORDER-210 player/U-turn/sand/95/-1 (123.1732ms)
+Γ£û EVIO-ORDER-211 player/U-turn/sand/95/-1 (123.6503ms)
+Γ£û EVIO-ORDER-212 player/U-turn/sand/95/-1 (123.6614ms)
+Γ£ö EVIO-ORDER-213 player/U-turn/rain/95/-1 (125.1918ms)
+Γ£ö EVIO-ORDER-214 player/U-turn/rain/95/-1 (125.9832ms)
+Γ£û EVIO-ORDER-215 player/U-turn/rain/95/-1 (123.005ms)
+Γ£û EVIO-ORDER-216 player/U-turn/rain/95/-1 (123.9405ms)
+Γ£ö EVIO-ORDER-217 player/U-turn/sun/95/-1 (127.4313ms)
+Γ£ö EVIO-ORDER-218 player/U-turn/sun/95/-1 (129.9043ms)
+Γ£û EVIO-ORDER-219 player/U-turn/sun/95/-1 (173.5725ms)
+Γ£û EVIO-ORDER-220 player/U-turn/sun/95/-1 (112.1499ms)
+Γ£ö EVIO-ORDER-221 player/Ice Beam/sand/65/0 (122.8015ms)
+Γ£ö EVIO-NEG original fractional-stage defect is detected (124.1643ms)
+Γ£ö EVIO-NEG rounding stage to nearest instead of truncation is detected (128.7616ms)
+Γ£û EVIO-NEG combining sand and item modifiers is detected (130.693ms)
+Γ£û EVIO-NEG dropping item modifier is detected (130.8675ms)
+Γ£ö EVIO invalid oracle inputs reject (1.1966ms)
+Γä╣ tests 226
+Γä╣ suites 0
+Γä╣ pass 164
+Γä╣ fail 62
+Γä╣ cancelled 0
+Γä╣ skipped 0
+Γä╣ todo 0
+Γä╣ duration_ms 29997.411
+
+Γ£û failing tests:
+
+test at isolated-eviolite\poke-sim\tests\eviolite_order_tests.mjs:6:31
+Γ£û EVIO-ORDER-001 player/U-turn/snow/31/-6 (718.5505ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly deep-equal:
+  + actual - expected
+  
+    [
+  +   362,
+  +   366,
+  +   370,
+  +   374,
+  +   378,
+  +   382,
+  +   386,
+  -   384,
+      390,
+  +   396,
+  +   400,
+  -   394,
+  -   398,
+      404,
+      408,
+      412,
+      416,
+  +   420,
+  -   422,
+      426,
+  -   430,
+  -   434,
+  -   440,
+  -   444,
+  -   448,
+  -   454
+    ]
+  
+      at TestContext.<anonymous> (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-20/task-2/isolated-eviolite/poke-sim/tests/eviolite_order_tests.mjs:9:9)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1201:25)
+      at Test.start (node:internal/test_runner/test:1096:17)
+      at startSubtestAfterBootstrap (node:internal/test_runner/harness:385:17) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: [Array],
+    expected: [Array],
+    operator: 'deepStrictEqual',
+    diff: 'simple'
+  }
+
+test at isolated-eviolite\poke-sim\tests\eviolite_order_tests.mjs:6:31
+Γ£û EVIO-ORDER-002 player/U-turn/none/31/-6 (145.0118ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly deep-equal:
+  + actual - expected
+  
+    [
+  +   526,
+  +   532,
+  +   538,
+  +   544,
+  +   550,
+  +   558,
+  +   564,
+  +   570,
+  +   576,
+  +   582,
+  +   588,
+  +   594,
+  +   600,
+  +   606,
+  -   578,
+  -   584,
+  -   590,
+  -   598,
+  -   604,
+      612,
+  +   620
+  -   618,
+  -   624,
+  -   632,
+  -   638,
+  -   646,
+  -   652,
+  -   658,
+  -   666,
+  -   672,
+  -   680
+    ]
+  
+      at TestContext.<anonymous> (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-20/task-2/isolated-eviolite/poke-sim/tests/eviolite_order_tests.mjs:9:9)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1201:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:831:18)
+      at Test.postRun (node:internal/test_runner/test:1330:19)
+      at Test.run (node:internal/test_runner/test:1258:12)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:385:3) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: [Array],
+    expected: [Array],
+    operator: 'deepStrictEqual',
+    diff: 'simple'
+  }
+
+test at isolated-eviolite\poke-sim\tests\eviolite_order_tests.mjs:6:31
+Γ£û EVIO-ORDER-003 player/Ice Beam/sand/31/-6 (135.0033ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly deep-equal:
+  + actual - expected
+  
+    [
+  +   418,
+  +   422,
+  +   428,
+  +   432,
+  +   436,
+  +   442,
+  +   446,
+  +   452,
+  +   456,
+  +   462,
+  +   466,
+  +   472,
+  +   476,
+  +   482,
+  +   486,
+  +   492
+  -   474,
+  -   478,
+  -   484,
+  -   490,
+  -   496,
+  -   502,
+  -   506,
+  -   512,
+  -   518,
+  -   524,
+  -   530,
+  -   534,
+  -   540,
+  -   546,
+  -   552,
+  -   558
+    ]
+  
+      at TestContext.<anonymous> (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-20/task-2/isolated-eviolite/poke-sim/tests/eviolite_order_tests.mjs:9:9)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1201:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:831:18)
+      at Test.postRun (node:internal/test_runner/test:1330:19)
+      at Test.run (node:internal/test_runner/test:1258:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:831:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: [Array],
+    expected: [Array],
+    operator: 'deepStrictEqual',
+    diff: 'simple'
+  }
+
+test at isolated-eviolite\poke-sim\tests\eviolite_order_tests.mjs:6:31
+Γ£û EVIO-ORDER-004 player/Ice Beam/none/31/-6 (156.9116ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly deep-equal:
+  + actual - expected
+  
+    [
+  +   323,
+  +   326,
+  +   330,
+  +   334,
+  +   338,
+  +   342,
+  +   345,
+  +   349,
+  +   353,
+  +   357,
+  +   361,
+  +   364,
+  +   368,
+  +   372,
+  +   376,
+  +   380
+  -   354,
+  -   358,
+  -   362,
+  -   366,
+  -   371,
+  -   375,
+  -   379,
+  -   383,
+  -   387,
+  -   391,
+  -   396,
+  -   400,
+  -   404,
+  -   408,
+  -   412,
+  -   417
+    ]
+  
+      at TestContext.<anonymous> (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-20/task-2/isolated-eviolite/poke-sim/tests/eviolite_order_tests.mjs:9:9)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1201:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:831:18)
+      at Test.postRun (node:internal/test_runner/test:1330:19)
+      at Test.run (node:internal/test_runner/test:1258:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:831:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: [Array],
+    expected: [Array],
+    operator: 'deepStrictEqual',
+    diff: 'simple'
+  }
+
+test at isolated-eviolite\poke-sim\tests\eviolite_order_tests.mjs:6:31
+Γ£û EVIO-ORDER-005 player/Psyshock/snow/31/-6 (114.6664ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly deep-equal:
+  + actual - expected
+  
+    [
+  +   198,
+  +   200,
+  +   202,
+  +   205,
+  +   207,
+  +   209,
+  +   212,
+  +   214,
+  +   216,
+  +   219,
+  +   221,
+  -   210,
+  -   213,
+  -   215,
+  -   218,
+  -   220,
+      223,
+  +   226,
+  -   225,
+      228,
+      230,
+      233,
+  -   235,
+  -   238,
+  -   240,
+  -   243,
+  -   245,
+  -   248
+    ]
+  
+      at TestContext.<anonymous> (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-20/task-2/isolated-eviolite/poke-sim/tests/eviolite_order_tests.mjs:9:9)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1201:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:831:18)
+      at Test.postRun (node:internal/test_runner/test:1330:19)
+      at Test.run (node:internal/test_runner/test:1258:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:831:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: [Array],
+    expected: [Array],
+    operator: 'deepStrictEqual',
+    diff: 'simple'
+  }
+
+test at isolated-eviolite\poke-sim\tests\eviolite_order_tests.mjs:6:31
+Γ£û EVIO-ORDER-006 player/U-turn/snow/31/-1 (128.2933ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly deep-equal:
+  + actual - expected
+  
+    [
+  +   126,
+  +   128,
+      130,
+      132,
+      132,
+      134,
+      136,
+      138,
+  +   138,
+      140,
+  -   140,
+      142,
+      144,
+  +   144,
+      146,
+  -   146,
+      148,
+      150,
+  -   152,
+  -   154
+    ]
+  
+      at TestContext.<anonymous> (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-20/task-2/isolated-eviolite/poke-sim/tests/eviolite_order_tests.mjs:9:9)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1201:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:831:18)
+      at Test.postRun (node:internal/test_runner/test:1330:19)
+      at Test.run (node:internal/test_runner/test:1258:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:831:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: [Array],
+    expected: [Array],
+    operator: 'deepStrictEqual',
+    diff: 'simple'
+  }
+
+test at isolated-eviolite\poke-sim\tests\eviolite_order_tests.mjs:6:31
+Γ£û EVIO-ORDER-007 player/U-turn/none/31/-1 (129.8806ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly deep-equal:
+  + actual - expected
+  
+    [
+  +   188,
+  +   190,
+      192,
+  +   194,
+      196,
+      198,
+  -   200,
+      202,
+      204,
+      206,
+      208,
+  +   210,
+      212,
+      214,
+      216,
+      218,
+  -   220,
+      222,
+  -   224,
+  -   228
+    ]
+  
+      at TestContext.<anonymous> (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-20/task-2/isolated-eviolite/poke-sim/tests/eviolite_order_tests.mjs:9:9)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1201:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:831:18)
+      at Test.postRun (node:internal/test_runner/test:1330:19)
+      at Test.run (node:internal/test_runner/test:1258:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:831:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: [Array],
+    expected: [Array],
+    operator: 'deepStrictEqual',
+    diff: 'simple'
+  }
+
+test at isolated-eviolite\poke-sim\tests\eviolite_order_tests.mjs:6:31
+Γ£û EVIO-ORDER-008 player/Ice Beam/sand/31/-1 (132.2059ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly deep-equal:
+  + actual - expected
+  ... Skipped lines
+  
+    [
+  +   156,
+      158,
+      160,
+  +   160,
+      162,
+      164,
+      166,
+      168,
+      170,
+  ...
+      184,
+  -   186,
+  -   188
+    ]
+  
+      at TestContext.<anonymous> (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-20/task-2/isolated-eviolite/poke-sim/tests/eviolite_order_tests.mjs:9:9)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1201:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:831:18)
+      at Test.postRun (node:internal/test_runner/test:1330:19)
+      at Test.run (node:internal/test_runner/test:1258:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:831:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: [Array],
+    expected: [Array],
+    operator: 'deepStrictEqual',
+    diff: 'simple'
+  }
+
+test at isolated-eviolite\poke-sim\tests\eviolite_order_tests.mjs:6:31
+Γ£û EVIO-ORDER-009 player/Ice Beam/none/31/-1 (128.4293ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly deep-equal:
+  + actual - expected
+  
+    [
+  +   115,
+  +   116,
+  +   118,
+      119,
+  -   120,
+      121,
+  +   122,
+      123,
+  +   125,
+  -   124,
+      126,
+      127,
+  +   129,
+  -   128,
+      130,
+      131,
+      133,
+      134,
+  +   136
+  -   135,
+  -   137,
+  -   138,
+  -   140
+    ]
+  
+      at TestContext.<anonymous> (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-20/task-2/isolated-eviolite/poke-sim/tests/eviolite_order_tests.mjs:9:9)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1201:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:831:18)
+      at Test.postRun (node:internal/test_runner/test:1330:19)
+      at Test.run (node:internal/test_runner/test:1258:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:831:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: [Array],
+    expected: [Array],
+    operator: 'deepStrictEqual',
+    diff: 'simple'
+  }
+
+test at isolated-eviolite\poke-sim\tests\eviolite_order_tests.mjs:6:31
+Γ£û EVIO-ORDER-010 player/Psyshock/snow/31/-1 (125.6766ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly deep-equal:
+  + actual - expected
+  
+    [
+  +   69,
+  +   70,
+      71,
+      72,
+  +   72,
+      73,
+  -   73,
+      74,
+      75,
+      76,
+      77,
+  +   77,
+      78,
+  -   78,
+      79,
+      80,
+      81,
+      82,
+  -   83,
+  -   84
+    ]
+  
+      at TestContext.<anonymous> (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-20/task-2/isolated-eviolite/poke-sim/tests/eviolite_order_tests.mjs:9:9)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1201:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:831:18)
+      at Test.postRun (node:internal/test_runner/test:1330:19)
+      at Test.run (node:internal/test_runner/test:1258:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:831:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: [Array],
+    expected: [Array],
+    operator: 'deepStrictEqual',
+    diff: 'simple'
+  }
+
+test at isolated-eviolite\poke-sim\tests\eviolite_order_tests.mjs:6:31
+Γ£û EVIO-ORDER-018 player/Ice Beam/sand/31/1 (137.3723ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly deep-equal:
+  + actual - expected
+  
+    [
+  +   68,
+      70,
+  +   70,
+      72,
+      72,
+      72,
+      74,
+      74,
+      76,
+      76,
+  +   76,
+      78,
+      78,
+  -   78,
+      80,
+      80,
+      82,
+  -   82,
+  -   84
+    ]
+  
+      at TestContext.<anonymous> (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-20/task-2/isolated-eviolite/poke-sim/tests/eviolite_order_tests.mjs:9:9)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1201:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:831:18)
+      at Test.postRun (node:internal/test_runner/test:1330:19)
+      at Test.run (node:internal/test_runner/test:1258:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:831:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: [Array],
+    expected: [Array],
+    operator: 'deepStrictEqual',
+    diff: 'simple'
+  }
+
+test at isolated-eviolite\poke-sim\tests\eviolite_order_tests.mjs:6:31
+Γ£û EVIO-ORDER-026 player/U-turn/snow/95/-6 (143.5499ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly deep-equal:
+  + actual - expected
+  
+    [
+  +   112,
+      114,
+      116,
+  +   116,
+      118,
+  -   118,
+      120,
+  +   120,
+      122,
+  -   122,
+      124,
+  +   124,
+      126,
+  -   126,
+      128,
+  +   128,
+      130,
+  -   130,
+      132,
+      134,
+  -   136
+    ]
+  
+      at TestContext.<anonymous> (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-20/task-2/isolated-eviolite/poke-sim/tests/eviolite_order_tests.mjs:9:9)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1201:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:831:18)
+      at Test.postRun (node:internal/test_runner/test:1330:19)
+      at Test.run (node:internal/test_runner/test:1258:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:831:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: [Array],
+    expected: [Array],
+    operator: 'deepStrictEqual',
+    diff: 'simple'
+  }
+
+test at isolated-eviolite\poke-sim\tests\eviolite_order_tests.mjs:6:31
+Γ£û EVIO-ORDER-027 player/U-turn/none/95/-6 (133.2268ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly deep-equal:
+  + actual - expected
+  ... Skipped lines
+  
+    [
+  +   166,
+  +   168,
+      170,
+      172,
+      174,
+      176,
+      178,
+  ...
+      196,
+  -   198,
+  -   202
+    ]
+  
+      at TestContext.<anonymous> (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-20/task-2/isolated-eviolite/poke-sim/tests/eviolite_order_tests.mjs:9:9)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1201:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:831:18)
+      at Test.postRun (node:internal/test_runner/test:1330:19)
+      at Test.run (node:internal/test_runner/test:1258:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:831:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: [Array],
+    expected: [Array],
+    operator: 'deepStrictEqual',
+    diff: 'simple'
+  }
+
+test at isolated-eviolite\poke-sim\tests\eviolite_order_tests.mjs:6:31
+Γ£û EVIO-ORDER-028 player/Ice Beam/sand/95/-6 (131.2748ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly deep-equal:
+  + actual - expected
+  
+    [
+  +   136,
+  +   136,
+  +   138,
+      140,
+      142,
+      144,
+  +   144,
+      146,
+  -   146,
+      148,
+      150,
+      152,
+  +   152,
+      154,
+      156,
+  -   156,
+      158,
+      160,
+  -   162,
+  -   164,
+  -   166
+    ]
+  
+      at TestContext.<anonymous> (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-20/task-2/isolated-eviolite/poke-sim/tests/eviolite_order_tests.mjs:9:9)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1201:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:831:18)
+      at Test.postRun (node:internal/test_runner/test:1330:19)
+      at Test.run (node:internal/test_runner/test:1258:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:831:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: [Array],
+    expected: [Array],
+    operator: 'deepStrictEqual',
+    diff: 'simple'
+  }
+
+test at isolated-eviolite\poke-sim\tests\eviolite_order_tests.mjs:6:31
+Γ£û EVIO-ORDER-029 player/Ice Beam/none/95/-6 (133.5836ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly deep-equal:
+  + actual - expected
+  ... Skipped lines
+  
+    [
+  +   102,
+  +   103,
+  +   104,
+      105,
+      106,
+  +   108,
+  -   107,
+      109,
+      110,
+      111,
+      112,
+      114,
+  ...
+      117,
+  +   118,
+  -   119,
+      120,
+  -   121,
+  -   122,
+  -   124
+    ]
+  
+      at TestContext.<anonymous> (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-20/task-2/isolated-eviolite/poke-sim/tests/eviolite_order_tests.mjs:9:9)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1201:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:831:18)
+      at Test.postRun (node:internal/test_runner/test:1330:19)
+      at Test.run (node:internal/test_runner/test:1258:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:831:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: [Array],
+    expected: [Array],
+    operator: 'deepStrictEqual',
+    diff: 'simple'
+  }
+
+test at isolated-eviolite\poke-sim\tests\eviolite_order_tests.mjs:6:31
+Γ£û EVIO-ORDER-030 player/Psyshock/snow/95/-6 (131.6797ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly deep-equal:
+  + actual - expected
+  
+    [
+      62,
+  +   62,
+      63,
+      64,
+  +   64,
+      65,
+  -   65,
+      66,
+      67,
+  +   67,
+      68,
+  -   68,
+      69,
+      70,
+  +   70,
+      71,
+  -   71,
+      72,
+      73,
+  -   74
+    ]
+  
+      at TestContext.<anonymous> (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-20/task-2/isolated-eviolite/poke-sim/tests/eviolite_order_tests.mjs:9:9)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1201:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:831:18)
+      at Test.postRun (node:internal/test_runner/test:1330:19)
+      at Test.run (node:internal/test_runner/test:1258:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:831:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: [Array],
+    expected: [Array],
+    operator: 'deepStrictEqual',
+    diff: 'simple'
+  }
+
+test at isolated-eviolite\poke-sim\tests\eviolite_order_tests.mjs:6:31
+Γ£û EVIO-ORDER-031 player/U-turn/snow/95/-1 (127.8233ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly deep-equal:
+  + actual - expected
+  ... Skipped lines
+  
+    [
+  +   42,
+  +   42,
+  +   42,
+      44,
+      44,
+      44,
+      44,
+      46,
+  ...
+      50,
+  -   50,
+  -   50,
+  -   52
+    ]
+  
+      at TestContext.<anonymous> (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-20/task-2/isolated-eviolite/poke-sim/tests/eviolite_order_tests.mjs:9:9)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1201:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:831:18)
+      at Test.postRun (node:internal/test_runner/test:1330:19)
+      at Test.run (node:internal/test_runner/test:1258:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:831:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: [Array],
+    expected: [Array],
+    operator: 'deepStrictEqual',
+    diff: 'simple'
+  }
+
+test at isolated-eviolite\poke-sim\tests\eviolite_order_tests.mjs:6:31
+Γ£û EVIO-ORDER-032 player/U-turn/none/95/-1 (133.9472ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly deep-equal:
+  + actual - expected
+  
+    [
+  +   62,
+  +   62,
+      64,
+      64,
+  +   64,
+      66,
+      66,
+  -   66,
+      68,
+      68,
+      68,
+      70,
+      70,
+  +   70,
+      72,
+      72,
+  -   72,
+      74,
+  -   74,
+  -   76
+    ]
+  
+      at TestContext.<anonymous> (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-20/task-2/isolated-eviolite/poke-sim/tests/eviolite_order_tests.mjs:9:9)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1201:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:831:18)
+      at Test.postRun (node:internal/test_runner/test:1330:19)
+      at Test.run (node:internal/test_runner/test:1258:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:831:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: [Array],
+    expected: [Array],
+    operator: 'deepStrictEqual',
+    diff: 'simple'
+  }
+
+test at isolated-eviolite\poke-sim\tests\eviolite_order_tests.mjs:6:31
+Γ£û EVIO-ORDER-034 player/Ice Beam/none/95/-1 (177.6624ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly deep-equal:
+  + actual - expected
+  ... Skipped lines
+  
+    [
+  +   38,
+  +   38,
+      39,
+      39,
+      40,
+      40,
+      40,
+  ...
+      45,
+  -   45,
+  -   46
+    ]
+  
+      at TestContext.<anonymous> (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-20/task-2/isolated-eviolite/poke-sim/tests/eviolite_order_tests.mjs:9:9)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1201:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:831:18)
+      at Test.postRun (node:internal/test_runner/test:1330:19)
+      at Test.run (node:internal/test_runner/test:1258:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:831:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: [Array],
+    expected: [Array],
+    operator: 'deepStrictEqual',
+    diff: 'simple'
+  }
+
+test at isolated-eviolite\poke-sim\tests\eviolite_order_tests.mjs:6:31
+Γ£û EVIO-ORDER-043 player/Ice Beam/sand/95/1 (129.3708ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly deep-equal:
+  + actual - expected
+  ... Skipped lines
+  
+    [
+  +   22,
+      24,
+      24,
+  +   24,
+  +   24,
+  +   24,
+  +   24,
+  +   24,
+      26,
+      26,
+      26,
+      26,
+      26,
+  ...
+      28,
+  -   28,
+  -   28,
+  -   28,
+  -   28,
+  -   28,
+  -   30
+    ]
+  
+      at TestContext.<anonymous> (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-20/task-2/isolated-eviolite/poke-sim/tests/eviolite_order_tests.mjs:9:9)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1201:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:831:18)
+      at Test.postRun (node:internal/test_runner/test:1330:19)
+      at Test.run (node:internal/test_runner/test:1258:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:831:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: [Array],
+    expected: [Array],
+    operator: 'deepStrictEqual',
+    diff: 'simple'
+  }
+
+test at isolated-eviolite\poke-sim\tests\eviolite_order_tests.mjs:6:31
+Γ£û EVIO-ORDER-057 player/U-turn/none/97/-1 (126.3768ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly deep-equal:
+  + actual - expected
+  
+    [
+  +   60,
+  +   60,
+      62,
+      62,
+      64,
+      64,
+      64,
+      66,
+      66,
+  +   66,
+      68,
+      68,
+      68,
+      70,
+      70,
+  -   70,
+      72,
+  -   72,
+  -   74
+    ]
+  
+      at TestContext.<anonymous> (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-20/task-2/isolated-eviolite/poke-sim/tests/eviolite_order_tests.mjs:9:9)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1201:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:831:18)
+      at Test.postRun (node:internal/test_runner/test:1330:19)
+      at Test.run (node:internal/test_runner/test:1258:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:831:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: [Array],
+    expected: [Array],
+    operator: 'deepStrictEqual',
+    diff: 'simple'
+  }
+
+test at isolated-eviolite\poke-sim\tests\eviolite_order_tests.mjs:6:31
+Γ£û EVIO-ORDER-059 player/Ice Beam/none/97/-1 (125.7784ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly deep-equal:
+  + actual - expected
+  ... Skipped lines
+  
+    [
+  +   37,
+  +   37,
+      38,
+      38,
+      39,
+      39,
+      40,
+  ...
+      44,
+  -   44,
+  -   45
+    ]
+  
+      at TestContext.<anonymous> (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-20/task-2/isolated-eviolite/poke-sim/tests/eviolite_order_tests.mjs:9:9)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1201:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:831:18)
+      at Test.postRun (node:internal/test_runner/test:1330:19)
+      at Test.run (node:internal/test_runner/test:1258:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:831:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: [Array],
+    expected: [Array],
+    operator: 'deepStrictEqual',
+    diff: 'simple'
+  }
+
+test at isolated-eviolite\poke-sim\tests\eviolite_order_tests.mjs:6:31
+Γ£û EVIO-ORDER-076 player/U-turn/snow/255/-6 (133.9912ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly deep-equal:
+  + actual - expected
+  ... Skipped lines
+  
+    [
+  +   42,
+  +   42,
+  +   42,
+      44,
+      44,
+      44,
+      44,
+      46,
+  ...
+      50,
+  -   50,
+  -   50,
+  -   52
+    ]
+  
+      at TestContext.<anonymous> (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-20/task-2/isolated-eviolite/poke-sim/tests/eviolite_order_tests.mjs:9:9)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1201:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:831:18)
+      at Test.postRun (node:internal/test_runner/test:1330:19)
+      at Test.run (node:internal/test_runner/test:1258:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:831:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: [Array],
+    expected: [Array],
+    operator: 'deepStrictEqual',
+    diff: 'simple'
+  }
+
+test at isolated-eviolite\poke-sim\tests\eviolite_order_tests.mjs:6:31
+Γ£û EVIO-ORDER-077 player/U-turn/none/255/-6 (128.6672ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly deep-equal:
+  + actual - expected
+  
+    [
+  +   62,
+  +   62,
+      64,
+      64,
+  +   64,
+      66,
+      66,
+  -   66,
+      68,
+      68,
+      68,
+      70,
+      70,
+  +   70,
+      72,
+      72,
+  -   72,
+      74,
+  -   74,
+  -   76
+    ]
+  
+      at TestContext.<anonymous> (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-20/task-2/isolated-eviolite/poke-sim/tests/eviolite_order_tests.mjs:9:9)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1201:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:831:18)
+      at Test.postRun (node:internal/test_runner/test:1330:19)
+      at Test.run (node:internal/test_runner/test:1258:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:831:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: [Array],
+    expected: [Array],
+    operator: 'deepStrictEqual',
+    diff: 'simple'
+  }
+
+test at isolated-eviolite\poke-sim\tests\eviolite_order_tests.mjs:6:31
+Γ£û EVIO-ORDER-079 player/Ice Beam/none/255/-6 (174.9838ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly deep-equal:
+  + actual - expected
+  ... Skipped lines
+  
+    [
+  +   38,
+  +   38,
+      39,
+      39,
+      40,
+      40,
+      40,
+  ...
+      45,
+  -   45,
+  -   46
+    ]
+  
+      at TestContext.<anonymous> (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-20/task-2/isolated-eviolite/poke-sim/tests/eviolite_order_tests.mjs:9:9)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1201:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:831:18)
+      at Test.postRun (node:internal/test_runner/test:1330:19)
+      at Test.run (node:internal/test_runner/test:1258:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:831:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: [Array],
+    expected: [Array],
+    operator: 'deepStrictEqual',
+    diff: 'simple'
+  }
+
+test at isolated-eviolite\poke-sim\tests\eviolite_order_tests.mjs:6:31
+Γ£û EVIO-ORDER-101 opponent/U-turn/snow/31/-6 (122.7832ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly deep-equal:
+  + actual - expected
+  
+    [
+  +   362,
+  +   366,
+  +   370,
+  +   374,
+  +   378,
+  +   382,
+  +   386,
+  -   384,
+      390,
+  +   396,
+  +   400,
+  -   394,
+  -   398,
+      404,
+      408,
+      412,
+      416,
+  +   420,
+  -   422,
+      426,
+  -   430,
+  -   434,
+  -   440,
+  -   444,
+  -   448,
+  -   454
+    ]
+  
+      at TestContext.<anonymous> (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-20/task-2/isolated-eviolite/poke-sim/tests/eviolite_order_tests.mjs:9:9)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1201:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:831:18)
+      at Test.postRun (node:internal/test_runner/test:1330:19)
+      at Test.run (node:internal/test_runner/test:1258:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:831:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: [Array],
+    expected: [Array],
+    operator: 'deepStrictEqual',
+    diff: 'simple'
+  }
+
+test at isolated-eviolite\poke-sim\tests\eviolite_order_tests.mjs:6:31
+Γ£û EVIO-ORDER-102 opponent/U-turn/none/31/-6 (120.8002ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly deep-equal:
+  + actual - expected
+  
+    [
+  +   526,
+  +   532,
+  +   538,
+  +   544,
+  +   550,
+  +   558,
+  +   564,
+  +   570,
+  +   576,
+  +   582,
+  +   588,
+  +   594,
+  +   600,
+  +   606,
+  -   578,
+  -   584,
+  -   590,
+  -   598,
+  -   604,
+      612,
+  +   620
+  -   618,
+  -   624,
+  -   632,
+  -   638,
+  -   646,
+  -   652,
+  -   658,
+  -   666,
+  -   672,
+  -   680
+    ]
+  
+      at TestContext.<anonymous> (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-20/task-2/isolated-eviolite/poke-sim/tests/eviolite_order_tests.mjs:9:9)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1201:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:831:18)
+      at Test.postRun (node:internal/test_runner/test:1330:19)
+      at Test.run (node:internal/test_runner/test:1258:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:831:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: [Array],
+    expected: [Array],
+    operator: 'deepStrictEqual',
+    diff: 'simple'
+  }
+
+test at isolated-eviolite\poke-sim\tests\eviolite_order_tests.mjs:6:31
+Γ£û EVIO-ORDER-103 opponent/Ice Beam/sand/31/-6 (130.102ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly deep-equal:
+  + actual - expected
+  
+    [
+  +   418,
+  +   422,
+  +   428,
+  +   432,
+  +   436,
+  +   442,
+  +   446,
+  +   452,
+  +   456,
+  +   462,
+  +   466,
+  +   472,
+  +   476,
+  +   482,
+  +   486,
+  +   492
+  -   474,
+  -   478,
+  -   484,
+  -   490,
+  -   496,
+  -   502,
+  -   506,
+  -   512,
+  -   518,
+  -   524,
+  -   530,
+  -   534,
+  -   540,
+  -   546,
+  -   552,
+  -   558
+    ]
+  
+      at TestContext.<anonymous> (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-20/task-2/isolated-eviolite/poke-sim/tests/eviolite_order_tests.mjs:9:9)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1201:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:831:18)
+      at Test.postRun (node:internal/test_runner/test:1330:19)
+      at Test.run (node:internal/test_runner/test:1258:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:831:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: [Array],
+    expected: [Array],
+    operator: 'deepStrictEqual',
+    diff: 'simple'
+  }
+
+test at isolated-eviolite\poke-sim\tests\eviolite_order_tests.mjs:6:31
+Γ£û EVIO-ORDER-104 opponent/Ice Beam/none/31/-6 (122.2782ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly deep-equal:
+  + actual - expected
+  
+    [
+  +   323,
+  +   326,
+  +   330,
+  +   334,
+  +   338,
+  +   342,
+  +   345,
+  +   349,
+  +   353,
+  +   357,
+  +   361,
+  +   364,
+  +   368,
+  +   372,
+  +   376,
+  +   380
+  -   354,
+  -   358,
+  -   362,
+  -   366,
+  -   371,
+  -   375,
+  -   379,
+  -   383,
+  -   387,
+  -   391,
+  -   396,
+  -   400,
+  -   404,
+  -   408,
+  -   412,
+  -   417
+    ]
+  
+      at TestContext.<anonymous> (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-20/task-2/isolated-eviolite/poke-sim/tests/eviolite_order_tests.mjs:9:9)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1201:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:831:18)
+      at Test.postRun (node:internal/test_runner/test:1330:19)
+      at Test.run (node:internal/test_runner/test:1258:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:831:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: [Array],
+    expected: [Array],
+    operator: 'deepStrictEqual',
+    diff: 'simple'
+  }
+
+test at isolated-eviolite\poke-sim\tests\eviolite_order_tests.mjs:6:31
+Γ£û EVIO-ORDER-105 opponent/Psyshock/snow/31/-6 (122.5612ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly deep-equal:
+  + actual - expected
+  
+    [
+  +   198,
+  +   200,
+  +   202,
+  +   205,
+  +   207,
+  +   209,
+  +   212,
+  +   214,
+  +   216,
+  +   219,
+  +   221,
+  -   210,
+  -   213,
+  -   215,
+  -   218,
+  -   220,
+      223,
+  +   226,
+  -   225,
+      228,
+      230,
+      233,
+  -   235,
+  -   238,
+  -   240,
+  -   243,
+  -   245,
+  -   248
+    ]
+  
+      at TestContext.<anonymous> (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-20/task-2/isolated-eviolite/poke-sim/tests/eviolite_order_tests.mjs:9:9)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1201:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:831:18)
+      at Test.postRun (node:internal/test_runner/test:1330:19)
+      at Test.run (node:internal/test_runner/test:1258:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:831:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: [Array],
+    expected: [Array],
+    operator: 'deepStrictEqual',
+    diff: 'simple'
+  }
+
+test at isolated-eviolite\poke-sim\tests\eviolite_order_tests.mjs:6:31
+Γ£û EVIO-ORDER-106 opponent/U-turn/snow/31/-1 (130.0358ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly deep-equal:
+  + actual - expected
+  
+    [
+  +   126,
+  +   128,
+      130,
+      132,
+      132,
+      134,
+      136,
+      138,
+  +   138,
+      140,
+  -   140,
+      142,
+      144,
+  +   144,
+      146,
+  -   146,
+      148,
+      150,
+  -   152,
+  -   154
+    ]
+  
+      at TestContext.<anonymous> (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-20/task-2/isolated-eviolite/poke-sim/tests/eviolite_order_tests.mjs:9:9)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1201:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:831:18)
+      at Test.postRun (node:internal/test_runner/test:1330:19)
+      at Test.run (node:internal/test_runner/test:1258:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:831:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: [Array],
+    expected: [Array],
+    operator: 'deepStrictEqual',
+    diff: 'simple'
+  }
+
+test at isolated-eviolite\poke-sim\tests\eviolite_order_tests.mjs:6:31
+Γ£û EVIO-ORDER-107 opponent/U-turn/none/31/-1 (168.0987ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly deep-equal:
+  + actual - expected
+  
+    [
+  +   188,
+  +   190,
+      192,
+  +   194,
+      196,
+      198,
+  -   200,
+      202,
+      204,
+      206,
+      208,
+  +   210,
+      212,
+      214,
+      216,
+      218,
+  -   220,
+      222,
+  -   224,
+  -   228
+    ]
+  
+      at TestContext.<anonymous> (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-20/task-2/isolated-eviolite/poke-sim/tests/eviolite_order_tests.mjs:9:9)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1201:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:831:18)
+      at Test.postRun (node:internal/test_runner/test:1330:19)
+      at Test.run (node:internal/test_runner/test:1258:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:831:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: [Array],
+    expected: [Array],
+    operator: 'deepStrictEqual',
+    diff: 'simple'
+  }
+
+test at isolated-eviolite\poke-sim\tests\eviolite_order_tests.mjs:6:31
+Γ£û EVIO-ORDER-108 opponent/Ice Beam/sand/31/-1 (115.3522ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly deep-equal:
+  + actual - expected
+  ... Skipped lines
+  
+    [
+  +   156,
+      158,
+      160,
+  +   160,
+      162,
+      164,
+      166,
+      168,
+      170,
+  ...
+      184,
+  -   186,
+  -   188
+    ]
+  
+      at TestContext.<anonymous> (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-20/task-2/isolated-eviolite/poke-sim/tests/eviolite_order_tests.mjs:9:9)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1201:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:831:18)
+      at Test.postRun (node:internal/test_runner/test:1330:19)
+      at Test.run (node:internal/test_runner/test:1258:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:831:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: [Array],
+    expected: [Array],
+    operator: 'deepStrictEqual',
+    diff: 'simple'
+  }
+
+test at isolated-eviolite\poke-sim\tests\eviolite_order_tests.mjs:6:31
+Γ£û EVIO-ORDER-109 opponent/Ice Beam/none/31/-1 (130.4336ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly deep-equal:
+  + actual - expected
+  
+    [
+  +   115,
+  +   116,
+  +   118,
+      119,
+  -   120,
+      121,
+  +   122,
+      123,
+  +   125,
+  -   124,
+      126,
+      127,
+  +   129,
+  -   128,
+      130,
+      131,
+      133,
+      134,
+  +   136
+  -   135,
+  -   137,
+  -   138,
+  -   140
+    ]
+  
+      at TestContext.<anonymous> (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-20/task-2/isolated-eviolite/poke-sim/tests/eviolite_order_tests.mjs:9:9)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1201:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:831:18)
+      at Test.postRun (node:internal/test_runner/test:1330:19)
+      at Test.run (node:internal/test_runner/test:1258:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:831:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: [Array],
+    expected: [Array],
+    operator: 'deepStrictEqual',
+    diff: 'simple'
+  }
+
+test at isolated-eviolite\poke-sim\tests\eviolite_order_tests.mjs:6:31
+Γ£û EVIO-ORDER-110 opponent/Psyshock/snow/31/-1 (127.0737ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly deep-equal:
+  + actual - expected
+  
+    [
+  +   69,
+  +   70,
+      71,
+      72,
+  +   72,
+      73,
+  -   73,
+      74,
+      75,
+      76,
+      77,
+  +   77,
+      78,
+  -   78,
+      79,
+      80,
+      81,
+      82,
+  -   83,
+  -   84
+    ]
+  
+      at TestContext.<anonymous> (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-20/task-2/isolated-eviolite/poke-sim/tests/eviolite_order_tests.mjs:9:9)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1201:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:831:18)
+      at Test.postRun (node:internal/test_runner/test:1330:19)
+      at Test.run (node:internal/test_runner/test:1258:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:831:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: [Array],
+    expected: [Array],
+    operator: 'deepStrictEqual',
+    diff: 'simple'
+  }
+
+test at isolated-eviolite\poke-sim\tests\eviolite_order_tests.mjs:6:31
+Γ£û EVIO-ORDER-118 opponent/Ice Beam/sand/31/1 (124.9093ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly deep-equal:
+  + actual - expected
+  
+    [
+  +   68,
+      70,
+  +   70,
+      72,
+      72,
+      72,
+      74,
+      74,
+      76,
+      76,
+  +   76,
+      78,
+      78,
+  -   78,
+      80,
+      80,
+      82,
+  -   82,
+  -   84
+    ]
+  
+      at TestContext.<anonymous> (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-20/task-2/isolated-eviolite/poke-sim/tests/eviolite_order_tests.mjs:9:9)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1201:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:831:18)
+      at Test.postRun (node:internal/test_runner/test:1330:19)
+      at Test.run (node:internal/test_runner/test:1258:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:831:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: [Array],
+    expected: [Array],
+    operator: 'deepStrictEqual',
+    diff: 'simple'
+  }
+
+test at isolated-eviolite\poke-sim\tests\eviolite_order_tests.mjs:6:31
+Γ£û EVIO-ORDER-126 opponent/U-turn/snow/95/-6 (129.952ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly deep-equal:
+  + actual - expected
+  
+    [
+  +   112,
+      114,
+      116,
+  +   116,
+      118,
+  -   118,
+      120,
+  +   120,
+      122,
+  -   122,
+      124,
+  +   124,
+      126,
+  -   126,
+      128,
+  +   128,
+      130,
+  -   130,
+      132,
+      134,
+  -   136
+    ]
+  
+      at TestContext.<anonymous> (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-20/task-2/isolated-eviolite/poke-sim/tests/eviolite_order_tests.mjs:9:9)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1201:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:831:18)
+      at Test.postRun (node:internal/test_runner/test:1330:19)
+      at Test.run (node:internal/test_runner/test:1258:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:831:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: [Array],
+    expected: [Array],
+    operator: 'deepStrictEqual',
+    diff: 'simple'
+  }
+
+test at isolated-eviolite\poke-sim\tests\eviolite_order_tests.mjs:6:31
+Γ£û EVIO-ORDER-127 opponent/U-turn/none/95/-6 (126.6602ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly deep-equal:
+  + actual - expected
+  ... Skipped lines
+  
+    [
+  +   166,
+  +   168,
+      170,
+      172,
+      174,
+      176,
+      178,
+  ...
+      196,
+  -   198,
+  -   202
+    ]
+  
+      at TestContext.<anonymous> (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-20/task-2/isolated-eviolite/poke-sim/tests/eviolite_order_tests.mjs:9:9)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1201:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:831:18)
+      at Test.postRun (node:internal/test_runner/test:1330:19)
+      at Test.run (node:internal/test_runner/test:1258:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:831:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: [Array],
+    expected: [Array],
+    operator: 'deepStrictEqual',
+    diff: 'simple'
+  }
+
+test at isolated-eviolite\poke-sim\tests\eviolite_order_tests.mjs:6:31
+Γ£û EVIO-ORDER-128 opponent/Ice Beam/sand/95/-6 (124.603ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly deep-equal:
+  + actual - expected
+  
+    [
+  +   136,
+  +   136,
+  +   138,
+      140,
+      142,
+      144,
+  +   144,
+      146,
+  -   146,
+      148,
+      150,
+      152,
+  +   152,
+      154,
+      156,
+  -   156,
+      158,
+      160,
+  -   162,
+  -   164,
+  -   166
+    ]
+  
+      at TestContext.<anonymous> (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-20/task-2/isolated-eviolite/poke-sim/tests/eviolite_order_tests.mjs:9:9)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1201:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:831:18)
+      at Test.postRun (node:internal/test_runner/test:1330:19)
+      at Test.run (node:internal/test_runner/test:1258:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:831:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: [Array],
+    expected: [Array],
+    operator: 'deepStrictEqual',
+    diff: 'simple'
+  }
+
+test at isolated-eviolite\poke-sim\tests\eviolite_order_tests.mjs:6:31
+Γ£û EVIO-ORDER-129 opponent/Ice Beam/none/95/-6 (125.6916ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly deep-equal:
+  + actual - expected
+  ... Skipped lines
+  
+    [
+  +   102,
+  +   103,
+  +   104,
+      105,
+      106,
+  +   108,
+  -   107,
+      109,
+      110,
+      111,
+      112,
+      114,
+  ...
+      117,
+  +   118,
+  -   119,
+      120,
+  -   121,
+  -   122,
+  -   124
+    ]
+  
+      at TestContext.<anonymous> (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-20/task-2/isolated-eviolite/poke-sim/tests/eviolite_order_tests.mjs:9:9)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1201:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:831:18)
+      at Test.postRun (node:internal/test_runner/test:1330:19)
+      at Test.run (node:internal/test_runner/test:1258:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:831:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: [Array],
+    expected: [Array],
+    operator: 'deepStrictEqual',
+    diff: 'simple'
+  }
+
+test at isolated-eviolite\poke-sim\tests\eviolite_order_tests.mjs:6:31
+Γ£û EVIO-ORDER-130 opponent/Psyshock/snow/95/-6 (125.6783ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly deep-equal:
+  + actual - expected
+  
+    [
+      62,
+  +   62,
+      63,
+      64,
+  +   64,
+      65,
+  -   65,
+      66,
+      67,
+  +   67,
+      68,
+  -   68,
+      69,
+      70,
+  +   70,
+      71,
+  -   71,
+      72,
+      73,
+  -   74
+    ]
+  
+      at TestContext.<anonymous> (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-20/task-2/isolated-eviolite/poke-sim/tests/eviolite_order_tests.mjs:9:9)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1201:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:831:18)
+      at Test.postRun (node:internal/test_runner/test:1330:19)
+      at Test.run (node:internal/test_runner/test:1258:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:831:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: [Array],
+    expected: [Array],
+    operator: 'deepStrictEqual',
+    diff: 'simple'
+  }
+
+test at isolated-eviolite\poke-sim\tests\eviolite_order_tests.mjs:6:31
+Γ£û EVIO-ORDER-131 opponent/U-turn/snow/95/-1 (130.8411ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly deep-equal:
+  + actual - expected
+  ... Skipped lines
+  
+    [
+  +   42,
+  +   42,
+  +   42,
+      44,
+      44,
+      44,
+      44,
+      46,
+  ...
+      50,
+  -   50,
+  -   50,
+  -   52
+    ]
+  
+      at TestContext.<anonymous> (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-20/task-2/isolated-eviolite/poke-sim/tests/eviolite_order_tests.mjs:9:9)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1201:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:831:18)
+      at Test.postRun (node:internal/test_runner/test:1330:19)
+      at Test.run (node:internal/test_runner/test:1258:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:831:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: [Array],
+    expected: [Array],
+    operator: 'deepStrictEqual',
+    diff: 'simple'
+  }
+
+test at isolated-eviolite\poke-sim\tests\eviolite_order_tests.mjs:6:31
+Γ£û EVIO-ORDER-132 opponent/U-turn/none/95/-1 (140.7789ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly deep-equal:
+  + actual - expected
+  
+    [
+  +   62,
+  +   62,
+      64,
+      64,
+  +   64,
+      66,
+      66,
+  -   66,
+      68,
+      68,
+      68,
+      70,
+      70,
+  +   70,
+      72,
+      72,
+  -   72,
+      74,
+  -   74,
+  -   76
+    ]
+  
+      at TestContext.<anonymous> (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-20/task-2/isolated-eviolite/poke-sim/tests/eviolite_order_tests.mjs:9:9)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1201:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:831:18)
+      at Test.postRun (node:internal/test_runner/test:1330:19)
+      at Test.run (node:internal/test_runner/test:1258:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:831:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: [Array],
+    expected: [Array],
+    operator: 'deepStrictEqual',
+    diff: 'simple'
+  }
+
+test at isolated-eviolite\poke-sim\tests\eviolite_order_tests.mjs:6:31
+Γ£û EVIO-ORDER-134 opponent/Ice Beam/none/95/-1 (129.2587ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly deep-equal:
+  + actual - expected
+  ... Skipped lines
+  
+    [
+  +   38,
+  +   38,
+      39,
+      39,
+      40,
+      40,
+      40,
+  ...
+      45,
+  -   45,
+  -   46
+    ]
+  
+      at TestContext.<anonymous> (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-20/task-2/isolated-eviolite/poke-sim/tests/eviolite_order_tests.mjs:9:9)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1201:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:831:18)
+      at Test.postRun (node:internal/test_runner/test:1330:19)
+      at Test.run (node:internal/test_runner/test:1258:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:831:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: [Array],
+    expected: [Array],
+    operator: 'deepStrictEqual',
+    diff: 'simple'
+  }
+
+test at isolated-eviolite\poke-sim\tests\eviolite_order_tests.mjs:6:31
+Γ£û EVIO-ORDER-143 opponent/Ice Beam/sand/95/1 (121.7918ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly deep-equal:
+  + actual - expected
+  ... Skipped lines
+  
+    [
+  +   22,
+      24,
+      24,
+  +   24,
+  +   24,
+  +   24,
+  +   24,
+  +   24,
+      26,
+      26,
+      26,
+      26,
+      26,
+  ...
+      28,
+  -   28,
+  -   28,
+  -   28,
+  -   28,
+  -   28,
+  -   30
+    ]
+  
+      at TestContext.<anonymous> (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-20/task-2/isolated-eviolite/poke-sim/tests/eviolite_order_tests.mjs:9:9)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1201:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:831:18)
+      at Test.postRun (node:internal/test_runner/test:1330:19)
+      at Test.run (node:internal/test_runner/test:1258:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:831:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: [Array],
+    expected: [Array],
+    operator: 'deepStrictEqual',
+    diff: 'simple'
+  }
+
+test at isolated-eviolite\poke-sim\tests\eviolite_order_tests.mjs:6:31
+Γ£û EVIO-ORDER-157 opponent/U-turn/none/97/-1 (125.4014ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly deep-equal:
+  + actual - expected
+  
+    [
+  +   60,
+  +   60,
+      62,
+      62,
+      64,
+      64,
+      64,
+      66,
+      66,
+  +   66,
+      68,
+      68,
+      68,
+      70,
+      70,
+  -   70,
+      72,
+  -   72,
+  -   74
+    ]
+  
+      at TestContext.<anonymous> (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-20/task-2/isolated-eviolite/poke-sim/tests/eviolite_order_tests.mjs:9:9)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1201:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:831:18)
+      at Test.postRun (node:internal/test_runner/test:1330:19)
+      at Test.run (node:internal/test_runner/test:1258:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:831:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: [Array],
+    expected: [Array],
+    operator: 'deepStrictEqual',
+    diff: 'simple'
+  }
+
+test at isolated-eviolite\poke-sim\tests\eviolite_order_tests.mjs:6:31
+Γ£û EVIO-ORDER-159 opponent/Ice Beam/none/97/-1 (127.9291ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly deep-equal:
+  + actual - expected
+  ... Skipped lines
+  
+    [
+  +   37,
+  +   37,
+      38,
+      38,
+      39,
+      39,
+      40,
+  ...
+      44,
+  -   44,
+  -   45
+    ]
+  
+      at TestContext.<anonymous> (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-20/task-2/isolated-eviolite/poke-sim/tests/eviolite_order_tests.mjs:9:9)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1201:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:831:18)
+      at Test.postRun (node:internal/test_runner/test:1330:19)
+      at Test.run (node:internal/test_runner/test:1258:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:831:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: [Array],
+    expected: [Array],
+    operator: 'deepStrictEqual',
+    diff: 'simple'
+  }
+
+test at isolated-eviolite\poke-sim\tests\eviolite_order_tests.mjs:6:31
+Γ£û EVIO-ORDER-176 opponent/U-turn/snow/255/-6 (132.2221ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly deep-equal:
+  + actual - expected
+  ... Skipped lines
+  
+    [
+  +   42,
+  +   42,
+  +   42,
+      44,
+      44,
+      44,
+      44,
+      46,
+  ...
+      50,
+  -   50,
+  -   50,
+  -   52
+    ]
+  
+      at TestContext.<anonymous> (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-20/task-2/isolated-eviolite/poke-sim/tests/eviolite_order_tests.mjs:9:9)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1201:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:831:18)
+      at Test.postRun (node:internal/test_runner/test:1330:19)
+      at Test.run (node:internal/test_runner/test:1258:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:831:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: [Array],
+    expected: [Array],
+    operator: 'deepStrictEqual',
+    diff: 'simple'
+  }
+
+test at isolated-eviolite\poke-sim\tests\eviolite_order_tests.mjs:6:31
+Γ£û EVIO-ORDER-177 opponent/U-turn/none/255/-6 (172.1336ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly deep-equal:
+  + actual - expected
+  
+    [
+  +   62,
+  +   62,
+      64,
+      64,
+  +   64,
+      66,
+      66,
+  -   66,
+      68,
+      68,
+      68,
+      70,
+      70,
+  +   70,
+      72,
+      72,
+  -   72,
+      74,
+  -   74,
+  -   76
+    ]
+  
+      at TestContext.<anonymous> (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-20/task-2/isolated-eviolite/poke-sim/tests/eviolite_order_tests.mjs:9:9)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1201:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:831:18)
+      at Test.postRun (node:internal/test_runner/test:1330:19)
+      at Test.run (node:internal/test_runner/test:1258:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:831:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: [Array],
+    expected: [Array],
+    operator: 'deepStrictEqual',
+    diff: 'simple'
+  }
+
+test at isolated-eviolite\poke-sim\tests\eviolite_order_tests.mjs:6:31
+Γ£û EVIO-ORDER-179 opponent/Ice Beam/none/255/-6 (127.829ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly deep-equal:
+  + actual - expected
+  ... Skipped lines
+  
+    [
+  +   38,
+  +   38,
+      39,
+      39,
+      40,
+      40,
+      40,
+  ...
+      45,
+  -   45,
+  -   46
+    ]
+  
+      at TestContext.<anonymous> (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-20/task-2/isolated-eviolite/poke-sim/tests/eviolite_order_tests.mjs:9:9)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1201:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:831:18)
+      at Test.postRun (node:internal/test_runner/test:1330:19)
+      at Test.run (node:internal/test_runner/test:1258:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:831:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: [Array],
+    expected: [Array],
+    operator: 'deepStrictEqual',
+    diff: 'simple'
+  }
+
+test at isolated-eviolite\poke-sim\tests\eviolite_order_tests.mjs:6:31
+Γ£û EVIO-ORDER-203 player/U-turn/none/95/-1 (134.2262ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly deep-equal:
+  + actual - expected
+  
+    [
+  +   92,
+  +   94,
+  +   94,
+      96,
+  +   96,
+      98,
+  -   98,
+      100,
+      100,
+      102,
+      102,
+      104,
+  +   104,
+      106,
+      106,
+      108,
+  -   108,
+      110,
+  -   110,
+  -   112,
+  -   114
+    ]
+  
+      at TestContext.<anonymous> (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-20/task-2/isolated-eviolite/poke-sim/tests/eviolite_order_tests.mjs:9:9)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1201:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:831:18)
+      at Test.postRun (node:internal/test_runner/test:1330:19)
+      at Test.run (node:internal/test_runner/test:1258:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:831:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: [Array],
+    expected: [Array],
+    operator: 'deepStrictEqual',
+    diff: 'simple'
+  }
+
+test at isolated-eviolite\poke-sim\tests\eviolite_order_tests.mjs:6:31
+Γ£û EVIO-ORDER-204 player/U-turn/none/95/-1 (131.8261ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly deep-equal:
+  + actual - expected
+  
+    [
+  +   62,
+  +   62,
+      64,
+      64,
+  +   64,
+      66,
+      66,
+  -   66,
+      68,
+      68,
+      68,
+      70,
+      70,
+  +   70,
+      72,
+      72,
+  -   72,
+      74,
+  -   74,
+  -   76
+    ]
+  
+      at TestContext.<anonymous> (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-20/task-2/isolated-eviolite/poke-sim/tests/eviolite_order_tests.mjs:9:9)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1201:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:831:18)
+      at Test.postRun (node:internal/test_runner/test:1330:19)
+      at Test.run (node:internal/test_runner/test:1258:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:831:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: [Array],
+    expected: [Array],
+    operator: 'deepStrictEqual',
+    diff: 'simple'
+  }
+
+test at isolated-eviolite\poke-sim\tests\eviolite_order_tests.mjs:6:31
+Γ£û EVIO-ORDER-207 player/U-turn/snow/95/-1 (128.115ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly deep-equal:
+  + actual - expected
+  
+    [
+  +   62,
+  +   62,
+  +   64,
+  +   64,
+  +   64,
+      66,
+      66,
+  -   66,
+      68,
+      68,
+  +   68,
+      70,
+      70,
+      70,
+      72,
+      72,
+      74,
+  -   74,
+  -   74,
+  -   76,
+  -   76,
+  -   78
+    ]
+  
+      at TestContext.<anonymous> (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-20/task-2/isolated-eviolite/poke-sim/tests/eviolite_order_tests.mjs:9:9)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1201:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:831:18)
+      at Test.postRun (node:internal/test_runner/test:1330:19)
+      at Test.run (node:internal/test_runner/test:1258:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:831:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: [Array],
+    expected: [Array],
+    operator: 'deepStrictEqual',
+    diff: 'simple'
+  }
+
+test at isolated-eviolite\poke-sim\tests\eviolite_order_tests.mjs:6:31
+Γ£û EVIO-ORDER-208 player/U-turn/snow/95/-1 (128.3622ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly deep-equal:
+  + actual - expected
+  ... Skipped lines
+  
+    [
+  +   42,
+  +   42,
+  +   42,
+      44,
+      44,
+      44,
+      44,
+      46,
+  ...
+      50,
+  -   50,
+  -   50,
+  -   52
+    ]
+  
+      at TestContext.<anonymous> (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-20/task-2/isolated-eviolite/poke-sim/tests/eviolite_order_tests.mjs:9:9)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1201:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:831:18)
+      at Test.postRun (node:internal/test_runner/test:1330:19)
+      at Test.run (node:internal/test_runner/test:1258:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:831:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: [Array],
+    expected: [Array],
+    operator: 'deepStrictEqual',
+    diff: 'simple'
+  }
+
+test at isolated-eviolite\poke-sim\tests\eviolite_order_tests.mjs:6:31
+Γ£û EVIO-ORDER-211 player/U-turn/sand/95/-1 (123.6503ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly deep-equal:
+  + actual - expected
+  
+    [
+  +   92,
+  +   94,
+  +   94,
+      96,
+  +   96,
+      98,
+  -   98,
+      100,
+      100,
+      102,
+      102,
+      104,
+  +   104,
+      106,
+      106,
+      108,
+  -   108,
+      110,
+  -   110,
+  -   112,
+  -   114
+    ]
+  
+      at TestContext.<anonymous> (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-20/task-2/isolated-eviolite/poke-sim/tests/eviolite_order_tests.mjs:9:9)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1201:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:831:18)
+      at Test.postRun (node:internal/test_runner/test:1330:19)
+      at Test.run (node:internal/test_runner/test:1258:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:831:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: [Array],
+    expected: [Array],
+    operator: 'deepStrictEqual',
+    diff: 'simple'
+  }
+
+test at isolated-eviolite\poke-sim\tests\eviolite_order_tests.mjs:6:31
+Γ£û EVIO-ORDER-212 player/U-turn/sand/95/-1 (123.6614ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly deep-equal:
+  + actual - expected
+  
+    [
+  +   62,
+  +   62,
+      64,
+      64,
+  +   64,
+      66,
+      66,
+  -   66,
+      68,
+      68,
+      68,
+      70,
+      70,
+  +   70,
+      72,
+      72,
+  -   72,
+      74,
+  -   74,
+  -   76
+    ]
+  
+      at TestContext.<anonymous> (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-20/task-2/isolated-eviolite/poke-sim/tests/eviolite_order_tests.mjs:9:9)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1201:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:831:18)
+      at Test.postRun (node:internal/test_runner/test:1330:19)
+      at Test.run (node:internal/test_runner/test:1258:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:831:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: [Array],
+    expected: [Array],
+    operator: 'deepStrictEqual',
+    diff: 'simple'
+  }
+
+test at isolated-eviolite\poke-sim\tests\eviolite_order_tests.mjs:6:31
+Γ£û EVIO-ORDER-215 player/U-turn/rain/95/-1 (123.005ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly deep-equal:
+  + actual - expected
+  
+    [
+  +   92,
+  +   94,
+  +   94,
+      96,
+  +   96,
+      98,
+  -   98,
+      100,
+      100,
+      102,
+      102,
+      104,
+  +   104,
+      106,
+      106,
+      108,
+  -   108,
+      110,
+  -   110,
+  -   112,
+  -   114
+    ]
+  
+      at TestContext.<anonymous> (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-20/task-2/isolated-eviolite/poke-sim/tests/eviolite_order_tests.mjs:9:9)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1201:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:831:18)
+      at Test.postRun (node:internal/test_runner/test:1330:19)
+      at Test.run (node:internal/test_runner/test:1258:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:831:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: [Array],
+    expected: [Array],
+    operator: 'deepStrictEqual',
+    diff: 'simple'
+  }
+
+test at isolated-eviolite\poke-sim\tests\eviolite_order_tests.mjs:6:31
+Γ£û EVIO-ORDER-216 player/U-turn/rain/95/-1 (123.9405ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly deep-equal:
+  + actual - expected
+  
+    [
+  +   62,
+  +   62,
+      64,
+      64,
+  +   64,
+      66,
+      66,
+  -   66,
+      68,
+      68,
+      68,
+      70,
+      70,
+  +   70,
+      72,
+      72,
+  -   72,
+      74,
+  -   74,
+  -   76
+    ]
+  
+      at TestContext.<anonymous> (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-20/task-2/isolated-eviolite/poke-sim/tests/eviolite_order_tests.mjs:9:9)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1201:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:831:18)
+      at Test.postRun (node:internal/test_runner/test:1330:19)
+      at Test.run (node:internal/test_runner/test:1258:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:831:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: [Array],
+    expected: [Array],
+    operator: 'deepStrictEqual',
+    diff: 'simple'
+  }
+
+test at isolated-eviolite\poke-sim\tests\eviolite_order_tests.mjs:6:31
+Γ£û EVIO-ORDER-219 player/U-turn/sun/95/-1 (173.5725ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly deep-equal:
+  + actual - expected
+  
+    [
+  +   92,
+  +   94,
+  +   94,
+      96,
+  +   96,
+      98,
+  -   98,
+      100,
+      100,
+      102,
+      102,
+      104,
+  +   104,
+      106,
+      106,
+      108,
+  -   108,
+      110,
+  -   110,
+  -   112,
+  -   114
+    ]
+  
+      at TestContext.<anonymous> (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-20/task-2/isolated-eviolite/poke-sim/tests/eviolite_order_tests.mjs:9:9)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1201:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:831:18)
+      at Test.postRun (node:internal/test_runner/test:1330:19)
+      at Test.run (node:internal/test_runner/test:1258:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:831:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: [Array],
+    expected: [Array],
+    operator: 'deepStrictEqual',
+    diff: 'simple'
+  }
+
+test at isolated-eviolite\poke-sim\tests\eviolite_order_tests.mjs:6:31
+Γ£û EVIO-ORDER-220 player/U-turn/sun/95/-1 (112.1499ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly deep-equal:
+  + actual - expected
+  
+    [
+  +   62,
+  +   62,
+      64,
+      64,
+  +   64,
+      66,
+      66,
+  -   66,
+      68,
+      68,
+      68,
+      70,
+      70,
+  +   70,
+      72,
+      72,
+  -   72,
+      74,
+  -   74,
+  -   76
+    ]
+  
+      at TestContext.<anonymous> (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-20/task-2/isolated-eviolite/poke-sim/tests/eviolite_order_tests.mjs:9:9)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1201:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:831:18)
+      at Test.postRun (node:internal/test_runner/test:1330:19)
+      at Test.run (node:internal/test_runner/test:1258:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:831:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: [Array],
+    expected: [Array],
+    operator: 'deepStrictEqual',
+    diff: 'simple'
+  }
+
+test at isolated-eviolite\poke-sim\tests\eviolite_order_tests.mjs:21:1
+Γ£û EVIO-NEG combining sand and item modifiers is detected (130.693ms)
+  AssertionError [ERR_ASSERTION]: Expected "actual" not to be strictly deep-equal to:
+  
+  [
+    50,
+    50,
+    52,
+    52,
+    52,
+    54,
+    54,
+    54,
+    54,
+    56,
+    56,
+    56,
+    58,
+    58,
+    58,
+    60
+  ]
+  
+      at TestContext.<anonymous> (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-20/task-2/isolated-eviolite/poke-sim/tests/eviolite_order_tests.mjs:24:9)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1201:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:831:18)
+      at Test.postRun (node:internal/test_runner/test:1330:19)
+      at Test.run (node:internal/test_runner/test:1258:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:831:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: [Array],
+    expected: [Array],
+    operator: 'notDeepStrictEqual',
+    diff: 'simple'
+  }
+
+test at isolated-eviolite\poke-sim\tests\eviolite_order_tests.mjs:26:1
+Γ£û EVIO-NEG dropping item modifier is detected (130.8675ms)
+  AssertionError [ERR_ASSERTION]: Expected "actual" not to be strictly deep-equal to:
+  
+  [
+    42,
+    42,
+    42,
+    44,
+    44,
+    44,
+    44,
+    46,
+    46,
+    46,
+    46,
+    48,
+    48,
+    48,
+    48,
+    50
+  ]
+  
+      at TestContext.<anonymous> (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-20/task-2/isolated-eviolite/poke-sim/tests/eviolite_order_tests.mjs:29:9)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1201:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:831:18)
+      at Test.postRun (node:internal/test_runner/test:1330:19)
+      at Test.run (node:internal/test_runner/test:1258:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:831:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: [Array],
+    expected: [Array],
+    operator: 'notDeepStrictEqual',
+    diff: 'simple'
+  }

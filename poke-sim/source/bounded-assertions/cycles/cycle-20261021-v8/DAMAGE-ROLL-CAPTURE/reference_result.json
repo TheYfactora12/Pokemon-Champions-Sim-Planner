@@ -1,0 +1,110 @@
+{
+  "schema_version": "bounded-result-v1",
+  "assertion_id": "DAMAGE-ROLL-CAPTURE.current-runtime.v8",
+  "case_id": "DAMAGE-ROLL-CAPTURE",
+  "scope": {
+    "oracle_kind": "shared_reference",
+    "format": "gen9championsdoublescustomgame",
+    "regulation_id": null,
+    "client_version": null,
+    "boundaries": [
+      "level50 Hardy zeroEV Snorlax Tackle into Venusaur",
+      "16 explicitly controlled damage draws, no critical hits; calculation API in doubles field"
+    ]
+  },
+  "role": "reference_result",
+  "status": "complete",
+  "inputs_sha256": "57e65d17fefbcdd7667cf573c0263aa25db4975f89dfc1bbb8032be57dd1229f",
+  "contract_sha256": "c9f1d859c97c27e9622f3c4d561e9d5d14b3923c44973b20a10405139af0c364",
+  "dependencies": {
+    "engine": "2960a66152d35e0b07d62b83e184f9c1c1fd5b79099e10c19d4824647c1cfd69",
+    "data": "dd258aec23104c305658a95eeb20c8af71204ef43311d7033d00f33a64943409",
+    "runner": "7324e992dc86371999bd2686edb4e2c649ea1d9b2e655ad3850ac5121608df08",
+    "test": "3d7cfd2e383fa6e32f8dc626c9a9bef27ac9b25d298e90646014bf95b1e524e1",
+    "checker": "d18159d8291af83e8fbd6bebac7fade9aa89c9400bb0641538b8bccd88de25a1",
+    "reference": "de66162a28b270bdf17ea17a804a7ec65c6d2f286815ae17eaa3336273405f61"
+  },
+  "executed_at": "2026-10-21T01:10:39.023Z",
+  "observations": {
+    "damage_bucket_0": {
+      "pointer": "/observations/damage_bucket_0/value",
+      "unit": "HP",
+      "value": 30
+    },
+    "damage_bucket_1": {
+      "pointer": "/observations/damage_bucket_1/value",
+      "unit": "HP",
+      "value": 30
+    },
+    "damage_bucket_2": {
+      "pointer": "/observations/damage_bucket_2/value",
+      "unit": "HP",
+      "value": 30
+    },
+    "damage_bucket_3": {
+      "pointer": "/observations/damage_bucket_3/value",
+      "unit": "HP",
+      "value": 31
+    },
+    "damage_bucket_4": {
+      "pointer": "/observations/damage_bucket_4/value",
+      "unit": "HP",
+      "value": 31
+    },
+    "damage_bucket_5": {
+      "pointer": "/observations/damage_bucket_5/value",
+      "unit": "HP",
+      "value": 31
+    },
+    "damage_bucket_6": {
+      "pointer": "/observations/damage_bucket_6/value",
+      "unit": "HP",
+      "value": 31
+    },
+    "damage_bucket_7": {
+      "pointer": "/observations/damage_bucket_7/value",
+      "unit": "HP",
+      "value": 33
+    },
+    "damage_bucket_8": {
+      "pointer": "/observations/damage_bucket_8/value",
+      "unit": "HP",
+      "value": 33
+    },
+    "damage_bucket_9": {
+      "pointer": "/observations/damage_bucket_9/value",
+      "unit": "HP",
+      "value": 33
+    },
+    "damage_bucket_10": {
+      "pointer": "/observations/damage_bucket_10/value",
+      "unit": "HP",
+      "value": 33
+    },
+    "damage_bucket_11": {
+      "pointer": "/observations/damage_bucket_11/value",
+      "unit": "HP",
+      "value": 34
+    },
+    "damage_bucket_12": {
+      "pointer": "/observations/damage_bucket_12/value",
+      "unit": "HP",
+      "value": 34
+    },
+    "damage_bucket_13": {
+      "pointer": "/observations/damage_bucket_13/value",
+      "unit": "HP",
+      "value": 34
+    },
+    "damage_bucket_14": {
+      "pointer": "/observations/damage_bucket_14/value",
+      "unit": "HP",
+      "value": 34
+    },
+    "damage_bucket_15": {
+      "pointer": "/observations/damage_bucket_15/value",
+      "unit": "HP",
+      "value": 36
+    }
+  }
+}

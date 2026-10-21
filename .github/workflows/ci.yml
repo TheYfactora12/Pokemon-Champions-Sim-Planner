@@ -73,7 +73,10 @@ jobs:
   tests:
     name: "Test Suite"
     runs-on: ubuntu-latest
-    timeout-minutes: 8
+    # Retain every discovered test; the measured full suite can exceed eight minutes.
+    # Full reference suites reached White Herb while still progressing at 12m.
+    # Preserve every suite; allow completion within the methodology job budget.
+    timeout-minutes: 20
     needs: [syntax, detect-changes]
     # The isolated test project has shared fixture IDs; serialize its users.
     # A different repository/manual test runner must use a separate test project.
@@ -82,6 +85,8 @@ jobs:
       cancel-in-progress: false
     steps:
       - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0 # Validate retained immutable checkpoint source identities.
 
       - uses: actions/setup-node@v6
         with:
@@ -148,6 +153,9 @@ jobs:
       - uses: dorny/paths-filter@v4
         id: filter
         with:
+          # Large evidence snapshots can exceed GitHub's PR-diff API budget.
+          # The action compares the event base SHA to the checked-out merge via Git.
+          token: ''
           filters: |
             engine:
               - 'poke-sim/engine.js'
@@ -179,10 +187,93 @@ jobs:
   # ----------------------------------------------------------------
   # 4. BATTLE AUDIT (GATED)
   # Runs the reusable mechanics-fixture, parity, golden-trace, and seeded-stress
-  # workflow whenever battle code, evidence, or tests change.
+  # workflow on every existing push/PR trigger; path filters do not waive it.
   # ----------------------------------------------------------------
   audit:
     name: "Battle Audit"
     needs: [tests, detect-changes]
-    if: needs.detect-changes.outputs.engine == 'true'
     uses: ./.github/workflows/battle-audit.yml
+
+  accuracy-standard:
+    name: Accuracy methodology and readiness report
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0 # Validate retained immutable checkpoint source identities.
+      - uses: actions/setup-node@v6
+        with:
+          node-version: '20'
+          cache: npm
+          cache-dependency-path: poke-sim/package-lock.json
+      - name: Install existing locked dependencies
+        working-directory: poke-sim
+        run: npm ci
+      - name: Run references, information boundaries and negative controls
+        working-directory: poke-sim
+        run: npm run test:accuracy:standard
+      - name: Require dated tracker and lifecycle refresh
+        working-directory: poke-sim
+        run: |
+          node tools/validation-cycle.mjs export . --check
+          node tools/validation-lifecycle.mjs . --check
+          node --test tests/validation_cycle_tests.mjs
+      - name: Run shipped-mechanics invariants (not client accuracy)
+        working-directory: poke-sim
+        run: npm run test:accuracy
+      - name: Report competitive readiness separately
+        if: always()
+        working-directory: poke-sim
+        run: |
+          mkdir -p artifacts/accuracy-standard
+          npm run readiness:competitive -- --report artifacts/accuracy-standard/competitive-readiness.json
+          node -e "const r=require('./artifacts/accuracy-standard/competitive-readiness.json');require('fs').appendFileSync(process.env.GITHUB_STEP_SUMMARY,'Competitive release: **'+r.status+'**\n\n'+r.blockers.map(x=>'- '+x).join('\n')+'\n')"
+      - name: Retain exact-head evidence and failures
+        if: always()
+        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f
+        with:
+          name: accuracy-method-${{ github.sha }}-${{ github.run_attempt }}
+          if-no-files-found: error
+          path: |
+            poke-sim/artifacts/accuracy-standard/
+            poke-sim/artifacts/test-method-controls/
+            poke-sim/artifacts/accuracy-2026-08-30/cross-format/
+          retention-days: 30
+
+  browser-audit:
+    name: Candidate browser replay evidence
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v6
+        with:
+          node-version: '20'
+          cache: npm
+          cache-dependency-path: poke-sim/package-lock.json
+      - name: Install locked test dependencies
+        working-directory: poke-sim
+        run: npm ci
+      - name: Set isolated browser cache
+        run: echo "PLAYWRIGHT_BROWSERS_PATH=$RUNNER_TEMP/champions-playwright" >> "$GITHUB_ENV"
+      - name: Install pinned Chromium revision
+        working-directory: poke-sim
+        run: npx --no-install playwright install chromium
+      - name: Verify actual candidate browser responses and paired replays
+        working-directory: poke-sim
+        run: npm run test:browser
+      - name: Retain browser evidence and failures
+        if: always()
+        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f
+        with:
+          name: browser-evidence-${{ github.sha }}-${{ github.run_attempt }}
+          if-no-files-found: error
+          path: |
+            poke-sim/artifacts/browser-ci/
+            poke-sim/artifacts/browser-replay-*/
+          retention-days: 30

@@ -1,0 +1,35 @@
+{
+  "implementation_commit": "e1ccfd0029aed2b2625f9abcd6d035f7911f4013",
+  "artifacts": [
+    {
+      "path": "poke-sim/engine.js",
+      "working_sha256": "3c13645cf1798fb28a0f1bc840a9ed9032c32add5fe16a5404ddcfcf6b6750f9",
+      "committed_sha256": "6033c281304d873e1d63d365343f858d3683e8ad9070563d8ebddce3aa79835e",
+      "bytes_committed": 393267
+    },
+    {
+      "path": "poke-sim/pokemon-champion-2026.html",
+      "working_sha256": "b8eb0a27815b13c587ac73216db221678a8ace1c18dfc2c710a0441f171c8dc9",
+      "committed_sha256": "b8eb0a27815b13c587ac73216db221678a8ace1c18dfc2c710a0441f171c8dc9",
+      "bytes_committed": 11537314
+    },
+    {
+      "path": "poke-sim/tests/fixtures/eviolite_activation_v1.json",
+      "working_sha256": "a63b94a3caa7de78626ee96ff651ee55914b6f163c1951c69bd2942c8a982a20",
+      "committed_sha256": "a63b94a3caa7de78626ee96ff651ee55914b6f163c1951c69bd2942c8a982a20",
+      "bytes_committed": 172419
+    },
+    {
+      "path": "poke-sim/source/eviolite-eligibility.json",
+      "working_sha256": "823e6cfbdd70a337b4ce26f5c9dcad4a3fe6568872ae281cb472b3fedde71a9a",
+      "committed_sha256": "823e6cfbdd70a337b4ce26f5c9dcad4a3fe6568872ae281cb472b3fedde71a9a",
+      "bytes_committed": 8640
+    },
+    {
+      "path": "poke-sim/tools/eviolite-activation-probes.mjs",
+      "working_sha256": "7bf85e596361adb32f54bdce162d886b24d0e92da5db9cc40f9b34d589ce6d22",
+      "committed_sha256": "c48fc574124013f23be7034489fbe3a22f0e66b56148fc55a6e7e5e29417b4c3",
+      "bytes_committed": 5161
+    }
+  ]
+}

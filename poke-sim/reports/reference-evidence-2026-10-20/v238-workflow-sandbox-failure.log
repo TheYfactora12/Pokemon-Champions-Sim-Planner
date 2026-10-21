@@ -1,0 +1,109 @@
+workflow governance: 27 pass, 0 fail
+node:assert:152
+  throw new AssertionError(obj);
+  ^
+
+AssertionError [ERR_ASSERTION]: "2026_05_12_align_reg_ma_meta_sources.sql":       0 [main] bash (126160) C:\Program Files\Git\bin\..\usr\bin\bash.exe: *** fatal error - NtCreateDirectoryObject(\BaseNamedObjects\msys-2.0S5-1888ae32e00d56aa): 0xC0000022
+Stack trace:
+
+Frame         Function      Args
+
+0002FF3FB660  0166CB3CFE8E (0166CB61EB97, 0166CB5DAB81, 000000000000, 0002FF3FA500) msys-2.0.dll+0x1FE8E
+
+0002FF3FB660  0166CB3B67F9 (0002FF3FB540, 0002FF3FB5F8, 0002FF3FB5D4, 0002FF3FB610) msys-2.0.dll+0x67F9
+
+0002FF3FB660  0166CB3B6832 (0002FF3FB610, 0000C0000022, 000000000000, 0000000F0007) msys-2.0.dll+0x6832
+
+0002FF3FB660  0166CB4EE1D6 (000000000220, 016600000000, 000000000020, 0000FFFFFFFF) msys-2.0.dll+0x13E1D6
+
+FFFFFFFFFFFFFFFF  0166CB3E20DC (0166CB1F1970, 0166CB61EE6C, 000000000005, 00000000DFB8) msys-2.0.dll+0x320DC
+
+0002FF3FB9D0  0166CB4EE564 (0002FF3FD320, 0002FF3FEF50, 00000000DFB8, 016600000000) msys-2.0.dll+0x13E564
+
+0002FF3FEF50  0166CB4EEFB8 (000000000002, 0166CB682760, 000000000000, 000000000000) msys-2.0.dll+0x13EFB8
+
+0002FF3FEF50  0166CB3B8462 (0166CB3E0B80, 000000000000, 000000000000, 000000000000) msys-2.0.dll+0x8462
+
+0002FF3FEF50  0166CB3E0C3C (0166CAF80000, 000000000000, 0166CB1D0000, 0002FF3FF139) msys-2.0.dll+0x30C3C
+
+0002FF3FF440  7FF97BBBEF6A (000000000000, 000000000000, 000000000004, 0002FF3FF070) ntdll.dll+0x11EF6A
+
+0002FF3FF440  7FF97BABB2E3 (0000000005DE, 000000000000, 000000000000, 7FF97BC19F30) ntdll.dll+0x1B2E3
+
+0002FF3FF440  7FF97BAB8E1C (7FF97BB2F200, 7FF900000000, 0166CB1EAA10, 0002FF3FF446) ntdll.dll+0x18E1C
+
+0002FF3FF440  7FF97BB300AA (0166CB1E5A70, 0166CB1E5A40, 7FF97BC736F0, 7FF97BC19EA0) ntdll.dll+0x900AA
+
+0002FF3FF440  7FF97BB300D6 (0002FF3FF950, 7FF97BC3C7E8, 0002FF109000, 7FF97BC3CCB0) ntdll.dll+0x900D6
+
+000000000000  7FF97BB362BB (000000000000, 000000000000, 0002FF109000, 000000000000) ntdll.dll+0x962BB
+
+000000000000  7FF97BB343D8 (7FF97BAA0000, 0002FF109000, 0002FF10A000, 7FF97BAA0000) ntdll.dll+0x943D8
+
+000000000000  7FF97BB341C2 (000000000000, 000000000000, 000000000000, 000000000000) ntdll.dll+0x941C2
+
+000000000000  7FF97BB7F09E (000000000000, 000000000000, 000000000000, 000000000000) ntdll.dll+0xDF09E
+
+End of stack trace
+
+Loaded modules:
+
+0166CACD0000 bash.exe
+
+7FF97BAA0000 ntdll.dll
+
+7FF97AA60000 KERNEL32.DLL
+
+7FF9790F0000 KERNELBASE.dll
+
+7FF975C10000 apphelp.dll
+
+7FF97B880000 USER32.dll
+
+7FF978C90000 win32u.dll
+
+7FF97ADB0000 GDI32.dll
+
+7FF978CC0000 gdi32full.dll
+
+7FF979040000 msvcp_win.dll
+
+7FF9795C0000 ucrtbase.dll
+
+0166CB3B0000 msys-2.0.dll
+
+7FF97ACE0000 advapi32.dll
+
+7FF979860000 msvcrt.dll
+
+7FF97B770000 sechost.dll
+
+7FF97B650000 RPCRT4.dll
+
+7FF9780F0000 CRYPTBASE.DLL
+
+7FF979500000 bcryptPrimitives.dll
+
+
+
+false !== true
+
+    at Object.<anonymous> (C:\Users\The Rig\Documents\Codex\2026-10-14\task-2\champions-moves-repair\poke-sim\tools\verify-migration-input.cjs:21:10)
+    at Module._compile (node:internal/modules/cjs/loader:1830:14)
+    at Object..js (node:internal/modules/cjs/loader:1961:10)
+    at Module.load (node:internal/modules/cjs/loader:1553:32)
+    at Module._load (node:internal/modules/cjs/loader:1355:12)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:255:19)
+    at Module.require (node:internal/modules/cjs/loader:1576:12)
+    at require (node:internal/modules/helpers:153:16)
+    at Object.<anonymous> (C:\Users\The Rig\Documents\Codex\2026-10-14\task-2\champions-moves-repair\poke-sim\tests\workflow_governance_tests.js:50:1)
+    at Module._compile (node:internal/modules/cjs/loader:1830:14) {
+  generatedMessage: false,
+  code: 'ERR_ASSERTION',
+  actual: false,
+  expected: true,
+  operator: 'strictEqual',
+  diff: 'simple'
+}
+
+Node.js v24.15.0

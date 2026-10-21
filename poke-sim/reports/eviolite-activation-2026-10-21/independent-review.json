@@ -1,0 +1,7 @@
+{
+  "reviewer": "/root/battle_auditor",
+  "mode": "independent read-only source and execution review",
+  "engine_sha256": "3c13645cf1798fb28a0f1bc840a9ed9032c32add5fe16a5404ddcfcf6b6750f9",
+  "final_statement": "Harness delta reviewed; independent upstream run passed 201/201. setActiveMove now establishes the correct oracle context. Both added Unaware controls match 62-74 across all 16 rolls. No new scoped blocker found. The bundle 2,978-byte budget excess remains an integration gate; source-derived eligibility metadata does not establish ranked legality or client verification.",
+  "retracted_observation": "Earlier exploratory Unaware discrepancy used direct getDamage without active-move context. Corrected context resolved it; no Unaware engine patch was justified."
+}

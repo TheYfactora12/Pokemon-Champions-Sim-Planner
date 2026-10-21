@@ -1,0 +1,19 @@
+{
+  "schema_version": "mc-reference-pair-delta-v1",
+  "base_pin": "efe4948570d5e8189751792136d26e71710c6c66",
+  "source_pin": "9b136a8c8cdb860a8ab96fa063f906604e352547",
+  "source_url": "https://github.com/smogon/pokemon-showdown/blob/9b136a8c8cdb860a8ab96fa063f906604e352547/data/mods/champions/learnsets.ts",
+  "reference_format": "gen9championsvgc2026regmc",
+  "official_eligibility": "unknown",
+  "competitive_use": false,
+  "scope": "One independently reconciled species-move admission correction; all other rows retain base pin. No mechanics or client certification.",
+  "receipt_file": "mc-meteor-assault-independent-receipt.json",
+  "receipt_sha256": "cd71d1f0f9643d9aab1f48b870b42de5e1c6fef4ea812b842c8b65f10f8d2cb9",
+  "add_pairs": [
+    {
+      "species": "sirfetchd",
+      "move": "meteorassault"
+    }
+  ],
+  "base_artifact_sha256": "9b2262a492e6320816edfd1e482386c597eacbbcfccf9860cbd05d18d283c630"
+}

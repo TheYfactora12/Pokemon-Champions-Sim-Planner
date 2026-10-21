@@ -1,0 +1,49 @@
+{
+  "schema_version": "official-watch-parse-v1",
+  "parsed_at": "2026-10-20T22:53:03.210Z",
+  "source_capture_time": null,
+  "limitation": "Read-only retained pages; parse time is not fetch time. No eligibility approval or active watcher claim.",
+  "sources": [
+    {
+      "source_id": "champions_reg_mc_game_notice",
+      "url": "https://champions-news.pokemon-home.com/en/page/816.html",
+      "raw_sha256": "c195592cdf52c8ce193cc02d444b19c3272234be66a04764356064be35ff1985",
+      "semantic_sha256": "5b52910d7452d31f50bd65a70e64a78ba30b10672ba766a2801614da26f97205",
+      "title": "Regulation Set M-C Duration",
+      "roster_count": null,
+      "dates_mentioned": [
+        "December 2, 2026",
+        "September 9",
+        "September 9, 2026"
+      ],
+      "status": "parsed_review_candidate"
+    },
+    {
+      "source_id": "champions_reg_mc_official_roster",
+      "url": "https://web-view.app.pokemonchampions.jp/battle/pages/events/rs178713870219xeaaio/en/pokemon.html",
+      "raw_sha256": "122529cebbc15cd2a22c781e0fb43ca814be86a18951f1ceaf37cf65297a3627",
+      "semantic_sha256": "1dc4e003829f856c5bb60f285aa3403b0ac4b37b7f51dd7a2ee684dfeb2c5e9b",
+      "title": "Eligible Pokémon",
+      "roster_count": 262,
+      "dates_mentioned": [],
+      "status": "parsed_review_candidate"
+    },
+    {
+      "source_id": "nintendo_champions_updates",
+      "url": "https://en-americas-support.nintendo.com/app/answers/detail/a_id/71525/~/how-to-update-pok%C3%A9mon-champions",
+      "raw_sha256": "e2e7f4298cca859dc52f98752e970141f788501bb936e29d5ebe79769c13d423",
+      "semantic_sha256": "02920536e5a898da45ddb34b21a9e99e01aa47ce90a28116698e0c711c4a5322",
+      "title": "How to Update Pokémon Champions",
+      "roster_count": null,
+      "dates_mentioned": [
+        "April 22, 2026",
+        "August 4, 2026",
+        "July 7, 2026",
+        "June 16, 2026",
+        "October 6, 2026",
+        "September 8, 2026"
+      ],
+      "status": "parsed_review_candidate"
+    }
+  ]
+}

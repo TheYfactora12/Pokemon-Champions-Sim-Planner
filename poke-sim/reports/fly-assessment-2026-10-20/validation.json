@@ -1,0 +1,29 @@
+{
+  "recorded_at": "2026-10-20T21:00:18.751828+00:00",
+  "runtime_changed": false,
+  "fast_gate": {
+    "files": 268,
+    "initial_failures": 3,
+    "cause": "Windows sandbox denied temporary Git configuration and Git Bash runtime initialization",
+    "resolved_suites": [
+      "current_bounded_register_tests.mjs: 36/36",
+      "release_manifest_tests.js: 12/12",
+      "workflow_governance_tests.js: 29 plus 12 migration-input fixtures"
+    ]
+  },
+  "focused": {
+    "tests": 29,
+    "passed": 29
+  },
+  "db_contract": {
+    "files": 12,
+    "failures": 0,
+    "live_database_access": false
+  },
+  "battle_manifest_contract": "passed",
+  "javascript_syntax": "2 files passed",
+  "independent_review": "accepted assessment only; 29/29 pinned-reference tests",
+  "hosted": "pending exact committed head",
+  "client_verified": false,
+  "fly_admitted": false
+}

@@ -1,0 +1,56 @@
+[
+  {
+    "evidence_id": "baseline",
+    "kind": "stored_reference_catalog",
+    "path": "generated/pokemon_showdown_legal_data.js",
+    "sha256": "d00ab46ddf9d86f87b1848385b7ee0b3ee22ee7419956350d3e955c5d15b108a",
+    "source_url": "https://github.com/smogon/pokemon-showdown",
+    "source_revision": "approved-db",
+    "exact_upstream_commit": null,
+    "last_verification": null,
+    "scope": "Stored approved database export; revision label alone is not an executable current reference pin"
+  },
+  {
+    "evidence_id": "overrides",
+    "kind": "pinned_reference_metadata",
+    "path": "generated/champions_move_overrides.js",
+    "sha256": "6f37d6b3a47863d67f4d6bc3855ff0184621bd44746eccc9be665d4e534b2277",
+    "schema_version": "champions-move-overrides-v1",
+    "source": "pokemon-showdown pinned Champions mod",
+    "package_version": "0.11.11",
+    "move_count": 103,
+    "moves_sha256": "99edf5f35b8f0757102976201fe7af2c84b6b7fcb82c2d53da3f2be9709cca19",
+    "champions_scripts_sha256": "06f22e35364210da17348ecc8334e925fcb1758e47e4d276ef1ae6d7ec8bc214",
+    "last_verification": null,
+    "scope": "Metadata only; not lifecycle, legal roster or client proof"
+  },
+  {
+    "evidence_id": "pools",
+    "kind": "inherited_reference_learnsets",
+    "path": "generated/champions_move_pools.js",
+    "sha256": "21099bad04135f23de2d8b23203628c98004faf4a7d1da179ba808ccef2087f9",
+    "reference": {
+      "integrity": "sha512-FdW7gt3TkG4AdXmpMTPYX2kx42VEfY8tQApjW9wEHOGzwH6Kn97wD0o5uIzAc4xpO1W+Tim70Ti9+FNkMNCA2w==",
+      "package": "pokemon-showdown",
+      "version": "0.11.11"
+    },
+    "source_hashes": {
+      "generator_sha256": "a06706f1660f6aa9ed007c0729a8715f82764312c13dde26c79ff4c789478abf",
+      "mirrored_species_input_sha256": "d00ab46ddf9d86f87b1848385b7ee0b3ee22ee7419956350d3e955c5d15b108a",
+      "reference_data_tree_sha256": "eb81218bcc9de41317f3f8b2860c1a6746fa01e4d9103bf19e9742ccd47d2b6d",
+      "reference_sim_tree_sha256": "bf02b156586492b9c0ee15ac99607c38bc6fed61a825525f85afc2025361a6ef"
+    },
+    "mod": "champions",
+    "schema_version": "champions-inherited-move-pools-v1",
+    "scope": "Reference membership only; not set combinations or regulation approval"
+  },
+  {
+    "evidence_id": "regulation",
+    "kind": "unapproved_regulation_package",
+    "path": "source/reg-m-c-source-review.json",
+    "sha256": "76c98b5f4878bc6f7bda2c552bc8f4b80bc66c2e17bde31065c71bb8f21f426a",
+    "source_url": "https://www.pokemon.com/us/news/get-ready-for-regulation-set-m-c-in-pokemon-champions",
+    "review_status": "needs_review",
+    "competitive_use": false
+  }
+]

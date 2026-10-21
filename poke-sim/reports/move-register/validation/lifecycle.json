@@ -1,0 +1,79 @@
+{
+  "schema_version": "validation-lifecycle-view-v1",
+  "candidate_commit": "e447d94b2fbec4946ee75dc3b49fce3a6daf0bc4",
+  "observed_at": "2026-10-21T10:10:08.276Z",
+  "scope": "Bounded reference validation and draft CI; excludes official/client certification and deployment",
+  "implementation": {
+    "status": "implemented",
+    "source_digest": "06ef2f77f029d4226e7b16d4410f4bccb5057b2ab82266d5d3447789015de553"
+  },
+  "local_test": {
+    "status": "passed",
+    "fast_files": 283,
+    "offline_db_files": 12,
+    "failures": 0,
+    "executed_at": "2026-10-21T09:39:10.399Z",
+    "started_at": "2026-10-21T09:29:00.685Z",
+    "completed_at": "2026-10-21T09:39:10.399Z",
+    "date_limitation": null,
+    "evidence": {
+      "path": "source/validation-lifecycle/e65b3eeea1495fc33b35f5dfecf20b1899aa33e0a473cdce71c35449a686529c/local.json",
+      "sha256": "a8aaf1e241b210ad1d4c722cf4e6667723b83793252ea4467734f9a0b737e52d"
+    },
+    "candidate_source_bound": true
+  },
+  "independent_verification": {
+    "status": "passed_bounded_scope",
+    "reviewed_at": "2026-10-21T09:14:16.267Z",
+    "runtime_source_commit": "2f3411e4b9f86cc22d44ea1abfd9004b029ca7ec",
+    "cases": 6,
+    "evidence": {
+      "path": "source/validation-lifecycle/e65b3eeea1495fc33b35f5dfecf20b1899aa33e0a473cdce71c35449a686529c/review.json",
+      "sha256": "11bfe8e0bbeff16206b730d46d2dd93038d6f2ecad669ba4749c566fd1cc0cb5"
+    },
+    "candidate_source_bound": true
+  },
+  "remote_publication": {
+    "commit": "e447d94b2fbec4946ee75dc3b49fce3a6daf0bc4",
+    "url": "https://github.com/TheYfactora12/Pokemon-Champions-Sim-Planner/pull/279",
+    "observed_at": "2026-10-21T10:10:08.277Z",
+    "evidence": {
+      "path": "source/validation-lifecycle/e65b3eeea1495fc33b35f5dfecf20b1899aa33e0a473cdce71c35449a686529c/remote.json",
+      "sha256": "b7e0fa07107eba4568243f10413a7098aa927c3f023382497dc5fcfe09cd01fb"
+    },
+    "status": "pushed"
+  },
+  "hosted_checks": {
+    "status": "passed",
+    "run_url": "https://github.com/TheYfactora12/Pokemon-Champions-Sim-Planner/actions/runs/39578669915",
+    "commit": "e447d94b2fbec4946ee75dc3b49fce3a6daf0bc4",
+    "started_at": "2026-10-21T09:39:38Z",
+    "updated_at": "2026-10-21T10:08:37Z"
+  },
+  "merge": {
+    "status": "not_performed",
+    "authorization": "not_authorized"
+  },
+  "deployment": {
+    "status": "not_performed",
+    "authorization": "not_authorized"
+  },
+  "current_source_matches": true,
+  "current_workflow_state": "validated_draft_checkpoint",
+  "completed": true,
+  "competitive_release_ready": false,
+  "completion_scope": "draft_checkpoint_only",
+  "actual_hosted_preview": {
+    "status": "not_run",
+    "blocker": "Distinct preview hostname and publication approval required; CI browser uses loopback"
+  },
+  "production_smoke": {
+    "status": "not_run",
+    "blocker": "Requires separately approved merge/deployment and exact deployed bytes"
+  },
+  "rollback_verification": {
+    "status": "not_run",
+    "blocker": "Requires reviewed rollback target and authorized hosted verification"
+  },
+  "next_blocker": "Open mechanics/client/regulation release gates remain"
+}

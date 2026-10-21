@@ -5,9 +5,24 @@ import { createHash } from 'node:crypto';
 
 const normalize = value => String(value ?? '').replace(/\s+/g, ' ').trim();
 const labelKey = value => normalize(value).toLowerCase();
-const movePrefixes = lines => [...new Set(lines.map(line => normalize(line).match(/^(.+? used .+?!)/)?.[1]).filter(Boolean))];
+const movePrefixes = lines => lines.map(line => normalize(line).match(/^(.+? used .+?!)/)?.[1]).filter(Boolean);
 
-export function compareVisibleReplay(log, visual) {
+// Detail records repeat action prefixes but are not additional actions.
+const detailRecord = text => /used .+?!.*(?:\[\d+ dmg\b|lost \d+ HP\b|It missed[.!]|But it failed!)/.test(normalize(text));
+const damageRecord = text => {
+  const s = normalize(text), prefix = s.match(/^(.+?) used (.+?)!/);
+  if (!prefix) return [];
+  return s.slice(prefix[0].length).split(';').flatMap(segment => {
+    const hit = segment.trim().match(/^(?:\u2192|\u001a)?\s*(.+?) lost (\d+) HP\b/) ||
+      segment.trim().match(/^(?:\u2192|\u001a)\s*(.+?)\s*\[(\d+) dmg\b/);
+    return hit ? [[prefix[1], prefix[2], hit[1], Number(hit[2])]] : [];
+  });
+};
+const canonical = value => Array.isArray(value) ? value.map(canonical) : value && typeof value === 'object'
+  ? Object.fromEntries(Object.keys(value).sort().map(k => [k, canonical(value[k])])) : value;
+const digest = value => createHash('sha256').update(JSON.stringify(canonical(value))).digest('hex');
+
+export function compareVisibleReplay(log, visual, expectedCandidate = null) {
   const issues = [];
   let checks = 0;
   const check = (ok, code, location, expected, actual) => {
@@ -24,6 +39,13 @@ export function compareVisibleReplay(log, visual) {
   const rendererBuild = visual?.renderer_build_id || (visual?.banner || '').match(/\b(v\d+\.\d+\.\d+-[a-z0-9-]+)\b/)?.[1];
   equal(rendererBuild, log?.exporter_build_id || p?.build_id, 'build_mismatch', 'renderer_build_id');
   check(!!p?.build_id && log?.build_id === p.build_id, 'execution_build_mismatch', 'log.build_id', p?.build_id, log?.build_id);
+  if (expectedCandidate) {
+    equal(rendererBuild, expectedCandidate.build_id, 'candidate_renderer_mismatch', 'renderer_build_id');
+    equal(log?.build_id, expectedCandidate.build_id, 'candidate_execution_mismatch', 'log.build_id');
+    check(/^[a-f0-9]{40}$/.test(expectedCandidate.commit || '') && /^[a-f0-9]{64}$/.test(expectedCandidate.bundle_sha256 || ''),
+      'invalid_candidate_identity', 'expectedCandidate', 'independent commit and bundle digest', expectedCandidate);
+    equal(visual?.candidate_bundle_sha256, expectedCandidate.bundle_sha256, 'candidate_bytes_mismatch', 'captured response bytes');
+  }
   equal(visual?.title, `${String(log?.result || '').toUpperCase()} vs ${log?.opponent_team?.name || ''}`, 'replay_title_mismatch', 'title');
   equal(Number((visual?.meta || '').match(/^(\d+) turns/)?.[1]), turns.length, 'turn_count_mismatch', 'meta');
   equal((visual?.turns || []).map(t => t.label), turns.map(t => `T${t.turn}`), 'turn_sequence_mismatch', 'turns');
@@ -68,24 +90,41 @@ export function compareVisibleReplay(log, visual) {
   }
   for (const turn of turns) {
     const lines = visual?.turns?.find(t => t.label === `T${turn.turn}`)?.lines || [];
-    const expected = movePrefixes((turn.events || []).map(e => e.text || e.message || ''));
+    const events=turn.events || [];
+    const actions = events.filter(e => movePrefixes([e.text || e.message || '']).length &&
+      (['actor_key','move','log_index'].some(k=>e[k]!=null) || !detailRecord(e.text || e.message || '')));
+    const hasAnchor = e => ['actor_key','move','log_index'].some(k => e[k] != null);
+    const complete = e => typeof e.actor_key === 'string' && e.actor_key.length > 0 &&
+      typeof e.move === 'string' && e.move.length > 0 && Number.isInteger(e.log_index) && e.log_index >= 0;
+    if (actions.some(hasAnchor)) {
+      check(actions.every(complete), 'incomplete_action_anchors', `T${turn.turn}`, 'all actions anchored', actions);
+      const indices = actions.filter(complete).map(e => e.log_index);
+      check(indices.every((n,i) => i === 0 || n > indices[i-1]), 'invalid_action_anchor_order', `T${turn.turn}`, 'unique increasing indices', indices);
+      for (const e of actions.filter(complete)) check((e.text || e.message || '').includes(` used ${e.move}!`), 'action_anchor_move_mismatch', `T${turn.turn}`, e.move, e.text || e.message);
+    }
+    // Legacy details may repeat an action, but cannot establish an omitted action.
+    let retainedAction=null;
+    for(const event of events){
+      if(actions.includes(event)){retainedAction=movePrefixes([event.text||event.message||''])[0];continue;}
+      const text=event.text||event.message||'',prefix=movePrefixes([text])[0];
+      if(prefix&&detailRecord(text))check(prefix===retainedAction,'orphan_action_detail',`T${turn.turn}`,'preceding matching retained action',text);
+    }
+    const expected = movePrefixes(actions.map(e => e.text || e.message || ''));
     const actual = movePrefixes(lines);
     check(Array.isArray(turn.events), 'missing_action_evidence', `T${turn.turn}`, 'events array', turn.events);
     equal(actual, expected, 'resolved_move_order_or_omission', `T${turn.turn}`);
-    for (const event of turn.damage_events || []) {
-      const amount = event.applied_damage ?? event.damage ?? 0;
-      const token = `${event.target} lost ${amount} HP`;
-      check(lines.some(line => line.startsWith(`${event.attacker} used ${event.move}!`) && line.includes(token)), 'damage_display_mismatch', `T${turn.turn}`, token, lines);
-    }
+    const expectedDamage = (turn.damage_events || []).map(e => [e.attacker,e.move,e.target,e.applied_damage ?? e.damage ?? 0]);
+    const actualDamage = lines.flatMap(damageRecord);
+    equal(actualDamage, expectedDamage, 'damage_display_mismatch', `T${turn.turn}`);
   }
   return { schema_version: 'champions-visual-comparison-v1', seed: log?.seed || null,
     build_id: p?.build_id || null, team_ids: [p?.player_team_id, p?.opp_team_id],
     status: issues.length ? 'mismatch' : 'matched_observable_fields', checks, turns: turns.length, issues,
     not_checked: ['Independent real-game mechanics parity', 'Hidden stable IDs and exact stats not printed in replay cards',
-      'Every same-name repeated action, effect tooltip and coach claim', 'Pixel layout outside inspected screenshots; lazy sprites outside viewport', 'Production DB persistence'] };
+      'Hidden actor IDs/targets, effect tooltips and coach claims', 'Cross-action attribution of legacy damage without action IDs', 'Pixel layout outside inspected screenshots; lazy sprites outside viewport', 'Production DB persistence', ...(!expectedCandidate ? ['Current candidate artifact identity not supplied; historical display consistency only'] : [])] };
 }
 
-export function ingestDirectory(directory) {
+export function ingestDirectory(directory, expectedCandidate = null) {
   const names = fs.readdirSync(directory);
   const files = names.filter(name => name.endsWith('.visual.json')).sort();
   if (!files.length) throw new Error('No paired visible replay captures');
@@ -109,15 +148,31 @@ export function ingestDirectory(directory) {
     const log = JSON.parse(logBytes);
     const captureCase = cases.find(c => c.id === file.replace(/\.visual\.json$/, ''));
     if (JSON.stringify(captureCase.seed) !== JSON.stringify(log.seed)) throw new Error('Seed differs from capture inventory: ' + file);
-    const report = compareVisibleReplay(log, JSON.parse(visualBytes));
-    return { ...report, case_kind: captureCase.kind, log_file: logName, visual_file: file,
+    const report = compareVisibleReplay(log, JSON.parse(visualBytes), expectedCandidate);
+    const provenance = Object.fromEntries(['build_id','engine_version','ruleset_version','regulation_id',
+      'player_team_digest','opp_team_digest','format','policy','policy_version'].map(k=>[k,log.provenance?.[k]]));
+    const scenario = {seed:log.seed, provenance, participants:log.participants,
+      team_snapshots:log.team_snapshots, policy:log.policy_provenance, format:log.format,
+      bring:log.bring, leads:log.leads, forced_actions:log.forcedActions};
+    return {scenario_sha256:digest(scenario),
+      observation_sha256:digest({scenario,turnLog:log.turnLog,result:log.result,terminal:log.terminal}), ...report, case_kind: captureCase.kind, log_file: logName, visual_file: file,
       log_sha256: createHash('sha256').update(logBytes).digest('hex'), visual_sha256: createHash('sha256').update(visualBytes).digest('hex') };
   });
   const issue_counts = {};
   for (const report of reports) for (const issue of report.issues) issue_counts[issue.code] = (issue_counts[issue.code] || 0) + 1;
   return { schema_version: 'champions-visual-ingestion-v1', generated_at: new Date().toISOString(),
     evidence_scope: 'local downloaded JSON versus visible DOM; not trusted promotion',
-    expected_game_count: inventory.expected_game_count, pairs: reports.length, mismatch_pairs: reports.filter(r => r.issues.length).length,
+    expected_game_count: inventory.expected_game_count, pairs: reports.length,
+    declared_simulation_captures: inventory.expected_game_count,
+    unique_scenarios: new Set(reports.map(r=>r.scenario_sha256)).size,
+    unique_observations: new Set(reports.map(r=>r.observation_sha256)).size,
+    unique_capture_pairs: new Set(reports.map(r=>r.log_sha256+':'+r.visual_sha256)).size,
+    repeated_captures: reports.length-new Set(reports.map(r=>r.observation_sha256)).size,
+    verified_execution_count: null,
+    count_limitations: ['Inventory IDs declare captures, not independently verified executions.',
+      'Scenario counts use retained metadata only; missing fields cannot establish distinct scenarios.',
+      'Repeated captures and permutations do not establish independent mechanics or accuracy percentages.'],
+    mismatch_pairs: reports.filter(r => r.issues.length).length,
     turns: reports.reduce((n, r) => n + r.turns, 0), issue_counts, reports };
 }
 

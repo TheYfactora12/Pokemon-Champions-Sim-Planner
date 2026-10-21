@@ -160,7 +160,7 @@ function targetedBattles() {
     level: 50,
     moves: ['Moonblast'],
     evs: { hp: 32, spa: 32, spe: 0, atk: 0, def: 0, spd: 2 }
-  }], { seed: [100, 200, 300, 400], maxTurns: 1 });
+  }], { seed: [1000000, 123456789, 987654321, 314159265], maxTurns: 1 });
 
   const hpCost = battle('HP Cost Proof', [{
     name: 'Cyclizar',

@@ -1,5 +1,7 @@
 # Champions Spec — Deltas From User-Provided Verification (V2)
 
+> 2026-10-20 supersession: the historical86–100/15-roll adoption below is superseded for the simulator's reference profile by executable Champions custom/M-C upstream9b136a8, which yields85–100/16rolls. See docs/release/DISCRETE_DAMAGE_2026-10-20.md. The prior second-source account is retained as history; current-client distribution remains unverified.
+
 Compares user's 2026-04-24 verification report against locked `CHAMPIONS_MECHANICS_SPEC.md` (commit `2b15225`).
 
 Legend:

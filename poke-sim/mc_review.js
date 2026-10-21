@@ -107,7 +107,7 @@ function mcRedirectElectric(attacker,target,move,field,log,rng) {
 }
 
 function checkMcReferenceExecution(team, options) {
-  var opts = options || {}, errors = [];
+  var opts = options || {}, errors = typeof checkSimulationSupport === 'function' ? checkSimulationSupport(team) : [];
   var id = function(s) { return String(s || '').toLowerCase().replace(/[^a-z0-9]/g,''); };
   var result = {allowed:false,competitive_eligible:false,status:'not_verified',
     regulation_id:'champions_mc_reference',ruleset_version:'champions-mc-reference-v1',

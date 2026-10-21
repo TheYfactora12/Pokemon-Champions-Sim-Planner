@@ -1,0 +1,29 @@
+Γ£ö aggregate identity binds owning tests, runners, fixtures, DB inputs and discovery additions/removals (80.7066ms)
+Γ£ö committed inventory and working bytes agree; documentation-only commit preserves identity (994.8104ms)
+Γ£ö checked-in canonical current/history exports are refreshed (4225.9669ms)
+Γ£ö new reviewed rerun becomes dated current and preserves prior stale record (0.1575ms)
+Γ£ö stale never checked (0.086ms)
+Γ£ö failed never checked (0.0656ms)
+Γ£ö blocked never checked (0.0647ms)
+Γ£ö missing independent evidence cannot yield green (0.584ms)
+Γ£ö skipped refresh is rejected (2792.2861ms)
+Γ£ö changed runtime cannot retain stale green export (1392.8932ms)
+Γ£ö missing receipt fails closed (1367.0053ms)
+Γ£ö failed capture persists blocked attempt instead of old green (9.2392ms)
+Γ£ö exact validated checkpoint never means merged/deployed/competitive (0.3317ms)
+Γ£ö source change blocks prior completed status (0.1326ms)
+Γ£ö publication wrong commit rejects (0.3822ms)
+Γ£ö hosted wrong commit rejects (0.1012ms)
+Γ£ö failed CI and missing hosted job cannot complete (0.1509ms)
+Γ£ö unsupported deployment promotion rejects (0.1904ms)
+Γ£ö canonical lifecycle export is refreshed when present (2236.9493ms)
+Γ£ö old unbound local or review evidence cannot complete new candidate (0.1928ms)
+Γ£ö single and doubles scope never share a current checkmark (0.1491ms)
+Γä╣ tests 21
+Γä╣ suites 0
+Γä╣ pass 21
+Γä╣ fail 0
+Γä╣ cancelled 0
+Γä╣ skipped 0
+Γä╣ todo 0
+Γä╣ duration_ms 12310.7506

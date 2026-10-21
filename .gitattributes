@@ -8,3 +8,34 @@ poke-sim/source/reg-m-c-official-roster.json text eol=lf
 poke-sim/source/reg-m-c-reference-intake.json text eol=lf
 poke-sim/source/reg-m-c-mega-descriptor-candidates.json text eol=lf
 poke-sim/mc_review.js text eol=lf
+poke-sim/own_state_policy.js text eol=lf
+poke-sim/generated/source_sync_status.js text eol=lf
+
+# Stable generator provenance across Windows and CI.
+poke-sim/tools/move-register.mjs text eol=lf
+
+# Preserve captured independent evidence and immutable candidate bytes.
+poke-sim/source/mc-meteor-assault-independent-receipt.json -text
+poke-sim/source/mc-reference-pair-delta.json text eol=lf
+poke-sim/reports/mc-reference-candidates/** -text
+poke-sim/reports/move-register/** text eol=lf
+# Raw independently retained receipts keep their captured bytes.
+poke-sim/source/bounded-assertions/** -text
+
+# Immutable raw audit receipts and execution logs.
+poke-sim/reports/focused-independent-146ba91/** -text
+poke-sim/reports/struggle-boundaries-2026-10-20/** -text
+poke-sim/reports/current-bounded-input-repair-2026-10-20/** -text
+
+# Lifecycle snapshots retain exact evidence bytes across checkouts.
+poke-sim/source/validation-lifecycle/** -text
+poke-sim/reports/source-gates-2026-10-20/** -text
+poke-sim/reports/charge-spa-2026-10-21/** -text
+
+# Preserve raw Eviolite regression captures byte-for-byte.
+poke-sim/reports/eviolite-order-2026-10-21/** -text
+poke-sim/reports/eviolite-order-2026-10-21/*.log binary
+
+poke-sim/reports/eviolite-activation-2026-10-21/** -text
+poke-sim/reports/eviolite-activation-2026-10-21/*.log binary
+poke-sim/reports/eviolite-activation-2026-10-21/eviolite-c9d071d-receipt.json binary

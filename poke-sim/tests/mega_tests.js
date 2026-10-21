@@ -13,6 +13,7 @@ function loadFile(f) {
   vm.runInContext(src, ctx, { filename: f });
 }
 loadFile('data.js');
+loadFile('outcome_policy.js');
 loadFile('engine.js');
 // Expose class declarations (class/let/const are lexical, not on ctx object)
 vm.runInContext('this.Pokemon = Pokemon; this.Field = Field; if (typeof TEAMS !== "undefined") this.TEAMS = TEAMS;', ctx);
@@ -154,7 +155,10 @@ const sweepTeamA = ctx.TEAMS.mega_dragonite;
 const sweepTeamB = ctx.TEAMS.aurora_veil_froslass;
 if (sweepTeamA && sweepTeamB) {
   try {
+    const originalSimulation=ctx.simulateBattle;
+    ctx.simulateBattle=()=>({result:'win',terminal:true,timerExpired:false,playerSurvivors:2,oppSurvivors:0});
     const testCell = ctx.runMegaSweepCell(sweepTeamA, sweepTeamB, 1, 'at_turn', 2, 3);
+    ctx.simulateBattle=originalSimulation;
     check('12b. runMegaSweepCell returns {wr, n, ci95}',
           typeof testCell.wr === 'number' && typeof testCell.n === 'number' &&
           typeof testCell.ci95 === 'number' && testCell.n === 3,

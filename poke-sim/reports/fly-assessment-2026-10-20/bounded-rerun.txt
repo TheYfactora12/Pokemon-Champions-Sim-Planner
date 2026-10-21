@@ -1,0 +1,44 @@
+Γ£ö six current exact assertions pass without promoting historical or client scope (1258.9984ms)
+Γ£ö real engine change invalidates: engine.js (608.6206ms)
+Γ£ö real engine change invalidates: outcome_policy.js (602.5705ms)
+Γ£ö real engine change invalidates: rulesets.js (629.2732ms)
+Γ£ö real engine change invalidates: move_legality.js (631.7764ms)
+Γ£ö real engine change invalidates: mc_review.js (623.7756ms)
+Γ£ö real engine change invalidates: legality.js (620.524ms)
+Γ£ö real data change invalidates: data.js (623.7945ms)
+Γ£ö real data change invalidates: runtime_data.js (618.881ms)
+Γ£ö real data change invalidates: generated/pokemon_showdown_legal_data.js (511.7842ms)
+Γ£ö real data change invalidates: generated/pokemon_showdown_species_weights.js (621.5322ms)
+Γ£ö real data change invalidates: generated/champions_move_overrides.js (649.6252ms)
+Γ£ö real data change invalidates: generated/champions_move_pools.js (716.1016ms)
+Γ£ö real data change invalidates: generated/mc_review_reference.js (753.1838ms)
+Γ£ö real data change invalidates: package-lock.json (750.206ms)
+Γ£ö real data change invalidates: source/bounded-assertions/reference-target.json (726.6959ms)
+Γ£ö real runner change invalidates: tools/bounded-runtime-capture.mjs (764.3242ms)
+Γ£ö real runner change invalidates: tools/showdown-reference.mjs (746.4978ms)
+Γ£ö real runner change invalidates: tools/prepare-mc-reference-candidate.mjs (722.8749ms)
+Γ£ö real test change invalidates: tests/fixtures/bounded_runtime_cases.mjs (732.8465ms)
+Γ£ö real checker change invalidates: tools/bounded-assertions.mjs (729.4383ms)
+Γ£ö real checker change invalidates: tools/bounded-register.mjs (738.3401ms)
+Γ£ö real checker change invalidates: tools/current-bounded-core.mjs (706.6544ms)
+Γ£ö real checker change invalidates: tools/regulation-watch-core.mjs (723.5411ms)
+Γ£ö documentation-only Git commit changes HEAD but not dependency identity (1081.9314ms)
+Γ£ö wrong item label (363.5684ms)
+Γ£ö wrong move label (363.1615ms)
+Γ£ö missing review (445.8944ms)
+Γ£ö future capture time (403.4818ms)
+Γ£ö missing dependency (407.4472ms)
+Γ£ö scope promotion (419.1256ms)
+Γ£ö changing a pinned review without changing its anchor rejects (455.6961ms)
+Γ£ö missing per-case review (401.2037ms)
+Γ£ö duplicate review case (394.5032ms)
+Γ£ö wrong independently observed value (400.2618ms)
+Γ£ö opaque execution attachments (423.8419ms)
+Γä╣ tests 36
+Γä╣ suites 0
+Γä╣ pass 36
+Γä╣ fail 0
+Γä╣ cancelled 0
+Γä╣ skipped 0
+Γä╣ todo 0
+Γä╣ duration_ms 22380.3236

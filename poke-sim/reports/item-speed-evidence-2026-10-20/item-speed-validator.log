@@ -1,0 +1,38 @@
+
+=== turn log export validator tests ===
+
+  PASS 1. stable identity export passes strict validation across replacement
+  PASS 2. legacy volatile-key exports warn without hard-failing
+  PASS 3. strict mode rejects legacy exports missing stable identity fields
+  PASS 4. item drift on a stable Pokemon is a hard error
+  PASS 5. observed action order respects priority before speed
+  PASS 6. observed action order allows exact same-Speed ties
+  PASS 6b. Gale Wings uses Showdown move type and exact full HP
+  PASS 6c. Pollen Puff cannot target its user after its ally faints
+  PASS 7. observed action order rejects non-tied same-priority reversals
+  PASS 7b. observed action order accepts a mid-turn Tailwind reorder supported by the post snapshot
+  PASS 7bb. a post-turn Speed snapshot cannot retroactively justify an impossible Agility order
+  PASS 7c. observed action order reconstructs Tailwind under Trick Room before end-turn expiry
+  PASS 7d. observed action order reconstructs a mid-turn paralysis Speed drop
+  PASS 7e. Thunder Wave paralysis changes order within Trick Room (accuracy seed 2775382101)
+  PASS 7f. mid-turn Sitrus Unburden requires prior consumption and stable identity
+  PASS 8. speed_order_details provide SP-aware order evidence over legacy name order
+  PASS 9. malformed speed_order_details fail validation
+  PASS 10. terminal no-valid-target skips pass when the target side is empty after earlier KO
+  PASS 11. no-valid-target skips fail when a target side still has a live active Pokemon
+  PASS 11b. no-valid-target skips ignore post-turn replacements sent after the skip
+  PASS 11c. structured event identity resolves mirror-name no-valid-target actions
+  PASS 11d. observed action order uses side and stable keys for mirror species
+  PASS 11e. identical mirror actions remain visible as an explicit identity ambiguity
+  PASS 11f. stable actor identity resolves identical mirror action text
+  PASS 11g. structured action identity ignores repeated damage-detail text
+  PASS 12. calculated damage_events pass validation with modifier evidence
+  PASS 13. malformed calculated damage_events fail validation
+  PASS 14. effect_events pass validation and malformed effect math fails
+  PASS 15. qa_coverage_summary passes when totals match turnLog evidence
+  PASS 16. qa_coverage_summary fails when totals drift from turnLog evidence
+  PASS 17. top-level turns fails when it drifts from turnLog evidence
+  PASS 18. champions-turn-log-v2 requires top-level turns
+
+turn log export validator: 32 pass, 0 fail
+

@@ -1,0 +1,14 @@
+{
+  "candidate_sha256": "d02c935ef45bc6f9a70bfbdb8d98d6e62c8a741328783b8dcb5ca30a8f80b59d",
+  "approval": null,
+  "official_completeness": "unresolved",
+  "runtime_promoted": false,
+  "required_review": [
+    "bidirectional pair delta",
+    "registered versus battle-only forms",
+    "official removals and source conflicts",
+    "historical M-B routing",
+    "transitive dependent invalidation",
+    "current-client package and exact digest approval"
+  ]
+}

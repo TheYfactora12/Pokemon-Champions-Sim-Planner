@@ -1,0 +1,68 @@
+{
+  "schema_version": "independent-charge-spa-review-v1",
+  "reviewed_at": "2026-10-21T00:55:47.652Z",
+  "checkout_head": "932c4736225e2bd5bc3586c85a36130b2e849562",
+  "source_state": "Working-tree repair; hashes identify files inspected before source freeze",
+  "status": "passed_declared_scope",
+  "reference_pin": "9b136a8c8cdb860a8ab96fa063f906604e352547",
+  "source_hashes": {
+    "data.js": "1f6fb92c6ef68cf095a07058f3ddede81f16bb19b9e83dc12a1a98f117802d92",
+    "generated/pokemon_showdown_legal_data.js": "1f13d6fa5b6340e9db041668bde45d7fc70d137ab15ccbc6f42468471ca26bd0",
+    "generated/pokemon_showdown_species_weights.js": "707978246aa6daa97f73495d233d81f2ba0a17c1f9c5119b6a7ddb5585a5914f",
+    "generated/champions_move_overrides.js": "e06e7e59dccc7fd7e1565cc5bc3896e36cc0b5a2cdb03312555458afae677783",
+    "generated/champions_move_pools.js": "21099bad04135f23de2d8b23203628c98004faf4a7d1da179ba808ccef2087f9",
+    "runtime_data.js": "c9ad5dc5c847b5e1be5685a4ee575c6838e2ae958b8063f30adc296eec2dc2eb",
+    "move_legality.js": "80f5a3a42a6c4709f64698cc9d354782c08482c099c64b6281d905ba651508f1",
+    "generated/mc_review_reference.js": "d81091273c06c39dd1a234c5eeb2bb89af2d6e64d36998b2ae9450d8b6c43827",
+    "mc_review.js": "7d51fec376e60c05e81d23e74770c5f00333570e87e08b7b0a598ac790a6b7e2",
+    "legality.js": "859c5fcb4eff7c05834791f00bee13c9ae7587efa8e30a433f2928d388920c0d",
+    "rulesets.js": "72d23fc4490d7291052e18320461e5c309bb70c697ca4f9f5052bb80c139cab7",
+    "outcome_policy.js": "9b356f341f0600b28a157ee7d0f9da33149a63538e824701272fc93b1c3f4832",
+    "engine.js": "3c6cab3730232c8076b1bdb27089dfcc4d33864a56819de0d37eb1bb31258a58",
+    "tools/fly-lifecycle-probes.mjs": "fb26a6ef0edf316777cf161a84ea9d2f0cc234bd150ee2bee364a33b985df8b1",
+    "tools/probe-fly-repair.mjs": "ebcf607cde1f91cf35e062c07e68acd1ed30234e7f641f4163716797d3b40900",
+    "tests/charge_spa_timing_tests.mjs": "fe3f87c173af2d16389be1659b751c57cf871619c17f4c346d9baa3fd534715a"
+  },
+  "evidence": [
+    {
+      "path": "probes.mjs",
+      "sha256": "d668256a1ac8501c76c06c3f9b8a3263f47ce74e1a899e8ea05b4a92ce06d8c1"
+    },
+    {
+      "path": "probe-results.json",
+      "sha256": "23b9e1eebb5301508cc711389209751be4c593bdf6485f8daa8649a3f35b099f"
+    },
+    {
+      "path": "focused-tests.txt",
+      "sha256": "2562b58e3c4791c53c50b449298f0407dc5cb41c255759fd73020a4c21759cd1"
+    }
+  ],
+  "results": {
+    "focused_suite": {
+      "passed": 186,
+      "failed": 0
+    },
+    "independent_preview": {
+      "passed": 36,
+      "failed": 0
+    },
+    "independent_causal_interruptions": {
+      "passed": 10,
+      "failed": 0
+    }
+  },
+  "scope": [
+    "Meteor Beam/Electro Shot preparation boost timing, ordinary/repeated release and Herb/weather skips",
+    "Effective Simple/Contrary including suppression controls in focused suite",
+    "Preview stat nonmutation at stage caps",
+    "Denied release preserves acquired boost and clears stored charge; causal denial/self-hit evidence"
+  ],
+  "preserved_failures": "Earlier focused146/170 passed;24 charging-state failures in ../charge-spa-focused.txt were resolved by scoped charge cleanup. Earlier eight baseline failures retained by parent in ../charge-spa-before.json.",
+  "limits": [
+    "Synthetic shared-reference doubles; not client, full move, legality or team-strength certification",
+    "Independent probes use reviewed shared adapter; not a separate oracle implementation",
+    "Direct36preview/10causal controls overlap focused coverage and are not a combined unique test total",
+    "Switch/reentry and broader move interactions not certified",
+    "No primary edits, publishing or settings changes"
+  ]
+}

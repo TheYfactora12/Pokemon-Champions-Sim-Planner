@@ -1,0 +1,390 @@
+
+> pokemon-champions-sim-planner@1.0.0 test:source-truth
+> node tests/showdown_runtime_data_tests.js && node tests/runtime_data_bridge_tests.js && node tests/damage_pipeline_tests.js && node tests/showdown_damage_oracle_tests.js && node tests/move_verification_registry_tests.js && node tests/showdown_priority_drift_tests.js && node tests/showdown_approved_data_generator_tests.js && node tests/showdown_db_writer_tests.js && node tests/showdown_sync_workflow_tests.js && node tests/pokemon_data_audit_tests.js && node tests/species_ability_legality_tests.js && node tests/supabase_governance_tests.js && node tests/workflow_governance_tests.js && node tests/news_sync_resilience_tests.mjs
+
+
+=== Showdown runtime data tests ===
+
+  PASS 1. generated Showdown species and move data are loaded for runtime
+  PASS 2. Pokemon construction prefers generated Showdown stats/types over local tables
+  PASS 3. every preloaded team member resolves to generated Showdown species at battle construction
+  PASS 4. role classification uses generated Showdown stats when local stats drift
+  PASS 5. local fallback stays aligned for Farigiraf when Showdown data is unavailable
+  PASS 6. complete local fallback stats stay aligned with generated Showdown rows
+
+Showdown runtime data: 6 pass, 0 fail
+
+
+=== runtime data bridge tests ===
+
+  PASS 1. runtime bridge exposes generated move/species lookups
+  PASS 2. champions damage roll window is explicit in runtime overrides
+  PASS 3. engine damage uses runtime roll override instead of DB-side logic
+  PASS 4. runtime bridge canonicalizes Showdown move target categories for the engine
+  PASS 5. every generated Showdown target value maps to a supported engine category
+  PASS 6. engine-only fallback target map cannot drift from runtime bridge map
+
+runtime data bridge: 6 pass, 0 fail
+
+
+=== damage pipeline tests ===
+
+  PASS 1. damage follows explicit staged rounding instead of one-shot modifier lumping
+  PASS 2. sand does not boost Rock-type move damage
+  PASS 3. Rock-types gain special defense in sand against special hits
+  PASS 4. electric terrain boost keys off attacker grounded state, not target grounded state
+  PASS 5. flying attackers do not receive electric terrain damage boost
+
+damage pipeline: 5 pass, 0 fail
+
+
+=== Showdown damage oracle tests ===
+
+  PASS 1. neutral special damage range matches Showdown exactly
+  PASS 2. sand special-defense interaction matches Showdown exactly
+  PASS 3. electric terrain damage range matches Showdown exactly
+  PASS 4. helping hand boost matches Showdown exactly
+  PASS 5. physical stab damage range matches Showdown exactly
+  PASS 6. burn penalty is applied at the same damage stage as Showdown
+  PASS 7. target Tera typing matches Showdown defensive typing
+  PASS 8. same-type attacker Tera upgrades STAB the same way as Showdown
+  PASS 9. off-type attacker Tera keeps original-type STAB like Showdown
+  PASS 10. Freeze-Dry matches Showdown Water effectiveness exactly
+  PASS 11. off-type Tera drops Adaptability back to Showdown's original-type STAB rules
+  PASS 12. Facade status power boost matches Showdown exactly
+  PASS 13. Guts physical boost matches Showdown exactly
+  PASS 14. Weather Ball in rain matches Showdown exactly
+  PASS 15. Weather Ball in sun matches Showdown exactly
+  PASS 16. Electro Shot in rain matches Showdown exactly
+  PASS 17. Terrain Pulse in electric terrain matches Showdown exactly
+  PASS 18. Rising Voltage against a grounded target matches Showdown exactly
+  PASS 19. Solar Beam under rain matches Showdown exactly
+  PASS 20. Tough Claws contact boost matches Showdown exactly
+  PASS 21. Pixilate Normal-to-Fairy conversion matches Showdown exactly
+  PASS 22. Solar Power in sun matches Showdown exactly
+  PASS 23. Supreme Overlord with three fainted allies matches Showdown exactly
+  PASS 24. Defender Cloud Nine suppresses rain Weather Ball like Showdown
+  PASS 25. defender Unaware ignores attacker offensive stat boosts exactly like Showdown
+  PASS 26. attacker Unaware ignores defender defensive stat boosts exactly like Showdown
+  PASS 27. Mega Launcher pulse boost matches Showdown exactly
+  PASS 28. Strong Jaw bite boost matches Showdown exactly
+  PASS 29. Blaze low-HP Fire boost matches Showdown exactly
+  PASS 30. Charcoal stacks with Blaze, sun, STAB, and super-effective Fire damage like Showdown
+  PASS 31. Overgrow low-HP Grass boost matches Showdown exactly
+  PASS 32. Iron Fist punch boost matches Showdown exactly
+  PASS 33. Technician low-BP boost matches Showdown exactly
+  PASS 34. Huge Power Attack boost matches Showdown exactly
+  PASS 35. Pure Power Attack boost matches Showdown exactly
+  PASS 36. Sand Force sand boost matches Showdown exactly
+  PASS 37. Thick Fat Fire reduction matches Showdown exactly
+  PASS 38. Filter super-effective reduction matches Showdown exactly
+  PASS 39. Tinted Lens resisted-hit boost matches Showdown exactly
+  PASS 40. Earth Eater Ground immunity matches Showdown zero damage
+  PASS 41. Levitate Ground immunity matches Showdown zero damage
+  PASS 42. Sheer Force damage boost matches Showdown exactly
+  PASS 43. Fairy Aura damage boost matches Showdown exactly
+  PASS 44. Scrappy Normal damage into Ghost matches Showdown exactly
+  PASS 45. Infiltrator bypasses Light Screen damage reduction like Showdown
+  PASS 46. Mold Breaker bypasses Levitate immunity like Showdown
+  PASS 47. Tera Blast before Tera remains Normal and special like Showdown
+  PASS 48. Tera Blast uses active Tera type and special category like Showdown
+  PASS 49. Tera Blast uses active Tera type and physical category like Showdown
+  PASS 50. Tera Blast category can flip from stat boosts like Showdown
+  PASS 51. DB-style tera_type feeds Tera Blast type and damage evidence
+  PASS 52. Active Tera Blast ignores Pixilate Normal-conversion boost like Showdown
+  PASS 53. Low Kick heavy-target base power matches Showdown exactly
+  PASS 54. Low Kick mid-weight base power matches Showdown exactly
+  PASS 55. former baseline direct and spread damage ranges match Showdown
+  PASS 56. baseline special-case damage rules match Showdown
+
+showdown damage oracle: 56 pass, 0 fail
+
+
+=== move verification registry tests ===
+
+  PASS 1. Freeze-Dry keeps Water targets super effective
+  PASS 2. Giga Drain heals after dealing damage
+  PASS 3. Rock Tomb lowers target Speed after damage
+  PASS 4. Light Screen reduces special damage
+  PASS 5. Reflect reduces physical damage
+  PASS 6. verified registry exposes sources and tests for the promoted move slice
+  PASS 7. Weather Ball uses weather-driven typing in damage resolution
+  PASS 8. direct Electro Shot calc previews the SpA boost without mutating persistent boosts
+  PASS 9. Last Respects scales from the attacker side fainted count
+  PASS 10. battle execution applies Electro Shot's SpA rise before damage resolution
+  PASS 11. Terrain Pulse changes type and doubles base power for a grounded user in terrain
+  PASS 12. Rising Voltage doubles only against grounded targets in Electric Terrain
+  PASS 13. Solar Beam is halved by rain
+  PASS 14. Dragon Darts hits each opposing Pokemon once when both can be hit
+  PASS 15. Dragon Darts sends both hits into the Follow Me target
+  PASS 16. Dragon Darts retargets both hits away from a protected intended target
+  PASS 17. Meteor Beam charges on turn one before dealing damage
+  PASS 18. Solar Beam charges on turn one outside sun
+  PASS 19. Electro Shot still fires immediately in rain
+  PASS 20. simulateBattle respects opts.maxTurns
+  PASS 21. Phantom Force charges and makes the user untargetable on turn one
+  PASS 22. Phantom Force bypasses Protect with Power Herb on the hit turn
+  PASS 23. Phantom Force sleep interruption clears concealment instead of trapping the user off-field
+  PASS 24. Solar Beam full paralysis on the release turn cancels the queued attack
+  PASS 25. Electro Shot sleep interruption cancels the queued hit and restarts on waking
+  PASS 26. stored charge keeps the original target slot when the locked foe is gone
+  PASS 27. stored charge rechecks Follow Me before Protect on the release turn
+  PASS 28. stored charge respects Rage Powder immunity on the release turn
+  PASS 29. stored charge follows Ally Switch as a slot change on the release turn
+  PASS 30. U-turn switches immediately and later actions hit the replacement
+  PASS 31. U-turn does not switch if the attack is fully blocked
+  PASS 32. Volt Switch now pivots after dealing damage
+  PASS 33. Flip Turn now pivots after dealing damage
+  PASS 34. Parting Shot switches the user out after lowering offenses
+  PASS 35. Shed Tail switches out and leaves the Substitute with the replacement
+  PASS 36. Shed Tail fails when no replacement is available
+  PASS 37. Teleport switches the user out into a replacement in trainer battles
+  PASS 38. Baton Pass hands the substitute and speed boosts to the replacement
+  PASS 39. Wish heals the active user at the end of the next turn
+  PASS 40. Wish heals the switched-in replacement occupying the original slot
+  PASS 41. Swords Dance sharply raises the user Attack
+  PASS 42. Dragon Dance raises both Attack and Speed
+  PASS 43. Fake Tears harshly lowers the target Special Defense
+  PASS 44. Coaching boosts the ally Attack and Defense in doubles
+  PASS 45. Coaching fails when there is no ally to receive it
+  PASS 46. Clangorous Soul trades HP for boosts to all five combat stats
+  PASS 47. Clangorous Soul fails when the user does not have enough HP to pay the cost
+  PASS 48. Hypnosis can inflict sleep on a valid target
+  PASS 49. Spore inflicts sleep on a valid target
+  PASS 50. Leech Seed drains HP at end of turn
+  PASS 51. Perish Song sets the countdown on active battlers
+  PASS 52. Perish Song KOs battlers when the counter expires
+  PASS 53. Trick swaps items and the gained Choice Scarf changes later turn order
+  PASS 54. Heal Pulse restores half HP to a damaged ally
+  PASS 55. Heal Pulse fails on a full-HP target
+  PASS 56. Heal Bell cures active and bench ally status conditions
+  PASS 57. Aromatherapy cures active and bench ally status conditions
+  PASS 58. Jungle Healing restores ally HP and cures status
+  PASS 59. Snarl lowers target Special Attack after damage
+  PASS 60. Lunge lowers target Attack after damage
+  PASS 61. Noble Roar lowers the target Attack and Special Attack
+  PASS 62. Super Fang halves the target current HP
+  PASS 63. Pollen Puff heals a damaged ally
+  PASS 64. Psychic Noise blocks recovery for two turns
+  PASS 65. Matcha Gotcha damages, heals the user, and can burn
+  PASS 66. Dire Claw can inflict a major status effect
+  PASS 67. Air Slash can flinch the target
+  PASS 68. Dark Pulse can flinch the target
+  PASS 69. Iron Head can flinch the target
+  PASS 70. Rock Slide can flinch the target
+  PASS 71. Will-O-Wisp burns the target
+  PASS 72. Thunder Wave inflicts paralysis
+  PASS 73. Sleep Powder inflicts sleep
+  PASS 74. Helping Hand boosts an ally attack in doubles
+  PASS 75. Shore Up heals the user
+  PASS 76. Rain Dance sets rain before later damage checks use weather
+  PASS 77. Sunny Day sets sun before later damage checks use weather
+  PASS 78. Flare Blitz applies recoil after a successful hit
+  PASS 79. Wave Crash applies recoil after a successful hit
+  PASS 80. Head Smash applies heavy recoil after a successful hit
+  PASS 81. Aqua Jet lets a slower attacker move before a faster standard-priority target
+  PASS 82. Extreme Speed outranks Aqua Jet at the priority layer
+  PASS 83. Vacuum Wave carries priority through the special attacking path
+  PASS 84. Shadow Sneak carries priority through the physical attacking path
+  PASS 85. Draco Meteor harshly lowers the user Special Attack after damage
+  PASS 86. Overheat harshly lowers the user Special Attack after damage
+  PASS 87. Close Combat lowers the user defensive stats after damage
+  PASS 88. Headlong Rush lowers the user defensive stats after damage
+  PASS 89. Clanging Scales lowers the user Defense after spread damage
+  PASS 90. Showdown camelCase spread target data still hits both adjacent foes
+  PASS 91. single-target damage retargets when the intended opposing target fainted first
+  PASS 92. Knock Off gains base power against removable held items only
+  PASS 93. Knock Off removes a removable held item after a successful damaging hit
+  PASS 94. Knock Off does not boost or remove a corresponding Mega Stone before Mega activation
+  PASS 95. Sticky Hold blocks Knock Off item removal while still allowing the damage boost
+  PASS 96. Knock Off against a legal no-item target does not boost or remove anything
+  PASS 97. Dual Wingbeat executes exactly two damaging hits
+  PASS 98. Poltergeist fails against no-item targets and damages item holders
+  PASS 99. Leaf Storm drops the user Special Attack after successful damage
+  PASS 100. Stomping Tantrum doubles base power after the previous move failed
+  PASS 101. weather and true-accuracy move rules are deterministic
+  PASS 102. baseline secondary effects apply through the shared dispatcher
+  PASS 103. Hurricane confusion and Throat Chop sound lock alter future state
+  PASS 104. Light of Ruin recoil and Ice Shard priority are modeled
+  PASS 105. move failures are exported as structured effect_events
+
+move verification registry: 105 pass, 0 fail
+
+
+=== Showdown priority drift tests ===
+
+  PASS 1. generated Showdown move metadata is available
+  PASS 2. shipped move base priorities match Showdown unless explicitly overridden
+  PASS 3. Trick Room keeps Showdown priority -7
+  PASS 4. Prankster adds one stage on top of Showdown base status priority
+
+Showdown priority drift: 4 pass, 0 fail
+
+
+=== approved Showdown data generator tests ===
+
+  PASS 0. sync audit migration exposes read-only status tables
+  PASS 1. migration creates approved entity, diff, override, and view objects
+  PASS 2. migration allows anon reads only through approved/active RLS paths
+  PASS 3. species move legality view joins exact species/form learnsets to approved move metadata
+  PASS 4. generator emits approved runtime data and excludes unapproved rows
+  PASS 5. Phase 4 compatibility generator path emits the same runtime contract
+  PASS 6. generated DB-style rows are compatible with the battle engine helpers
+
+approved Showdown data generator: 7 pass, 0 fail
+
+
+=== Showdown DB writer tests ===
+
+  PASS 1. dry run reports DB row counts without Supabase credentials
+  PASS 2. approval fails before artifact reads and network, including dry runs
+  PASS 3. real write mode requires a service-role style secret
+  PASS 4. exported payload builder cannot approve rows
+  PASS 5. staging writes only unapproved rows through intercepted requests
+  PASS 6. dry run stays unapproved with credentials present and never calls fetch
+
+Showdown DB writer: 6 pass, 0 fail
+
+
+=== Showdown sync workflow tests ===
+
+  PASS 1. workflow runs daily and supports manual dispatch
+  PASS 2. workflow evaluates change summary before any Supabase write
+  PASS 3. approval and approval-triggered refetch are unavailable
+  PASS 4. fetch, dry run and manual unapproved staging remain available
+
+Showdown sync workflow: 4 pass, 0 fail
+
+
+=== Pokemon data audit tests ===
+
+  PASS 1. CSV, XLSX, and runtime generated data exist
+  PASS 2. CSV fallback exposes required sheet names and source version
+  PASS 3. required example species/forms exist separately
+  PASS 4. Form_Differences includes Arcanine vs Arcanine-Hisui
+  PASS 5. XLSX has a valid zip container signature
+  PASS 6. runtime move metadata preserves Showdown recoil and descriptions
+
+Pokemon data audit: 6 pass, 0 fail
+
+species Ability legality: 8 pass, 0 fail
+
+=== Supabase governance tests ===
+
+  PASS 1. public catalog and evidence writes are revoked
+  PASS 2. runtime team-member grain and override uniqueness are database-enforced
+  PASS 3. adapter matches live schema column names and fails child write errors
+  PASS 4. scheduled checks do not advance an unpromoted Showdown baseline
+  PASS 5. privileged workflows are scoped and production deploy fails closed
+
+Supabase governance: 5 pass, 0 fail
+
+workflow governance: 29 pass, 0 fail
+node:assert:152
+  throw new AssertionError(obj);
+  ^
+
+AssertionError [ERR_ASSERTION]: "2026_05_12_align_reg_ma_meta_sources.sql":       1 [main] bash (116952) C:\Program Files\Git\bin\..\usr\bin\bash.exe: *** fatal error - NtCreateDirectoryObject(\BaseNamedObjects\msys-2.0S5-1888ae32e00d56aa): 0xC0000022
+Stack trace:
+
+Frame         Function      Args
+
+0012E79FB5F0  017E7B98FE8E (017E7BBDEB97, 017E7BB9AB81, 000000000000, 0012E79FA490) msys-2.0.dll+0x1FE8E
+
+0012E79FB5F0  017E7B9767F9 (0012E79FB4D0, 0012E79FB588, 0012E79FB564, 0012E79FB5A0) msys-2.0.dll+0x67F9
+
+0012E79FB5F0  017E7B976832 (0012E79FB5A0, 0000C0000022, 000000000000, 0000000F0007) msys-2.0.dll+0x6832
+
+0012E79FB5F0  017E7BAAE1D6 (000000000220, 017E00000000, 000000000020, 0000FFFFFFFF) msys-2.0.dll+0x13E1D6
+
+FFFFFFFFFFFFFFFF  017E7B9A20DC (017E7B795C30, 017E7BBDEE6C, 000000000005, 00000000DFB8) msys-2.0.dll+0x320DC
+
+0012E79FB960  017E7BAAE564 (0012E79FD320, 0012E79FEEE0, 00000000DFB8, 017E00000000) msys-2.0.dll+0x13E564
+
+0012E79FEEE0  017E7BAAEFB8 (000000000002, 017E7BC42760, 000000000000, 000000000000) msys-2.0.dll+0x13EFB8
+
+0012E79FEEE0  017E7B978462 (017E7B9A0B80, 000000000000, 000000000000, 000000000000) msys-2.0.dll+0x8462
+
+0012E79FEEE0  017E7B9A0C3C (017E7B590000, 000000000000, 017E7B770000, 0012E79FF0C9) msys-2.0.dll+0x30C3C
+
+0012E79FF3D0  7FF97BBBEF6A (000000000000, 000000000000, 000000000004, 0012E79FF000) ntdll.dll+0x11EF6A
+
+0012E79FF3D0  7FF97BABB2E3 (0000000005DE, 000000000000, 000000000000, 7FF97BC19F30) ntdll.dll+0x1B2E3
+
+0012E79FF3D0  7FF97BAB8E1C (7FF97BB2F200, 7FF900000000, 017E7B78BD70, 0012E79FF3D6) ntdll.dll+0x18E1C
+
+0012E79FF3D0  7FF97BB300AA (017E7B786C00, 017E7B787170, 7FF97BC736F0, 7FF97BC19EA0) ntdll.dll+0x900AA
+
+0012E79FF3D0  7FF97BB300D6 (0012E79FF8E0, 7FF97BC3C7E8, 0012E77F5000, 7FF97BC3CCB0) ntdll.dll+0x900D6
+
+000000000000  7FF97BB362BB (000000000000, 000000000000, 0012E77F5000, 000000000000) ntdll.dll+0x962BB
+
+000000000000  7FF97BB343D8 (7FF97BAA0000, 0012E77F5000, 0012E77F6000, 7FF97BAA0000) ntdll.dll+0x943D8
+
+000000000000  7FF97BB341C2 (000000000000, 000000000000, 000000000000, 000000000000) ntdll.dll+0x941C2
+
+000000000000  7FF97BB7F09E (000000000000, 000000000000, 000000000000, 000000000000) ntdll.dll+0xDF09E
+
+End of stack trace
+
+Loaded modules:
+
+017E7B2E0000 bash.exe
+
+7FF97BAA0000 ntdll.dll
+
+7FF97AA60000 KERNEL32.DLL
+
+7FF9790F0000 KERNELBASE.dll
+
+7FF975C10000 apphelp.dll
+
+7FF97B880000 USER32.dll
+
+7FF978C90000 win32u.dll
+
+7FF97ADB0000 GDI32.dll
+
+7FF978CC0000 gdi32full.dll
+
+7FF979040000 msvcp_win.dll
+
+7FF9795C0000 ucrtbase.dll
+
+017E7B970000 msys-2.0.dll
+
+7FF97ACE0000 advapi32.dll
+
+7FF979860000 msvcrt.dll
+
+7FF97B770000 sechost.dll
+
+7FF97B650000 RPCRT4.dll
+
+7FF9780F0000 CRYPTBASE.DLL
+
+7FF979500000 bcryptPrimitives.dll
+
+
+
+false !== true
+
+    at Object.<anonymous> (C:\Users\The Rig\Documents\Codex\2026-10-20\task-2\isolated-eviolite\poke-sim\tools\verify-migration-input.cjs:21:10)
+    at Module._compile (node:internal/modules/cjs/loader:1830:14)
+    at Object..js (node:internal/modules/cjs/loader:1961:10)
+    at Module.load (node:internal/modules/cjs/loader:1553:32)
+    at Module._load (node:internal/modules/cjs/loader:1355:12)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:255:19)
+    at Module.require (node:internal/modules/cjs/loader:1576:12)
+    at require (node:internal/modules/helpers:153:16)
+    at Object.<anonymous> (C:\Users\The Rig\Documents\Codex\2026-10-20\task-2\isolated-eviolite\poke-sim\tests\workflow_governance_tests.js:53:1)
+    at Module._compile (node:internal/modules/cjs/loader:1830:14) {
+  generatedMessage: false,
+  code: 'ERR_ASSERTION',
+  actual: false,
+  expected: true,
+  operator: 'strictEqual',
+  diff: 'simple'
+}
+
+Node.js v24.15.0

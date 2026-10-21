@@ -125,7 +125,7 @@ T('5. complex state secondaries apply their explicit conditions', () => {
   eq(target.status, 'burn', 'Burning Jealousy conditional burn');
 });
 
-T('6. Spirit Shackle traps pivot attempts while the trapper is alive', () => {
+T('6. Spirit Shackle establishes a trap but successful U-turn bypasses it', () => {
   const player = team('Spirit Shackle Trap', [
     { name: 'Decidueye', ability: '', item: '', nature: 'Adamant', level: 50, moves: ['Spirit Shackle'], evs: { hp: 252, atk: 252, spe: 4, def: 0, spa: 0, spd: 0 } },
     { name: 'Garchomp', ability: '', item: '', nature: 'Jolly', level: 50, moves: ['Tackle'], evs: { hp: 252, atk: 252, spe: 4, def: 0, spa: 0, spd: 0 } }
@@ -137,8 +137,10 @@ T('6. Spirit Shackle traps pivot attempts while the trapper is alive', () => {
   const battle = simulateBattle(player, opp, { format: 'singles', seed: [0, 0, 0, 0], maxTurns: 2 });
   truthy(battle.log.some((line) => String(line).includes('Torkoal can no longer escape because of Spirit Shackle!')),
     'Spirit Shackle trap log missing');
-  truthy(battle.log.some((line) => String(line).includes('Torkoal is trapped by Spirit Shackle!')),
-    'trapped pivot block log missing');
+  truthy(!battle.log.some((line) => String(line).includes('Torkoal is trapped by Spirit Shackle!')),
+    'successful damaging pivot must bypass voluntary trap');
+  truthy(battle.log.some(line => String(line) === 'Torkoal pivoted out!'), 'U-turn pivot missing');
+  truthy(battle.log.some(line => String(line) === 'Blissey was sent out!'), 'replacement missing');
 });
 
 T('7. Sparkling Aria cures burn after a successful damaging hit', () => {

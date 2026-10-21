@@ -1,0 +1,13 @@
+{
+  "schema_version": "champions-move-register-v1",
+  "identity": "63bb916585144e02a72bb59be8fa3ca9fcd397f1ab1c9c661e37fa5aa97d6a96",
+  "path": "63bb916585144e02a72bb59be8fa3ca9fcd397f1ab1c9c661e37fa5aa97d6a96/register.json",
+  "competitive_use": false,
+  "counts": {
+    "catalog_moves": 954,
+    "regulation_approved_moves": 0,
+    "client_verified_moves": 0,
+    "reference_pairs": 68025,
+    "interaction_cases": 78
+  }
+}

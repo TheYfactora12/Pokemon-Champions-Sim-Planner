@@ -1,6 +1,4 @@
-// ============================================================
 // POKEMON DATA â VGC 2026 Reg M (Champions Format)
-// ============================================================
 
 // Type color map
 const TYPE_COLORS = {
@@ -912,9 +910,7 @@ function getSpriteUrl(name) {
   return showdownAnimatedSpriteUrl(name);
 }
 
-// ============================================================
 // TEAM DEFINITIONS
-// ============================================================
 
 const TEAMS = {
   "player": {
@@ -5060,9 +5056,7 @@ const TEAMS = {
 
 };
 
-// ============================================================
 // SHIPPED DATA PLACEHOLDER GUARD - T9j.18 (Refs #138)
-// ============================================================
 // CI calls this guard after loading data.js. Keep it narrow: it validates the
 // curated TEAMS catalog, not user-imported teams, so imports can remain lenient.
 const DATA_PLACEHOLDER_RE = /(^|[^A-Z0-9])(TODO|TBD|FIXME|PLACEHOLDER|FILL_ME|MISSING_DATA)([^A-Z0-9]|$)|__[^_]+__/i;
@@ -5176,9 +5170,7 @@ const MOVE_TYPES = {
 };
 
 
-// ============================================================
 // MOVE_CATEGORY / MOVE_BP — T9j.9 (Refs #3 #24)
-// ============================================================
 // Data-driven move metadata replaces engine.js hardcoded whitelists.
 // Category: 'physical' / 'special' / 'status'. BP: base power in (0 for status).
 //
@@ -5191,7 +5183,6 @@ const MOVE_TYPES = {
 //
 // If a move is missing here, engine.js logs a warning and falls back to the
 // legacy type-based classifier (physical for contact-adjacent types) and 60 BP.
-// ============================================================
 const MOVE_CATEGORY = {
   // --- Physical ---
   'Fake Out':'physical','Flare Blitz':'physical','Knock Off':'physical',
@@ -5287,11 +5278,9 @@ const MOVE_BP = {
   'Headbutt':70,'Rolling Kick':60,'Stomp':65
 };
 
-// ============================================================
 // MOVE_EFFECTS — reusable self-state / utility move metadata.
 // The engine reads these values instead of hardcoding the healing and
 // status-duration numbers in multiple branches.
-// ============================================================
 const MOVE_EFFECTS = {
   'Recover': { healFraction: 0.5, failIfFull: true },
   'Shore Up': { healFraction: 0.5, sandHealFraction: 2 / 3, failIfFull: true },
@@ -5305,9 +5294,7 @@ const MOVE_EFFECTS = {
 };
 
 
-// ============================================================
 // MOVE_TARGETS — Champions 2026 move target categories (T9j.2, Issue #33)
-// ============================================================
 // Categories:
 //   'normal'             single target, redirectable by Follow Me/Rage Powder
 //   'adjacent-foe'       same as 'normal' in this engine (no distance model)
@@ -5425,13 +5412,13 @@ const TYPE_CHART = {
   Water:    { Water:0.5, Grass:0.5, Dragon:0.5, Fire:2, Ground:2, Rock:2 },
   Electric: { Electric:0.5, Grass:0.5, Dragon:0.5, Ground:0, Flying:2, Water:2 },
   Grass:    { Fire:0.5, Grass:0.5, Poison:0.5, Flying:0.5, Bug:0.5, Steel:0.5, Dragon:0.5, Water:2, Ground:2, Rock:2 },
-  Ice:      { Water:0.5, Ice:0.5, Fire:2, Fighting:2, Rock:2, Steel:2, Grass:2, Ground:2, Flying:2, Dragon:2 },
+  Ice:      { Water:0.5, Ice:0.5, Fire:0.5, Steel:0.5, Grass:2, Ground:2, Flying:2, Dragon:2 },
   Fighting: { Normal:2, Ice:2, Rock:2, Dark:2, Steel:2, Poison:0.5, Bug:0.5, Psychic:0.5, Flying:0.5, Ghost:0, Fairy:0.5 },
   Poison:   { Grass:2, Fairy:2, Poison:0.5, Ground:0.5, Rock:0.5, Ghost:0.5, Steel:0 },
   Ground:   { Fire:2, Electric:2, Poison:2, Rock:2, Steel:2, Flying:0, Bug:0.5, Grass:0.5 },
   Flying:   { Grass:2, Fighting:2, Bug:2, Electric:0.5, Rock:0.5, Steel:0.5 },
   Psychic:  { Fighting:2, Poison:2, Psychic:0.5, Steel:0.5, Dark:0 },
-  Bug:      { Grass:2, Psychic:2, Dark:2, Fire:0.5, Fighting:0.5, Flying:0.5, Ghost:0.5, Steel:0.5, Fairy:0.5 },
+  Bug:      { Grass:2, Psychic:2, Dark:2, Poison:0.5, Fire:0.5, Fighting:0.5, Flying:0.5, Ghost:0.5, Steel:0.5, Fairy:0.5 },
   Rock:     { Fire:2, Ice:2, Flying:2, Bug:2, Fighting:0.5, Ground:0.5, Steel:0.5 },
   Ghost:    { Ghost:2, Psychic:2, Normal:0, Dark:0.5 },
   Dragon:   { Dragon:2, Steel:0.5, Fairy:0 },
@@ -5450,7 +5437,6 @@ function getEffectiveness(moveType, defTypes) {
 }
 
 
-// ============================================================
 // CHAMPIONS MEGA EVOLUTION REGISTRY (T9c)
 // Source: CHAMPIONS_MEGA_DATASET.json (cross-confirmed audit, 60 entries)
 // All Reg M-A legal Megas. Keyed by Mega display name ("Base-Mega" or
@@ -5469,7 +5455,6 @@ function getEffectiveness(moveType, defTypes) {
 //   Serebii Updated Abilities: https://www.serebii.net/pokemonchampions/updatedabilities.shtml
 //   Serebii Mega Abilities: https://www.serebii.net/pokemonchampions/megaabilities.shtml
 //   Serebii Reg M-A: https://www.serebii.net/pokemonchampions/rankedbattle/regulationm-a.shtml
-// ============================================================
 var CHAMPIONS_MEGAS = {
   'Venusaur-Mega': { baseSpecies:'Venusaur', nationalDex:3, types:['Grass','Poison'], ability:'Thick Fat', abilityIsNew:false, abilityIsUpdated:false, megaBaseStats:{hp:80,atk:100,def:123,spa:122,spd:120,spe:80}, megaStone:'Venusaurite', megaStoneSource:"Shop: 2000 VP" },
   'Charizard-Mega-X': { baseSpecies:'Charizard', nationalDex:6, types:['Fire','Dragon'], ability:'Tough Claws', abilityIsNew:false, abilityIsUpdated:false, megaBaseStats:{hp:78,atk:130,def:111,spa:130,spd:85,spe:100}, megaStone:'Charizardite X', megaStoneSource:"Shop: 2000 VP" },

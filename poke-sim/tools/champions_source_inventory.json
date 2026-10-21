@@ -9,6 +9,17 @@
   },
   "public_sources": [
     {
+      "source_id": "nintendo_champions_updates",
+      "owner": "Nintendo",
+      "tier": 0,
+      "url": "https://en-americas-support.nintendo.com/app/answers/detail/a_id/71525/~/how-to-update-pok%C3%A9mon-champions",
+      "kind": "official_patch_notes",
+      "cadence": "daily",
+      "required": true,
+      "claim_scopes": ["published_client_versions", "patch_dates", "explicit_patch_notes"],
+      "limitations": "Generic bug-fix notes do not verify individual mechanics or regulation eligibility."
+    },
+    {
       "source_id": "champions_official_home",
       "owner": "The Pokemon Company International",
       "tier": 0,

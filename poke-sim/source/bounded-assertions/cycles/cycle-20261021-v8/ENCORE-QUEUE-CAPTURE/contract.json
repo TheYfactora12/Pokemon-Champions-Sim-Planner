@@ -1,0 +1,41 @@
+{
+  "schema_version": "bounded-contract-v1",
+  "assertion_id": "ENCORE-QUEUE-CAPTURE.current-runtime.v8",
+  "case_id": "ENCORE-QUEUE-CAPTURE",
+  "scope": {
+    "oracle_kind": "shared_reference",
+    "format": "gen9championsdoublescustomgame",
+    "regulation_id": null,
+    "client_version": null,
+    "boundaries": [
+      "two turns, Prankster Encore before queued Flamethrower",
+      "replacement executes Will-O-Wisp and spends replacement PP"
+    ]
+  },
+  "fields": [
+    {
+      "field": "executed_move",
+      "type": "string",
+      "unit": "value",
+      "expected": "Will-O-Wisp"
+    },
+    {
+      "field": "willowisp_pp_spent",
+      "type": "number",
+      "unit": "PP",
+      "expected": 2
+    },
+    {
+      "field": "flamethrower_pp_spent",
+      "type": "number",
+      "unit": "PP",
+      "expected": 0
+    },
+    {
+      "field": "lock_move",
+      "type": "string",
+      "unit": "value",
+      "expected": "willowisp"
+    }
+  ]
+}

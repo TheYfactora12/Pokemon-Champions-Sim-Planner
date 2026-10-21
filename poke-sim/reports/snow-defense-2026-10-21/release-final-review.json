@@ -1,0 +1,21 @@
+{
+  "reviewed_at_utc": "2026-10-21T04:26:42.231753+00:00",
+  "scope": "final source/hash confirmation, no duplicated tests",
+  "build_id": "v2.2.245-snow-defense",
+  "bundle_sha256": "0e411af66e6ae05fd1014604c0a377d9556aa1ab7fca46e59971beb44d552c15",
+  "bundle_bytes": 11534277,
+  "headroom_11MiB": 59,
+  "external_assets": {
+    "generated/source_sync_status.js": true,
+    "generated/champions_move_pools.js": true,
+    "generated/mc_review_reference.js": true,
+    "mc_review.js": true,
+    "own_state_policy.js": true,
+    "assets/retro-intro/gengar.png": true,
+    "assets/retro-intro/nidorino.png": true
+  },
+  "header_app_shell_ui_fallback": "resolved",
+  "remaining_release_identity_findings": [],
+  "tests": "Final 12-test run owned by primary; not rerun by reviewer",
+  "publication": false
+}

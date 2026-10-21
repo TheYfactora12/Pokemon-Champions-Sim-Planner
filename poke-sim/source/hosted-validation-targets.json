@@ -1,0 +1,8 @@
+{
+  "hosted_origins": {
+    "preview": null,
+    "production": "https://theyfactora12.github.io"
+  },
+  "rollback_target": null,
+  "scope": "Preview hostname and exact rollback target require reviewed configuration. Null blocks remote release proof; localhost CI is not remote deployment validation."
+}

@@ -1,65 +1,8 @@
-// ============================================================
-// TEAM LAB SIM EVIDENCE FOUNDATION
-// ============================================================
-// First-class replay records and simulation jobs for Team Lab evidence.
-// This module does not run battles. It normalizes metadata so future runners,
-// replays, and leaderboard aggregation can stay versioned and auditable.
 (function(root) {
   'use strict';
+  var outcomePolicy = root.ChampionsOutcome || (typeof require==='function' ? require('./outcome_policy.js') : null);
 
-  /** @typedef {'team_vs_team'|'team_vs_leaderboard'|'archetype_sweep'|'full_leaderboard_recalc'|'qa_regression'} SimJobType */
-  /** @typedef {'queued'|'running'|'completed'|'failed'|'cancelled'} SimJobStatus */
-  /** @typedef {'ko'|'timer'|'forfeit'|'draw'|'error'} SimResultReason */
-  /**
-   * @typedef {Object} SimJob
-   * @property {string=} id
-   * @property {SimJobType} job_type
-   * @property {string} regulation_id
-   * @property {string} ruleset_version
-   * @property {string} engine_version
-   * @property {'singles'|'doubles'} format
-   * @property {string[]} team_ids
-   * @property {string[]=} opponent_team_ids
-   * @property {string[]=} opponent_archetypes
-   * @property {number} games_per_matchup
-   * @property {SimJobStatus} status
-   * @property {Object=} status_report
-   * @property {string[]=} confidence_flags
-   * @property {string[]=} source_gaps
-   */
-  /**
-   * @typedef {Object} ReplayRecord
-   * @property {string=} id
-   * @property {string=} sim_run_id
-   * @property {string=} job_id
-   * @property {string} team_a_id
-   * @property {string} team_b_id
-   * @property {string} regulation_id
-   * @property {'singles'|'doubles'} format
-   * @property {string} engine_version
-   * @property {string} ruleset_version
-   * @property {string} seed
-   * @property {string=} winner_team_id
-   * @property {SimResultReason} result_reason
-   * @property {number=} turns
-   * @property {Object[]} event_log
-   * @property {Object[]=} turn_log
-   * @property {Object[]=} damage_events
-   * @property {Object[]=} effect_events
-   * @property {Object=} qa_coverage_summary
-   * @property {string[]=} confidence_flags
-   * @property {string[]=} source_gaps
-   */
-   /**
-    * @typedef {Object} ReplayEvidenceSummary
-    * @property {number} events
-    * @property {number} turns
-    * @property {number} damage_events
-    * @property {number} effect_events
-    * @property {boolean} has_qa_coverage
-    * @property {string[]} confidence_flags
-    * @property {string[]} source_gaps
-    */
+  // Record type documentation: docs/SIM_EVIDENCE_TYPES.md
 
   var VALID_JOB_TYPES = ['team_vs_team', 'team_vs_leaderboard', 'archetype_sweep', 'full_leaderboard_recalc', 'qa_regression'];
   var VALID_JOB_STATUS = ['queued', 'running', 'completed', 'failed', 'cancelled'];
@@ -131,6 +74,7 @@
       turnLog.forEach(function(turn) { effectRows = effectRows.concat((turn && turn.effect_events) || []); });
     }
     return {
+      outcome_proof: outcomePolicy ? outcomePolicy.evaluate(replay).proof : null,
       events: eventLog.length,
       turns: Number((replay && replay.turns) || turnLog.length || 0),
       damage_events: damageRows.length,
@@ -171,13 +115,24 @@
     return null;
   }
 
-  function artifactResultReason(result) {
-    var value = String(result || '').toLowerCase();
-    if (value === 'draw') return 'draw';
-    if (value === 'timeout' || value === 'timer') return 'timer';
-    if (value === 'forfeit') return 'forfeit';
+  function artifactResultReason(result, card, sourceGaps) {
+    var value = String(result || '').toLowerCase(), gap;
     if (value === 'error') return 'error';
-    return 'ko';
+    if (value === 'forfeit') {
+      sourceGaps.push(artifactSourceGap('OUTCOME_WINNER_UNVERIFIED', 'Forfeit winner is not attributed.', 'result'));
+      return 'forfeit';
+    }
+    if (card.timerExpired === true || value === 'timeout' || value === 'timer') {
+      sourceGaps.push(artifactSourceGap('TIMER_POLICY_UNVERIFIED', 'Timer proxy is not verified game adjudication.', 'timerExpired'));
+      return 'timer';
+    }
+    if (card.terminal === false) gap = 'OUTCOME_UNFINISHED';
+    else if (card.terminal !== true || !Number.isInteger(card.playerSurvivors) || !Number.isInteger(card.oppSurvivors) ||
+        card.playerSurvivors < 0 || card.oppSurvivors < 0 || (card.playerSurvivors > 0 && card.oppSurvivors > 0)) gap = 'OUTCOME_TERMINATION_UNKNOWN';
+    else if (!(value === 'win' && card.playerSurvivors > 0 && card.oppSurvivors === 0) &&
+        !(value === 'loss' && card.oppSurvivors > 0 && card.playerSurvivors === 0)) gap = 'OUTCOME_WINNER_UNVERIFIED';
+    if (gap) { sourceGaps.push(artifactSourceGap(gap, 'No verified terminal outcome in artifact.', 'terminal')); return 'error'; }
+    return value === 'draw' ? 'draw' : 'ko';
   }
 
   function artifactWinnerTeamId(result, playerTeamId, opponentTeamId) {
@@ -462,6 +417,7 @@
     var turnLog = Array.isArray(card.turnLog) ? card.turnLog : (Array.isArray(card.turn_log) ? card.turn_log : []);
     var eventLog = Array.isArray(card.event_log) ? card.event_log : artifactRowsFromTextLog(card.log);
     var result = card.result || payload.result || null;
+    var reason = artifactResultReason(result, Object.assign({},payload,card), sourceGaps);
     var replay = {
       id: card.id || undefined,
       job_id: opts.job_id || undefined,
@@ -473,8 +429,9 @@
       engine_version: scope.engine_version,
       ruleset_version: scope.ruleset_version,
       seed: String(card.seed || payload.seed || 'artifact-seed-needed'),
-      winner_team_id: artifactWinnerTeamId(result, playerTeamId, opponentTeamId) || undefined,
-      result_reason: artifactResultReason(result),
+      winner_team_id: reason !== 'error' && reason !== 'timer' ? artifactWinnerTeamId(result, playerTeamId, opponentTeamId) || undefined : undefined,
+      outcome_proof: outcomePolicy.evaluate(Object.assign({},payload,card)).proof,
+      result_reason: reason,
       turns: Number(card.turns || turnLog.length || 0),
       event_log: eventLog,
       turn_log: turnLog,
@@ -488,6 +445,7 @@
       sourceGaps.push(artifactSourceGap('SEED_MISSING_FROM_ARTIFACT', 'Artifact replay card did not include a deterministic seed.', 'seed'));
       replay.seed = 'artifact-seed-needed';
     }
+    replay.qa_coverage_summary=Object.assign({},replay.qa_coverage_summary,{outcome_proof:replay.outcome_proof});
     replay.source_gaps = uniqueGaps(sourceGaps).map(function(gap) { return gap.code; });
     return { replay: normalizeReplayRecord(replay), source_gaps: uniqueGaps(sourceGaps) };
   }
@@ -628,6 +586,14 @@
     run.replay_id = normalized.id || run.replay_id || null;
     run.job_id = normalized.job_id || run.job_id || null;
     run.confidence_flags = unique((run.confidence_flags || []).concat(normalized.confidence_flags || []));
+    run.source_gaps = unique((run.source_gaps || []).concat(normalized.source_gaps || []));
+    run.confidence_flags = unique(run.confidence_flags.concat(normalized.source_gaps || []));
+    var prior = outcomePolicy && outcomePolicy.evaluate(run);
+    var hasPrior = ['outcome_proof','tactical_summary','qa_coverage_summary','replay_evidence_summary','terminal','timerExpired','exclusion_reason','result','result_reason','playerSurvivors','oppSurvivors','winner_team_id'].some(function(k){return run[k]!=null;});
+    run.outcome_proof = hasPrior ? outcomePolicy.evaluate({outcome_proof:prior.proof,replay_evidence_summary:normalized.evidence_summary}).proof : normalized.evidence_summary.outcome_proof;
+    if(outcomePolicy)run.outcome_proof=outcomePolicy.evaluate(run).proof;
+    run.result_reason = normalized.result_reason;
+    run.winner_team_id = normalized.winner_team_id || null;
     run.replay_evidence_summary = normalized.evidence_summary;
     return { ok: true, sim_run: run, replay: normalized, warnings: replayValidation.warnings };
   }

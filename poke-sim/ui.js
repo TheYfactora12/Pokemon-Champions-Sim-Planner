@@ -1,9 +1,7 @@
-// ============================================================
 // POKE-E-SIM CHAMPION 2026 — UI CONTROLLER
-// Build marker: v2.2.216-beta-feedback
-// ============================================================
+// Build marker: v2.2.248-eviolite-activation
 
-// ---- Theme Toggle ----
+// Theme Toggle
 (function() {
   const t = document.querySelector('[data-theme-toggle]'), r = document.documentElement;
   let d = matchMedia('(prefers-color-scheme:dark)').matches ? 'dark' : 'light';
@@ -17,10 +15,8 @@
   });
 })();
 
-// ============================================================
 // CHAMPIONS SIM NAMESPACE - Issue #78
 // Cross-module state and public helper APIs live here.
-// ============================================================
 var ChampionsSim = (typeof window !== 'undefined')
   ? (window.ChampionsSim = window.ChampionsSim || {})
   : {};
@@ -41,7 +37,7 @@ var UILog = ChampionsSim.logger.for ? ChampionsSim.logger.for('ui') : ChampionsS
 // ui.js without the documented app-shell script order.
 var csSpriteFallbackAttrs = (typeof csSpriteFallbackAttrs === 'function') ? csSpriteFallbackAttrs : function() { return ''; };
 var csInitPublicSecurityDelegates = (typeof csInitPublicSecurityDelegates === 'function') ? csInitPublicSecurityDelegates : function() {};
-var csGetBuildId = (typeof csGetBuildId === 'function') ? csGetBuildId : function() { return 'v2.2.216-beta-feedback'; };
+var csGetBuildId = (typeof csGetBuildId === 'function') ? csGetBuildId : function() { return 'v2.2.248-eviolite-activation'; };
 var csApplyReleaseManifestToHeader = (typeof csApplyReleaseManifestToHeader === 'function') ? csApplyReleaseManifestToHeader : function() {};
 var csReloadAfterBuildCacheReset = (typeof csReloadAfterBuildCacheReset === 'function') ? csReloadAfterBuildCacheReset : function() { return false; };
 var csGetSourceUrl = (typeof csGetSourceUrl === 'function') ? csGetSourceUrl : function() { return null; };
@@ -150,7 +146,7 @@ async function csHardenClientState() {
   return true;
 }
 
-// ---- Tabs ----
+// Tabs
 var _activeA11yTabId = null;
 var _activeModalState = null;
 function _getFocusableElements(root) {
@@ -336,7 +332,7 @@ function _handleModalKeydown(ev) {
 }
 document.addEventListener('keydown', _handleModalKeydown, true);
 
-// ---- Format Toggle (Doubles / Singles) ----
+// Format Toggle (Doubles / Singles)
 let currentFormat = 'doubles';
 let currentRuleset = 'champions';
 var selectedRegulationId = 'champions_custom_practice';
@@ -500,7 +496,7 @@ document.querySelectorAll('.fmt-btn').forEach(btn => {
   });
 });
 
-// ---- Bo Picker ----
+// Bo Picker
 let currentBo = 3;
 document.querySelectorAll('.bo-btn').forEach(btn => {
   btn.addEventListener('click', () => {
@@ -510,10 +506,8 @@ document.querySelectorAll('.bo-btn').forEach(btn => {
   });
 });
 
-// ============================================================
 // SHOWDOWN PASTE PARSER
 // Parses standard PS! export format into team member objects
-// ============================================================
 function _applySpreadLineToEvs(lineText, evs, seen = new Set()) {
   const errors = [];
   const parts = String(lineText || '').split('/').map(s => s.trim());
@@ -712,7 +706,10 @@ function csReconcilePasteMembers(previous, incoming, options) {
 }
 
 function csLearnsetOptionsForTeam(team) {
-  return { learnsetContext: team && team.format === 'champions' ? 'champions' : team && team.format === 'sv' ? 'historical' : null };
+  var rules = team && (team.ruleset_id || team.regulation_id) ||
+    (typeof getSelectedRegulationId === 'function' ? getSelectedRegulationId() : null);
+  return { learnsetContext: team && team.format === 'champions' ?
+    (rules === 'champions_custom_practice' ? 'champions_current' : 'champions') : team && team.format === 'sv' ? 'historical' : null };
 }
 
 function buildImportedTeamValidation(members, opts) {
@@ -725,6 +722,7 @@ function buildImportedTeamValidation(members, opts) {
   // Editable input is not verified admission when source evidence is missing.
   var team = {
     name: opts.name || 'Imported Team',
+    regulation_id: opts.regulationId || null,
     format: opts.format || 'champions',
     legality_status: 'unverified',
     members: members || []
@@ -898,11 +896,9 @@ function getMoveLegalityIssueSeverity(reason) {
   return 'warning';
 }
 
-// ============================================================
 // CHAMPION PASTE EXPORTER
 // Generates a Champion-safe text export. Uses SPs instead of Showdown EVs so
 // round-tripping does not re-import SV-format spread lines by mistake.
-// ============================================================
 function exportTeamToPaste(team) {
   return exportTeamToPasteWithOptions(team, {});
 }
@@ -940,12 +936,10 @@ function exportTeamToPasteWithOptions(team, opts) {
 
 
 
-// ---- Type color ----
+// Type color
 function typeColor(type) { return TYPE_COLORS[type] || '#888'; }
 
-// ============================================================
 // ROSTER RENDERING
-// ============================================================
 function getPokemonTypes(name) {
   const source = typeof _showdownSpeciesBase === 'function' ? _showdownSpeciesBase(name) : null;
   if (source && Array.isArray(source.types) && source.types.length) return source.types.slice();
@@ -1000,12 +994,10 @@ function renderRoster(containerId, members) {
   });
 }
 
-// ============================================================
 // T9d: Dynamic player/opponent team selectors + Swap button
 // currentPlayerKey tracks the active player team (user-selectable).
 // rebuildTeamSelects() re-populates both dropdowns from TEAMS so that
 // imported/custom teams appear in BOTH sides.
-// ============================================================
 function normalizeTeamRecordForSim(teamKey, team) {
   if (!team || typeof team !== 'object') return null;
   team.team_id = team.team_id || teamKey;
@@ -1430,12 +1422,10 @@ function getEditablePlayerTeam() {
   return TEAMS[getEditablePlayerTeamKey()] || null;
 }
 
-// ============================================================
 // T9f: Custom-team persistence (localStorage)
 // - Only teams with source === 'custom' are persisted
 // - Preloaded teams are protected (not written, not deletable)
 // - Schema version bumps require migration
-// ============================================================
 var CUSTOM_TEAMS_STORAGE_KEY = 'champions_sim_custom_teams_v1';
 var CUSTOM_TEAMS_SCHEMA_VERSION = 1;
 
@@ -1476,9 +1466,7 @@ function saveCustomTeamsToStorage() {
 // Load persisted custom teams BEFORE first rebuildTeamSelects() call
 loadCustomTeamsFromStorage();
 
-// ============================================================
 // T9h: Preloaded overrides + async confirm modal
-// ============================================================
 var PRELOADED_OVERRIDES_KEY = 'champions_sim_preloaded_overrides_v1';
 var PRELOADED_OVERRIDES_SCHEMA = 1;
 
@@ -1560,9 +1548,7 @@ document.addEventListener('click', function(e) {
   else if (e.target && (e.target.id === 'confirm-cancel' || e.target.id === 'confirm-close')) _resolveConfirm(false);
 });
 
-// ============================================================
 // T9g: Delete custom teams (gated by team.source === 'custom')
-// ============================================================
 async function deleteCustomTeam(key) {
   var team = TEAMS[key];
   if (!team) return;
@@ -1643,7 +1629,7 @@ rebuildTeamSelects();
 // T9j.12 (Refs #74): draw sim-side bring pickers on initial load.
 if (typeof renderSimBringPickers === 'function') renderSimBringPickers();
 
-// ---- Player select ----
+// Player select
 document.getElementById('player-select').addEventListener('change', function() {
   var team = TEAMS[this.value];
   if (team) {
@@ -1670,7 +1656,7 @@ document.getElementById('player-select').addEventListener('change', function() {
   }
 });
 
-// ---- Opponent select ----
+// Opponent select
 document.getElementById('opponent-select').addEventListener('change', function() {
   const team = TEAMS[this.value];
   if (team) {
@@ -1689,7 +1675,7 @@ document.getElementById('opponent-select').addEventListener('change', function()
   }
 });
 
-// ---- T9d: Swap Teams button ----
+// T9d: Swap Teams button
 document.getElementById('swap-teams-btn')?.addEventListener('click', function() {
   var pSel = document.getElementById('player-select');
   var oSel = document.getElementById('opponent-select');
@@ -1703,13 +1689,11 @@ document.getElementById('swap-teams-btn')?.addEventListener('click', function() 
   if (typeof renderSimBringPickers === 'function') renderSimBringPickers();
 });
 
-// ============================================================
 // Issue #T6: Ladder Mode gate
 // Ladder Mode ON (default): only teams whose format==='champions'
 // AND legality_status==='legal' appear in opponent-select; Run All
 // iterates only those teams. OFF: all teams visible.
 // Reads T5 schema fields: team.format, team.legality_status.
-// ============================================================
 // T9h: default OFF so all preloaded + inferred + custom teams are visible.
 // T9h: isLadderLegal accepts 'legal' (manually verified) AND 'legal_inferred'
 // (tournament placement teams with archetype-default spreads).
@@ -1936,12 +1920,8 @@ document.getElementById('ladder-mode-toggle')?.addEventListener('change', functi
 // Initial gate on load
 applyLadderGate();
 
-// ============================================================
 // TEAMS TAB
-// ============================================================
-// ============================================================
 // T9j.12 (Refs #74) Shared bring-picker HTML builder + wiring
-// ------------------------------------------------------------
 // Same markup used on Teams tab (cards) and Simulator tab (inline, under the
 // two VS roster columns). State (BRING_SELECTION + BRING_MODE) is authoritative
 // in localStorage via the T9j.10 helpers getBringFor/setBringFor/getBringMode/
@@ -1950,7 +1930,6 @@ applyLadderGate();
 //   Cite: https://bulbapedia.bulbagarden.net/wiki/Team_Preview
 //   Cite: https://bulbapedia.bulbagarden.net/wiki/Lead_Pok%C3%A9mon
 //   Cite: https://developer.mozilla.org/en-US/docs/Web/API/HTML_Drag_and_Drop_API
-// ============================================================
 function buildBringPickerHtml(teamKey, opts) {
   opts = opts || {};
   var compact = !!opts.compact;
@@ -2183,9 +2162,7 @@ function renderSimBringPickers() {
   renderSimBringPicker('opp-bring-picker', oppKey);
 }
 
-// ============================================================
 // T9j.11 (Refs #73) Teams-tab filter + persistence banner + bulk file I/O
-// ------------------------------------------------------------
 // Filter chips: All / Preloaded / Custom / Tournament / Mega
 //   - Preloaded = any team whose source !== 'custom'
 //   - Custom    = team.source === 'custom' (imported by user, localStorage-backed)
@@ -2200,7 +2177,6 @@ function renderSimBringPickers() {
 // Cite: Pokemon Showdown team format -- https://bulbapedia.bulbagarden.net/wiki/Pok%C3%A9mon_Showdown
 // Cite: Smogon export convention   -- https://www.smogon.com/forums/threads/3587177/
 // Cite: MDN File API (reader)      -- https://developer.mozilla.org/en-US/docs/Web/API/File_API
-// ============================================================
 var TEAMS_FILTER = 'all'; // 'all' | 'preloaded' | 'custom' | 'tournament' | 'mega' | 'regma' | 'historical' | 'regmb_review'
 function csIsTournamentTeamKey(key) {
   // Membership is callable before UI state initialization, including error recovery.
@@ -2583,9 +2559,7 @@ renderTeamsGrid();
 
 document.getElementById('import-team-btn')?.addEventListener('click', () => openImportModal());
 
-// ============================================================
 // T9j.11 (Refs #73) Bulk file import/export
-// ------------------------------------------------------------
 // parseMultiTeamShowdown(text): accepts a Smogon/pokepaste multi-team dump.
 //   Splits first on lines of the form `=== [name] ===` (pokepaste convention
 //   used by Showdown's teambuilder export-all). If no `=== ... ===` markers
@@ -2594,7 +2568,6 @@ document.getElementById('import-team-btn')?.addEventListener('click', () => open
 // Returns: [{ name, members:[...] }, ...]
 // Cite: Smogon export-all team format -- https://www.smogon.com/forums/threads/3587177/
 // Cite: MDN File API                  -- https://developer.mozilla.org/en-US/docs/Web/API/File_API
-// ============================================================
 function parseMultiTeamShowdown(text) {
   if (!text) return [];
   // Normalize line endings (Windows CRLF, classic Mac CR -> \n).
@@ -2935,9 +2908,7 @@ document.getElementById('bulk-import-file')?.addEventListener('change', function
 });
 
 
-// ============================================================
 // EDITOR TAB
-// ============================================================
 let editingIdx = null;
 var editingTeamKey = null;
 var editingRosterSnapshot = null;
@@ -3688,9 +3659,7 @@ document.getElementById('export-team-editor')?.addEventListener('click', ()=>ope
 document.getElementById('import-team-editor')?.addEventListener('click', ()=>{ openImportModal(); var imp=document.getElementById('import-slot'); if(imp) imp.value=currentPlayerKey; });
 document.getElementById('add-team-mon')?.addEventListener('click', addEditorPokemonSlot);
 
-// ============================================================
 // EXPORT MODAL
-// ============================================================
 function openExportModal(teamKey) {
   const team = TEAMS[teamKey];
   if (!team) return;
@@ -3741,9 +3710,7 @@ document.getElementById('result-run-again-btn')?.addEventListener('click', funct
   if (runBtn) runBtn.click();
 });
 
-// ============================================================
 // IMPORT MODAL
-// ============================================================
 function openImportModal() {
   _openModalOverlay('import-modal', { focusSelector: '#showdown-paste', labelledbyId: 'import-modal-title' });
   document.getElementById('showdown-paste').value = '';
@@ -3758,11 +3725,9 @@ function openImportModal() {
 }
 function closeImportModal() { _closeModalOverlay('import-modal'); }
 
-// ============================================================
 // T9h: Edit any team (preloaded, opponent-added, or custom)
 // Reuses the import modal pre-populated with the team's current Showdown paste.
 // Saving writes: custom -> localStorage custom; preloaded -> localStorage override.
-// ============================================================
 function openEditTeamModal(teamKey) {
   var team = TEAMS[teamKey];
   if (!team) return;
@@ -4104,9 +4069,7 @@ document.querySelectorAll('.modal-overlay').forEach(overlay => {
   });
 });
 
-// ============================================================
 // CHART HELPERS
-// ============================================================
 function drawBarChart(canvasId, labels, values, color) {
   const cv = document.getElementById(canvasId);
   if (!cv) return;
@@ -4149,9 +4112,7 @@ function drawBarChart(canvasId, labels, values, color) {
   }
 }
 
-// ============================================================
 // RESULTS DISPLAY
-// ============================================================
 function displayResults(res, oppKey, simCtx) {
   simCtx = simCtx || resolveSimContext({ bo: currentBo, oppKey: oppKey });
   oppKey = oppKey || simCtx.oppKey;
@@ -4355,9 +4316,7 @@ function revealPdfButton() {
   btn.title = 'Generates a fresh PDF packet from the latest simulation data (' + count + ' matchup' + (count === 1 ? '' : 's') + ' included). Run another sim to refresh.';
 }
 
-// ============================================================
 // INLINE PILOT CARD — shown after every single sim run
-// ============================================================
 function showInlinePilotCard(oppKey, res, simCtx) {
   simCtx = simCtx || resolveSimContext({ playerKey: res && res.playerKey, oppKey: oppKey || (res && res.oppKey), bo: res && res.bo });
   var playerKey = simCtx.playerKey;
@@ -4417,9 +4376,7 @@ function showInlinePilotCard(oppKey, res, simCtx) {
     </div>`;
 }
 
-// ============================================================
 // REPLAY LOG
-// ============================================================
 let allReplays = [];
 let replayFilter = 'all';
 const MAX_REPLAY_LOG_LINES = 200;
@@ -4952,7 +4909,48 @@ function csRenderReplayPlayByPlay(turn) {
     if (!text) return;
     eventRows.push(text);
   });
-  if (eventRows.length) {
+  var anchoredActions = (turn.events || []).filter(function(ev) {
+    return ev && ev.actor_key && ev.move && Number.isInteger(ev.log_index);
+  });
+  if (anchoredActions.length) {
+    // Resolve only executed actions. Planned mirror actions may have been denied
+    // or fainted; their raw damage detail must never become another action.
+    var usedDamage = new Set();
+    (turn.events || []).forEach(function(ev, index, all) {
+      if (!ev) return;
+      var text = showdownEventText(ev);
+      if (!text) return;
+      if (!anchoredActions.includes(ev)) {
+        if (!/^.+? used .+?!/.test(text)) rows.push(text);
+        else if (!/\[\d+ dmg\b|lost \d+ HP\b|It missed[.!]|But it failed!/.test(String(ev.text || ev.message || '')))
+          unordered.push(text.replace(' used ', ' attempted '));
+        return;
+      }
+      var end = index + 1;
+      while (end < all.length && !anchoredActions.includes(all[end])) end++;
+      var details = all.slice(index + 1, end);
+      var rawDamageCount = details.filter(function(row) { return /\[\d+ dmg\b/.test(String(row.text || row.message || '')); }).length;
+      var matchingActions = anchoredActions.filter(function(action) { return action.actor_key === ev.actor_key && action.move === ev.move; });
+      var available = (turn.damage_events || []).map(function(row, i) { return {row:row,index:i}; }).filter(function(entry) {
+        return !usedDamage.has(entry.index) && entry.row.attacker_key === ev.actor_key && entry.row.move === ev.move;
+      });
+      var hits = rawDamageCount ? available.slice(0, rawDamageCount) : matchingActions.length === 1 ? available : [];
+      if (hits.length) {
+        hits.forEach(function(entry) { usedDamage.add(entry.index); });
+        rows.push((ev.actor || 'Pokemon') + ' used ' + ev.move + '! ' + hits.map(function(entry) {
+          var row = entry.row;
+          return (row.target || 'target') + ' lost ' + (row.applied_damage != null ? row.applied_damage : row.damage || 0) + ' HP' + hpText(row) + damageNote(row);
+        }).join('; '));
+      } else {
+        var failure = details.find(function(row) { return /It missed[.!]|But it failed!/.test(String(row.text || row.message || '')); });
+        rows.push(failure ? showdownEventText(failure) : text);
+      }
+    });
+    (turn.damage_events || []).forEach(function(row, i) {
+      if (!usedDamage.has(i)) unordered.push((row.attacker || 'Pokemon') + ' attempted ' + (row.move || 'Move') + '! ' +
+        (row.target || 'target') + ' lost ' + (row.applied_damage != null ? row.applied_damage : row.damage || 0) + ' HP' + hpText(row));
+    });
+  } else if (eventRows.length) {
     var structuredByMove = {};
     var plannedMoveCounts = {};
     ['player', 'opponent'].forEach(function(side) {
@@ -7095,7 +7093,7 @@ function csQaProofTeam(name, members) {
 
 function csRunTargetedQaProofBattle(config) {
   config = config || {};
-  var seeds = config.seeds || [[1, 2, 3, 4], [100, 200, 300, 400], [10, 20, 30, 40], [123, 456, 789, 1011]];
+  var seeds = config.seeds || [[1000000, 123456789, 987654321, 314159265], [1, 2, 3, 4], [100, 200, 300, 400], [10, 20, 30, 40], [123, 456, 789, 1011]];
   var selected = null;
   var selectedSummary = null;
   for (var i = 0; i < seeds.length; i++) {
@@ -7833,6 +7831,7 @@ async function csBuildForcedBranchMatrixSweepEvidence(opts) {
     });
     var turnLog = Array.isArray(battle && battle.turnLog) ? battle.turnLog : [];
     var tacticalSummary = csSummarizeBranchTactics(turnLog, candidate.forced_actions, { horizonTurns: maxTurns });
+    tacticalSummary.outcome_proof=ChampionsOutcome.evaluate(battle).proof;
     runs.push({
       id: 'branch_matrix_' + runs.length,
       branch_key: candidate.branch_key,
@@ -7957,6 +7956,7 @@ function csBranchMoveRowWeight(row) {
 }
 
 function csBranchMoveNormalizeRow(row) {
+  if (!row || !ChampionsOutcome.evaluate(row).eligible) return null;
   if (!row || !Array.isArray(row.forced_actions)) return null;
   var playerLeads = Array.isArray(row.player_leads) ? row.player_leads
     : Array.isArray(row.player_bring) ? row.player_bring.slice(0, 2) : [];
@@ -7981,6 +7981,7 @@ function csBranchMoveNormalizeRow(row) {
     return String(a.move).localeCompare(String(b.move));
   });
   return {
+    outcome_proof: ChampionsOutcome.evaluate(row).proof,
     branch_key: row.branch_key || null,
     player_team_id: row.player_team_id || null,
     opponent_team_id: row.opponent_team_id || null,
@@ -7995,7 +7996,8 @@ function csBranchMoveNormalizeRow(row) {
 }
 
 function csBranchMoveBucketAdd(bucket, row) {
-  var weight = row.run_count || 1;
+  if(!ChampionsOutcome.evaluate(row).eligible)return;
+  var weight = 1;
   bucket.samples += weight;
   bucket.weighted_score += csBranchMoveResultScore(row.result) * weight;
   if (row.result === 'win') bucket.wins += weight;
@@ -8568,10 +8570,29 @@ function downloadReplayTurnLog(replay, opts) {
     'application/json', JSON.stringify(payload, null, 2));
 }
 
+function csReplayHeaderState(card) {
+  const header = card.querySelector && card.querySelector('.replay-card-hdr');
+  if (header) header.setAttribute('aria-expanded', String(card.classList.contains('open')));
+}
+function csSetupReplayHeader(card) {
+  const header = card.querySelector('.replay-card-hdr');
+  if (!header) return;
+  header.setAttribute('role','button');
+  header.setAttribute('tabindex','0');
+  csReplayHeaderState(card);
+  header.addEventListener('keydown',event=>{
+    if (event.target !== header || (event.key !== 'Enter' && event.key !== ' ')) return;
+    event.preventDefault();
+    event.stopPropagation();
+    header.click();
+  });
+}
+
 function csReplayCardClick(card, event) {
   if (event.target && event.target.closest &&
       event.target.closest('button, a, details, input, select, textarea')) return;
   card.classList.toggle('open');
+  csReplayHeaderState(card);
 }
 
 function csBuildReplayCoachingSummary(replay, opts) {
@@ -9765,6 +9786,7 @@ function renderReplays() {
     const dlBtn = card.querySelector('.replay-json-btn');
     if (dlBtn) dlBtn.addEventListener('click', (ev)=>{ ev.stopPropagation(); downloadReplayTurnLog(r); });
     card.addEventListener('click', (event)=>csReplayCardClick(card, event));
+    csSetupReplayHeader(card);
     el.appendChild(card);
   }
 }
@@ -9791,9 +9813,7 @@ document.querySelectorAll('.filter-btn').forEach(btn=>{
 });
 
 // __M6_HISTORY_BEGIN__
-// ============================================================
 // M6 — HISTORY: load past analyses from DB into Replay Log
-// ============================================================
 let historyRows = [];
 let historyFilter = 'all';
 
@@ -9841,18 +9861,26 @@ function renderHistorySection() {
     card.addEventListener('click', (function(analysisId, cardEl) {
       return function() {
         cardEl.classList.toggle('open');
+        csReplayHeaderState(cardEl);
         if (cardEl.classList.contains('open') && !cardEl.dataset.loaded) {
           lazyLoadAnalysisLogs(analysisId, cardEl);
         }
       };
     })(row.analysis_id, card));
+    csSetupReplayHeader(card);
     el.appendChild(card);
   }
 }
 
 async function lazyLoadAnalysisLogs(analysisId, cardEl) {
+  if (cardEl.dataset.loading) return;
   var adapter = getWindowValue('SupabaseAdapter', null);
-  if (!adapter || typeof adapter.loadAnalysisLogs !== 'function') return;
+  if (!adapter || typeof adapter.loadAnalysisLogs !== 'function') {
+    const expanded=cardEl.querySelector('.replay-expanded');
+    if(expanded) expanded.textContent='Saved game logs are unavailable. Open this replay again to retry.';
+    return;
+  }
+  cardEl.dataset.loading='true';
   try {
     var logs = await adapter.loadAnalysisLogs(analysisId);
     var expanded = cardEl.querySelector('.replay-expanded');
@@ -9872,6 +9900,10 @@ async function lazyLoadAnalysisLogs(analysisId, cardEl) {
     cardEl.dataset.loaded = 'true';
   } catch (e) {
     UILog.warn('lazyLoadAnalysisLogs failed', e);
+    const expanded=cardEl.querySelector('.replay-expanded');
+    if(expanded) expanded.textContent='Could not load saved game logs. Open this replay again to retry.';
+  } finally {
+    delete cardEl.dataset.loading;
   }
 }
 
@@ -9886,7 +9918,7 @@ async function csBuildMyDataExport(teamKey) {
   var localReports = (typeof csLoadAllReports === 'function') ? csLoadAllReports() : {};
   var localSimLog = (typeof csSimLogGetAll === 'function') ? csSimLogGetAll({ includeQuarantined: true }) : [];
   var localTeamHistory = (typeof csSimLogForTeamBothSides === 'function') ? csSimLogForTeamBothSides(key) : [];
-  var activeReport = (typeof csLoadReport === 'function') ? csLoadReport(key) : null;
+  var activeReport = (typeof csBuildEvidenceOnlyStrategy === 'function') ? csBuildEvidenceOnlyStrategy(key) : null;
   var dbAnalyses = [];
 
   if (adapter && adapter.enabled && typeof adapter.loadAnalysesForPlayer === 'function') {
@@ -9937,6 +9969,7 @@ async function csBuildMyDataExport(teamKey) {
     local: {
       reports: localReports,
       current_report: activeReport,
+      reports_status: 'historical_unverified_reports_not_current_coaching',
       sim_log: localSimLog,
       team_history: localTeamHistory
     },
@@ -12247,14 +12280,10 @@ if (typeof exposeLegacyWindowAlias === 'function') exposeLegacyWindowAlias('csLo
 if (typeof exposeLegacyWindowAlias === 'function') exposeLegacyWindowAlias('csLatestCoachBrainForTeam', csLatestCoachBrainForTeam);
 // __M6_HISTORY_END__
 
-// ============================================================
 // GLOBAL SIMULATION RESULTS STORE
-// ============================================================
 ChampionsSim.state.lastResults = {};
 
-// ============================================================
 // BO SERIES RUNNER
-// ============================================================
 // T9j.10 (Refs #16) — Team Preview bring-N-of-6 state.
 // Keyed by team slot (e.g. 'player', 'mega_altaria'). Value is an ordered
 // array of Pokemon names of length BRING_COUNT. Slot 1-2 (or 1 in singles)
@@ -12496,6 +12525,7 @@ async function runBoSeries(numSeries, playerTeamKey, oppTeamKey, bo, onProgress)
     throw new Error('opponent team not loaded: ' + (oppTeamKey || 'none'));
   }
   const results = {
+    outcome_records:[], excludedOutcomes:0, exclusionReasons:{},
     wins:0,
     losses:0,
     draws:0,
@@ -12613,6 +12643,13 @@ async function runBoSeries(numSeries, playerTeamKey, oppTeamKey, bo, onProgress)
           });
         }
         results.totalBattles++;
+        const eligibility=ChampionsOutcome.evaluate(battle);
+        if(!eligibility.eligible){
+          results.excludedOutcomes++;
+          results.exclusionReasons[eligibility.reason]=(results.exclusionReasons[eligibility.reason]||0)+1;
+          if(results.allLogs.length<50)results.allLogs.push({...battle,outcome_exclusion:eligibility.reason});
+          seriesBattles.push(battle);gamesPlayed++;break;
+        }
         if (battle.result==='win') seriesW++;
         else if (battle.result==='loss') seriesL++;
         else { seriesW+=0.5; seriesL+=0.5; }
@@ -12643,7 +12680,10 @@ async function runBoSeries(numSeries, playerTeamKey, oppTeamKey, bo, onProgress)
         previousBattle = battle;
       }
 
-      const seriesResult = seriesW>seriesL?'wins':seriesW<seriesL?'losses':'draws';
+      const seriesEvidence=ChampionsOutcome.series(seriesBattles,bo);
+      results.outcome_records.push(seriesEvidence.proof);
+      if(!seriesEvidence.eligible)continue;
+      const seriesResult = seriesEvidence.result==='win'?'wins':seriesEvidence.result==='loss'?'losses':'draws';
       results[seriesResult]++;
       if (seriesResult==='wins') liveW++;
       if (seriesResult==='losses') liveL++;
@@ -12680,11 +12720,14 @@ async function runBoSeries(numSeries, playerTeamKey, oppTeamKey, bo, onProgress)
     return csCapBattleReplay(battle);
   });
   const validSeries = results.wins + results.losses + results.draws;
-  results.winRate = validSeries ? results.wins/validSeries : 0;
+  results.winRate = validSeries ? results.wins/validSeries : null;
   results.avgTurns = validSeries ? results.totalTurns/validSeries : 0;
   results.avgTrTurns = validSeries ? results.totalTrTurns/validSeries : 0;
   results.avgTwTurns = validSeries ? results.totalTwTurns/validSeries : 0;
   results.sampleSize = validSeries;
+  results.requestedBattles=numSeries;
+  results.provenance.outcome_count=numSeries;
+  if(!validSeries)throw Object.assign(new Error('No verified series outcomes; results unavailable.'),{results:results});
   results.retainedLogSampleSize = results.allLogs.length;
   results.adaptiveBringEnabled = adaptiveSeries;
   results.playerBringPoolSize = playerBringPool.length;
@@ -12752,9 +12795,7 @@ async function runAllMatchupsUI(numSeries, bo, onProgress, onDone, simCtx) {
 }
 
 // __M4_BUILD_PAYLOAD_BEGIN__
-// ============================================================
 // M4 — _buildAnalysisPayload: builds the canonical payload for SupabaseAdapter.saveAnalysis
-// ============================================================
 var _M4_VALID_BO = [1, 3, 5, 10];
 var _csRunTeamIdentities = {};
 
@@ -12793,6 +12834,7 @@ async function _captureSimulationProvenance(playerKey, oppKey, playerTeam, oppTe
 function _stripTurnLogForPersistence(logRow) {
   if (!logRow || typeof logRow !== 'object') return logRow;
   return {
+    outcome_proof: ChampionsOutcome.evaluate(logRow).proof,
     result: logRow.result || null,
     turns: logRow.turns || 0,
     trTurns: logRow.trTurns || 0,
@@ -12823,14 +12865,17 @@ function _buildAnalysisPayload(playerKey, oppKey, bo, res) {
     throw new Error('[M4] _buildAnalysisPayload: policy_model must be non-empty string');
   }
 
-  var wins   = (res && res.wins)   || 0;
+  var verified=ChampionsOutcome.aggregate(res&&res.outcome_records,res&&res.requestedBattles);
+  if(!verified.complete || !verified.sampleSize)throw new Error('Complete outcome evidence required for analysis.');
+  res=Object.assign({},res,verified);
+  var wins   = res.wins;
   var losses = (res && res.losses) || 0;
   var draws  = (res && res.draws)  || 0;
   var sampleSize = wins + losses + draws;
   var winRate = sampleSize > 0 ? wins / sampleSize : 0;
 
-  if (typeof res.win_rate === 'number') { winRate = res.win_rate; }
-  if (typeof res.winRate  === 'number') { winRate = res.winRate; }
+
+
   if (winRate < 0 || winRate > 1) {
     throw new Error('[M4] _buildAnalysisPayload: win_rate out of [0,1]: ' + winRate);
   }
@@ -12838,7 +12883,7 @@ function _buildAnalysisPayload(playerKey, oppKey, bo, res) {
   var provenance = res && res.provenance ? JSON.parse(JSON.stringify(res.provenance)) : null;
   var rulesetId = provenance && provenance.ruleset_id || 'unknown';
   var rulesetEvidence = typeof getSimulationEvidencePolicy === 'function'
-    ? getSimulationEvidencePolicy(provenance, res && (res.logs || res.allLogs))
+    ? getSimulationEvidencePolicy(provenance,(res.outcome_records||[]).map(function(proof){return {outcome_proof:proof,format:provenance&&provenance.format,provenance:provenance};}))
     : {
       ruleset_id: rulesetId,
       ruleset_status: 'unknown',
@@ -12855,6 +12900,14 @@ function _buildAnalysisPayload(playerKey, oppKey, bo, res) {
     rulesetEvidence.poisoning_guard = 'identity_mismatch_do_not_train_or_rank';
     rulesetEvidence.data_policy = 'do_not_write_trusted_stats';
     rulesetEvidence.coaching_policy = 'review_only_no_matchup_learning';
+  }
+  var retainedLogs=res.allLogs||res.logs||[];
+  if(provenance && retainedLogs.length && typeof getSimulationEvidencePolicy==='function'){
+    var retainedPolicy=getSimulationEvidencePolicy(Object.assign({},provenance,{outcome_count:retainedLogs.length}),retainedLogs);
+    if((retainedPolicy.provenance_gaps||[]).indexOf('game_provenance_mismatch')>=0){
+      rulesetEvidence.provenance_gaps=(rulesetEvidence.provenance_gaps||[]).concat('game_provenance_mismatch');
+      rulesetEvidence.learning_eligibility='blocked_identity_mismatch';rulesetEvidence.poisoning_guard='identity_mismatch_do_not_train_or_rank';rulesetEvidence.data_policy='do_not_write_trusted_stats';rulesetEvidence.coaching_policy='review_only_no_matchup_learning';
+    }
   }
   var engineVersion = provenance && provenance.engine_version || 'unknown';
 
@@ -12883,11 +12936,9 @@ function _buildAnalysisPayload(playerKey, oppKey, bo, res) {
   analysisJson.policy_provenance = res && res.policy_provenance || analysisJson.policy_provenance || null;
   analysisJson.evidence_policy = rulesetEvidence;
   // Existing JSON column retains per-game identity without requiring a schema migration.
-  analysisJson.game_provenance = logs.map(function(row) {
-    return { seed: row && row.seed || null, format: row && row.format || null,
-      bring: row && row.bring || null, participants: row && row.participants || null,
-      provenance: row && row.provenance || null };
-  });
+  analysisJson.game_provenance=(res.outcome_records||[]).map(function(proof){return {outcome_proof:proof,format:provenance&&provenance.format,provenance:provenance};});
+  analysisJson.outcome_summary=verified;
+
   if (res && res.turning_point && !analysisJson.turning_point) analysisJson.turning_point = res.turning_point;
   if (res && Array.isArray(res.position_path) && !analysisJson.position_path) {
     analysisJson.position_path = res.position_path.slice(0, 40);
@@ -12961,9 +13012,7 @@ if (typeof exposeLegacyWindowAlias === 'function') exposeLegacyWindowAlias('_bui
 // __M4_BUILD_PAYLOAD_END__
 
 // __M5_UPSERT_TEAM_BEGIN__
-// ============================================================
 // M5 — _upsertTeamToDB: persists imported/edited teams to Supabase
-// ============================================================
 function _upsertTeamToDB(teamId, team, source) {
   if (team && team.import_context && team.import_context.draft_only === true) return;
   try {
@@ -13047,9 +13096,7 @@ if (typeof exposeLegacyWindowAlias !== 'function') {
 if (typeof exposeLegacyWindowAlias === 'function') exposeLegacyWindowAlias('_upsertTeamToDB', _upsertTeamToDB);
 // __M5_UPSERT_TEAM_END__
 
-// ============================================================
 // SIM BUTTON HANDLERS
-// ============================================================
 let simRunning = false;
 
 function setProgress(pct, label, w, l) {
@@ -13599,9 +13646,7 @@ if (typeof ChampionsSim !== 'undefined') {
 }
 if (typeof exposeLegacyWindowAlias === 'function') exposeLegacyWindowAlias('csRunAllMatchupsFromButton', csRunAllMatchupsFromButton);
 
-// ============================================================
 // PART 2: PILOT GUIDE GENERATOR
-// ============================================================
 function generatePilotGuide(oppKey, results, simCtx) {
   const el = document.getElementById('pilot-content');
   if (!el) return;
@@ -13721,9 +13766,7 @@ function generatePilotGuide(oppKey, results, simCtx) {
   });
 }
 
-// ============================================================
 // T9j.15 (Refs #71) — Best Mega Trigger Turn card
-// ============================================================
 // Consumes runMegaTriggerSweep() from engine.js (T9j.7, shipped #23).
 // Sweep output shape is { results: [ { megaSlot, curve, refinedTop3, bestTurn } ] }
 // where each curve entry is { turn: <int|'never'>, wr, n, ci95 } — refinedTop3
@@ -13889,7 +13932,7 @@ function computeMegaTriggerSweep(playerKey, oppKey, bo, format) {
   try {
     // Use smaller sample counts than engine default so Pilot Guide render
     // stays within the <30s acceptance budget even on 13-matchup full runs.
-    var sweep = runMegaTriggerSweep(TEAMS[playerKey], TEAMS[oppKey], bo || 1, { coarseN: 30, refineN: 200, maxTurn: 6 });
+    var sweep = runMegaTriggerSweep(TEAMS[playerKey], TEAMS[oppKey], bo || 1, { coarseN: 30, refineN: 200, maxTurn: 6, rulesetId: getSelectedRegulationId(), format: format });
     setCachedMegaSweep(playerKey, oppKey, bo, format, sweep);
     return sweep;
   } catch (e) {
@@ -13898,9 +13941,7 @@ function computeMegaTriggerSweep(playerKey, oppKey, bo, format) {
   }
 }
 
-// ============================================================
 // PART 3: PDF REPORT BUILDER — T9j.14 (Refs #75) Shadow Pressure master sheet + coaching
-// ============================================================
 // Source design: user-supplied Shadow_Pressure_vFINAL_PLUS.pdf master sheet.
 // Structure: title banner, team overview, core game plan, role breakdown,
 // lead system, matchup guide, turn flow, rules to win, Bo3 adaptation,
@@ -13911,7 +13952,7 @@ function computeMegaTriggerSweep(playerKey, oppKey, bo, format) {
 // advice without touching the renderer.
 document.getElementById('pdf-report-btn')?.addEventListener('click', generatePDFReport);
 
-// --- Move/ability taxonomies used by role inference and coaching ---------
+// Move/ability taxonomies used by role inference and coaching
 var PDF_FAKE_OUT = ['Fake Out'];
 var PDF_TAILWIND = ['Tailwind'];
 var PDF_TRICK_ROOM = ['Trick Room'];
@@ -14247,7 +14288,7 @@ function findCoverageGaps(members) {
     .map(function(c){ return c.label; });
 }
 
-// ------------- COACHING_RULES pluggable registry ------------------------
+// COACHING_RULES pluggable registry
 // Each rule:
 //   when(ctx) — returns bool  (ctx: { playstyle, members, results, trends, gaps, deadMoves, overallWR })
 //   say(ctx)  — returns string advice
@@ -16345,7 +16386,7 @@ function csBuildTeamLabLocalTop25Rows() {
     var opponentDisplay = entry.oppTeamName || entry.opponentTeamName || entry.opp_team_name || entry.opponent_name || entry.oppLabel || '';
     (entry.games || []).forEach(function(game) {
       var result = game && game.result ? game.result : null;
-      if (!result) return;
+      if (!result || !ChampionsOutcome.evaluate(game).eligible) return;
       addGame(entry.playerKey, entry.oppKey, result, entry.format, playerDisplay, opponentDisplay);
       addGame(entry.oppKey, entry.playerKey, result === 'win' ? 'loss' : result === 'loss' ? 'win' : 'draw', entry.format, opponentDisplay, playerDisplay);
     });
@@ -16405,13 +16446,13 @@ function csBuildTeamLabDbBranchTop25Rows(rowsOverride) {
     return stats[teamKey];
   }
   rows.forEach(function(row) {
-    if (!row || !row.player_team_id) return;
+    if (!row || !row.player_team_id || !ChampionsOutcome.evaluate(row).eligible) return;
     var seenAt = row.last_seen_at ? Date.parse(row.last_seen_at) || 0 : 0;
     if (resetTs && seenAt && seenAt <= resetTs) return;
     var teamKey = row.player_team_id;
     teamKey = csTeamLabCanonicalTeamKey(teamKey);
     var opponentKey = csTeamLabCanonicalTeamKey(row.opponent_team_id || 'unknown-opponent');
-    var weight = Math.max(1, Number(row.run_count || 1));
+    var weight = 1;
     var result = row.result === 'win' || row.result === 'loss' || row.result === 'draw' ? row.result : null;
     if (!result && row.tactical_summary && typeof row.tactical_summary === 'object') {
       result = row.tactical_summary.result === 'win' || row.tactical_summary.result === 'loss' || row.tactical_summary.result === 'draw'
@@ -17215,7 +17256,7 @@ function _unverifiedLegacyPDFReport() {
   var teamTitle = (playerTeam.name || playerKey).toUpperCase() + ' — MASTER SHEET';
   var playstyle = inferPlaystyle(playerMembers);
 
-  // --- Section 1: Team Overview ------------------------------------------
+  // Section 1: Team Overview
   var overviewRows = playerMembers.map(function(m, i){
     return '<tr>' +
       '<td>' + (i+1) + '</td>' +
@@ -17225,7 +17266,7 @@ function _unverifiedLegacyPDFReport() {
     '</tr>';
   }).join('');
 
-  // --- Section 2: Core Game Plan ----------------------------------------
+  // Section 2: Core Game Plan
   var allWinConds = {};
   Object.values(results).forEach(function(res){
     Object.entries(res.winConditions || {}).forEach(function(wc){ allWinConds[wc[0]] = (allWinConds[wc[0]]||0) + wc[1]; });
@@ -17234,18 +17275,18 @@ function _unverifiedLegacyPDFReport() {
   var planPrimary = topWC[0] ? ('Primary: ' + topWC[0] + ' — shown most often in winning series.') : 'Primary: Win Turn 1 (tempo) → force Protects → KO Turn 2-3 → clean lategame.';
   var planSecondary = topWC[1] ? ('Secondary: ' + topWC[1] + ' — fallback win condition when primary line is answered.') : 'Secondary: Apply pressure + chip board until a clean win condition opens.';
 
-  // --- Section 3: Role Breakdown ----------------------------------------
+  // Section 3: Role Breakdown
   var roleCards = playerMembers.map(function(m){
     return '<div class="pdf-role-card"><strong>' + _escapeHtml(m.name) + ':</strong> ' + _escapeHtml(inferRole(m)) + ' — ' + _escapeHtml(inferWinFunction(m)) + '.</div>';
   }).join('');
 
-  // --- Section 4: Lead System -------------------------------------------
+  // Section 4: Lead System
   var leads = buildLeadSystem(results, playerMembers);
   function _leadRow(label, pair){
     return '<div class="pdf-lead-row"><strong>' + label + ':</strong> ' + (pair ? _escapeHtml(pair) : '<em style="color:#888">no qualifying wins yet</em>') + '</div>';
   }
 
-  // --- Section 5: Matchup Guide table -----------------------------------
+  // Section 5: Matchup Guide table
   // T9j.15 (Refs #71) — appends a "Mega Trigger" column when the player team
   // holds a Mega. Column is omitted entirely for non-Mega teams to keep the
   // Shadow Pressure layout tight.
@@ -17292,7 +17333,7 @@ function _unverifiedLegacyPDFReport() {
     '</tr>';
   }).join('');
 
-  // --- Sections 6+: templated blocks -----------------------------------
+  // Sections 6+: templated blocks
   var turnFlow = [
     'Turn 1: Fake Out / Tailwind / trap line — establish tempo.',
     'Turn 2: Force Protect or take a KO into the opened target.',
@@ -17306,7 +17347,7 @@ function _unverifiedLegacyPDFReport() {
   var overallPct = Math.round(overallWR * 100);
   var overallV = _verdictFor(overallPct);
 
-  // --- Coaching analysis ------------------------------------------------
+  // Coaching analysis
   var trends = analyzeLossTrends(results, playerMembers);
   var deadMoves = findDeadMoves(results, playerMembers);
   var gaps = findCoverageGaps(playerMembers);
@@ -17342,7 +17383,7 @@ function _unverifiedLegacyPDFReport() {
       '</tbody></table>'
     : '<div style="color:#666">No move evidence gaps listed. Recorded actions do not establish success or moveset quality.</div>';
 
-  // --- Render -----------------------------------------------------------
+  // Render
   container.innerHTML = [
     '<div class="pdf-banner">',
       '<div class="pdf-title">' + _escapeHtml(teamTitle) + '</div>',
@@ -17429,9 +17470,7 @@ function _unverifiedLegacyPDFReport() {
   window.print();
 }
 
-// ============================================================
 // PART 4: SERIES SUMMARY MODE (Replay Log)
-// ============================================================
 let replayMode = 'log';
 
 document.getElementById('replay-mode-toggle')?.addEventListener('click', function() {
@@ -17493,9 +17532,7 @@ function renderSeriesSummary() {
   </table>`;
 }
 
-// ============================================================
 // PART 5A: SPEED TIER WIDGET (Teams Tab)
-// ============================================================
 function getEffectiveSpe(member, teamFormat) {
   if (!member || typeof member.name !== 'string' || typeof Pokemon !== 'function') return null;
   const format = teamFormat ?? member.format ?? 'champions';
@@ -17541,10 +17578,8 @@ function renderSpeedTiersForGrid() {
   });
 }
 
-// ============================================================
 // PART 5B: ROLE COVERAGE CHECKER
-// ============================================================
-// ---- T9j.3b: Champions-legal move/ability lists for coverage detection ----
+// T9j.3b: Champions-legal move/ability lists for coverage detection
 var PRIORITY_MOVES = [
   'Fake Out','Extreme Speed','Aqua Jet','Shadow Sneak','Sucker Punch',
   'Bullet Punch','Ice Shard','Vacuum Wave','Mach Punch','Grassy Glide',
@@ -17666,9 +17701,7 @@ renderCoverageWidget();
 // Render speed tiers for initial teams grid
 renderSpeedTiersForGrid();
 
-// ============================================================
 // PART 6: META THREAT RADAR
-// ============================================================
 const META_THREATS = [
   { name:'Sneasler',   types:['Fighting','Poison'], usage:42.1, winRate:54.2 },
   { name:'Garchomp',  types:['Dragon','Ground'],   usage:38.7, winRate:52.8 },
@@ -17707,9 +17740,7 @@ function renderMetaRadar() {
 }
 
 renderMetaRadar();
-// ============================================================
 // T9j.16 (Refs #65) - Champions Coaching Engine PDF renderer
-// ============================================================
 // Renders the Strategy Report into the existing pdf-section / pdf-table
 // styles. No new CSS classes - reuses pdf-coach-item / pdf-coach-badge
 // shipped with T9j.14. Output is concatenated into the PDF body so
@@ -17733,7 +17764,7 @@ function _renderT9j16PdfSections(report) {
     return '#6b7280';
   };
 
-  // ---- Team Identity ----
+  // Team Identity
   var identityHtml = '<div class="pdf-section">' +
     '<div class="pdf-h2">TEAM IDENTITY</div>' +
     '<table class="pdf-table"><tbody>' +
@@ -17746,13 +17777,13 @@ function _renderT9j16PdfSections(report) {
     '</tbody></table>' +
   '</div>';
 
-  // ---- Coaching Summary (top of new sections) ----
+  // Coaching Summary (top of new sections)
   var summaryHtml = '<div class="pdf-section">' +
     '<div class="pdf-h2">COACH’S TAKE</div>' +
     '<p class="pdf-p" style="font-style:italic;border-left:3px solid #f59e0b;padding-left:10px">' + esc(report.coaching_summary || '') + '</p>' +
   '</div>';
 
-  // ---- Pilot Plan ----
+  // Pilot Plan
   var planHtml = '<div class="pdf-section">' +
     '<div class="pdf-h2">PILOT PLAN</div>' +
     '<table class="pdf-table"><tbody>' +
@@ -17766,7 +17797,7 @@ function _renderT9j16PdfSections(report) {
     '</tbody></table>' +
   '</div>';
 
-  // ---- Elite Decision Analysis ----
+  // Elite Decision Analysis
   var eliteRow = function(label, value) {
     var color = stateColor(value);
     return '<tr><td style="width:32%"><strong>' + esc(label) + '</strong></td>' +
@@ -17784,7 +17815,7 @@ function _renderT9j16PdfSections(report) {
     '<p class="pdf-p" style="font-size:11px;color:#666">Switch rate: ' + (elite.switch_rate||0) + ' (vs opp ' + (elite.opp_switch_rate||0) + ') · Lead concentration: ' + Math.round((elite.lead_concentration||0)*100) + '% · Avg win turns: ' + (elite.avg_win_turns||0) + ' · Avg loss turns: ' + (elite.avg_loss_turns||0) + '</p>' +
   '</div>';
 
-  // ---- Matchup Warnings ----
+  // Matchup Warnings
   var warningsHtml = warnings.length
     ? '<div class="pdf-section">' +
         '<div class="pdf-h2">MATCHUP WARNINGS</div>' +
@@ -17794,7 +17825,7 @@ function _renderT9j16PdfSections(report) {
       '</div>'
     : '';
 
-  // ---- Coaching Rules (severity-sorted, full explain + correction) ----
+  // Coaching Rules (severity-sorted, full explain + correction)
   var rulesHtml = rules.length
     ? '<div class="pdf-section pdf-coach-section">' +
         '<div class="pdf-h2">COACHING RULES TRIGGERED</div>' +
@@ -17809,7 +17840,7 @@ function _renderT9j16PdfSections(report) {
       '</div>'
     : '';
 
-  // ---- Trend Analysis (compact) ----
+  // Trend Analysis (compact)
   var trendHtml = '<div class="pdf-section">' +
     '<div class="pdf-h2">TREND ANALYSIS</div>' +
     '<table class="pdf-table"><tbody>' +
@@ -17824,44 +17855,13 @@ function _renderT9j16PdfSections(report) {
   return summaryHtml + identityHtml + planHtml + eliteHtml + warningsHtml + rulesHtml + trendHtml;
 }
 
-// ============================================================
-// T9j.16 (Refs #65) - Champions Coaching Engine
-// ============================================================
-// Pure analysis layer over shipped sim outputs. NO ENGINE CHANGES.
-//
-// Inputs: TEAMS[teamKey].members, ChampionsSim.state.lastResults, currentFormat
-// Outputs: structured Strategy Report (Sections 1-6 + Elite Decision
-// Analysis + human coaching summary), persisted via localStorage and
-// keyed on a stable team signature so any imported/custom team gets
-// continuous coaching history across sessions.
-//
-// Wiring points (no renderer churn):
-//   - PDF coaching section consumes coaching_rules + coaching_summary
-//   - Pilot Guide tab can render the full report behind a toggle
-//   - Inline pilot card shows top-2 critical rules + 1-line summary
-//
-// 17 coaching rules total:
-//   Base 6:    protect-pp-burn, fake-out-illegal-timing,
-//              redirection-vs-spread, double-switch-over-read,
-//              hazard-in-doubles-noise, single-mode-safe-lead
-//   Human 3:   win-condition-clarity, overprediction-risk,
-//              role-overlap-warning
-//   Elite 8:   tempo-control-loss, unnecessary-risk,
-//              passive-play-when-behind, win-path-overextension,
-//              information-neglect, positioning-over-damage,
-//              endgame-misalignment, predictable-pattern
-//
-// Primary-source citations (Bulbapedia, verified 2026-04-24):
-//   - Fake Out fails outside first turn out, +3 priority
-//   - Protect priority +4, success drops on consecutive use
-//   - Unseen Fist bypasses Protect on contact moves only
-// All rules below stay within these established mechanics.
+// T9j.16 (#65): coaching analysis of team/results/format; persisted by team signature.
+// PDF, Pilot Guide and inline cards consume the structured report. Engine rules are unchanged.
 
 var T9J16_STORAGE_KEY = 'champions_strategy_v1';
 var T9J16_HISTORY_BUFFER = 5; // rolling buffer of last N runs per team
 
-// ---------- helpers ---------------------------------------------------
-
+// helpers
 function _t9j16_hash(s) {
   // Simple stable string hash (djb2). Not cryptographic; collision-safe
   // enough for localStorage keying across any reasonable team count.
@@ -17954,8 +17954,7 @@ function _t9j16_lsSet(sig, payload) {
   catch(e){ /* quota exceeded — silent skip */ }
 }
 
-// ---------- STEP 1: TEAM IDENTITY -------------------------------------
-
+// STEP 1: TEAM IDENTITY
 function inferTeamIdentity(team, results, fmt) {
   var members = (team && team.members) || [];
   var playstyle = inferPlaystyle(members);
@@ -18019,7 +18018,7 @@ function inferTeamIdentity(team, results, fmt) {
   };
 }
 
-// ---------- STEP 2: LEAD SYSTEM (reuses buildLeadSystem) --------------
+// STEP 2: LEAD SYSTEM (reuses buildLeadSystem)
 // buildLeadSystem already returns { safe, speed, pressure, punish }.
 // We add a Bad Lead Recovery Plan derived from team composition.
 
@@ -18031,10 +18030,9 @@ function buildLeadRecoveryPlan(members) {
   return 'No natural pivot — sacrifice the weakest mon to bring in a fresh pair, then play one turn of Protect to read intent.';
 }
 
-// ---------- STEP 3: COACHING RULES (17 total) -------------------------
-
+// STEP 3: COACHING RULES (17 total)
 var T9J16_RULES = [
-  // ---- Base 6 ----
+  // Base 6
   {
     id: 'protect-pp-burn',
     when: function(c){
@@ -18099,7 +18097,7 @@ var T9J16_RULES = [
     correct: function(){ return 'Add Focus Sash to the lead, swap to a Sturdy user, or change your opener to a bulkier piece.'; }
   },
 
-  // ---- Human 3 ----
+  // Human 3
   {
     id: 'win-condition-clarity',
     when: function(c){ return c.identity && c.identity.primary_win_path_pct < 30; },
@@ -18133,7 +18131,7 @@ var T9J16_RULES = [
     correct: function(){ return 'Replace the third overlap slot with a pivot, speed setter, or priority cleaner.'; }
   },
 
-  // ---- Elite 8 ----
+  // Elite 8
   {
     id: 'tempo-control-loss',
     when: function(c){ return c.elite && c.elite.tempo_control === 'losing'; },
@@ -18220,8 +18218,7 @@ function evaluateT9j16Rules(ctx) {
     .sort(function(a,b){ return SEVERITY[a.severity] - SEVERITY[b.severity]; });
 }
 
-// ---------- STEP 4: ELITE DECISION ANALYSIS ---------------------------
-
+// STEP 4: ELITE DECISION ANALYSIS
 function analyzeEliteDecisions(results, members) {
   var allLogs = [];
   Object.values(results || {}).forEach(function(r){
@@ -18324,8 +18321,7 @@ function analyzeEliteDecisions(results, members) {
   };
 }
 
-// ---------- STEP 5: PILOT PLAN ----------------------------------------
-
+// STEP 5: PILOT PLAN
 function buildPilotPlan(team, leadSystem, trends, fmt) {
   var members = (team && team.members) || [];
   var hasFO = members.some(function(m){ return _pdfHasAny(m, PDF_FAKE_OUT); });
@@ -18363,8 +18359,7 @@ function buildPilotPlan(team, leadSystem, trends, fmt) {
   };
 }
 
-// ---------- STEP 6: MATCHUP WARNINGS ----------------------------------
-
+// STEP 6: MATCHUP WARNINGS
 function buildMatchupWarnings(team, results, fmt) {
   var members = (team && team.members) || [];
   var warnings = [];
@@ -18396,8 +18391,7 @@ function buildMatchupWarnings(team, results, fmt) {
   return warnings;
 }
 
-// ---------- STEP 7: COACHING SUMMARY (real coach voice) ---------------
-
+// STEP 7: COACHING SUMMARY (real coach voice)
 function buildCoachingSummary(rules, identity, elite) {
   var top = rules.slice(0, 2);
   if (!top.length) return 'No critical issues. Team executes its win condition cleanly. Keep refining lead reads to stay ahead of the meta.';
@@ -18698,8 +18692,7 @@ function buildWeaknessDashboard(team, results, format, identity, leadSystem, tre
   };
 }
 
-// ---------- STRATEGY REPORT (full assembly) ---------------------------
-
+// STRATEGY REPORT (full assembly)
 function _buildStrategyReportUncached(teamKey, results, fmt) {
   var team = (typeof TEAMS !== 'undefined' && TEAMS[teamKey]) ? TEAMS[teamKey] : null;
   if (!team) return null;
@@ -18830,8 +18823,7 @@ function buildStrategyReport(teamKey, results, fmt) {
   return report;
 }
 
-// ---------- PERSISTENCE + EVOLUTION -----------------------------------
-
+// PERSISTENCE + EVOLUTION
 function saveStrategyReport(teamKey, report) {
   if (!report || !report.team_signature) return;
   var prev = _t9j16_lsGet(report.team_signature) || { history: [] };
@@ -18867,7 +18859,7 @@ function evolveReport(teamKey, newResults, fmt) {
   return fresh;
 }
 
-// ---------- AUTO-SAVE HOOK --------------------------------------------
+// AUTO-SAVE HOOK
 // Called from runAllMatchupsUI completion path (see ui.js wiring).
 function t9j16AutoSave() {
   try {
@@ -18879,9 +18871,7 @@ function t9j16AutoSave() {
 }
 
 
-// =====================================================================
 // PHASE 2 - COACHING LAYER ADAPTER
-// =====================================================================
 // Wraps existing T9j.16 buildStrategyReport with spec-compliant generators.
 // See COACHING_LAYER_SPEC.md sections 3-12.
 //
@@ -18895,9 +18885,8 @@ function t9j16AutoSave() {
 //
 // NO em-dashes in this file (commit-message rule applies to comments too
 // for consistency).
-// ---------------------------------------------------------------------
 
-// ---- Source labels (Section 3.13) -----------------------------------
+// Source labels (Section 3.13)
 // Every claim must declare its provenance so the Evidence toggle has
 // something to show. Citations point to the spec's primary sources.
 var CS_SOURCES = {
@@ -18917,7 +18906,7 @@ function csLabelVerified(citationKeys)   { return csLabel('verified_champions_so
 function csLabelSim()                    { return csLabel('simulation_data', []); }
 function csLabelUnknown()                { return csLabel('unknown', []); }
 
-// ---- Tier mapping (Section 4.1) -------------------------------------
+// Tier mapping (Section 4.1)
 function csScoreToTier(s) {
   if (s >= 90) return 'S';
   if (s >= 75) return 'A';
@@ -18926,7 +18915,7 @@ function csScoreToTier(s) {
   return 'D';
 }
 
-// ---- Scoring rubric (Section 4.2) -----------------------------------
+// Scoring rubric (Section 4.2)
 // 14 categories. Each scored 0-10. Weights sum to 100.
 var CS_WEIGHTS = {
   legality_confidence:          12,
@@ -19085,7 +19074,7 @@ function csRiskLevel(score, hardCaps) {
   return 'low';
 }
 
-// ---- Generator: csTierAndScore (Section 5.1) ------------------------
+// Generator: csTierAndScore (Section 5.1)
 // Returns full TeamReportCard. Applies all hard caps from Section 4.3.
 function csTierAndScore(team, identity, leadSystem, gaps, results, sample) {
   var graded = csScoreCategories(team, identity, leadSystem, gaps, results, sample);
@@ -19141,7 +19130,7 @@ function csTierAndScore(team, identity, leadSystem, gaps, results, sample) {
   };
 }
 
-// ---- Generator: csTeamIdentityV2 (Section 5.2) ----------------------
+// Generator: csTeamIdentityV2 (Section 5.2)
 // Wraps existing inferTeamIdentity, adds closer / support_core / format_fit
 // shape fields the spec requires. When sim data is missing, derives a
 // primary_win_condition from team composition so the report is useful
@@ -19205,7 +19194,7 @@ function csTeamIdentityV2(team, results, fmt) {
   };
 }
 
-// ---- Generator: csTop3Leads (Section 5.3) ---------------------------
+// Generator: csTop3Leads (Section 5.3)
 // Returns LeadGuide with exactly 3 ranked recommendations.
 // Closes #46 - top-3 lead pairs with purpose / T1 / T2 / risk.
 function csTop3Leads(team, identity, results, fmt) {
@@ -19332,7 +19321,7 @@ function csTop3Leads(team, identity, results, fmt) {
   };
 }
 
-// ---- Generator: csMistakes (Section 5.5) ----------------------------
+// Generator: csMistakes (Section 5.5)
 // Returns 3-7 entries (Section 14, decision 4: cap min 3, max 7).
 // Each: { mistake, why_it_loses, correction }. Severity-sorted.
 // Closes #49 - mistakes-to-avoid generator.
@@ -19481,7 +19470,7 @@ function csMistakes(team, identity, format) {
   });
 }
 
-// ---- Generator: csMoveLines (Section 5.4) ---------------------------
+// Generator: csMoveLines (Section 5.4)
 // Minimum 6 scenarios. Each: scenario, lead_recommendation, t1, t2, avoid, fallback.
 function csMoveLines(team, identity, leadGuide) {
   var members = (team && team.members) || [];
@@ -19588,7 +19577,7 @@ function csMoveLines(team, identity, leadGuide) {
   return lines;
 }
 
-// ---- Generator: csSkillCoaching (Section 5.9) -----------------------
+// Generator: csSkillCoaching (Section 5.9)
 function csSkillCoaching(team, identity, leadGuide) {
   var members = (team && team.members) || [];
   var closer = identity && identity.closer ? identity.closer : ((members[0] && members[0].name) || 'your closer');
@@ -19630,7 +19619,7 @@ function csSkillCoaching(team, identity, leadGuide) {
   };
 }
 
-// ---- Generator: csStressTest (Section 5.7) --------------------------
+// Generator: csStressTest (Section 5.7)
 function csStressTest(team, identity, results, scoreCard) {
   var members = (team && team.members) || [];
   var hasTW = members.some(function(m){ return _pdfHasAny(m, PDF_TAILWIND); });
@@ -19690,7 +19679,7 @@ function csStressTest(team, identity, results, scoreCard) {
   };
 }
 
-// ---- Generator: csWhatWorks / csWhatIsWeak / csTopThreats ----------
+// Generator: csWhatWorks / csWhatIsWeak / csTopThreats
 function csWhatWorks(team, identity, leadGuide) {
   var members = (team && team.members) || [];
   var top = leadGuide && leadGuide.recommendations[0];
@@ -19894,7 +19883,7 @@ function csTrendAnalysisV2(team, results) {
   };
 }
 
-// ---- Top-level adapter ----------------------------------------------
+// Top-level adapter
 // Builds the spec-shaped StrategyReport from the existing T9j.16 engine
 // plus the Phase 2 generators above.
 function csBuildStrategyReportV2(teamKey, results, fmt) {
@@ -19955,7 +19944,7 @@ function csBuildStrategyReportV2(teamKey, results, fmt) {
   };
 }
 
-// ---- Renderer --------------------------------------------------------
+// Renderer
 // Paints #strategy-content with all 12 sections from the spec report.
 function _csEsc(s) {
   if (s === null || s === undefined) return '';
@@ -20287,6 +20276,28 @@ function renderStrategyTab(teamKey) {
   if (typeof exposeLegacyWindowAlias === 'function') exposeLegacyWindowAlias('_lastStrategyReport', report);
 }
 
+// Observation eligibility is separate from competitive promotion: Practice/reference
+// attempts can be shown, but only for the current captured execution context.
+function csStrategyObservationMatches(game, teamKey, opponentKey, format) {
+  var p = game && game.provenance;
+  if (!p || p.schema_version !== 'champions-simulation-provenance-v1') return false;
+  if (game.playerKey !== teamKey || game.oppKey !== opponentKey || game.format !== format ||
+      p.player_team_id !== teamKey || p.opp_team_id !== opponentKey || p.format !== format) return false;
+  if (typeof ENGINE_VERSION === 'undefined' || p.engine_version !== ENGINE_VERSION ||
+      typeof CHAMPIONS_RELEASE_MANIFEST === 'undefined' || p.build_id !== CHAMPIONS_RELEASE_MANIFEST.build_id) return false;
+  if (typeof getSelectedRegulationId !== 'function' || typeof getChampionsRuleset !== 'function') return false;
+  var profile = getChampionsRuleset(getSelectedRegulationId());
+  if (!profile || !profile.id || !profile.version || p.regulation_id !== profile.id ||
+      p.ruleset_id !== profile.id || p.ruleset_version !== profile.version) return false;
+  if (profile.id === 'champions_mc_reference' && (!p.reference_artifact_sha256 ||
+      p.reference_artifact_sha256 !== CHAMPIONS_RELEASE_MANIFEST.reference_artifact_sha256)) return false;
+  return [['player_team_id', 'player_team_digest'], ['opp_team_id', 'opp_team_digest']].every(function(keys) {
+    var identity = _csRunTeamIdentities[p[keys[0]]];
+    return TEAMS[p[keys[0]]] && identity && /^[a-f0-9]{64}$/.test(p[keys[1]] || '') &&
+      identity.digest === p[keys[1]] && identity.input === JSON.stringify(TEAMS[p[keys[0]]]);
+  });
+}
+
 function csBuildEvidenceOnlyStrategy(teamKey) {
   var team = typeof TEAMS !== 'undefined' && TEAMS[teamKey];
   if (!team) return null;
@@ -20296,7 +20307,7 @@ function csBuildEvidenceOnlyStrategy(teamKey) {
   Object.keys(results).forEach(function(key) {
     var result = results[key];
     matching[key] = { allLogs: (result && Array.isArray(result.allLogs) ? result.allLogs : []).filter(function(game) {
-      return game && game.playerKey === teamKey && game.format === format;
+      return csStrategyObservationMatches(game, teamKey, key, format);
     }) };
   });
   var members = team.members || [];
@@ -20342,10 +20353,6 @@ function _unverifiedLegacyStrategyTab(teamKey) {
     host.innerHTML = '<div class="strategy-empty">Select a team to generate the coaching report.</div>';
     return;
   }
-  // Phase 3 (Refs #51): cached fast-path. If renderStrategyTabFromCache has
-  // stashed a saved report on window._csCachedOverride, paint that instead
-  // of rebuilding from scratch. Skips the (cheap) build but more importantly
-  // gives us instant paint on team switches and after page reload.
   var report;
   var fromCache = false;
   if (ChampionsSim.state.cachedStrategyOverride) {
@@ -20359,11 +20366,9 @@ function _unverifiedLegacyStrategyTab(teamKey) {
     host.innerHTML = '<div class="strategy-empty">Could not generate report for this team.</div>';
     return;
   }
-  // Phase 3: persist freshly-built reports so the next page load paints instantly.
   if (!fromCache) {
     try { csSaveReport(teamKey, report); } catch(e) { UILog.warn('strategy report save failed', e); }
   }
-  // Stash for tests / inspection
   ChampionsSim.state.lastStrategyReport = report;
   if (typeof exposeLegacyWindowAlias === 'function') exposeLegacyWindowAlias('_lastStrategyReport', report);
 
@@ -20384,8 +20389,6 @@ function _unverifiedLegacyStrategyTab(teamKey) {
 
   html += '<p class="cs-summary-line">' + _csEsc(report.coaching_summary) + '</p>';
 
-  // Phase 4b (Refs #52) — Adaptive state banner + consistency pill.
-  // Inserted above Section 1 so the user sees the state before reading anything.
   try {
     var _history = (typeof computeTeamHistory === 'function') ? computeTeamHistory(teamKey) : null;
     var _branchAnalysis = (typeof csLatestBranchMoveAnalysisForTeam === 'function') ? csLatestBranchMoveAnalysisForTeam(teamKey) : null;
@@ -20394,18 +20397,12 @@ function _unverifiedLegacyStrategyTab(teamKey) {
     }
     if (_history) html += csRenderAdaptiveBanner(_history);
     if (_history) html += csRenderRecordBar(_history);
-    // Phase 4c (Refs PHASE4C_DETECTORS_SPEC.md): 5 collapsible detector
-    // sections under the Record bar. Renders inline/section confidence
-    // badges and 'insufficient data' placeholders when n < 5.
     if (_history && typeof csRenderPhase4cSections === 'function') {
       html += csRenderPhase4cSections(_history, teamKey, team);
     }
     if (_history && typeof csRenderPolicyAuditSection === 'function') {
       html += csRenderPolicyAuditSection(_history);
     }
-    // Phase 4d: surface best candidate + alternatives for the currently
-    // selected opponent. Kept low-budget in the tab render; deeper sweeps can
-    // request a larger simsPerBranch explicitly.
     if (typeof solveThreatResponse === 'function' && typeof renderThreatResponseCard === 'function') {
       var _oppSel = (typeof document !== 'undefined') ? document.getElementById('opponent-select') : null;
       var _oppKey = (_oppSel && _oppSel.value && TEAMS[_oppSel.value]) ? _oppSel.value : Object.keys(TEAMS).filter(function(k){ return k !== teamKey; })[0];
@@ -20416,7 +20413,6 @@ function _unverifiedLegacyStrategyTab(teamKey) {
     }
   } catch (e) { UILog.warn('banner render failed', e); }
 
-  // Section 1: Team report card
   html += '<section class="cs-section"><h3 class="cs-h3">Team Report Card ' + _csSourceChip(csLabelSim()) + '</h3>';
   html += '<p class="cs-explain">' + _csEsc(rc.short_explanation) + '</p>';
   html += '<div class="cs-cat-grid">';
@@ -20427,7 +20423,6 @@ function _unverifiedLegacyStrategyTab(teamKey) {
   });
   html += '</div></section>';
 
-  // Section 2: Team identity
   html += '<section class="cs-section"><h3 class="cs-h3">Team Identity ' + _csSourceChip(id.source_label) + '</h3>';
   html += '<ul class="cs-list">';
   html += '<li><strong>Playstyle:</strong> ' + _csEsc(id.playstyle) + '</li>';
@@ -20446,7 +20441,6 @@ function _unverifiedLegacyStrategyTab(teamKey) {
   html += '<li><strong>Format fit:</strong> ' + _csEsc(id.format_fit) + '</li>';
   html += '</ul></section>';
 
-  // Section 3: Matchup intelligence
   var mi = report.matchup_intelligence;
   if (mi) {
     html += '<section class="cs-section"><h3 class="cs-h3">Matchup Intelligence</h3>';
@@ -20459,7 +20453,6 @@ function _unverifiedLegacyStrategyTab(teamKey) {
     html += '</section>';
   }
 
-  // Section 4: BO3 adaptation
   var bo3 = report.bo3_adaptation;
   if (bo3) {
     html += '<section class="cs-section"><h3 class="cs-h3">BO3 Adaptation</h3>';
@@ -20473,7 +20466,6 @@ function _unverifiedLegacyStrategyTab(teamKey) {
     html += '</section>';
   }
 
-  // Section 5: What works
   var ww = report.what_works;
   html += '<section class="cs-section"><h3 class="cs-h3">What Works</h3>';
   html += '<p><strong>Best synergy:</strong> ' + _csEsc(ww.best_synergy.description) + ' ' + _csSourceChip(ww.best_synergy.source_label) + '</p>';
@@ -20482,7 +20474,6 @@ function _unverifiedLegacyStrategyTab(teamKey) {
   html += '<p><strong>Strongest win path:</strong> ' + _csEsc(ww.strongest_win_path.description) + ' ' + _csSourceChip(ww.strongest_win_path.source_label) + '</p>';
   html += '</section>';
 
-  // Section 6: What is weak
   var wk = report.what_is_weak;
   html += '<section class="cs-section"><h3 class="cs-h3">What Is Weak</h3>';
   if (wk.missing_roles.length) html += '<p><strong>Missing:</strong> ' + _csEsc(wk.missing_roles.join(', ')) + '</p>';
@@ -20493,7 +20484,6 @@ function _unverifiedLegacyStrategyTab(teamKey) {
   html += '<p><strong>Speed control:</strong> ' + _csEsc(wk.speed_issues) + '</p>';
   html += '</section>';
 
-  // Section 7: Top threats
   if (report.top_threats.length) {
     html += '<section class="cs-section"><h3 class="cs-h3">Top Threats</h3><div class="cs-threat-grid">';
     report.top_threats.forEach(function(t){
@@ -20504,7 +20494,6 @@ function _unverifiedLegacyStrategyTab(teamKey) {
     html += '</div></section>';
   }
 
-  // Section 8: Lead guide (top 3)
   html += '<section class="cs-section"><h3 class="cs-h3">Top 3 Leads (' + lg.format + ')</h3>';
   html += '<div class="cs-lead-grid">';
   (lg.recommendations || []).forEach(function(rec){
@@ -20522,7 +20511,6 @@ function _unverifiedLegacyStrategyTab(teamKey) {
   });
   html += '</div></section>';
 
-  // Section 9: Move lines
   html += '<section class="cs-section"><h3 class="cs-h3">Move Lines (' + report.move_lines.length + ' scenarios)</h3>';
   html += '<div class="cs-moveline-grid">';
   report.move_lines.forEach(function(ml){
@@ -20537,7 +20525,6 @@ function _unverifiedLegacyStrategyTab(teamKey) {
   });
   html += '</div></section>';
 
-  // Section 10: Mistakes
   html += '<section class="cs-section"><h3 class="cs-h3">Mistakes to Avoid (' + report.mistakes_to_avoid.length + ')</h3>';
   html += '<div class="cs-mistake-list">';
   report.mistakes_to_avoid.forEach(function(m, i){
@@ -20549,7 +20536,6 @@ function _unverifiedLegacyStrategyTab(teamKey) {
   });
   html += '</div></section>';
 
-  // Section 11: Risk profile
   if (report.risk_profile.length) {
     html += '<section class="cs-section"><h3 class="cs-h3">Risk Profile</h3><div class="cs-risk-grid">';
     report.risk_profile.forEach(function(r){
@@ -20562,7 +20548,6 @@ function _unverifiedLegacyStrategyTab(teamKey) {
     html += '</div></section>';
   }
 
-  // Section 12: Trend analysis
   var ta = report.trend_analysis;
   html += '<section class="cs-section"><h3 class="cs-h3">Trend Analysis</h3>';
   if (!ta.has_data) {
@@ -20579,7 +20564,6 @@ function _unverifiedLegacyStrategyTab(teamKey) {
   }
   html += '</section>';
 
-  // Section 13: Skill coaching
   var sk = report.skill_coaching;
   html += '<section class="cs-section"><h3 class="cs-h3">Skill Coaching</h3><div class="cs-skill-grid">';
   html += '<div class="cs-skill-card"><h4>Beginner</h4>';
@@ -20602,7 +20586,6 @@ function _unverifiedLegacyStrategyTab(teamKey) {
   html += '<p><strong>Opponent prediction:</strong> ' + _csEsc(sk.advanced.opponent_prediction) + '</p></div>';
   html += '</div></section>';
 
-  // Section 14: Stress test
   var st = report.stress_test;
   html += '<section class="cs-section"><h3 class="cs-h3">Stress Test &middot; Consistency: ' + st.consistency_rating + '</h3>';
   if (st.break_points.length) {
@@ -20629,11 +20612,9 @@ function _unverifiedLegacyStrategyTab(teamKey) {
     csWireLeadPairTableSort(host, teamKey);
   }
 
-  // Apply Evidence toggle state on initial paint
   _csApplyEvidenceVisibility();
 }
 
-// ---- Evidence toggle (Section 14, decision 3) -----------------------
 var CS_EVIDENCE_KEY = 'champions_evidence_chips_visible';
 function _csApplyEvidenceVisibility() {
   try {
@@ -20655,19 +20636,6 @@ function _csInitEvidenceToggle() {
   _csApplyEvidenceVisibility();
 }
 
-// =====================================================================
-// PHASE 3 - PER-TEAM REPORT PERSISTENCE (Section 7)
-// =====================================================================
-// Stores StrategyReport snapshots in localStorage keyed by team_signature
-// so the Strategy tab paints instantly on team switch, with no flash.
-// Implements Section 7 schema: { schema_version, reports: { <sig>: ... } }
-// Section 11 explicitly defers IndexedDB to a later effort, so we use
-// localStorage only for v1 - simpler and synchronous.
-//
-// Lifecycle (per Section 13.1 lifecycle 1 + 4):
-//   page load: paint cached snapshot synchronously, then schedule rebuild
-//   rebuild fires: compute new report, write snapshot, repaint
-// ---------------------------------------------------------------------
 var CS_PERSIST_KEY = 'champions_strategy_report_v1';
 var CS_PERSIST_SCHEMA = 1;
 
@@ -20813,7 +20781,6 @@ function csClearAllReports() {
   return _csPersistWrite({ schema_version: CS_PERSIST_SCHEMA, reports: {} });
 }
 
-// =========================================================================
 // Phase 4a (Refs #52) — Sim Log: raw append-only history of series results.
 // Lives in its own storage key (champions_sim_log_v1) so it can evolve
 // independently from the Phase 3 strategy snapshot store.
@@ -20829,7 +20796,6 @@ function csClearAllReports() {
 //
 // QuotaExceededError fallback: purge oldest 25%, retry once. Mirrors
 // Phase 3's recovery pattern.
-// =========================================================================
 var CS_SIMLOG_KEY = 'champions_sim_log_v1';
 var CS_SIMLOG_SCHEMA = 1;
 var CS_SIMLOG_MAX_TOTAL = 500;
@@ -20891,6 +20857,7 @@ function _csGameFromBattle(battle) {
     });
   }
   return {
+    outcome_proof: ChampionsOutcome.evaluate(battle).proof,
     result: battle.result || null,
     format: battle.format || null,
     provenance: battle.provenance ? JSON.parse(JSON.stringify(battle.provenance)) : null,
@@ -20952,6 +20919,7 @@ function csSimLogAppendSeries(opts) {
       games:     battles.map(_csGameFromBattle).filter(Boolean),
       seriesResult: opts.seriesResult || null
     };
+    if(entry.provenance)entry.provenance.outcome_count=entry.games.length;
     var store = _csSimLogRead();
     store.entries.push(entry);
     // Apply per-pair cap first (usually the tighter of the two).
@@ -20973,6 +20941,7 @@ function csSimLogAppendSeries(opts) {
 
 // Read helpers for Phase 4b/c/d.
 function csSimLogEntryEligible(entry) {
+  if(!entry || !ChampionsOutcome.series(entry.games,entry.bo).eligible)return false;
   var p = entry && entry.provenance;
   if (!p || entry._mirrored || typeof getSimulationEvidencePolicy !== 'function') return false;
   if (entry.format !== p.format || entry.bo !== p.bo || entry.playerKey !== p.player_team_id || entry.oppKey !== p.opp_team_id) return false;
@@ -21064,7 +21033,6 @@ if (typeof exposeLegacyWindowAlias === 'function') exposeLegacyWindowAlias('csSi
 if (typeof exposeLegacyWindowAlias === 'function') exposeLegacyWindowAlias('csSimLogClearTeam', csSimLogClearTeam);
 if (typeof exposeLegacyWindowAlias === 'function') exposeLegacyWindowAlias('csSimLogClearAll', csSimLogClearAll);
 
-// =========================================================================
 // Phase 4b (Refs #52) — team_history: adaptive state machine driver.
 //
 // Computes per-team stats on demand from the sim log. Drives the State 1/2/3
@@ -21077,12 +21045,10 @@ if (typeof exposeLegacyWindowAlias === 'function') exposeLegacyWindowAlias('csSi
 //
 // Cached per team with 500 ms TTL so the Strategy tab doesn't recompute on
 // every re-render (rebuilds happen on team switch + after every series).
-// =========================================================================
 var _csHistoryCache = {};  // teamKey -> { ts, history }
 var CS_HISTORY_TTL_MS = 500;
 var CS_STATE_MATURE_THRESHOLD = 15;
 
-// =========================================================================
 // Phase 4c (Refs PHASE4C_DETECTORS_SPEC.md) - Detectors + confidence badges.
 //
 // Four pure functions that read flat sim-log games and emit structured
@@ -21095,7 +21061,6 @@ var CS_STATE_MATURE_THRESHOLD = 15;
 //   - 'same advice after 100 battles = failing': covered by Fixture C in
 //     tests/phase4c_detectors.js.
 //   - 'no fake-confident claims': effect-size guard in csConfidenceBadge.
-// =========================================================================
 var CS_PHASE4C = {
   DEAD_MOVE_THRESHOLD:   0.15,  // avg calls per game (less than ~1 in ~7)
   DEAD_MOVE_MIN_GAMES:   10,
@@ -21924,7 +21889,7 @@ function csRenderPhase4cSections(history, teamKey, team) {
   var html = '';
   html += '<div class="cs-phase4c-block">';
 
-  // ---- Section 1: Lead Performance --------------------------------------
+  // Section 1: Lead Performance
   var leadHeader = '';
   var leadBody = '';
   if (n < CS_PHASE4C.CONF_LOW_MIN) {
@@ -21951,7 +21916,7 @@ function csRenderPhase4cSections(history, teamKey, team) {
   }
   html += _section('Lead Performance', leadHeader, leadBody);
 
-  // ---- Section 1b: Lead Pair Table by Matchup ---------------------------
+  // Section 1b: Lead Pair Table by Matchup
   var leadPairRows = history.lead_pair_table_v2 || [];
   var leadPairHeader = '';
   var leadPairBody = '';
@@ -21988,7 +21953,7 @@ function csRenderPhase4cSections(history, teamKey, team) {
   }
   html += _section('Lead Pair Win-Rate Table', leadPairHeader, leadPairBody);
 
-  // ---- Section 2: Likely Loss Patterns ----------------------------------
+  // Section 2: Likely Loss Patterns
   var lossHeader = '';
   var lossBody = '';
   if (n < CS_PHASE4C.LOSS_MIN_GAMES) {
@@ -22012,7 +21977,7 @@ function csRenderPhase4cSections(history, teamKey, team) {
   }
   html += _section('Likely Loss Patterns', lossHeader, lossBody);
 
-  // ---- Section 3: Dead Moves -------------------------------------------
+  // Section 3: Dead Moves
   var deadHeader = '';
   var deadBody = '';
   if (n < CS_PHASE4C.DEAD_MOVE_MIN_GAMES) {
@@ -22039,7 +22004,7 @@ function csRenderPhase4cSections(history, teamKey, team) {
   }
   html += _section('Dead Moves', deadHeader, deadBody);
 
-  // ---- Section 3b: Branch Move Coach ------------------------------------
+  // Section 3b: Branch Move Coach
   var branchAnalysis = (typeof csLatestBranchMoveAnalysisForTeam === 'function') ? csLatestBranchMoveAnalysisForTeam(teamKey) : null;
   var branchHeader = '';
   var branchBody = '';
@@ -22114,7 +22079,7 @@ function csRenderPhase4cSections(history, teamKey, team) {
   }
   html += _section('Branch Move Coach', branchHeader, branchBody);
 
-  // ---- Section 4: Coverage and Roles (read-only TEAM_META summary) ------
+  // Section 4: Coverage and Roles (read-only TEAM_META summary)
   var covHeader = _badgeHtml('high', 'team composition');
   var covBody = '';
   if (!members.length) {
@@ -22137,7 +22102,7 @@ function csRenderPhase4cSections(history, teamKey, team) {
   }
   html += _section('Coverage and Roles', covHeader, covBody);
 
-  // ---- Section 5: Sample Confidence (team-level) ------------------------
+  // Section 5: Sample Confidence (team-level)
   var teamHeader = _badgeHtml(teamConf.tier);
   var teamBody = '';
   teamBody += '<div class="cs-detector-team-conf">';
@@ -22359,25 +22324,30 @@ function solveThreatResponse(teamKey, oppKey, opts) {
 
   var start = Date.now();
   var budget = opts.budgetMsTotal || 30000;
-  var out = [];
+  var out = [], excludedBranches=[];
   branches.forEach(function(branchId){
     var branch = _cs4dResolveBranch(teamKey, oppKey, branchId);
-    var w = 0, l = 0, d = 0, logs = [];
+    var w = 0, l = 0, d = 0, logs = [], exclusions=[], attempted=0, reasons={};
     for (var i = 0; i < simsPerBranch; i++) {
       if (Date.now() - start > budget && i > 0) break;
       var battle = simulateBattle(TEAMS[teamKey], TEAMS[oppKey], {
+        rulesetId: typeof getSelectedRegulationId==='function'?getSelectedRegulationId():undefined,
         format: (typeof currentFormat !== 'undefined' ? currentFormat : 'doubles'),
         seed: _cs4dHashSeed(opts.rngSeed, branchId, i),
         playerBring: branch.bring,
         playerLeads: branch.lead
       });
+      attempted++;var outcome=ChampionsOutcome.evaluate(battle);
+      if(!outcome.eligible){reasons[outcome.reason]=(reasons[outcome.reason]||0)+1;if(exclusions.length<20)exclusions.push(battle);continue;}
       if (battle.result === 'win') w++;
       else if (battle.result === 'loss') l++;
       else d++;
       if (logs.length < 20) logs.push(battle);
     }
     var n = w + l + d;
-    var wr = n ? w / n : 0;
+    branch.requestedBattles=simsPerBranch;branch.attemptedBattles=attempted;branch.excludedOutcomes=attempted-n;branch.exclusionReasons=reasons;branch.excludedLogs=exclusions;
+    if(!n){branch.n=0;branch.win_rate=null;excludedBranches.push(branch);return;}
+    var wr = w / n;
     branch.n = n;
     branch.w = w;
     branch.l = l;
@@ -22399,10 +22369,11 @@ function solveThreatResponse(teamKey, oppKey, opts) {
     oppKey: oppKey,
     population: 'ai_vs_ai_greedy',
     branches: out,
+    excluded_branches:excludedBranches,
     best_candidate: best,
     recommended: best,
     alts: out.filter(function(b){ return b.id !== best; }).slice(0, 3),
-    confidence: sorted[0] ? sorted[0].win_rate : 0,
+    confidence: sorted[0] ? sorted[0].win_rate : null,
     generatedAt: Date.now()
   };
   if (!opts.noCache) CS_PHASE4D_CACHE[cacheKey] = result;
@@ -22853,7 +22824,7 @@ function renderStrategyTabFromCache(teamKey) {
   return true;
 }
 
-// ---- Auto-rebuild (Section 14, decision 1) --------------------------
+// Auto-rebuild (Section 14, decision 1)
 // Debounced 500ms. Triggered by team select / import / sim complete.
 var _csRebuildTimer = null;
 function csScheduleStrategyRebuild() {
@@ -22867,7 +22838,7 @@ function csScheduleStrategyRebuild() {
   }, 500);
 }
 
-// ---- Wire-up on DOMContentLoaded ------------------------------------
+// Wire-up on DOMContentLoaded
 if (typeof window !== 'undefined') {
   function setDbChip(state, detail) {
     var chip = document.getElementById('db-offline-chip');

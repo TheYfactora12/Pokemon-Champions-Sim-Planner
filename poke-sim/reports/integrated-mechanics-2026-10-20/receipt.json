@@ -1,0 +1,23 @@
+{
+  "scope": "Reference/local proof, not client or official legality",
+  "aggregate_scope": "pre-final Unburden helper correction; exact final CI pending",
+  "final_bundle_sha256": "bf832b7f12e78ce70f30b11ece330a759cc54bb9f6cb1c297e5574b25e3f8d2a",
+  "files": {
+    "integrated-project.log": "72824b1b7f54d2ecf07cbe2146ce0f0b0e3955551e9842277476a8abfb2258f6",
+    "integrated-battle.log": "c18cc92e1250e251f290f2ae2af26e33f612c27ee3e4ecd775e86fd6838ee361",
+    "integrated-method.log": "508a0a34812461f5405bce80c63ec51316ca46f5df193217dafdaf565c6c04a2",
+    "integrated-items-shared.log": "2d0329656cd1812a73a4a840ae93bcb004a9574ae692e2bc8c3136fac09ceccb",
+    "integrated-items-current.log": "0203840bf4dbfc3d62329e49212fd79f00724210df58eb445d2fe9bb6ba39a9c",
+    "integrated-items-mutants.json": "0d1e2aaab6e140ff05c2c7bfe5a5bd219ceb04f8cf67857945b31d0b1cc4c512",
+    "leaf-guard-before.log": "34476f463695051b33b163ff70f75d75dc09e6672f3bed5708069697e4d660e6",
+    "leaf-guard-after.log": "05a065024648cc59ec2fb3c650cbc354d79a274a87bb5432186441cec42d0deb",
+    "leaf-guard-current-reference.log": "d82c9a783c5687fcd267ead382a3931fc816d81467d5a50300c1015cede8b784",
+    "leaf-guard-mutant.log": "e08c965f715f799f59be0b067c1bb97bd2cdf2a716f708863578a93a8b7db689",
+    "encore-unburden-before.log": "dfafe477d7b9807dd0bf5a9e2ac261b93e7d1a3d3f71c9f5be1340d9ce8f1ebd",
+    "encore-unburden-shared.log": "12f4871b57496b837718457d061708e53cab58b62b09592dc8222e9871ecc3bb",
+    "encore-unburden-current.log": "980d7b8afb517c99c8eb17ac03dbac86756d25d5c98091188b8cc6710b611fe3",
+    "encore-unburden-mutant.log": "db78402ba25780590ec6516f3be407aadc9a96ed5812472aed9df5e48c87f207",
+    "integrated-browser-final.log": "b215113e10a5efc07e9e3300cb703a1e3c7f6c9f0425a24416a57762fcc170a6",
+    "integrated-release-final.log": "b35f9505522da9fe77a8f7f3f86b8bd9cb1b6d81fbd6c276843d8a08845fa830"
+  }
+}

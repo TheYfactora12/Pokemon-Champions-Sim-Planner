@@ -1,0 +1,24 @@
+{
+  "commit": "cce6af2ee20dace9e3c5ee6e24108c98d2010f76",
+  "release_tests": {
+    "passed": 11,
+    "failed": 1
+  },
+  "blocker": "index.html71 and app_shell.js69/71 still v244 while manifest v245",
+  "bundle_sha256": "7048d4059848d033e2b9600e078e1c1d1831f6a03d4adf27450c37d19bc177c6",
+  "bytes": 11534274,
+  "headroom_11MiB": 62,
+  "tracker": {
+    "current.json": {
+      "pass": 6,
+      "stale": 1
+    },
+    "history.json": {
+      "stale": 49,
+      "pass": 6,
+      "blocked": 6
+    }
+  },
+  "external_asset_verification": "passed",
+  "publication": false
+}

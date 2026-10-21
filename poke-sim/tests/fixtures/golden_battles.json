@@ -13,7 +13,7 @@
       ],
       "format": "doubles",
       "description": "Player (speed) vs Cofagrigus TR — seed 1337",
-      "expected_trace_hash": "7a68443bc21de47302ddaed6e9b225d44fdcd9532f1b4c46662ea3f21117cd40",
+      "expected_trace_hash": "674804fc9f09582fa9ae0b787fd1687a02c893323e9e753c92576124be4a4504",
       "expected_winner": "win"
     },
     {
@@ -28,7 +28,7 @@
       ],
       "format": "doubles",
       "description": "Player (speed) vs Sand Bulky Offense — seed 2024",
-      "expected_trace_hash": "483e8469777d4434d8cc20bfa99d75194d0162fb466c8da692797ca757b07ee0",
+      "expected_trace_hash": "12e43dda3e5dbb3eb95aa856a0a081f49c4e5b95495fa87872e84a6b7ce29be0",
       "expected_winner": "loss"
     },
     {
@@ -43,8 +43,8 @@
       ],
       "format": "doubles",
       "description": "Cofagrigus TR vs Sand Bulky Offense — seed 9999",
-      "expected_trace_hash": "ad2e2eb8f7757b4c3da1f007daaa9d9e3d56ada9d30c35100528d37d9a1ef374",
-      "expected_winner": "loss"
+      "expected_trace_hash": "676c5da8f2e424cc2b35f64076f5837f5fbd78348d08937c56b751fd47f897f1",
+      "expected_winner": "win"
     }
   ]
 }

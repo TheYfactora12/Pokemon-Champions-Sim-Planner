@@ -1,0 +1,466 @@
+[
+  {
+    "item": "Choice Band",
+    "swap": false,
+    "mod": "champions",
+    "lock": "fakeout",
+    "request": [],
+    "rawRequest": {
+      "active": [
+        {
+          "moves": [
+            {
+              "move": "Struggle",
+              "id": "struggle",
+              "target": "randomNormal",
+              "disabled": false
+            }
+          ]
+        },
+        {
+          "moves": [
+            {
+              "move": "Splash",
+              "id": "splash",
+              "pp": 19,
+              "maxpp": 20,
+              "target": "self",
+              "disabled": false
+            }
+          ]
+        }
+      ],
+      "side": {
+        "name": "Player 1",
+        "id": "p1",
+        "pokemon": [
+          {
+            "ident": "p1: Liepard",
+            "details": "Liepard, L50, M",
+            "condition": "139/139",
+            "active": true,
+            "stats": {
+              "atk": 108,
+              "def": 70,
+              "spa": 108,
+              "spd": 70,
+              "spe": 126
+            },
+            "moves": [
+              "fakeout",
+              "tackle"
+            ],
+            "baseAbility": "innerfocus",
+            "item": "choiceband",
+            "pokeball": "pokeball",
+            "ability": "innerfocus",
+            "commanding": false,
+            "reviving": false
+          },
+          {
+            "ident": "p1: Blissey",
+            "details": "Blissey, L50, F",
+            "condition": "330/330",
+            "active": true,
+            "stats": {
+              "atk": 30,
+              "def": 30,
+              "spa": 95,
+              "spd": 155,
+              "spe": 75
+            },
+            "moves": [
+              "splash"
+            ],
+            "baseAbility": "innerfocus",
+            "item": "",
+            "pokeball": "pokeball",
+            "ability": "innerfocus",
+            "commanding": false,
+            "reviving": false
+          }
+        ]
+      }
+    },
+    "log": [
+      "|",
+      "|t:|1792522143",
+      "|-activate|p1a: Liepard|move: Struggle",
+      "|move|p1a: Liepard|Struggle|p2a: Snorlax",
+      "|split|p2",
+      "|-damage|p2a: Snorlax|194/235",
+      "|-damage|p2a: Snorlax|194/235",
+      "|split|p1",
+      "|-damage|p1a: Liepard|104/139|[from] recoil",
+      "|-damage|p1a: Liepard|104/139|[from] recoil",
+      "|move|p2b: Blissey|Splash|p2b: Blissey",
+      "|-nothing",
+      "|move|p1b: Blissey|Splash|p1b: Blissey",
+      "|-nothing",
+      "|move|p2a: Snorlax|Splash|p2a: Snorlax",
+      "|-nothing",
+      "|",
+      "|upkeep",
+      "|turn|3"
+    ],
+    "hp": 104,
+    "pp": [
+      {
+        "id": "fakeout",
+        "pp": 11
+      },
+      {
+        "id": "tackle",
+        "pp": 20
+      }
+    ]
+  },
+  {
+    "item": "Choice Band",
+    "swap": true,
+    "mod": "champions",
+    "lock": "fakeout",
+    "request": [],
+    "rawRequest": {
+      "active": [
+        {
+          "moves": [
+            {
+              "move": "Struggle",
+              "id": "struggle",
+              "target": "randomNormal",
+              "disabled": false
+            }
+          ]
+        },
+        {
+          "moves": [
+            {
+              "move": "Splash",
+              "id": "splash",
+              "pp": 19,
+              "maxpp": 20,
+              "target": "self",
+              "disabled": false
+            }
+          ]
+        }
+      ],
+      "side": {
+        "name": "Player 2",
+        "id": "p2",
+        "pokemon": [
+          {
+            "ident": "p2: Liepard",
+            "details": "Liepard, L50, M",
+            "condition": "139/139",
+            "active": true,
+            "stats": {
+              "atk": 108,
+              "def": 70,
+              "spa": 108,
+              "spd": 70,
+              "spe": 126
+            },
+            "moves": [
+              "fakeout",
+              "tackle"
+            ],
+            "baseAbility": "innerfocus",
+            "item": "choiceband",
+            "pokeball": "pokeball",
+            "ability": "innerfocus",
+            "commanding": false,
+            "reviving": false
+          },
+          {
+            "ident": "p2: Blissey",
+            "details": "Blissey, L50, F",
+            "condition": "330/330",
+            "active": true,
+            "stats": {
+              "atk": 30,
+              "def": 30,
+              "spa": 95,
+              "spd": 155,
+              "spe": 75
+            },
+            "moves": [
+              "splash"
+            ],
+            "baseAbility": "innerfocus",
+            "item": "",
+            "pokeball": "pokeball",
+            "ability": "innerfocus",
+            "commanding": false,
+            "reviving": false
+          }
+        ]
+      }
+    },
+    "log": [
+      "|",
+      "|t:|1792522143",
+      "|-activate|p2a: Liepard|move: Struggle",
+      "|move|p2a: Liepard|Struggle|p1a: Snorlax",
+      "|split|p1",
+      "|-damage|p1a: Snorlax|194/235",
+      "|-damage|p1a: Snorlax|194/235",
+      "|split|p2",
+      "|-damage|p2a: Liepard|104/139|[from] recoil",
+      "|-damage|p2a: Liepard|104/139|[from] recoil",
+      "|move|p2b: Blissey|Splash|p2b: Blissey",
+      "|-nothing",
+      "|move|p1b: Blissey|Splash|p1b: Blissey",
+      "|-nothing",
+      "|move|p1a: Snorlax|Splash|p1a: Snorlax",
+      "|-nothing",
+      "|",
+      "|upkeep",
+      "|turn|3"
+    ],
+    "hp": 104,
+    "pp": [
+      {
+        "id": "fakeout",
+        "pp": 11
+      },
+      {
+        "id": "tackle",
+        "pp": 20
+      }
+    ]
+  },
+  {
+    "item": "Choice Scarf",
+    "swap": false,
+    "mod": "champions",
+    "lock": "fakeout",
+    "request": [],
+    "rawRequest": {
+      "active": [
+        {
+          "moves": [
+            {
+              "move": "Struggle",
+              "id": "struggle",
+              "target": "randomNormal",
+              "disabled": false
+            }
+          ]
+        },
+        {
+          "moves": [
+            {
+              "move": "Splash",
+              "id": "splash",
+              "pp": 19,
+              "maxpp": 20,
+              "target": "self",
+              "disabled": false
+            }
+          ]
+        }
+      ],
+      "side": {
+        "name": "Player 1",
+        "id": "p1",
+        "pokemon": [
+          {
+            "ident": "p1: Liepard",
+            "details": "Liepard, L50, M",
+            "condition": "139/139",
+            "active": true,
+            "stats": {
+              "atk": 108,
+              "def": 70,
+              "spa": 108,
+              "spd": 70,
+              "spe": 126
+            },
+            "moves": [
+              "fakeout",
+              "tackle"
+            ],
+            "baseAbility": "innerfocus",
+            "item": "choicescarf",
+            "pokeball": "pokeball",
+            "ability": "innerfocus",
+            "commanding": false,
+            "reviving": false
+          },
+          {
+            "ident": "p1: Blissey",
+            "details": "Blissey, L50, F",
+            "condition": "330/330",
+            "active": true,
+            "stats": {
+              "atk": 30,
+              "def": 30,
+              "spa": 95,
+              "spd": 155,
+              "spe": 75
+            },
+            "moves": [
+              "splash"
+            ],
+            "baseAbility": "innerfocus",
+            "item": "",
+            "pokeball": "pokeball",
+            "ability": "innerfocus",
+            "commanding": false,
+            "reviving": false
+          }
+        ]
+      }
+    },
+    "log": [
+      "|",
+      "|t:|1792522143",
+      "|-activate|p1a: Liepard|move: Struggle",
+      "|move|p1a: Liepard|Struggle|p2a: Snorlax",
+      "|split|p2",
+      "|-damage|p2a: Snorlax|207/235",
+      "|-damage|p2a: Snorlax|207/235",
+      "|split|p1",
+      "|-damage|p1a: Liepard|104/139|[from] recoil",
+      "|-damage|p1a: Liepard|104/139|[from] recoil",
+      "|move|p2b: Blissey|Splash|p2b: Blissey",
+      "|-nothing",
+      "|move|p1b: Blissey|Splash|p1b: Blissey",
+      "|-nothing",
+      "|move|p2a: Snorlax|Splash|p2a: Snorlax",
+      "|-nothing",
+      "|",
+      "|upkeep",
+      "|turn|3"
+    ],
+    "hp": 104,
+    "pp": [
+      {
+        "id": "fakeout",
+        "pp": 11
+      },
+      {
+        "id": "tackle",
+        "pp": 20
+      }
+    ]
+  },
+  {
+    "item": "Choice Scarf",
+    "swap": true,
+    "mod": "champions",
+    "lock": "fakeout",
+    "request": [],
+    "rawRequest": {
+      "active": [
+        {
+          "moves": [
+            {
+              "move": "Struggle",
+              "id": "struggle",
+              "target": "randomNormal",
+              "disabled": false
+            }
+          ]
+        },
+        {
+          "moves": [
+            {
+              "move": "Splash",
+              "id": "splash",
+              "pp": 19,
+              "maxpp": 20,
+              "target": "self",
+              "disabled": false
+            }
+          ]
+        }
+      ],
+      "side": {
+        "name": "Player 2",
+        "id": "p2",
+        "pokemon": [
+          {
+            "ident": "p2: Liepard",
+            "details": "Liepard, L50, M",
+            "condition": "139/139",
+            "active": true,
+            "stats": {
+              "atk": 108,
+              "def": 70,
+              "spa": 108,
+              "spd": 70,
+              "spe": 126
+            },
+            "moves": [
+              "fakeout",
+              "tackle"
+            ],
+            "baseAbility": "innerfocus",
+            "item": "choicescarf",
+            "pokeball": "pokeball",
+            "ability": "innerfocus",
+            "commanding": false,
+            "reviving": false
+          },
+          {
+            "ident": "p2: Blissey",
+            "details": "Blissey, L50, F",
+            "condition": "330/330",
+            "active": true,
+            "stats": {
+              "atk": 30,
+              "def": 30,
+              "spa": 95,
+              "spd": 155,
+              "spe": 75
+            },
+            "moves": [
+              "splash"
+            ],
+            "baseAbility": "innerfocus",
+            "item": "",
+            "pokeball": "pokeball",
+            "ability": "innerfocus",
+            "commanding": false,
+            "reviving": false
+          }
+        ]
+      }
+    },
+    "log": [
+      "|",
+      "|t:|1792522143",
+      "|-activate|p2a: Liepard|move: Struggle",
+      "|move|p2a: Liepard|Struggle|p1a: Snorlax",
+      "|split|p1",
+      "|-damage|p1a: Snorlax|207/235",
+      "|-damage|p1a: Snorlax|207/235",
+      "|split|p2",
+      "|-damage|p2a: Liepard|104/139|[from] recoil",
+      "|-damage|p2a: Liepard|104/139|[from] recoil",
+      "|move|p2b: Blissey|Splash|p2b: Blissey",
+      "|-nothing",
+      "|move|p1b: Blissey|Splash|p1b: Blissey",
+      "|-nothing",
+      "|move|p1a: Snorlax|Splash|p1a: Snorlax",
+      "|-nothing",
+      "|",
+      "|upkeep",
+      "|turn|3"
+    ],
+    "hp": 104,
+    "pp": [
+      {
+        "id": "fakeout",
+        "pp": 11
+      },
+      {
+        "id": "tackle",
+        "pp": 20
+      }
+    ]
+  }
+]

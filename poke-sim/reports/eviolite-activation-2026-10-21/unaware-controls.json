@@ -1,0 +1,550 @@
+[
+  {
+    "input": {
+      "move": "Body Press",
+      "weather": "snow",
+      "target": "Snorlax",
+      "attacker": "Snover",
+      "def": 95,
+      "stage": 0,
+      "side": "player",
+      "format": "doubles",
+      "suppressor": "Immunity",
+      "crit": false,
+      "item": "",
+      "types": null,
+      "gas": false,
+      "shield": "none",
+      "stat": "def",
+      "targetAbility": "Unaware",
+      "consumed": false,
+      "attackerItem": "Eviolite",
+      "attackerAbility": "Pressure",
+      "attackerConsumed": false,
+      "attackerDef": 97,
+      "attackerStage": 3
+    },
+    "teams": [
+      {
+        "format": "champions",
+        "members": [
+          {
+            "name": "Snover",
+            "ability": "Pressure",
+            "moves": [
+              "Body Press"
+            ],
+            "item": "Eviolite",
+            "nature": "Hardy",
+            "level": 50,
+            "evs": {
+              "hp": 0,
+              "atk": 0,
+              "def": 0,
+              "spa": 0,
+              "spd": 0,
+              "spe": 0
+            }
+          },
+          {
+            "name": "Snorlax",
+            "ability": "Immunity",
+            "moves": [
+              "Splash"
+            ],
+            "item": "",
+            "nature": "Hardy",
+            "level": 50,
+            "evs": {
+              "hp": 0,
+              "atk": 0,
+              "def": 0,
+              "spa": 0,
+              "spd": 0,
+              "spe": 0
+            }
+          },
+          {
+            "name": "Pikachu",
+            "ability": "Static",
+            "moves": [
+              "Splash"
+            ],
+            "item": "",
+            "nature": "Hardy",
+            "level": 50,
+            "evs": {
+              "hp": 0,
+              "atk": 0,
+              "def": 0,
+              "spa": 0,
+              "spd": 0,
+              "spe": 0
+            }
+          },
+          {
+            "name": "Raichu",
+            "ability": "Static",
+            "moves": [
+              "Splash"
+            ],
+            "item": "",
+            "nature": "Hardy",
+            "level": 50,
+            "evs": {
+              "hp": 0,
+              "atk": 0,
+              "def": 0,
+              "spa": 0,
+              "spd": 0,
+              "spe": 0
+            }
+          }
+        ]
+      },
+      {
+        "format": "champions",
+        "members": [
+          {
+            "name": "Snorlax",
+            "ability": "Unaware",
+            "moves": [
+              "Splash"
+            ],
+            "item": "",
+            "nature": "Hardy",
+            "level": 50,
+            "evs": {
+              "hp": 0,
+              "atk": 0,
+              "def": 0,
+              "spa": 0,
+              "spd": 0,
+              "spe": 0
+            }
+          },
+          {
+            "name": "Snorlax",
+            "ability": "Immunity",
+            "moves": [
+              "Splash"
+            ],
+            "item": "",
+            "nature": "Hardy",
+            "level": 50,
+            "evs": {
+              "hp": 0,
+              "atk": 0,
+              "def": 0,
+              "spa": 0,
+              "spd": 0,
+              "spe": 0
+            }
+          },
+          {
+            "name": "Pikachu",
+            "ability": "Static",
+            "moves": [
+              "Splash"
+            ],
+            "item": "",
+            "nature": "Hardy",
+            "level": 50,
+            "evs": {
+              "hp": 0,
+              "atk": 0,
+              "def": 0,
+              "spa": 0,
+              "spd": 0,
+              "spe": 0
+            }
+          },
+          {
+            "name": "Raichu",
+            "ability": "Static",
+            "moves": [
+              "Splash"
+            ],
+            "item": "",
+            "nature": "Hardy",
+            "level": 50,
+            "evs": {
+              "hp": 0,
+              "atk": 0,
+              "def": 0,
+              "spa": 0,
+              "spd": 0,
+              "spe": 0
+            }
+          }
+        ]
+      }
+    ],
+    "reference": [
+      62,
+      62,
+      64,
+      64,
+      64,
+      66,
+      66,
+      68,
+      68,
+      68,
+      70,
+      70,
+      70,
+      72,
+      72,
+      74
+    ],
+    "candidate": [
+      62,
+      62,
+      64,
+      64,
+      64,
+      66,
+      66,
+      68,
+      68,
+      68,
+      70,
+      70,
+      70,
+      72,
+      72,
+      74
+    ],
+    "reference_stat": 95,
+    "candidate_stat": 95,
+    "reference_log": [
+      "|t:|1792570682",
+      "|gametype|doubles",
+      "|player|p1|Player 1||",
+      "|player|p2|Player 2||",
+      "|gen|9",
+      "|tier|[Gen 9 Champions] Doubles Custom Game",
+      "|clearpoke",
+      "|poke|p1|Snover, L50, M|",
+      "|poke|p1|Snorlax, L50, M|",
+      "|poke|p1|Pikachu, L50, F|",
+      "|poke|p1|Raichu, L50, M|",
+      "|poke|p2|Snorlax, L50, M|",
+      "|poke|p2|Snorlax, L50, M|",
+      "|poke|p2|Pikachu, L50, F|",
+      "|poke|p2|Raichu, L50, M|",
+      "|teampreview",
+      "|",
+      "|t:|1792570682",
+      "|teamsize|p1|4",
+      "|teamsize|p2|4",
+      "|start",
+      "|split|p1",
+      "|switch|p1a: p1m1|Snover, L50, M|135/135",
+      "|switch|p1a: p1m1|Snover, L50, M|135/135",
+      "|split|p1",
+      "|switch|p1b: p1m2|Snorlax, L50, M|235/235",
+      "|switch|p1b: p1m2|Snorlax, L50, M|235/235",
+      "|split|p2",
+      "|switch|p2a: p2m1|Snorlax, L50, M|235/235",
+      "|switch|p2a: p2m1|Snorlax, L50, M|235/235",
+      "|split|p2",
+      "|switch|p2b: p2m2|Snorlax, L50, M|235/235",
+      "|switch|p2b: p2m2|Snorlax, L50, M|235/235",
+      "|-ability|p1a: p1m1|Pressure",
+      "|turn|1",
+      "|-weather|Snowscape",
+      "|-supereffective|p2a: p2m1|1",
+      "|-supereffective|p2a: p2m1|1",
+      "|-supereffective|p2a: p2m1|1",
+      "|-supereffective|p2a: p2m1|1",
+      "|-supereffective|p2a: p2m1|1",
+      "|-supereffective|p2a: p2m1|1",
+      "|-supereffective|p2a: p2m1|1",
+      "|-supereffective|p2a: p2m1|1",
+      "|-supereffective|p2a: p2m1|1",
+      "|-supereffective|p2a: p2m1|1",
+      "|-supereffective|p2a: p2m1|1",
+      "|-supereffective|p2a: p2m1|1",
+      "|-supereffective|p2a: p2m1|1",
+      "|-supereffective|p2a: p2m1|1",
+      "|-supereffective|p2a: p2m1|1",
+      "|-supereffective|p2a: p2m1|1"
+    ]
+  },
+  {
+    "input": {
+      "move": "Body Press",
+      "weather": "snow",
+      "target": "Snorlax",
+      "attacker": "Snover",
+      "def": 95,
+      "stage": 0,
+      "side": "opponent",
+      "format": "doubles",
+      "suppressor": "Immunity",
+      "crit": false,
+      "item": "",
+      "types": null,
+      "gas": false,
+      "shield": "none",
+      "stat": "def",
+      "targetAbility": "Unaware",
+      "consumed": false,
+      "attackerItem": "Eviolite",
+      "attackerAbility": "Pressure",
+      "attackerConsumed": false,
+      "attackerDef": 97,
+      "attackerStage": 3
+    },
+    "teams": [
+      {
+        "format": "champions",
+        "members": [
+          {
+            "name": "Snorlax",
+            "ability": "Unaware",
+            "moves": [
+              "Splash"
+            ],
+            "item": "",
+            "nature": "Hardy",
+            "level": 50,
+            "evs": {
+              "hp": 0,
+              "atk": 0,
+              "def": 0,
+              "spa": 0,
+              "spd": 0,
+              "spe": 0
+            }
+          },
+          {
+            "name": "Snorlax",
+            "ability": "Immunity",
+            "moves": [
+              "Splash"
+            ],
+            "item": "",
+            "nature": "Hardy",
+            "level": 50,
+            "evs": {
+              "hp": 0,
+              "atk": 0,
+              "def": 0,
+              "spa": 0,
+              "spd": 0,
+              "spe": 0
+            }
+          },
+          {
+            "name": "Pikachu",
+            "ability": "Static",
+            "moves": [
+              "Splash"
+            ],
+            "item": "",
+            "nature": "Hardy",
+            "level": 50,
+            "evs": {
+              "hp": 0,
+              "atk": 0,
+              "def": 0,
+              "spa": 0,
+              "spd": 0,
+              "spe": 0
+            }
+          },
+          {
+            "name": "Raichu",
+            "ability": "Static",
+            "moves": [
+              "Splash"
+            ],
+            "item": "",
+            "nature": "Hardy",
+            "level": 50,
+            "evs": {
+              "hp": 0,
+              "atk": 0,
+              "def": 0,
+              "spa": 0,
+              "spd": 0,
+              "spe": 0
+            }
+          }
+        ]
+      },
+      {
+        "format": "champions",
+        "members": [
+          {
+            "name": "Snover",
+            "ability": "Pressure",
+            "moves": [
+              "Body Press"
+            ],
+            "item": "Eviolite",
+            "nature": "Hardy",
+            "level": 50,
+            "evs": {
+              "hp": 0,
+              "atk": 0,
+              "def": 0,
+              "spa": 0,
+              "spd": 0,
+              "spe": 0
+            }
+          },
+          {
+            "name": "Snorlax",
+            "ability": "Immunity",
+            "moves": [
+              "Splash"
+            ],
+            "item": "",
+            "nature": "Hardy",
+            "level": 50,
+            "evs": {
+              "hp": 0,
+              "atk": 0,
+              "def": 0,
+              "spa": 0,
+              "spd": 0,
+              "spe": 0
+            }
+          },
+          {
+            "name": "Pikachu",
+            "ability": "Static",
+            "moves": [
+              "Splash"
+            ],
+            "item": "",
+            "nature": "Hardy",
+            "level": 50,
+            "evs": {
+              "hp": 0,
+              "atk": 0,
+              "def": 0,
+              "spa": 0,
+              "spd": 0,
+              "spe": 0
+            }
+          },
+          {
+            "name": "Raichu",
+            "ability": "Static",
+            "moves": [
+              "Splash"
+            ],
+            "item": "",
+            "nature": "Hardy",
+            "level": 50,
+            "evs": {
+              "hp": 0,
+              "atk": 0,
+              "def": 0,
+              "spa": 0,
+              "spd": 0,
+              "spe": 0
+            }
+          }
+        ]
+      }
+    ],
+    "reference": [
+      62,
+      62,
+      64,
+      64,
+      64,
+      66,
+      66,
+      68,
+      68,
+      68,
+      70,
+      70,
+      70,
+      72,
+      72,
+      74
+    ],
+    "candidate": [
+      62,
+      62,
+      64,
+      64,
+      64,
+      66,
+      66,
+      68,
+      68,
+      68,
+      70,
+      70,
+      70,
+      72,
+      72,
+      74
+    ],
+    "reference_stat": 95,
+    "candidate_stat": 95,
+    "reference_log": [
+      "|t:|1792570682",
+      "|gametype|doubles",
+      "|player|p1|Player 1||",
+      "|player|p2|Player 2||",
+      "|gen|9",
+      "|tier|[Gen 9 Champions] Doubles Custom Game",
+      "|clearpoke",
+      "|poke|p1|Snorlax, L50, M|",
+      "|poke|p1|Snorlax, L50, M|",
+      "|poke|p1|Pikachu, L50, F|",
+      "|poke|p1|Raichu, L50, M|",
+      "|poke|p2|Snover, L50, M|",
+      "|poke|p2|Snorlax, L50, M|",
+      "|poke|p2|Pikachu, L50, F|",
+      "|poke|p2|Raichu, L50, M|",
+      "|teampreview",
+      "|",
+      "|t:|1792570682",
+      "|teamsize|p1|4",
+      "|teamsize|p2|4",
+      "|start",
+      "|split|p1",
+      "|switch|p1a: p1m1|Snorlax, L50, M|235/235",
+      "|switch|p1a: p1m1|Snorlax, L50, M|235/235",
+      "|split|p1",
+      "|switch|p1b: p1m2|Snorlax, L50, M|235/235",
+      "|switch|p1b: p1m2|Snorlax, L50, M|235/235",
+      "|split|p2",
+      "|switch|p2a: p2m1|Snover, L50, M|135/135",
+      "|switch|p2a: p2m1|Snover, L50, M|135/135",
+      "|split|p2",
+      "|switch|p2b: p2m2|Snorlax, L50, M|235/235",
+      "|switch|p2b: p2m2|Snorlax, L50, M|235/235",
+      "|-ability|p2a: p2m1|Pressure",
+      "|turn|1",
+      "|-weather|Snowscape",
+      "|-supereffective|p1a: p1m1|1",
+      "|-supereffective|p1a: p1m1|1",
+      "|-supereffective|p1a: p1m1|1",
+      "|-supereffective|p1a: p1m1|1",
+      "|-supereffective|p1a: p1m1|1",
+      "|-supereffective|p1a: p1m1|1",
+      "|-supereffective|p1a: p1m1|1",
+      "|-supereffective|p1a: p1m1|1",
+      "|-supereffective|p1a: p1m1|1",
+      "|-supereffective|p1a: p1m1|1",
+      "|-supereffective|p1a: p1m1|1",
+      "|-supereffective|p1a: p1m1|1",
+      "|-supereffective|p1a: p1m1|1",
+      "|-supereffective|p1a: p1m1|1",
+      "|-supereffective|p1a: p1m1|1",
+      "|-supereffective|p1a: p1m1|1"
+    ]
+  }
+]

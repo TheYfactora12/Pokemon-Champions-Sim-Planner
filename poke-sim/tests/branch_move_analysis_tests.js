@@ -63,6 +63,7 @@ function load(file) {
 }
 
 load('data.js');
+load('outcome_policy.js');
 load('engine.js');
 load('ui.js');
 
@@ -97,6 +98,7 @@ function row(key, result, runCount, move0, move1, opponent, tacticalSummary) {
     opponent_leads: ['Mega Altaria', 'Whimsicott'],
     run_count: runCount,
     result,
+    outcome_proof: { schema_version: 'champions-outcome-v1', result, terminal: true, timerExpired: false, playerSurvivors: result === 'win' ? 1 : 0, oppSurvivors: result === 'loss' ? 1 : 0 },
     turns: 1,
     forced_actions: [
       { turn: 1, side: 'player', slot: 0, move: move0, targetSide: 'opponent', targetSlot: 0 },
@@ -108,10 +110,15 @@ function row(key, result, runCount, move0, move1, opponent, tacticalSummary) {
   };
 }
 
+function analyzeObservations(rows, options) {
+  // Every fixture row represents a distinct completed observation, never run_count weight.
+  return ctx.csAnalyzeBranchCoverageRows(rows.flatMap(r => Array.from({ length: r.run_count }, (_, i) => ({ ...r, branch_key: r.branch_key + ':' + i, run_count: 1 }))), options);
+}
+
 console.log('\n=== branch move analysis tests ===\n');
 
 T('1. flags repeated losing moves as strong avoid signals', () => {
-  const out = ctx.csAnalyzeBranchCoverageRows([
+  const out = analyzeObservations([
     row('bad-1', 'loss', 8, 'Parting Shot', 'Flare Blitz'),
     row('good-1', 'win', 8, 'Fake Out', 'Flare Blitz')
   ], { minStrongSamples: 8, avoidWinRate: 0.35 });
@@ -122,7 +129,7 @@ T('1. flags repeated losing moves as strong avoid signals', () => {
 });
 
 T('2. suggests better legal move seen in the same lead and matchup context', () => {
-  const out = ctx.csAnalyzeBranchCoverageRows([
+  const out = analyzeObservations([
     row('bad-2', 'loss', 8, 'Parting Shot', 'Flare Blitz'),
     row('good-2', 'win', 8, 'Fake Out', 'Flare Blitz')
   ], { minStrongSamples: 8, avoidWinRate: 0.35 });
@@ -133,7 +140,7 @@ T('2. suggests better legal move seen in the same lead and matchup context', () 
 });
 
 T('3. keeps low-sample advice marked as early signal', () => {
-  const out = ctx.csAnalyzeBranchCoverageRows([
+  const out = analyzeObservations([
     row('bad-3', 'loss', 1, 'Parting Shot', 'Flare Blitz'),
     row('good-3', 'win', 1, 'Fake Out', 'Flare Blitz')
   ], { minStrongSamples: 8, avoidWinRate: 0.35 });
@@ -143,7 +150,7 @@ T('3. keeps low-sample advice marked as early signal', () => {
 });
 
 T('4. does not mix different opponent matchup contexts', () => {
-  const out = ctx.csAnalyzeBranchCoverageRows([
+  const out = analyzeObservations([
     row('bad-4', 'loss', 8, 'Parting Shot', 'Flare Blitz', 'mega_altaria'),
     row('good-4', 'win', 8, 'Fake Out', 'Flare Blitz', 'mega_dragonite')
   ], { minStrongSamples: 8, avoidWinRate: 0.35 });
@@ -151,13 +158,13 @@ T('4. does not mix different opponent matchup contexts', () => {
 });
 
 T('5. branch move overview states QA analysis and priority truth', () => {
-  const out = ctx.csAnalyzeBranchCoverageRows([row('bad-5', 'loss', 1, 'Parting Shot', 'Flare Blitz')]);
+  const out = analyzeObservations([row('bad-5', 'loss', 1, 'Parting Shot', 'Flare Blitz')]);
   truthy(out.overview.some((line) => /does not alter battle mechanics/.test(line)), 'missing mechanics truth');
   truthy(out.overview.some((line) => /Highest priority/.test(line)), 'missing priority line');
 });
 
 T('6. trainer report uses competitive language and confidence truth', () => {
-  const out = ctx.csAnalyzeBranchCoverageRows([
+  const out = analyzeObservations([
     row('bad-6', 'loss', 1, 'Parting Shot', 'Flare Blitz'),
     row('good-6', 'win', 1, 'Fake Out', 'Flare Blitz')
   ], { minStrongSamples: 8, avoidWinRate: 0.35 });
@@ -167,7 +174,7 @@ T('6. trainer report uses competitive language and confidence truth', () => {
 });
 
 T('7. remembers branch strategy analysis for later Strategy guide rollup', () => {
-  const out = ctx.csAnalyzeBranchCoverageRows([
+  const out = analyzeObservations([
     row('bad-7', 'loss', 8, 'Parting Shot', 'Flare Blitz'),
     row('good-7', 'win', 8, 'Fake Out', 'Flare Blitz')
   ], { minStrongSamples: 8, avoidWinRate: 0.35 });
@@ -179,7 +186,7 @@ T('7. remembers branch strategy analysis for later Strategy guide rollup', () =>
 });
 
 T('8. strategy priority board puts player action before evidence rollup', () => {
-  const out = ctx.csAnalyzeBranchCoverageRows([
+  const out = analyzeObservations([
     row('bad-8', 'loss', 8, 'Parting Shot', 'Flare Blitz'),
     row('good-8', 'win', 8, 'Fake Out', 'Flare Blitz')
   ], { minStrongSamples: 8, avoidWinRate: 0.35 });
@@ -251,7 +258,7 @@ T('8c. strategy priority board reuses saved coach brain memory for the team', ()
 T('9. analyzes tactical timing tags beside move lines', () => {
   ctx.localStorage.removeItem('champions_coach_brain_memory_v1');
   ctx.ChampionsSim.state.lastCoachBrainMemory = null;
-  const out = ctx.csAnalyzeBranchCoverageRows([
+  const out = analyzeObservations([
     row('tactic-bad', 'loss', 8, 'Protect', 'Flare Blitz', 'mega_altaria', {
       timing_tags: ['player_protect_t1', 'early_position_loss', 'first_ko_t2'],
       early_position_delta: -0.4,
@@ -276,6 +283,21 @@ T('9. analyzes tactical timing tags beside move lines', () => {
   truthy(/player_protect_t1/.test(html), 'strategy board missing tactical tag');
   truthy(/Coach sequence why/.test(html), 'strategy board missing branch-derived coach sequence');
   truthy(/branch matrix/.test(html), 'branch-derived sequence should explain its evidence source');
+});
+
+T('10. legacy and unfinished outcomes cannot create move advice', () => {
+  const legacy = row('legacy', 'loss', 100, 'Parting Shot', 'Flare Blitz');
+  delete legacy.outcome_proof;
+  const unfinished = row('unfinished', 'loss', 100, 'Parting Shot', 'Flare Blitz');
+  unfinished.outcome_proof.terminal = false;
+  const out = ctx.csAnalyzeBranchCoverageRows([legacy, unfinished]);
+  eq(out.avoid_moves.length, 0, 'unverified move advice');
+});
+T('11. one completed observation cannot multiply evidence through run_count', () => {
+  const out = ctx.csAnalyzeBranchCoverageRows([row('single', 'loss', 100, 'Parting Shot', 'Flare Blitz')], { minStrongSamples: 8 });
+  const avoid = out.avoid_moves.find(m => m.move === 'Parting Shot');
+  truthy(avoid, 'missing single observation');
+  eq(avoid.confidence, 'early_signal', 'inflated run_count confidence');
 });
 
 console.log(`\nbranch move analysis tests: ${pass} pass, ${fail} fail\n`);

@@ -1,0 +1,40 @@
+{
+  "schema_version": "champions-bounded-assertion-v1",
+  "assertion_id": "RED-CARD-CAPTURE.current-runtime.v9",
+  "case_id": "RED-CARD-CAPTURE",
+  "scope": {
+    "oracle_kind": "shared_reference",
+    "format": "gen9championsdoublescustomgame",
+    "regulation_id": null,
+    "client_version": null,
+    "boundaries": [
+      "single fixed damage hit, surviving holder, exactly one legal reserve",
+      "consumption and forced replacement; no random-reserve claim"
+    ]
+  },
+  "executed_at": "2026-10-21T02:51:51.211Z",
+  "dependencies": {
+    "engine": "0304d9bba218821edc6f773eaa37a66719c22c738ab3323505cb4fdcfef5c463",
+    "data": "dd258aec23104c305658a95eeb20c8af71204ef43311d7033d00f33a64943409",
+    "runner": "7324e992dc86371999bd2686edb4e2c649ea1d9b2e655ad3850ac5121608df08",
+    "test": "3d7cfd2e383fa6e32f8dc626c9a9bef27ac9b25d298e90646014bf95b1e524e1",
+    "checker": "d18159d8291af83e8fbd6bebac7fade9aa89c9400bb0641538b8bccd88de25a1",
+    "reference": "de66162a28b270bdf17ea17a804a7ec65c6d2f286815ae17eaa3336273405f61"
+  },
+  "contract": {
+    "path": "source/bounded-assertions/cycles/cycle-20261021-v9/RED-CARD-CAPTURE/contract.json",
+    "sha256": "3ad04361f4c0b19221b4e77bf63867e469f7bc4f536b5febf09f16a1491d00b3"
+  },
+  "inputs": {
+    "path": "source/bounded-assertions/cycles/cycle-20261021-v9/RED-CARD-CAPTURE/inputs.json",
+    "sha256": "c5690ae3a47acac9a3aa050494989a3fcc946f0ad311898c915576bb5b01ff9f"
+  },
+  "local_result": {
+    "path": "source/bounded-assertions/cycles/cycle-20261021-v9/RED-CARD-CAPTURE/local_result.json",
+    "sha256": "109702e3c184c75138272ce226362af6d68100d4202517dd352cc23ced6cd825"
+  },
+  "reference_result": {
+    "path": "source/bounded-assertions/cycles/cycle-20261021-v9/RED-CARD-CAPTURE/reference_result.json",
+    "sha256": "8a1d5a5fd3c2ce06a8f42dfd156204f6410225539a9c3cd1b012e4fdb88deec8"
+  }
+}

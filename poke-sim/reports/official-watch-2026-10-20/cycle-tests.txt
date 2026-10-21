@@ -1,0 +1,27 @@
+Γ£ö checked-in canonical current/history exports are refreshed (3590.3069ms)
+Γ£ö new reviewed rerun becomes dated current and preserves prior stale record (0.1967ms)
+Γ£ö stale never checked (0.0884ms)
+Γ£ö failed never checked (0.0619ms)
+Γ£ö blocked never checked (0.0716ms)
+Γ£ö missing independent evidence cannot yield green (0.6872ms)
+Γ£ö skipped refresh is rejected (2396.6643ms)
+Γ£ö changed runtime cannot retain stale green export (1191.2101ms)
+Γ£ö missing receipt fails closed (1177.4148ms)
+Γ£ö failed capture persists blocked attempt instead of old green (8.7989ms)
+Γ£ö exact validated checkpoint never means merged/deployed/competitive (0.3464ms)
+Γ£ö source change blocks prior completed status (0.1466ms)
+Γ£ö publication wrong commit rejects (0.384ms)
+Γ£ö hosted wrong commit rejects (0.0987ms)
+Γ£ö failed CI and missing hosted job cannot complete (0.1572ms)
+Γ£ö unsupported deployment promotion rejects (0.1937ms)
+Γ£ö canonical lifecycle export is refreshed when present (4010.7943ms)
+Γ£ö old unbound local or review evidence cannot complete new candidate (0.1709ms)
+Γ£ö single and doubles scope never share a current checkmark (0.1461ms)
+Γä╣ tests 19
+Γä╣ suites 0
+Γä╣ pass 19
+Γä╣ fail 0
+Γä╣ cancelled 0
+Γä╣ skipped 0
+Γä╣ todo 0
+Γä╣ duration_ms 12738.91

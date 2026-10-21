@@ -1,0 +1,7 @@
+{
+  "mode": "clean checkout full offline project gate",
+  "exit_code": 0,
+  "started_at": "2026-10-20T23:35:19.0433851Z",
+  "source_commit": "c5e64d28cfebffaad8c5a4d14c49d5634d77fe9e",
+  "completed_at": "2026-10-20T23:43:32.5403322Z"
+}

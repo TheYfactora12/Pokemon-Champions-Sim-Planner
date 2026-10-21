@@ -1,0 +1,18 @@
+PASS independent-shared-reference: discrete_damage_reference_tests.mjs
+PASS independent-shared-reference: amnesia_reference_tests.mjs
+PASS independent-shared-reference: encore_reference_tests.mjs
+PASS independent-shared-reference: struggle_reference_tests.mjs
+PASS independent-shared-reference: showdown_damage_oracle_tests.js
+PASS independent-shared-reference: rough_skin_reference_tests.mjs
+PASS independent-shared-reference: showdown_complete_game_tests.mjs
+PASS player-information-boundary: default_policy_boundary_tests.js
+PASS player-information-boundary: utility_information_policy_tests.js
+PASS legality-version-roster: mc_reference_registration_tests.js
+PASS legality-version-roster: mc_reference_intake_tests.mjs
+PASS legality-version-roster: move_verification_registry_tests.js
+PASS checker-sensitivity: item_speed_evidence_tests.mjs
+PASS checker-sensitivity: artifact_outcome_truth_tests.js
+PASS checker-sensitivity: test_method_mutation_tests.mjs
+PASS checker-sensitivity: visible_replay_comparison_tests.mjs
+PASS checker-sensitivity: competitive_readiness_tests.mjs
+Development: passed; competitive release: NO-GO; browser: separate_job

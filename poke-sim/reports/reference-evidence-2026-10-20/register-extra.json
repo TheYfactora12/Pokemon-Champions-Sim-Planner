@@ -1,0 +1,30 @@
+{
+  "scope": "generated-data contract tests, not a bypass of immutable artifact byte checking",
+  "original_species_gap_count": 17,
+  "rows": [
+    {
+      "name": "false_move_source_hash",
+      "errors": []
+    },
+    {
+      "name": "false_move_source_revision",
+      "errors": []
+    },
+    {
+      "name": "wrong_pair_evidence_kind",
+      "errors": []
+    },
+    {
+      "name": "false_pair_inheritance",
+      "errors": []
+    },
+    {
+      "name": "duplicate_evidence_id",
+      "errors": []
+    },
+    {
+      "name": "remove_species_gaps",
+      "errors": []
+    }
+  ]
+}

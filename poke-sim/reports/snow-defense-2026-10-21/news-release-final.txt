@@ -1,0 +1,27 @@
+
+=== release manifest tests ===
+
+  PASS 1. manifest exposes canonical build and cache identity
+  PASS 2. visible header and app shell fallback mirror manifest build id
+  PASS 3. service worker derives cache from manifest and precaches manifest
+  PASS 4. bundle builder inlines release manifest before app runtime
+  PASS 5. release artifact records committed bundle sha and mirrors manifest identity
+  PASS 6. generator stdout reproduces file bytes, including on Windows
+  PASS 7. external move pools and intro sprites are bound to release bytes
+  PASS 8. missing or mismatched external asset identities fail closed
+  PASS 9. changed and missing deployed bytes are rejected
+  PASS 10. staged assets are verified before Pages upload
+  PASS 11. Windows Git checkout filters preserve generated asset bytes
+  PASS 12. exported reference identity matches committed bytes
+
+release manifest: 12 pass, 0 fail
+
+Γ£ö poke-sim\tests\release_manifest_tests.js (1871.2133ms)
+Γä╣ tests 1
+Γä╣ suites 0
+Γä╣ pass 1
+Γä╣ fail 0
+Γä╣ cancelled 0
+Γä╣ skipped 0
+Γä╣ todo 0
+Γä╣ duration_ms 1876.0122

@@ -1,0 +1,4773 @@
+{
+  "executed_at": "2026-10-21T02:37:00.431Z",
+  "setup": "Independent retained adapter: initialized Gas HP1 + burn; actual residual KO",
+  "rows": [
+    {
+      "input": {
+        "side": "player",
+        "ability": "Drizzle",
+        "shield": "none",
+        "mode": "entry",
+        "gas": true,
+        "secondGas": false,
+        "competing": false
+      },
+      "teams": [
+        {
+          "format": "champions",
+          "members": [
+            {
+              "name": "Archaludon",
+              "ability": "Stamina",
+              "moves": [
+                "Electro Shot",
+                "Splash"
+              ],
+              "item": "",
+              "level": 50,
+              "nature": "Hardy",
+              "evs": {
+                "hp": 0,
+                "atk": 0,
+                "def": 0,
+                "spa": 0,
+                "spd": 0,
+                "spe": 0
+              }
+            },
+            {
+              "name": "Weezing",
+              "ability": "Neutralizing Gas",
+              "moves": [
+                "U-turn",
+                "Splash"
+              ],
+              "item": "",
+              "level": 50,
+              "nature": "Hardy",
+              "evs": {
+                "hp": 0,
+                "atk": 0,
+                "def": 0,
+                "spa": 0,
+                "spd": 0,
+                "spe": 0
+              }
+            },
+            {
+              "name": "Magikarp",
+              "ability": "Swift Swim",
+              "moves": [
+                "Splash"
+              ],
+              "item": "",
+              "level": 50,
+              "nature": "Hardy",
+              "evs": {
+                "hp": 0,
+                "atk": 0,
+                "def": 0,
+                "spa": 0,
+                "spd": 0,
+                "spe": 0
+              }
+            },
+            {
+              "name": "Raichu",
+              "ability": "Static",
+              "moves": [
+                "Splash"
+              ],
+              "item": "",
+              "level": 50,
+              "nature": "Hardy",
+              "evs": {
+                "hp": 0,
+                "atk": 0,
+                "def": 0,
+                "spa": 0,
+                "spd": 0,
+                "spe": 0
+              }
+            }
+          ]
+        },
+        {
+          "format": "champions",
+          "members": [
+            {
+              "name": "Pelipper",
+              "ability": "Drizzle",
+              "moves": [
+                "Splash",
+                "Psychic"
+              ],
+              "item": "",
+              "level": 50,
+              "nature": "Hardy",
+              "evs": {
+                "hp": 0,
+                "atk": 0,
+                "def": 0,
+                "spa": 0,
+                "spd": 0,
+                "spe": 0
+              }
+            },
+            {
+              "name": "Snorlax",
+              "ability": "Immunity",
+              "moves": [
+                "Splash"
+              ],
+              "item": "",
+              "level": 50,
+              "nature": "Hardy",
+              "evs": {
+                "hp": 0,
+                "atk": 0,
+                "def": 0,
+                "spa": 0,
+                "spd": 0,
+                "spe": 0
+              }
+            },
+            {
+              "name": "Pikachu",
+              "ability": "Static",
+              "moves": [
+                "Splash"
+              ],
+              "item": "",
+              "level": 50,
+              "nature": "Hardy",
+              "evs": {
+                "hp": 0,
+                "atk": 0,
+                "def": 0,
+                "spa": 0,
+                "spd": 0,
+                "spe": 0
+              }
+            },
+            {
+              "name": "Venusaur",
+              "ability": "Overgrow",
+              "moves": [
+                "Splash"
+              ],
+              "item": "",
+              "level": 50,
+              "nature": "Hardy",
+              "evs": {
+                "hp": 0,
+                "atk": 0,
+                "def": 0,
+                "spa": 0,
+                "spd": 0,
+                "spe": 0
+              }
+            }
+          ]
+        }
+      ],
+      "commands": [
+        {
+          "turn": 1,
+          "side": "p1",
+          "choice": "move 1 1, move 2"
+        },
+        {
+          "turn": 1,
+          "side": "p2",
+          "choice": "move 1, move 1"
+        }
+      ],
+      "actions": [
+        {
+          "turn": 1,
+          "side": "player",
+          "slot": 0,
+          "move": "Electro Shot",
+          "targetSlot": 0
+        },
+        {
+          "turn": 1,
+          "side": "player",
+          "slot": 1,
+          "move": "Splash",
+          "targetSlot": 1
+        },
+        {
+          "turn": 1,
+          "side": "opponent",
+          "slot": 0,
+          "move": "Splash",
+          "targetSlot": 0
+        },
+        {
+          "turn": 1,
+          "side": "opponent",
+          "slot": 1,
+          "move": "Splash",
+          "targetSlot": 0
+        }
+      ],
+      "reference_initial": {
+        "weather": "none",
+        "weather_turns": 0,
+        "stage": 0,
+        "charging": false,
+        "pp": 0,
+        "gas_active": true,
+        "weather_hp": 135
+      },
+      "reference_turns": [
+        {
+          "weather": "rain",
+          "weather_turns": 5,
+          "stage": 1,
+          "charging": true,
+          "pp": 1,
+          "gas_active": false,
+          "weather_hp": 135
+        }
+      ],
+      "reference": {
+        "weather": "rain",
+        "weather_turns": 5,
+        "stage": 1,
+        "charging": true,
+        "pp": 1,
+        "gas_active": false,
+        "weather_hp": 135
+      },
+      "candidate": {
+        "weather": "rain",
+        "weather_turns": 5,
+        "stage": 1,
+        "charging": true,
+        "pp": 1,
+        "gas_active": false,
+        "weather_hp": 135
+      },
+      "reference_log": [
+        "|t:|1792550219",
+        "|gametype|doubles",
+        "|player|p1|Player 1||",
+        "|player|p2|Player 2||",
+        "|gen|9",
+        "|tier|[Gen 9 Champions] Doubles Custom Game",
+        "|clearpoke",
+        "|poke|p1|Archaludon, L50, M|",
+        "|poke|p1|Weezing, L50, M|",
+        "|poke|p1|Magikarp, L50, F|",
+        "|poke|p1|Raichu, L50, M|",
+        "|poke|p2|Pelipper, L50, M|",
+        "|poke|p2|Snorlax, L50, M|",
+        "|poke|p2|Pikachu, L50, F|",
+        "|poke|p2|Venusaur, L50, M|",
+        "|teampreview",
+        "|",
+        "|t:|1792550220",
+        "|teamsize|p1|4",
+        "|teamsize|p2|4",
+        "|start",
+        "|split|p1",
+        "|switch|p1a: p1m1|Archaludon, L50, M|165/165",
+        "|switch|p1a: p1m1|Archaludon, L50, M|165/165",
+        "|split|p1",
+        "|switch|p1b: p1m2|Weezing, L50, M|140/140",
+        "|switch|p1b: p1m2|Weezing, L50, M|140/140",
+        "|split|p2",
+        "|switch|p2a: p2m1|Pelipper, L50, M|135/135",
+        "|switch|p2a: p2m1|Pelipper, L50, M|135/135",
+        "|split|p2",
+        "|switch|p2b: p2m2|Snorlax, L50, M|235/235",
+        "|switch|p2b: p2m2|Snorlax, L50, M|235/235",
+        "|-ability|p1b: p1m2|Neutralizing Gas",
+        "|debug|SwitchIn handler suppressed by Gastro Acid or Neutralizing Gas",
+        "|turn|1",
+        "|-status|p1b: p1m2|brn",
+        "|",
+        "|t:|1792550220",
+        "|move|p1a: p1m1|Electro Shot||[still]",
+        "|-prepare|p1a: p1m1|Electro Shot",
+        "|-boost|p1a: p1m1|spa|1",
+        "|move|p2a: p2m1|Splash|p2a: p2m1",
+        "|-nothing",
+        "|move|p1b: p1m2|Splash|p1b: p1m2",
+        "|-nothing",
+        "|move|p2b: p2m2|Splash|p2b: p2m2",
+        "|-nothing",
+        "|",
+        "|split|p1",
+        "|-damage|p1b: p1m2|0 fnt|[from] brn",
+        "|-damage|p1b: p1m2|0 fnt|[from] brn",
+        "|faint|p1b: p1m2",
+        "|-end|p1b: p1m2|ability: Neutralizing Gas",
+        "|-weather|RainDance|[from] ability: Drizzle|[of] p2a: p2m1",
+        "|upkeep"
+      ],
+      "candidate_log": [
+        "--- Turn 1 ---",
+        "Archaludon's Special Attack rose!",
+        "Archaludon used Electro Shot!",
+        "Archaludon began charging Electro Shot!",
+        "Pelipper used Splash!",
+        "Splash had no effect on Archaludon!",
+        "Weezing used Splash!",
+        "Splash had no effect on Snorlax!",
+        "Snorlax used Splash!",
+        "Splash had no effect on Archaludon!",
+        "Weezing is hurt by its burn! [8 dmg]",
+        "Weezing fainted!",
+        "Pelipper's Drizzle summoned rain!",
+        "Magikarp was sent out!"
+      ],
+      "candidate_turns": [
+        {
+          "turn": 1,
+          "initial": {
+            "active": {
+              "player": [
+                "Archaludon",
+                "Weezing"
+              ],
+              "opponent": [
+                "Pelipper",
+                "Snorlax"
+              ]
+            },
+            "bench": {
+              "player": [
+                "Magikarp",
+                "Raichu"
+              ],
+              "opponent": [
+                "Pikachu",
+                "Venusaur"
+              ]
+            },
+            "active_keys": {
+              "player": [
+                "player:active:0:Archaludon",
+                "player:active:1:Weezing"
+              ],
+              "opponent": [
+                "opponent:active:0:Pelipper",
+                "opponent:active:1:Snorlax"
+              ]
+            },
+            "bench_keys": {
+              "player": [
+                "player:bench:0:Magikarp",
+                "player:bench:1:Raichu"
+              ],
+              "opponent": [
+                "opponent:bench:0:Pikachu",
+                "opponent:bench:1:Venusaur"
+              ]
+            },
+            "active_stable_keys": {
+              "player": [
+                "player:slot:0:Archaludon",
+                "player:slot:1:Weezing"
+              ],
+              "opponent": [
+                "opponent:slot:0:Pelipper",
+                "opponent:slot:1:Snorlax"
+              ]
+            },
+            "bench_stable_keys": {
+              "player": [
+                "player:slot:2:Magikarp",
+                "player:slot:3:Raichu"
+              ],
+              "opponent": [
+                "opponent:slot:2:Pikachu",
+                "opponent:slot:3:Venusaur"
+              ]
+            },
+            "hp_pct": {
+              "player:active:0:Archaludon": 1,
+              "player:active:1:Weezing": 0.007,
+              "player:bench:0:Magikarp": 1,
+              "player:bench:1:Raichu": 1,
+              "opponent:active:0:Pelipper": 1,
+              "opponent:active:1:Snorlax": 1,
+              "opponent:bench:0:Pikachu": 1,
+              "opponent:bench:1:Venusaur": 1
+            },
+            "hp_pct_stable": {
+              "player:slot:0:Archaludon": 1,
+              "player:slot:1:Weezing": 0.007,
+              "player:slot:2:Magikarp": 1,
+              "player:slot:3:Raichu": 1,
+              "opponent:slot:0:Pelipper": 1,
+              "opponent:slot:1:Snorlax": 1,
+              "opponent:slot:2:Pikachu": 1,
+              "opponent:slot:3:Venusaur": 1
+            },
+            "score_state": {
+              "player": {
+                "active": [
+                  "Archaludon",
+                  "Weezing"
+                ],
+                "bench": [
+                  "Magikarp",
+                  "Raichu"
+                ],
+                "active_keys": [
+                  "player:active:0:Archaludon",
+                  "player:active:1:Weezing"
+                ],
+                "bench_keys": [
+                  "player:bench:0:Magikarp",
+                  "player:bench:1:Raichu"
+                ],
+                "active_stable_keys": [
+                  "player:slot:0:Archaludon",
+                  "player:slot:1:Weezing"
+                ],
+                "bench_stable_keys": [
+                  "player:slot:2:Magikarp",
+                  "player:slot:3:Raichu"
+                ],
+                "alive_count": 4,
+                "hp_total": 3.007142857142857,
+                "max_count": 4
+              },
+              "opponent": {
+                "active": [
+                  "Pelipper",
+                  "Snorlax"
+                ],
+                "bench": [
+                  "Pikachu",
+                  "Venusaur"
+                ],
+                "active_keys": [
+                  "opponent:active:0:Pelipper",
+                  "opponent:active:1:Snorlax"
+                ],
+                "bench_keys": [
+                  "opponent:bench:0:Pikachu",
+                  "opponent:bench:1:Venusaur"
+                ],
+                "active_stable_keys": [
+                  "opponent:slot:0:Pelipper",
+                  "opponent:slot:1:Snorlax"
+                ],
+                "bench_stable_keys": [
+                  "opponent:slot:2:Pikachu",
+                  "opponent:slot:3:Venusaur"
+                ],
+                "alive_count": 4,
+                "hp_total": 4,
+                "max_count": 4
+              }
+            },
+            "roster": {
+              "player": [
+                {
+                  "key": "player:active:0:Archaludon",
+                  "stableKey": "player:slot:0:Archaludon",
+                  "teamSlot": 0,
+                  "zone": "active",
+                  "zoneIndex": 0,
+                  "side": "player",
+                  "status": "active",
+                  "displayName": "Archaludon",
+                  "species": "Archaludon",
+                  "types": [
+                    "Steel",
+                    "Dragon"
+                  ],
+                  "hp": 100,
+                  "hp_current": 165,
+                  "substitute_hp": 0,
+                  "perish_song_turns": 0,
+                  "hp_max": 165,
+                  "hpLabel": "100%",
+                  "level": 50,
+                  "item": "",
+                  "itemConsumed": false,
+                  "electric_charge": false,
+                  "mc_syrup_turns": 0,
+                  "mc_trap_turns": 0,
+                  "mc_partially_trapped": false,
+                  "ability": "Stamina",
+                  "moves": [
+                    "Electro Shot",
+                    "Splash"
+                  ],
+                  "move_pp": {
+                    "Electro Shot": {
+                      "current": 12,
+                      "max": 12
+                    },
+                    "Splash": {
+                      "current": 20,
+                      "max": 20
+                    }
+                  },
+                  "baseStatsLabel": "90/105/130/125/65/85",
+                  "calculatedStats": "165/125/150/145/85/105"
+                },
+                {
+                  "key": "player:active:1:Weezing",
+                  "stableKey": "player:slot:1:Weezing",
+                  "teamSlot": 1,
+                  "zone": "active",
+                  "zoneIndex": 1,
+                  "side": "player",
+                  "status": "active",
+                  "displayName": "Weezing",
+                  "species": "Weezing",
+                  "types": [
+                    "Poison"
+                  ],
+                  "hp": 1,
+                  "hp_current": 1,
+                  "substitute_hp": 0,
+                  "perish_song_turns": 0,
+                  "hp_max": 140,
+                  "hpLabel": "1%",
+                  "level": 50,
+                  "item": "",
+                  "itemConsumed": false,
+                  "electric_charge": false,
+                  "mc_syrup_turns": 0,
+                  "mc_trap_turns": 0,
+                  "mc_partially_trapped": false,
+                  "ability": "Neutralizing Gas",
+                  "moves": [
+                    "U-turn",
+                    "Splash"
+                  ],
+                  "move_pp": {
+                    "U-turn": {
+                      "current": 20,
+                      "max": 20
+                    },
+                    "Splash": {
+                      "current": 20,
+                      "max": 20
+                    }
+                  },
+                  "baseStatsLabel": "65/90/120/85/70/60",
+                  "calculatedStats": "140/110/140/105/90/80"
+                },
+                {
+                  "key": "player:bench:0:Magikarp",
+                  "stableKey": "player:slot:2:Magikarp",
+                  "teamSlot": 2,
+                  "zone": "bench",
+                  "zoneIndex": 0,
+                  "side": "player",
+                  "status": "bench",
+                  "displayName": "Magikarp",
+                  "species": "Magikarp",
+                  "types": [
+                    "Water"
+                  ],
+                  "hp": 100,
+                  "hp_current": 95,
+                  "substitute_hp": 0,
+                  "perish_song_turns": 0,
+                  "hp_max": 95,
+                  "hpLabel": "100%",
+                  "level": 50,
+                  "item": "",
+                  "itemConsumed": false,
+                  "electric_charge": false,
+                  "mc_syrup_turns": 0,
+                  "mc_trap_turns": 0,
+                  "mc_partially_trapped": false,
+                  "ability": "Swift Swim",
+                  "moves": [
+                    "Splash"
+                  ],
+                  "move_pp": {
+                    "Splash": {
+                      "current": 20,
+                      "max": 20
+                    }
+                  },
+                  "baseStatsLabel": "20/10/55/15/20/80",
+                  "calculatedStats": "95/30/75/35/40/100"
+                },
+                {
+                  "key": "player:bench:1:Raichu",
+                  "stableKey": "player:slot:3:Raichu",
+                  "teamSlot": 3,
+                  "zone": "bench",
+                  "zoneIndex": 1,
+                  "side": "player",
+                  "status": "bench",
+                  "displayName": "Raichu",
+                  "species": "Raichu",
+                  "types": [
+                    "Electric"
+                  ],
+                  "hp": 100,
+                  "hp_current": 135,
+                  "substitute_hp": 0,
+                  "perish_song_turns": 0,
+                  "hp_max": 135,
+                  "hpLabel": "100%",
+                  "level": 50,
+                  "item": "",
+                  "itemConsumed": false,
+                  "electric_charge": false,
+                  "mc_syrup_turns": 0,
+                  "mc_trap_turns": 0,
+                  "mc_partially_trapped": false,
+                  "ability": "Static",
+                  "moves": [
+                    "Splash"
+                  ],
+                  "move_pp": {
+                    "Splash": {
+                      "current": 20,
+                      "max": 20
+                    }
+                  },
+                  "baseStatsLabel": "60/90/55/90/80/110",
+                  "calculatedStats": "135/110/75/110/100/130"
+                }
+              ],
+              "opponent": [
+                {
+                  "key": "opponent:active:0:Pelipper",
+                  "stableKey": "opponent:slot:0:Pelipper",
+                  "teamSlot": 0,
+                  "zone": "active",
+                  "zoneIndex": 0,
+                  "side": "opponent",
+                  "status": "active",
+                  "displayName": "Pelipper",
+                  "species": "Pelipper",
+                  "types": [
+                    "Water",
+                    "Flying"
+                  ],
+                  "hp": 100,
+                  "hp_current": 135,
+                  "substitute_hp": 0,
+                  "perish_song_turns": 0,
+                  "hp_max": 135,
+                  "hpLabel": "100%",
+                  "level": 50,
+                  "item": "",
+                  "itemConsumed": false,
+                  "electric_charge": false,
+                  "mc_syrup_turns": 0,
+                  "mc_trap_turns": 0,
+                  "mc_partially_trapped": false,
+                  "ability": "Drizzle",
+                  "moves": [
+                    "Splash",
+                    "Psychic"
+                  ],
+                  "move_pp": {
+                    "Splash": {
+                      "current": 20,
+                      "max": 20
+                    },
+                    "Psychic": {
+                      "current": 12,
+                      "max": 12
+                    }
+                  },
+                  "baseStatsLabel": "60/50/100/95/70/65",
+                  "calculatedStats": "135/70/120/115/90/85"
+                },
+                {
+                  "key": "opponent:active:1:Snorlax",
+                  "stableKey": "opponent:slot:1:Snorlax",
+                  "teamSlot": 1,
+                  "zone": "active",
+                  "zoneIndex": 1,
+                  "side": "opponent",
+                  "status": "active",
+                  "displayName": "Snorlax",
+                  "species": "Snorlax",
+                  "types": [
+                    "Normal"
+                  ],
+                  "hp": 100,
+                  "hp_current": 235,
+                  "substitute_hp": 0,
+                  "perish_song_turns": 0,
+                  "hp_max": 235,
+                  "hpLabel": "100%",
+                  "level": 50,
+                  "item": "",
+                  "itemConsumed": false,
+                  "electric_charge": false,
+                  "mc_syrup_turns": 0,
+                  "mc_trap_turns": 0,
+                  "mc_partially_trapped": false,
+                  "ability": "Immunity",
+                  "moves": [
+                    "Splash"
+                  ],
+                  "move_pp": {
+                    "Splash": {
+                      "current": 20,
+                      "max": 20
+                    }
+                  },
+                  "baseStatsLabel": "160/110/65/65/110/30",
+                  "calculatedStats": "235/130/85/85/130/50"
+                },
+                {
+                  "key": "opponent:bench:0:Pikachu",
+                  "stableKey": "opponent:slot:2:Pikachu",
+                  "teamSlot": 2,
+                  "zone": "bench",
+                  "zoneIndex": 0,
+                  "side": "opponent",
+                  "status": "bench",
+                  "displayName": "Pikachu",
+                  "species": "Pikachu",
+                  "types": [
+                    "Electric"
+                  ],
+                  "hp": 100,
+                  "hp_current": 110,
+                  "substitute_hp": 0,
+                  "perish_song_turns": 0,
+                  "hp_max": 110,
+                  "hpLabel": "100%",
+                  "level": 50,
+                  "item": "",
+                  "itemConsumed": false,
+                  "electric_charge": false,
+                  "mc_syrup_turns": 0,
+                  "mc_trap_turns": 0,
+                  "mc_partially_trapped": false,
+                  "ability": "Static",
+                  "moves": [
+                    "Splash"
+                  ],
+                  "move_pp": {
+                    "Splash": {
+                      "current": 20,
+                      "max": 20
+                    }
+                  },
+                  "baseStatsLabel": "35/55/40/50/50/90",
+                  "calculatedStats": "110/75/60/70/70/110"
+                },
+                {
+                  "key": "opponent:bench:1:Venusaur",
+                  "stableKey": "opponent:slot:3:Venusaur",
+                  "teamSlot": 3,
+                  "zone": "bench",
+                  "zoneIndex": 1,
+                  "side": "opponent",
+                  "status": "bench",
+                  "displayName": "Venusaur",
+                  "species": "Venusaur",
+                  "types": [
+                    "Grass",
+                    "Poison"
+                  ],
+                  "hp": 100,
+                  "hp_current": 155,
+                  "substitute_hp": 0,
+                  "perish_song_turns": 0,
+                  "hp_max": 155,
+                  "hpLabel": "100%",
+                  "level": 50,
+                  "item": "",
+                  "itemConsumed": false,
+                  "electric_charge": false,
+                  "mc_syrup_turns": 0,
+                  "mc_trap_turns": 0,
+                  "mc_partially_trapped": false,
+                  "ability": "Overgrow",
+                  "moves": [
+                    "Splash"
+                  ],
+                  "move_pp": {
+                    "Splash": {
+                      "current": 20,
+                      "max": 20
+                    }
+                  },
+                  "baseStatsLabel": "80/82/83/100/100/80",
+                  "calculatedStats": "155/102/103/120/120/100"
+                }
+              ]
+            },
+            "status": {
+              "player:active:1:Weezing": "burn"
+            },
+            "status_stable": {
+              "player:slot:1:Weezing": "burn"
+            },
+            "stat_boosts": {},
+            "stat_boosts_stable": {},
+            "field": {
+              "weather": null,
+              "weather_turns": 0,
+              "gravity_turns": 0,
+              "terrain": null,
+              "terrain_turns": 0,
+              "trick_room": 0
+            },
+            "speed_control": {
+              "player": {
+                "tailwind_turns": 0,
+                "screens": {
+                  "reflect": 0,
+                  "light": 0,
+                  "aurora": 0
+                }
+              },
+              "opponent": {
+                "tailwind_turns": 0,
+                "screens": {
+                  "reflect": 0,
+                  "light": 0,
+                  "aurora": 0
+                }
+              }
+            },
+            "speed_order": [
+              "Archaludon",
+              "Pelipper",
+              "Weezing",
+              "Snorlax"
+            ],
+            "speed_order_keys": [
+              "player:active:0:Archaludon",
+              "opponent:active:0:Pelipper",
+              "player:active:1:Weezing",
+              "opponent:active:1:Snorlax"
+            ],
+            "speed_order_stable_keys": [
+              "player:slot:0:Archaludon",
+              "opponent:slot:0:Pelipper",
+              "player:slot:1:Weezing",
+              "opponent:slot:1:Snorlax"
+            ],
+            "speed_order_details": [
+              {
+                "side": "player",
+                "key": "player:active:0:Archaludon",
+                "stableKey": "player:slot:0:Archaludon",
+                "pokemon": "Archaludon",
+                "stat_format": "champions",
+                "nature": "Hardy",
+                "speed_points": 0,
+                "species_base_speed": 85,
+                "base_speed": 105,
+                "calculated_speed": 105,
+                "speed_stage": 0,
+                "effective_speed": 105,
+                "item": "",
+                "ability": "Stamina",
+                "status": "",
+                "tailwind": false,
+                "trick_room": false,
+                "weather": "none",
+                "exact_speed_tie": false
+              },
+              {
+                "side": "opponent",
+                "key": "opponent:active:0:Pelipper",
+                "stableKey": "opponent:slot:0:Pelipper",
+                "pokemon": "Pelipper",
+                "stat_format": "champions",
+                "nature": "Hardy",
+                "speed_points": 0,
+                "species_base_speed": 65,
+                "base_speed": 85,
+                "calculated_speed": 85,
+                "speed_stage": 0,
+                "effective_speed": 85,
+                "item": "",
+                "ability": "Drizzle",
+                "status": "",
+                "tailwind": false,
+                "trick_room": false,
+                "weather": "none",
+                "exact_speed_tie": false
+              },
+              {
+                "side": "player",
+                "key": "player:active:1:Weezing",
+                "stableKey": "player:slot:1:Weezing",
+                "pokemon": "Weezing",
+                "stat_format": "champions",
+                "nature": "Hardy",
+                "speed_points": 0,
+                "species_base_speed": 60,
+                "base_speed": 80,
+                "calculated_speed": 80,
+                "speed_stage": 0,
+                "effective_speed": 80,
+                "item": "",
+                "ability": "Neutralizing Gas",
+                "status": "burn",
+                "tailwind": false,
+                "trick_room": false,
+                "weather": "none",
+                "exact_speed_tie": false
+              },
+              {
+                "side": "opponent",
+                "key": "opponent:active:1:Snorlax",
+                "stableKey": "opponent:slot:1:Snorlax",
+                "pokemon": "Snorlax",
+                "stat_format": "champions",
+                "nature": "Hardy",
+                "speed_points": 0,
+                "species_base_speed": 30,
+                "base_speed": 50,
+                "calculated_speed": 50,
+                "speed_stage": 0,
+                "effective_speed": 50,
+                "item": "",
+                "ability": "Immunity",
+                "status": "",
+                "tailwind": false,
+                "trick_room": false,
+                "weather": "none",
+                "exact_speed_tie": false
+              }
+            ],
+            "legal_options": {},
+            "position_score": 0.465,
+            "win_probability": null
+          },
+          "playerHP": [
+            1,
+            0.007,
+            1,
+            1
+          ],
+          "oppHP": [
+            1,
+            1,
+            1,
+            1
+          ],
+          "activePair": [
+            "Archaludon",
+            "Weezing",
+            "Pelipper",
+            "Snorlax"
+          ],
+          "action": "Archaludon:Electro Shot | Weezing:Splash | Pelipper:Splash | Snorlax:Splash",
+          "positionScore": 0.465,
+          "pre": {
+            "active": {
+              "player": [
+                "Archaludon",
+                "Weezing"
+              ],
+              "opponent": [
+                "Pelipper",
+                "Snorlax"
+              ]
+            },
+            "bench": {
+              "player": [
+                "Magikarp",
+                "Raichu"
+              ],
+              "opponent": [
+                "Pikachu",
+                "Venusaur"
+              ]
+            },
+            "active_keys": {
+              "player": [
+                "player:active:0:Archaludon",
+                "player:active:1:Weezing"
+              ],
+              "opponent": [
+                "opponent:active:0:Pelipper",
+                "opponent:active:1:Snorlax"
+              ]
+            },
+            "bench_keys": {
+              "player": [
+                "player:bench:0:Magikarp",
+                "player:bench:1:Raichu"
+              ],
+              "opponent": [
+                "opponent:bench:0:Pikachu",
+                "opponent:bench:1:Venusaur"
+              ]
+            },
+            "active_stable_keys": {
+              "player": [
+                "player:slot:0:Archaludon",
+                "player:slot:1:Weezing"
+              ],
+              "opponent": [
+                "opponent:slot:0:Pelipper",
+                "opponent:slot:1:Snorlax"
+              ]
+            },
+            "bench_stable_keys": {
+              "player": [
+                "player:slot:2:Magikarp",
+                "player:slot:3:Raichu"
+              ],
+              "opponent": [
+                "opponent:slot:2:Pikachu",
+                "opponent:slot:3:Venusaur"
+              ]
+            },
+            "hp_pct": {
+              "player:active:0:Archaludon": 1,
+              "player:active:1:Weezing": 0.007,
+              "player:bench:0:Magikarp": 1,
+              "player:bench:1:Raichu": 1,
+              "opponent:active:0:Pelipper": 1,
+              "opponent:active:1:Snorlax": 1,
+              "opponent:bench:0:Pikachu": 1,
+              "opponent:bench:1:Venusaur": 1
+            },
+            "hp_pct_stable": {
+              "player:slot:0:Archaludon": 1,
+              "player:slot:1:Weezing": 0.007,
+              "player:slot:2:Magikarp": 1,
+              "player:slot:3:Raichu": 1,
+              "opponent:slot:0:Pelipper": 1,
+              "opponent:slot:1:Snorlax": 1,
+              "opponent:slot:2:Pikachu": 1,
+              "opponent:slot:3:Venusaur": 1
+            },
+            "score_state": {
+              "player": {
+                "active": [
+                  "Archaludon",
+                  "Weezing"
+                ],
+                "bench": [
+                  "Magikarp",
+                  "Raichu"
+                ],
+                "active_keys": [
+                  "player:active:0:Archaludon",
+                  "player:active:1:Weezing"
+                ],
+                "bench_keys": [
+                  "player:bench:0:Magikarp",
+                  "player:bench:1:Raichu"
+                ],
+                "active_stable_keys": [
+                  "player:slot:0:Archaludon",
+                  "player:slot:1:Weezing"
+                ],
+                "bench_stable_keys": [
+                  "player:slot:2:Magikarp",
+                  "player:slot:3:Raichu"
+                ],
+                "alive_count": 4,
+                "hp_total": 3.007142857142857,
+                "max_count": 4
+              },
+              "opponent": {
+                "active": [
+                  "Pelipper",
+                  "Snorlax"
+                ],
+                "bench": [
+                  "Pikachu",
+                  "Venusaur"
+                ],
+                "active_keys": [
+                  "opponent:active:0:Pelipper",
+                  "opponent:active:1:Snorlax"
+                ],
+                "bench_keys": [
+                  "opponent:bench:0:Pikachu",
+                  "opponent:bench:1:Venusaur"
+                ],
+                "active_stable_keys": [
+                  "opponent:slot:0:Pelipper",
+                  "opponent:slot:1:Snorlax"
+                ],
+                "bench_stable_keys": [
+                  "opponent:slot:2:Pikachu",
+                  "opponent:slot:3:Venusaur"
+                ],
+                "alive_count": 4,
+                "hp_total": 4,
+                "max_count": 4
+              }
+            },
+            "roster": {
+              "player": [
+                {
+                  "key": "player:active:0:Archaludon",
+                  "stableKey": "player:slot:0:Archaludon",
+                  "teamSlot": 0,
+                  "zone": "active",
+                  "zoneIndex": 0,
+                  "side": "player",
+                  "status": "active",
+                  "displayName": "Archaludon",
+                  "species": "Archaludon",
+                  "types": [
+                    "Steel",
+                    "Dragon"
+                  ],
+                  "hp": 100,
+                  "hp_current": 165,
+                  "substitute_hp": 0,
+                  "perish_song_turns": 0,
+                  "hp_max": 165,
+                  "hpLabel": "100%",
+                  "level": 50,
+                  "item": "",
+                  "itemConsumed": false,
+                  "electric_charge": false,
+                  "mc_syrup_turns": 0,
+                  "mc_trap_turns": 0,
+                  "mc_partially_trapped": false,
+                  "ability": "Stamina",
+                  "moves": [
+                    "Electro Shot",
+                    "Splash"
+                  ],
+                  "move_pp": {
+                    "Electro Shot": {
+                      "current": 12,
+                      "max": 12
+                    },
+                    "Splash": {
+                      "current": 20,
+                      "max": 20
+                    }
+                  },
+                  "baseStatsLabel": "90/105/130/125/65/85",
+                  "calculatedStats": "165/125/150/145/85/105"
+                },
+                {
+                  "key": "player:active:1:Weezing",
+                  "stableKey": "player:slot:1:Weezing",
+                  "teamSlot": 1,
+                  "zone": "active",
+                  "zoneIndex": 1,
+                  "side": "player",
+                  "status": "active",
+                  "displayName": "Weezing",
+                  "species": "Weezing",
+                  "types": [
+                    "Poison"
+                  ],
+                  "hp": 1,
+                  "hp_current": 1,
+                  "substitute_hp": 0,
+                  "perish_song_turns": 0,
+                  "hp_max": 140,
+                  "hpLabel": "1%",
+                  "level": 50,
+                  "item": "",
+                  "itemConsumed": false,
+                  "electric_charge": false,
+                  "mc_syrup_turns": 0,
+                  "mc_trap_turns": 0,
+                  "mc_partially_trapped": false,
+                  "ability": "Neutralizing Gas",
+                  "moves": [
+                    "U-turn",
+                    "Splash"
+                  ],
+                  "move_pp": {
+                    "U-turn": {
+                      "current": 20,
+                      "max": 20
+                    },
+                    "Splash": {
+                      "current": 20,
+                      "max": 20
+                    }
+                  },
+                  "baseStatsLabel": "65/90/120/85/70/60",
+                  "calculatedStats": "140/110/140/105/90/80"
+                },
+                {
+                  "key": "player:bench:0:Magikarp",
+                  "stableKey": "player:slot:2:Magikarp",
+                  "teamSlot": 2,
+                  "zone": "bench",
+                  "zoneIndex": 0,
+                  "side": "player",
+                  "status": "bench",
+                  "displayName": "Magikarp",
+                  "species": "Magikarp",
+                  "types": [
+                    "Water"
+                  ],
+                  "hp": 100,
+                  "hp_current": 95,
+                  "substitute_hp": 0,
+                  "perish_song_turns": 0,
+                  "hp_max": 95,
+                  "hpLabel": "100%",
+                  "level": 50,
+                  "item": "",
+                  "itemConsumed": false,
+                  "electric_charge": false,
+                  "mc_syrup_turns": 0,
+                  "mc_trap_turns": 0,
+                  "mc_partially_trapped": false,
+                  "ability": "Swift Swim",
+                  "moves": [
+                    "Splash"
+                  ],
+                  "move_pp": {
+                    "Splash": {
+                      "current": 20,
+                      "max": 20
+                    }
+                  },
+                  "baseStatsLabel": "20/10/55/15/20/80",
+                  "calculatedStats": "95/30/75/35/40/100"
+                },
+                {
+                  "key": "player:bench:1:Raichu",
+                  "stableKey": "player:slot:3:Raichu",
+                  "teamSlot": 3,
+                  "zone": "bench",
+                  "zoneIndex": 1,
+                  "side": "player",
+                  "status": "bench",
+                  "displayName": "Raichu",
+                  "species": "Raichu",
+                  "types": [
+                    "Electric"
+                  ],
+                  "hp": 100,
+                  "hp_current": 135,
+                  "substitute_hp": 0,
+                  "perish_song_turns": 0,
+                  "hp_max": 135,
+                  "hpLabel": "100%",
+                  "level": 50,
+                  "item": "",
+                  "itemConsumed": false,
+                  "electric_charge": false,
+                  "mc_syrup_turns": 0,
+                  "mc_trap_turns": 0,
+                  "mc_partially_trapped": false,
+                  "ability": "Static",
+                  "moves": [
+                    "Splash"
+                  ],
+                  "move_pp": {
+                    "Splash": {
+                      "current": 20,
+                      "max": 20
+                    }
+                  },
+                  "baseStatsLabel": "60/90/55/90/80/110",
+                  "calculatedStats": "135/110/75/110/100/130"
+                }
+              ],
+              "opponent": [
+                {
+                  "key": "opponent:active:0:Pelipper",
+                  "stableKey": "opponent:slot:0:Pelipper",
+                  "teamSlot": 0,
+                  "zone": "active",
+                  "zoneIndex": 0,
+                  "side": "opponent",
+                  "status": "active",
+                  "displayName": "Pelipper",
+                  "species": "Pelipper",
+                  "types": [
+                    "Water",
+                    "Flying"
+                  ],
+                  "hp": 100,
+                  "hp_current": 135,
+                  "substitute_hp": 0,
+                  "perish_song_turns": 0,
+                  "hp_max": 135,
+                  "hpLabel": "100%",
+                  "level": 50,
+                  "item": "",
+                  "itemConsumed": false,
+                  "electric_charge": false,
+                  "mc_syrup_turns": 0,
+                  "mc_trap_turns": 0,
+                  "mc_partially_trapped": false,
+                  "ability": "Drizzle",
+                  "moves": [
+                    "Splash",
+                    "Psychic"
+                  ],
+                  "move_pp": {
+                    "Splash": {
+                      "current": 20,
+                      "max": 20
+                    },
+                    "Psychic": {
+                      "current": 12,
+                      "max": 12
+                    }
+                  },
+                  "baseStatsLabel": "60/50/100/95/70/65",
+                  "calculatedStats": "135/70/120/115/90/85"
+                },
+                {
+                  "key": "opponent:active:1:Snorlax",
+                  "stableKey": "opponent:slot:1:Snorlax",
+                  "teamSlot": 1,
+                  "zone": "active",
+                  "zoneIndex": 1,
+                  "side": "opponent",
+                  "status": "active",
+                  "displayName": "Snorlax",
+                  "species": "Snorlax",
+                  "types": [
+                    "Normal"
+                  ],
+                  "hp": 100,
+                  "hp_current": 235,
+                  "substitute_hp": 0,
+                  "perish_song_turns": 0,
+                  "hp_max": 235,
+                  "hpLabel": "100%",
+                  "level": 50,
+                  "item": "",
+                  "itemConsumed": false,
+                  "electric_charge": false,
+                  "mc_syrup_turns": 0,
+                  "mc_trap_turns": 0,
+                  "mc_partially_trapped": false,
+                  "ability": "Immunity",
+                  "moves": [
+                    "Splash"
+                  ],
+                  "move_pp": {
+                    "Splash": {
+                      "current": 20,
+                      "max": 20
+                    }
+                  },
+                  "baseStatsLabel": "160/110/65/65/110/30",
+                  "calculatedStats": "235/130/85/85/130/50"
+                },
+                {
+                  "key": "opponent:bench:0:Pikachu",
+                  "stableKey": "opponent:slot:2:Pikachu",
+                  "teamSlot": 2,
+                  "zone": "bench",
+                  "zoneIndex": 0,
+                  "side": "opponent",
+                  "status": "bench",
+                  "displayName": "Pikachu",
+                  "species": "Pikachu",
+                  "types": [
+                    "Electric"
+                  ],
+                  "hp": 100,
+                  "hp_current": 110,
+                  "substitute_hp": 0,
+                  "perish_song_turns": 0,
+                  "hp_max": 110,
+                  "hpLabel": "100%",
+                  "level": 50,
+                  "item": "",
+                  "itemConsumed": false,
+                  "electric_charge": false,
+                  "mc_syrup_turns": 0,
+                  "mc_trap_turns": 0,
+                  "mc_partially_trapped": false,
+                  "ability": "Static",
+                  "moves": [
+                    "Splash"
+                  ],
+                  "move_pp": {
+                    "Splash": {
+                      "current": 20,
+                      "max": 20
+                    }
+                  },
+                  "baseStatsLabel": "35/55/40/50/50/90",
+                  "calculatedStats": "110/75/60/70/70/110"
+                },
+                {
+                  "key": "opponent:bench:1:Venusaur",
+                  "stableKey": "opponent:slot:3:Venusaur",
+                  "teamSlot": 3,
+                  "zone": "bench",
+                  "zoneIndex": 1,
+                  "side": "opponent",
+                  "status": "bench",
+                  "displayName": "Venusaur",
+                  "species": "Venusaur",
+                  "types": [
+                    "Grass",
+                    "Poison"
+                  ],
+                  "hp": 100,
+                  "hp_current": 155,
+                  "substitute_hp": 0,
+                  "perish_song_turns": 0,
+                  "hp_max": 155,
+                  "hpLabel": "100%",
+                  "level": 50,
+                  "item": "",
+                  "itemConsumed": false,
+                  "electric_charge": false,
+                  "mc_syrup_turns": 0,
+                  "mc_trap_turns": 0,
+                  "mc_partially_trapped": false,
+                  "ability": "Overgrow",
+                  "moves": [
+                    "Splash"
+                  ],
+                  "move_pp": {
+                    "Splash": {
+                      "current": 20,
+                      "max": 20
+                    }
+                  },
+                  "baseStatsLabel": "80/82/83/100/100/80",
+                  "calculatedStats": "155/102/103/120/120/100"
+                }
+              ]
+            },
+            "status": {
+              "player:active:1:Weezing": "burn"
+            },
+            "status_stable": {
+              "player:slot:1:Weezing": "burn"
+            },
+            "stat_boosts": {},
+            "stat_boosts_stable": {},
+            "field": {
+              "weather": null,
+              "weather_turns": 0,
+              "gravity_turns": 0,
+              "terrain": null,
+              "terrain_turns": 0,
+              "trick_room": 0
+            },
+            "speed_control": {
+              "player": {
+                "tailwind_turns": 0,
+                "screens": {
+                  "reflect": 0,
+                  "light": 0,
+                  "aurora": 0
+                }
+              },
+              "opponent": {
+                "tailwind_turns": 0,
+                "screens": {
+                  "reflect": 0,
+                  "light": 0,
+                  "aurora": 0
+                }
+              }
+            },
+            "speed_order": [
+              "Archaludon",
+              "Pelipper",
+              "Weezing",
+              "Snorlax"
+            ],
+            "speed_order_keys": [
+              "player:active:0:Archaludon",
+              "opponent:active:0:Pelipper",
+              "player:active:1:Weezing",
+              "opponent:active:1:Snorlax"
+            ],
+            "speed_order_stable_keys": [
+              "player:slot:0:Archaludon",
+              "opponent:slot:0:Pelipper",
+              "player:slot:1:Weezing",
+              "opponent:slot:1:Snorlax"
+            ],
+            "speed_order_details": [
+              {
+                "side": "player",
+                "key": "player:active:0:Archaludon",
+                "stableKey": "player:slot:0:Archaludon",
+                "pokemon": "Archaludon",
+                "stat_format": "champions",
+                "nature": "Hardy",
+                "speed_points": 0,
+                "species_base_speed": 85,
+                "base_speed": 105,
+                "calculated_speed": 105,
+                "speed_stage": 0,
+                "effective_speed": 105,
+                "item": "",
+                "ability": "Stamina",
+                "status": "",
+                "tailwind": false,
+                "trick_room": false,
+                "weather": "none",
+                "exact_speed_tie": false
+              },
+              {
+                "side": "opponent",
+                "key": "opponent:active:0:Pelipper",
+                "stableKey": "opponent:slot:0:Pelipper",
+                "pokemon": "Pelipper",
+                "stat_format": "champions",
+                "nature": "Hardy",
+                "speed_points": 0,
+                "species_base_speed": 65,
+                "base_speed": 85,
+                "calculated_speed": 85,
+                "speed_stage": 0,
+                "effective_speed": 85,
+                "item": "",
+                "ability": "Drizzle",
+                "status": "",
+                "tailwind": false,
+                "trick_room": false,
+                "weather": "none",
+                "exact_speed_tie": false
+              },
+              {
+                "side": "player",
+                "key": "player:active:1:Weezing",
+                "stableKey": "player:slot:1:Weezing",
+                "pokemon": "Weezing",
+                "stat_format": "champions",
+                "nature": "Hardy",
+                "speed_points": 0,
+                "species_base_speed": 60,
+                "base_speed": 80,
+                "calculated_speed": 80,
+                "speed_stage": 0,
+                "effective_speed": 80,
+                "item": "",
+                "ability": "Neutralizing Gas",
+                "status": "burn",
+                "tailwind": false,
+                "trick_room": false,
+                "weather": "none",
+                "exact_speed_tie": false
+              },
+              {
+                "side": "opponent",
+                "key": "opponent:active:1:Snorlax",
+                "stableKey": "opponent:slot:1:Snorlax",
+                "pokemon": "Snorlax",
+                "stat_format": "champions",
+                "nature": "Hardy",
+                "speed_points": 0,
+                "species_base_speed": 30,
+                "base_speed": 50,
+                "calculated_speed": 50,
+                "speed_stage": 0,
+                "effective_speed": 50,
+                "item": "",
+                "ability": "Immunity",
+                "status": "",
+                "tailwind": false,
+                "trick_room": false,
+                "weather": "none",
+                "exact_speed_tie": false
+              }
+            ],
+            "legal_options": {
+              "Archaludon": [
+                "Electro Shot -> Pelipper",
+                "Splash -> Pelipper"
+              ],
+              "Weezing": [
+                "U-turn -> Pelipper",
+                "Splash -> Pelipper"
+              ]
+            },
+            "position_score": 0.465,
+            "win_probability": null
+          },
+          "actions": {
+            "player": [
+              {
+                "actor": "Archaludon",
+                "actor_key": "player:slot:0:Archaludon",
+                "kind": "move",
+                "move": "Electro Shot",
+                "target": "Pelipper",
+                "target_key": "opponent:slot:0:Pelipper",
+                "target_side": "opponent"
+              },
+              {
+                "actor": "Weezing",
+                "actor_key": "player:slot:1:Weezing",
+                "kind": "move",
+                "move": "Splash",
+                "target": "Snorlax",
+                "target_key": "opponent:slot:1:Snorlax",
+                "target_side": "opponent"
+              }
+            ],
+            "opponent": [
+              {
+                "actor": "Pelipper",
+                "actor_key": "opponent:slot:0:Pelipper",
+                "kind": "move",
+                "move": "Splash",
+                "target": "Archaludon",
+                "target_key": "player:slot:0:Archaludon",
+                "target_side": "player"
+              },
+              {
+                "actor": "Snorlax",
+                "actor_key": "opponent:slot:1:Snorlax",
+                "kind": "move",
+                "move": "Splash",
+                "target": "Archaludon",
+                "target_key": "player:slot:0:Archaludon",
+                "target_side": "player"
+              }
+            ]
+          },
+          "events": [
+            {
+              "type": "log",
+              "text": "Archaludon's Special Attack rose!"
+            },
+            {
+              "type": "log",
+              "text": "Archaludon used Electro Shot!",
+              "actor": "Archaludon",
+              "actor_key": "player:slot:0:Archaludon",
+              "side": "player",
+              "move": "Electro Shot",
+              "target": "Pelipper",
+              "target_key": "opponent:slot:0:Pelipper",
+              "target_side": "opponent",
+              "log_index": 1,
+              "called_by": null
+            },
+            {
+              "type": "log",
+              "text": "Archaludon began charging Electro Shot!"
+            },
+            {
+              "type": "log",
+              "text": "Pelipper used Splash!",
+              "actor": "Pelipper",
+              "actor_key": "opponent:slot:0:Pelipper",
+              "side": "opponent",
+              "move": "Splash",
+              "target": "Archaludon",
+              "target_key": "player:slot:0:Archaludon",
+              "target_side": "player",
+              "log_index": 3,
+              "called_by": null
+            },
+            {
+              "type": "log",
+              "text": "Splash had no effect on Archaludon!"
+            },
+            {
+              "type": "log",
+              "text": "Weezing used Splash!",
+              "actor": "Weezing",
+              "actor_key": "player:slot:1:Weezing",
+              "side": "player",
+              "move": "Splash",
+              "target": "Snorlax",
+              "target_key": "opponent:slot:1:Snorlax",
+              "target_side": "opponent",
+              "log_index": 5,
+              "called_by": null
+            },
+            {
+              "type": "log",
+              "text": "Splash had no effect on Snorlax!"
+            },
+            {
+              "type": "log",
+              "text": "Snorlax used Splash!",
+              "actor": "Snorlax",
+              "actor_key": "opponent:slot:1:Snorlax",
+              "side": "opponent",
+              "move": "Splash",
+              "target": "Archaludon",
+              "target_key": "player:slot:0:Archaludon",
+              "target_side": "player",
+              "log_index": 7,
+              "called_by": null
+            },
+            {
+              "type": "log",
+              "text": "Splash had no effect on Archaludon!"
+            },
+            {
+              "type": "damage",
+              "text": "Weezing is hurt by its burn! [8 dmg]"
+            },
+            {
+              "type": "ko",
+              "text": "Weezing fainted!"
+            },
+            {
+              "type": "log",
+              "text": "Pelipper's Drizzle summoned rain!"
+            },
+            {
+              "type": "log",
+              "text": "Magikarp was sent out!"
+            }
+          ],
+          "damage_events": [],
+          "effect_events": [
+            {
+              "actor": "Weezing",
+              "actor_key": "player:slot:1:Weezing",
+              "side": "player",
+              "move": "Burn",
+              "effect_kind": "status-damage",
+              "hp_before": 1,
+              "hp_after": 0,
+              "hp_delta": -1,
+              "max_hp": 140,
+              "source": "engine status rule",
+              "move_context": "",
+              "rule": {
+                "numerator": 1,
+                "denominator": 16,
+                "basis": "max_hp",
+                "rounding": "down"
+              },
+              "damage_applied": 1
+            }
+          ],
+          "post": {
+            "active": {
+              "player": [
+                "Archaludon",
+                "Magikarp"
+              ],
+              "opponent": [
+                "Pelipper",
+                "Snorlax"
+              ]
+            },
+            "bench": {
+              "player": [
+                "Raichu"
+              ],
+              "opponent": [
+                "Pikachu",
+                "Venusaur"
+              ]
+            },
+            "active_keys": {
+              "player": [
+                "player:active:0:Archaludon",
+                "player:active:1:Magikarp"
+              ],
+              "opponent": [
+                "opponent:active:0:Pelipper",
+                "opponent:active:1:Snorlax"
+              ]
+            },
+            "bench_keys": {
+              "player": [
+                "player:bench:0:Raichu"
+              ],
+              "opponent": [
+                "opponent:bench:0:Pikachu",
+                "opponent:bench:1:Venusaur"
+              ]
+            },
+            "active_stable_keys": {
+              "player": [
+                "player:slot:0:Archaludon",
+                "player:slot:2:Magikarp"
+              ],
+              "opponent": [
+                "opponent:slot:0:Pelipper",
+                "opponent:slot:1:Snorlax"
+              ]
+            },
+            "bench_stable_keys": {
+              "player": [
+                "player:slot:3:Raichu"
+              ],
+              "opponent": [
+                "opponent:slot:2:Pikachu",
+                "opponent:slot:3:Venusaur"
+              ]
+            },
+            "hp_pct": {
+              "player:active:0:Archaludon": 1,
+              "player:active:1:Magikarp": 1,
+              "player:bench:0:Raichu": 1,
+              "opponent:active:0:Pelipper": 1,
+              "opponent:active:1:Snorlax": 1,
+              "opponent:bench:0:Pikachu": 1,
+              "opponent:bench:1:Venusaur": 1
+            },
+            "hp_pct_stable": {
+              "player:slot:0:Archaludon": 1,
+              "player:slot:2:Magikarp": 1,
+              "player:slot:3:Raichu": 1,
+              "opponent:slot:0:Pelipper": 1,
+              "opponent:slot:1:Snorlax": 1,
+              "opponent:slot:2:Pikachu": 1,
+              "opponent:slot:3:Venusaur": 1
+            },
+            "score_state": {
+              "player": {
+                "active": [
+                  "Archaludon",
+                  "Magikarp"
+                ],
+                "bench": [
+                  "Raichu"
+                ],
+                "active_keys": [
+                  "player:active:0:Archaludon",
+                  "player:active:1:Magikarp"
+                ],
+                "bench_keys": [
+                  "player:bench:0:Raichu"
+                ],
+                "active_stable_keys": [
+                  "player:slot:0:Archaludon",
+                  "player:slot:2:Magikarp"
+                ],
+                "bench_stable_keys": [
+                  "player:slot:3:Raichu"
+                ],
+                "alive_count": 3,
+                "hp_total": 3,
+                "max_count": 3
+              },
+              "opponent": {
+                "active": [
+                  "Pelipper",
+                  "Snorlax"
+                ],
+                "bench": [
+                  "Pikachu",
+                  "Venusaur"
+                ],
+                "active_keys": [
+                  "opponent:active:0:Pelipper",
+                  "opponent:active:1:Snorlax"
+                ],
+                "bench_keys": [
+                  "opponent:bench:0:Pikachu",
+                  "opponent:bench:1:Venusaur"
+                ],
+                "active_stable_keys": [
+                  "opponent:slot:0:Pelipper",
+                  "opponent:slot:1:Snorlax"
+                ],
+                "bench_stable_keys": [
+                  "opponent:slot:2:Pikachu",
+                  "opponent:slot:3:Venusaur"
+                ],
+                "alive_count": 4,
+                "hp_total": 4,
+                "max_count": 4
+              }
+            },
+            "roster": {
+              "player": [
+                {
+                  "key": "player:active:0:Archaludon",
+                  "stableKey": "player:slot:0:Archaludon",
+                  "teamSlot": 0,
+                  "zone": "active",
+                  "zoneIndex": 0,
+                  "side": "player",
+                  "status": "active",
+                  "displayName": "Archaludon",
+                  "species": "Archaludon",
+                  "types": [
+                    "Steel",
+                    "Dragon"
+                  ],
+                  "hp": 100,
+                  "hp_current": 165,
+                  "substitute_hp": 0,
+                  "perish_song_turns": 0,
+                  "hp_max": 165,
+                  "hpLabel": "100%",
+                  "level": 50,
+                  "item": "",
+                  "itemConsumed": false,
+                  "electric_charge": false,
+                  "mc_syrup_turns": 0,
+                  "mc_trap_turns": 0,
+                  "mc_partially_trapped": false,
+                  "ability": "Stamina",
+                  "moves": [
+                    "Electro Shot",
+                    "Splash"
+                  ],
+                  "move_pp": {
+                    "Electro Shot": {
+                      "current": 11,
+                      "max": 12
+                    },
+                    "Splash": {
+                      "current": 20,
+                      "max": 20
+                    }
+                  },
+                  "baseStatsLabel": "90/105/130/125/65/85",
+                  "calculatedStats": "165/125/150/145/85/105"
+                },
+                {
+                  "key": "player:fainted:1:Weezing",
+                  "stableKey": "player:slot:1:Weezing",
+                  "teamSlot": 1,
+                  "zone": "fainted",
+                  "zoneIndex": 1,
+                  "side": "player",
+                  "status": "fainted",
+                  "displayName": "Weezing",
+                  "species": "Weezing",
+                  "types": [
+                    "Poison"
+                  ],
+                  "hp": 0,
+                  "hp_current": 0,
+                  "substitute_hp": 0,
+                  "perish_song_turns": 0,
+                  "hp_max": 140,
+                  "hpLabel": "0%",
+                  "level": 50,
+                  "item": "",
+                  "itemConsumed": false,
+                  "electric_charge": false,
+                  "mc_syrup_turns": 0,
+                  "mc_trap_turns": 0,
+                  "mc_partially_trapped": false,
+                  "ability": "Neutralizing Gas",
+                  "moves": [
+                    "U-turn",
+                    "Splash"
+                  ],
+                  "move_pp": {
+                    "U-turn": {
+                      "current": 20,
+                      "max": 20
+                    },
+                    "Splash": {
+                      "current": 19,
+                      "max": 20
+                    }
+                  },
+                  "baseStatsLabel": "65/90/120/85/70/60",
+                  "calculatedStats": "140/110/140/105/90/80"
+                },
+                {
+                  "key": "player:active:1:Magikarp",
+                  "stableKey": "player:slot:2:Magikarp",
+                  "teamSlot": 2,
+                  "zone": "active",
+                  "zoneIndex": 1,
+                  "side": "player",
+                  "status": "active",
+                  "displayName": "Magikarp",
+                  "species": "Magikarp",
+                  "types": [
+                    "Water"
+                  ],
+                  "hp": 100,
+                  "hp_current": 95,
+                  "substitute_hp": 0,
+                  "perish_song_turns": 0,
+                  "hp_max": 95,
+                  "hpLabel": "100%",
+                  "level": 50,
+                  "item": "",
+                  "itemConsumed": false,
+                  "electric_charge": false,
+                  "mc_syrup_turns": 0,
+                  "mc_trap_turns": 0,
+                  "mc_partially_trapped": false,
+                  "ability": "Swift Swim",
+                  "moves": [
+                    "Splash"
+                  ],
+                  "move_pp": {
+                    "Splash": {
+                      "current": 20,
+                      "max": 20
+                    }
+                  },
+                  "baseStatsLabel": "20/10/55/15/20/80",
+                  "calculatedStats": "95/30/75/35/40/100"
+                },
+                {
+                  "key": "player:bench:0:Raichu",
+                  "stableKey": "player:slot:3:Raichu",
+                  "teamSlot": 3,
+                  "zone": "bench",
+                  "zoneIndex": 0,
+                  "side": "player",
+                  "status": "bench",
+                  "displayName": "Raichu",
+                  "species": "Raichu",
+                  "types": [
+                    "Electric"
+                  ],
+                  "hp": 100,
+                  "hp_current": 135,
+                  "substitute_hp": 0,
+                  "perish_song_turns": 0,
+                  "hp_max": 135,
+                  "hpLabel": "100%",
+                  "level": 50,
+                  "item": "",
+                  "itemConsumed": false,
+                  "electric_charge": false,
+                  "mc_syrup_turns": 0,
+                  "mc_trap_turns": 0,
+                  "mc_partially_trapped": false,
+                  "ability": "Static",
+                  "moves": [
+                    "Splash"
+                  ],
+                  "move_pp": {
+                    "Splash": {
+                      "current": 20,
+                      "max": 20
+                    }
+                  },
+                  "baseStatsLabel": "60/90/55/90/80/110",
+                  "calculatedStats": "135/110/75/110/100/130"
+                }
+              ],
+              "opponent": [
+                {
+                  "key": "opponent:active:0:Pelipper",
+                  "stableKey": "opponent:slot:0:Pelipper",
+                  "teamSlot": 0,
+                  "zone": "active",
+                  "zoneIndex": 0,
+                  "side": "opponent",
+                  "status": "active",
+                  "displayName": "Pelipper",
+                  "species": "Pelipper",
+                  "types": [
+                    "Water",
+                    "Flying"
+                  ],
+                  "hp": 100,
+                  "hp_current": 135,
+                  "substitute_hp": 0,
+                  "perish_song_turns": 0,
+                  "hp_max": 135,
+                  "hpLabel": "100%",
+                  "level": 50,
+                  "item": "",
+                  "itemConsumed": false,
+                  "electric_charge": false,
+                  "mc_syrup_turns": 0,
+                  "mc_trap_turns": 0,
+                  "mc_partially_trapped": false,
+                  "ability": "Drizzle",
+                  "moves": [
+                    "Splash",
+                    "Psychic"
+                  ],
+                  "move_pp": {
+                    "Splash": {
+                      "current": 19,
+                      "max": 20
+                    },
+                    "Psychic": {
+                      "current": 12,
+                      "max": 12
+                    }
+                  },
+                  "baseStatsLabel": "60/50/100/95/70/65",
+                  "calculatedStats": "135/70/120/115/90/85"
+                },
+                {
+                  "key": "opponent:active:1:Snorlax",
+                  "stableKey": "opponent:slot:1:Snorlax",
+                  "teamSlot": 1,
+                  "zone": "active",
+                  "zoneIndex": 1,
+                  "side": "opponent",
+                  "status": "active",
+                  "displayName": "Snorlax",
+                  "species": "Snorlax",
+                  "types": [
+                    "Normal"
+                  ],
+                  "hp": 100,
+                  "hp_current": 235,
+                  "substitute_hp": 0,
+                  "perish_song_turns": 0,
+                  "hp_max": 235,
+                  "hpLabel": "100%",
+                  "level": 50,
+                  "item": "",
+                  "itemConsumed": false,
+                  "electric_charge": false,
+                  "mc_syrup_turns": 0,
+                  "mc_trap_turns": 0,
+                  "mc_partially_trapped": false,
+                  "ability": "Immunity",
+                  "moves": [
+                    "Splash"
+                  ],
+                  "move_pp": {
+                    "Splash": {
+                      "current": 19,
+                      "max": 20
+                    }
+                  },
+                  "baseStatsLabel": "160/110/65/65/110/30",
+                  "calculatedStats": "235/130/85/85/130/50"
+                },
+                {
+                  "key": "opponent:bench:0:Pikachu",
+                  "stableKey": "opponent:slot:2:Pikachu",
+                  "teamSlot": 2,
+                  "zone": "bench",
+                  "zoneIndex": 0,
+                  "side": "opponent",
+                  "status": "bench",
+                  "displayName": "Pikachu",
+                  "species": "Pikachu",
+                  "types": [
+                    "Electric"
+                  ],
+                  "hp": 100,
+                  "hp_current": 110,
+                  "substitute_hp": 0,
+                  "perish_song_turns": 0,
+                  "hp_max": 110,
+                  "hpLabel": "100%",
+                  "level": 50,
+                  "item": "",
+                  "itemConsumed": false,
+                  "electric_charge": false,
+                  "mc_syrup_turns": 0,
+                  "mc_trap_turns": 0,
+                  "mc_partially_trapped": false,
+                  "ability": "Static",
+                  "moves": [
+                    "Splash"
+                  ],
+                  "move_pp": {
+                    "Splash": {
+                      "current": 20,
+                      "max": 20
+                    }
+                  },
+                  "baseStatsLabel": "35/55/40/50/50/90",
+                  "calculatedStats": "110/75/60/70/70/110"
+                },
+                {
+                  "key": "opponent:bench:1:Venusaur",
+                  "stableKey": "opponent:slot:3:Venusaur",
+                  "teamSlot": 3,
+                  "zone": "bench",
+                  "zoneIndex": 1,
+                  "side": "opponent",
+                  "status": "bench",
+                  "displayName": "Venusaur",
+                  "species": "Venusaur",
+                  "types": [
+                    "Grass",
+                    "Poison"
+                  ],
+                  "hp": 100,
+                  "hp_current": 155,
+                  "substitute_hp": 0,
+                  "perish_song_turns": 0,
+                  "hp_max": 155,
+                  "hpLabel": "100%",
+                  "level": 50,
+                  "item": "",
+                  "itemConsumed": false,
+                  "electric_charge": false,
+                  "mc_syrup_turns": 0,
+                  "mc_trap_turns": 0,
+                  "mc_partially_trapped": false,
+                  "ability": "Overgrow",
+                  "moves": [
+                    "Splash"
+                  ],
+                  "move_pp": {
+                    "Splash": {
+                      "current": 20,
+                      "max": 20
+                    }
+                  },
+                  "baseStatsLabel": "80/82/83/100/100/80",
+                  "calculatedStats": "155/102/103/120/120/100"
+                }
+              ]
+            },
+            "status": {},
+            "status_stable": {},
+            "stat_boosts": {
+              "player:active:0:Archaludon": {
+                "atk": 0,
+                "def": 0,
+                "spa": 1,
+                "spd": 0,
+                "spe": 0,
+                "acc": 0,
+                "eva": 0
+              }
+            },
+            "stat_boosts_stable": {
+              "player:slot:0:Archaludon": {
+                "atk": 0,
+                "def": 0,
+                "spa": 1,
+                "spd": 0,
+                "spe": 0,
+                "acc": 0,
+                "eva": 0
+              }
+            },
+            "field": {
+              "weather": "rain",
+              "weather_turns": 5,
+              "gravity_turns": 0,
+              "terrain": null,
+              "terrain_turns": 0,
+              "trick_room": 0
+            },
+            "speed_control": {
+              "player": {
+                "tailwind_turns": 0,
+                "screens": {
+                  "reflect": 0,
+                  "light": 0,
+                  "aurora": 0
+                }
+              },
+              "opponent": {
+                "tailwind_turns": 0,
+                "screens": {
+                  "reflect": 0,
+                  "light": 0,
+                  "aurora": 0
+                }
+              }
+            },
+            "speed_order": [
+              "Magikarp",
+              "Archaludon",
+              "Pelipper",
+              "Snorlax"
+            ],
+            "speed_order_keys": [
+              "player:active:1:Magikarp",
+              "player:active:0:Archaludon",
+              "opponent:active:0:Pelipper",
+              "opponent:active:1:Snorlax"
+            ],
+            "speed_order_stable_keys": [
+              "player:slot:2:Magikarp",
+              "player:slot:0:Archaludon",
+              "opponent:slot:0:Pelipper",
+              "opponent:slot:1:Snorlax"
+            ],
+            "speed_order_details": [
+              {
+                "side": "player",
+                "key": "player:active:1:Magikarp",
+                "stableKey": "player:slot:2:Magikarp",
+                "pokemon": "Magikarp",
+                "stat_format": "champions",
+                "nature": "Hardy",
+                "speed_points": 0,
+                "species_base_speed": 80,
+                "base_speed": 100,
+                "calculated_speed": 100,
+                "speed_stage": 0,
+                "effective_speed": 200,
+                "item": "",
+                "ability": "Swift Swim",
+                "status": "",
+                "tailwind": false,
+                "trick_room": false,
+                "weather": "rain",
+                "exact_speed_tie": false
+              },
+              {
+                "side": "player",
+                "key": "player:active:0:Archaludon",
+                "stableKey": "player:slot:0:Archaludon",
+                "pokemon": "Archaludon",
+                "stat_format": "champions",
+                "nature": "Hardy",
+                "speed_points": 0,
+                "species_base_speed": 85,
+                "base_speed": 105,
+                "calculated_speed": 105,
+                "speed_stage": 0,
+                "effective_speed": 105,
+                "item": "",
+                "ability": "Stamina",
+                "status": "",
+                "tailwind": false,
+                "trick_room": false,
+                "weather": "rain",
+                "exact_speed_tie": false
+              },
+              {
+                "side": "opponent",
+                "key": "opponent:active:0:Pelipper",
+                "stableKey": "opponent:slot:0:Pelipper",
+                "pokemon": "Pelipper",
+                "stat_format": "champions",
+                "nature": "Hardy",
+                "speed_points": 0,
+                "species_base_speed": 65,
+                "base_speed": 85,
+                "calculated_speed": 85,
+                "speed_stage": 0,
+                "effective_speed": 85,
+                "item": "",
+                "ability": "Drizzle",
+                "status": "",
+                "tailwind": false,
+                "trick_room": false,
+                "weather": "rain",
+                "exact_speed_tie": false
+              },
+              {
+                "side": "opponent",
+                "key": "opponent:active:1:Snorlax",
+                "stableKey": "opponent:slot:1:Snorlax",
+                "pokemon": "Snorlax",
+                "stat_format": "champions",
+                "nature": "Hardy",
+                "speed_points": 0,
+                "species_base_speed": 30,
+                "base_speed": 50,
+                "calculated_speed": 50,
+                "speed_stage": 0,
+                "effective_speed": 50,
+                "item": "",
+                "ability": "Immunity",
+                "status": "",
+                "tailwind": false,
+                "trick_room": false,
+                "weather": "rain",
+                "exact_speed_tie": false
+              }
+            ],
+            "legal_options": {},
+            "position_score": 0.428,
+            "win_probability": null
+          },
+          "delta": {
+            "position_score": -0.037,
+            "win_probability": null,
+            "primary_cause": "position_lost",
+            "explanation": ""
+          }
+        }
+      ]
+    },
+    {
+      "input": {
+        "side": "opponent",
+        "ability": "Drizzle",
+        "shield": "none",
+        "mode": "entry",
+        "gas": true,
+        "secondGas": false,
+        "competing": false
+      },
+      "teams": [
+        {
+          "format": "champions",
+          "members": [
+            {
+              "name": "Pelipper",
+              "ability": "Drizzle",
+              "moves": [
+                "Splash",
+                "Psychic"
+              ],
+              "item": "",
+              "level": 50,
+              "nature": "Hardy",
+              "evs": {
+                "hp": 0,
+                "atk": 0,
+                "def": 0,
+                "spa": 0,
+                "spd": 0,
+                "spe": 0
+              }
+            },
+            {
+              "name": "Snorlax",
+              "ability": "Immunity",
+              "moves": [
+                "Splash"
+              ],
+              "item": "",
+              "level": 50,
+              "nature": "Hardy",
+              "evs": {
+                "hp": 0,
+                "atk": 0,
+                "def": 0,
+                "spa": 0,
+                "spd": 0,
+                "spe": 0
+              }
+            },
+            {
+              "name": "Pikachu",
+              "ability": "Static",
+              "moves": [
+                "Splash"
+              ],
+              "item": "",
+              "level": 50,
+              "nature": "Hardy",
+              "evs": {
+                "hp": 0,
+                "atk": 0,
+                "def": 0,
+                "spa": 0,
+                "spd": 0,
+                "spe": 0
+              }
+            },
+            {
+              "name": "Venusaur",
+              "ability": "Overgrow",
+              "moves": [
+                "Splash"
+              ],
+              "item": "",
+              "level": 50,
+              "nature": "Hardy",
+              "evs": {
+                "hp": 0,
+                "atk": 0,
+                "def": 0,
+                "spa": 0,
+                "spd": 0,
+                "spe": 0
+              }
+            }
+          ]
+        },
+        {
+          "format": "champions",
+          "members": [
+            {
+              "name": "Archaludon",
+              "ability": "Stamina",
+              "moves": [
+                "Electro Shot",
+                "Splash"
+              ],
+              "item": "",
+              "level": 50,
+              "nature": "Hardy",
+              "evs": {
+                "hp": 0,
+                "atk": 0,
+                "def": 0,
+                "spa": 0,
+                "spd": 0,
+                "spe": 0
+              }
+            },
+            {
+              "name": "Weezing",
+              "ability": "Neutralizing Gas",
+              "moves": [
+                "U-turn",
+                "Splash"
+              ],
+              "item": "",
+              "level": 50,
+              "nature": "Hardy",
+              "evs": {
+                "hp": 0,
+                "atk": 0,
+                "def": 0,
+                "spa": 0,
+                "spd": 0,
+                "spe": 0
+              }
+            },
+            {
+              "name": "Magikarp",
+              "ability": "Swift Swim",
+              "moves": [
+                "Splash"
+              ],
+              "item": "",
+              "level": 50,
+              "nature": "Hardy",
+              "evs": {
+                "hp": 0,
+                "atk": 0,
+                "def": 0,
+                "spa": 0,
+                "spd": 0,
+                "spe": 0
+              }
+            },
+            {
+              "name": "Raichu",
+              "ability": "Static",
+              "moves": [
+                "Splash"
+              ],
+              "item": "",
+              "level": 50,
+              "nature": "Hardy",
+              "evs": {
+                "hp": 0,
+                "atk": 0,
+                "def": 0,
+                "spa": 0,
+                "spd": 0,
+                "spe": 0
+              }
+            }
+          ]
+        }
+      ],
+      "commands": [
+        {
+          "turn": 1,
+          "side": "p1",
+          "choice": "move 1, move 1"
+        },
+        {
+          "turn": 1,
+          "side": "p2",
+          "choice": "move 1 1, move 2"
+        }
+      ],
+      "actions": [
+        {
+          "turn": 1,
+          "side": "player",
+          "slot": 0,
+          "move": "Splash",
+          "targetSlot": 0
+        },
+        {
+          "turn": 1,
+          "side": "player",
+          "slot": 1,
+          "move": "Splash",
+          "targetSlot": 0
+        },
+        {
+          "turn": 1,
+          "side": "opponent",
+          "slot": 0,
+          "move": "Electro Shot",
+          "targetSlot": 0
+        },
+        {
+          "turn": 1,
+          "side": "opponent",
+          "slot": 1,
+          "move": "Splash",
+          "targetSlot": 1
+        }
+      ],
+      "reference_initial": {
+        "weather": "none",
+        "weather_turns": 0,
+        "stage": 0,
+        "charging": false,
+        "pp": 0,
+        "gas_active": true,
+        "weather_hp": 135
+      },
+      "reference_turns": [
+        {
+          "weather": "rain",
+          "weather_turns": 5,
+          "stage": 1,
+          "charging": true,
+          "pp": 1,
+          "gas_active": false,
+          "weather_hp": 135
+        }
+      ],
+      "reference": {
+        "weather": "rain",
+        "weather_turns": 5,
+        "stage": 1,
+        "charging": true,
+        "pp": 1,
+        "gas_active": false,
+        "weather_hp": 135
+      },
+      "candidate": {
+        "weather": "rain",
+        "weather_turns": 5,
+        "stage": 1,
+        "charging": true,
+        "pp": 1,
+        "gas_active": false,
+        "weather_hp": 135
+      },
+      "reference_log": [
+        "|t:|1792550220",
+        "|gametype|doubles",
+        "|player|p1|Player 1||",
+        "|player|p2|Player 2||",
+        "|gen|9",
+        "|tier|[Gen 9 Champions] Doubles Custom Game",
+        "|clearpoke",
+        "|poke|p1|Pelipper, L50, M|",
+        "|poke|p1|Snorlax, L50, M|",
+        "|poke|p1|Pikachu, L50, F|",
+        "|poke|p1|Venusaur, L50, M|",
+        "|poke|p2|Archaludon, L50, M|",
+        "|poke|p2|Weezing, L50, M|",
+        "|poke|p2|Magikarp, L50, F|",
+        "|poke|p2|Raichu, L50, M|",
+        "|teampreview",
+        "|",
+        "|t:|1792550220",
+        "|teamsize|p1|4",
+        "|teamsize|p2|4",
+        "|start",
+        "|split|p1",
+        "|switch|p1a: p1m1|Pelipper, L50, M|135/135",
+        "|switch|p1a: p1m1|Pelipper, L50, M|135/135",
+        "|split|p1",
+        "|switch|p1b: p1m2|Snorlax, L50, M|235/235",
+        "|switch|p1b: p1m2|Snorlax, L50, M|235/235",
+        "|split|p2",
+        "|switch|p2a: p2m1|Archaludon, L50, M|165/165",
+        "|switch|p2a: p2m1|Archaludon, L50, M|165/165",
+        "|split|p2",
+        "|switch|p2b: p2m2|Weezing, L50, M|140/140",
+        "|switch|p2b: p2m2|Weezing, L50, M|140/140",
+        "|-ability|p2b: p2m2|Neutralizing Gas",
+        "|debug|SwitchIn handler suppressed by Gastro Acid or Neutralizing Gas",
+        "|turn|1",
+        "|-status|p2b: p2m2|brn",
+        "|",
+        "|t:|1792550220",
+        "|move|p2a: p2m1|Electro Shot||[still]",
+        "|-prepare|p2a: p2m1|Electro Shot",
+        "|-boost|p2a: p2m1|spa|1",
+        "|move|p1a: p1m1|Splash|p1a: p1m1",
+        "|-nothing",
+        "|move|p2b: p2m2|Splash|p2b: p2m2",
+        "|-nothing",
+        "|move|p1b: p1m2|Splash|p1b: p1m2",
+        "|-nothing",
+        "|",
+        "|split|p2",
+        "|-damage|p2b: p2m2|0 fnt|[from] brn",
+        "|-damage|p2b: p2m2|0 fnt|[from] brn",
+        "|faint|p2b: p2m2",
+        "|-end|p2b: p2m2|ability: Neutralizing Gas",
+        "|-weather|RainDance|[from] ability: Drizzle|[of] p1a: p1m1",
+        "|upkeep"
+      ],
+      "candidate_log": [
+        "--- Turn 1 ---",
+        "Archaludon's Special Attack rose!",
+        "Archaludon used Electro Shot!",
+        "Archaludon began charging Electro Shot!",
+        "Pelipper used Splash!",
+        "Splash had no effect on Archaludon!",
+        "Weezing used Splash!",
+        "Splash had no effect on Snorlax!",
+        "Snorlax used Splash!",
+        "Splash had no effect on Archaludon!",
+        "Weezing is hurt by its burn! [8 dmg]",
+        "Weezing fainted!",
+        "Pelipper's Drizzle summoned rain!",
+        "Magikarp was sent out!"
+      ],
+      "candidate_turns": [
+        {
+          "turn": 1,
+          "initial": {
+            "active": {
+              "player": [
+                "Pelipper",
+                "Snorlax"
+              ],
+              "opponent": [
+                "Archaludon",
+                "Weezing"
+              ]
+            },
+            "bench": {
+              "player": [
+                "Pikachu",
+                "Venusaur"
+              ],
+              "opponent": [
+                "Magikarp",
+                "Raichu"
+              ]
+            },
+            "active_keys": {
+              "player": [
+                "player:active:0:Pelipper",
+                "player:active:1:Snorlax"
+              ],
+              "opponent": [
+                "opponent:active:0:Archaludon",
+                "opponent:active:1:Weezing"
+              ]
+            },
+            "bench_keys": {
+              "player": [
+                "player:bench:0:Pikachu",
+                "player:bench:1:Venusaur"
+              ],
+              "opponent": [
+                "opponent:bench:0:Magikarp",
+                "opponent:bench:1:Raichu"
+              ]
+            },
+            "active_stable_keys": {
+              "player": [
+                "player:slot:0:Pelipper",
+                "player:slot:1:Snorlax"
+              ],
+              "opponent": [
+                "opponent:slot:0:Archaludon",
+                "opponent:slot:1:Weezing"
+              ]
+            },
+            "bench_stable_keys": {
+              "player": [
+                "player:slot:2:Pikachu",
+                "player:slot:3:Venusaur"
+              ],
+              "opponent": [
+                "opponent:slot:2:Magikarp",
+                "opponent:slot:3:Raichu"
+              ]
+            },
+            "hp_pct": {
+              "player:active:0:Pelipper": 1,
+              "player:active:1:Snorlax": 1,
+              "player:bench:0:Pikachu": 1,
+              "player:bench:1:Venusaur": 1,
+              "opponent:active:0:Archaludon": 1,
+              "opponent:active:1:Weezing": 0.007,
+              "opponent:bench:0:Magikarp": 1,
+              "opponent:bench:1:Raichu": 1
+            },
+            "hp_pct_stable": {
+              "player:slot:0:Pelipper": 1,
+              "player:slot:1:Snorlax": 1,
+              "player:slot:2:Pikachu": 1,
+              "player:slot:3:Venusaur": 1,
+              "opponent:slot:0:Archaludon": 1,
+              "opponent:slot:1:Weezing": 0.007,
+              "opponent:slot:2:Magikarp": 1,
+              "opponent:slot:3:Raichu": 1
+            },
+            "score_state": {
+              "player": {
+                "active": [
+                  "Pelipper",
+                  "Snorlax"
+                ],
+                "bench": [
+                  "Pikachu",
+                  "Venusaur"
+                ],
+                "active_keys": [
+                  "player:active:0:Pelipper",
+                  "player:active:1:Snorlax"
+                ],
+                "bench_keys": [
+                  "player:bench:0:Pikachu",
+                  "player:bench:1:Venusaur"
+                ],
+                "active_stable_keys": [
+                  "player:slot:0:Pelipper",
+                  "player:slot:1:Snorlax"
+                ],
+                "bench_stable_keys": [
+                  "player:slot:2:Pikachu",
+                  "player:slot:3:Venusaur"
+                ],
+                "alive_count": 4,
+                "hp_total": 4,
+                "max_count": 4
+              },
+              "opponent": {
+                "active": [
+                  "Archaludon",
+                  "Weezing"
+                ],
+                "bench": [
+                  "Magikarp",
+                  "Raichu"
+                ],
+                "active_keys": [
+                  "opponent:active:0:Archaludon",
+                  "opponent:active:1:Weezing"
+                ],
+                "bench_keys": [
+                  "opponent:bench:0:Magikarp",
+                  "opponent:bench:1:Raichu"
+                ],
+                "active_stable_keys": [
+                  "opponent:slot:0:Archaludon",
+                  "opponent:slot:1:Weezing"
+                ],
+                "bench_stable_keys": [
+                  "opponent:slot:2:Magikarp",
+                  "opponent:slot:3:Raichu"
+                ],
+                "alive_count": 4,
+                "hp_total": 3.007142857142857,
+                "max_count": 4
+              }
+            },
+            "roster": {
+              "player": [
+                {
+                  "key": "player:active:0:Pelipper",
+                  "stableKey": "player:slot:0:Pelipper",
+                  "teamSlot": 0,
+                  "zone": "active",
+                  "zoneIndex": 0,
+                  "side": "player",
+                  "status": "active",
+                  "displayName": "Pelipper",
+                  "species": "Pelipper",
+                  "types": [
+                    "Water",
+                    "Flying"
+                  ],
+                  "hp": 100,
+                  "hp_current": 135,
+                  "substitute_hp": 0,
+                  "perish_song_turns": 0,
+                  "hp_max": 135,
+                  "hpLabel": "100%",
+                  "level": 50,
+                  "item": "",
+                  "itemConsumed": false,
+                  "electric_charge": false,
+                  "mc_syrup_turns": 0,
+                  "mc_trap_turns": 0,
+                  "mc_partially_trapped": false,
+                  "ability": "Drizzle",
+                  "moves": [
+                    "Splash",
+                    "Psychic"
+                  ],
+                  "move_pp": {
+                    "Splash": {
+                      "current": 20,
+                      "max": 20
+                    },
+                    "Psychic": {
+                      "current": 12,
+                      "max": 12
+                    }
+                  },
+                  "baseStatsLabel": "60/50/100/95/70/65",
+                  "calculatedStats": "135/70/120/115/90/85"
+                },
+                {
+                  "key": "player:active:1:Snorlax",
+                  "stableKey": "player:slot:1:Snorlax",
+                  "teamSlot": 1,
+                  "zone": "active",
+                  "zoneIndex": 1,
+                  "side": "player",
+                  "status": "active",
+                  "displayName": "Snorlax",
+                  "species": "Snorlax",
+                  "types": [
+                    "Normal"
+                  ],
+                  "hp": 100,
+                  "hp_current": 235,
+                  "substitute_hp": 0,
+                  "perish_song_turns": 0,
+                  "hp_max": 235,
+                  "hpLabel": "100%",
+                  "level": 50,
+                  "item": "",
+                  "itemConsumed": false,
+                  "electric_charge": false,
+                  "mc_syrup_turns": 0,
+                  "mc_trap_turns": 0,
+                  "mc_partially_trapped": false,
+                  "ability": "Immunity",
+                  "moves": [
+                    "Splash"
+                  ],
+                  "move_pp": {
+                    "Splash": {
+                      "current": 20,
+                      "max": 20
+                    }
+                  },
+                  "baseStatsLabel": "160/110/65/65/110/30",
+                  "calculatedStats": "235/130/85/85/130/50"
+                },
+                {
+                  "key": "player:bench:0:Pikachu",
+                  "stableKey": "player:slot:2:Pikachu",
+                  "teamSlot": 2,
+                  "zone": "bench",
+                  "zoneIndex": 0,
+                  "side": "player",
+                  "status": "bench",
+                  "displayName": "Pikachu",
+                  "species": "Pikachu",
+                  "types": [
+                    "Electric"
+                  ],
+                  "hp": 100,
+                  "hp_current": 110,
+                  "substitute_hp": 0,
+                  "perish_song_turns": 0,
+                  "hp_max": 110,
+                  "hpLabel": "100%",
+                  "level": 50,
+                  "item": "",
+                  "itemConsumed": false,
+                  "electric_charge": false,
+                  "mc_syrup_turns": 0,
+                  "mc_trap_turns": 0,
+                  "mc_partially_trapped": false,
+                  "ability": "Static",
+                  "moves": [
+                    "Splash"
+                  ],
+                  "move_pp": {
+                    "Splash": {
+                      "current": 20,
+                      "max": 20
+                    }
+                  },
+                  "baseStatsLabel": "35/55/40/50/50/90",
+                  "calculatedStats": "110/75/60/70/70/110"
+                },
+                {
+                  "key": "player:bench:1:Venusaur",
+                  "stableKey": "player:slot:3:Venusaur",
+                  "teamSlot": 3,
+                  "zone": "bench",
+                  "zoneIndex": 1,
+                  "side": "player",
+                  "status": "bench",
+                  "displayName": "Venusaur",
+                  "species": "Venusaur",
+                  "types": [
+                    "Grass",
+                    "Poison"
+                  ],
+                  "hp": 100,
+                  "hp_current": 155,
+                  "substitute_hp": 0,
+                  "perish_song_turns": 0,
+                  "hp_max": 155,
+                  "hpLabel": "100%",
+                  "level": 50,
+                  "item": "",
+                  "itemConsumed": false,
+                  "electric_charge": false,
+                  "mc_syrup_turns": 0,
+                  "mc_trap_turns": 0,
+                  "mc_partially_trapped": false,
+                  "ability": "Overgrow",
+                  "moves": [
+                    "Splash"
+                  ],
+                  "move_pp": {
+                    "Splash": {
+                      "current": 20,
+                      "max": 20
+                    }
+                  },
+                  "baseStatsLabel": "80/82/83/100/100/80",
+                  "calculatedStats": "155/102/103/120/120/100"
+                }
+              ],
+              "opponent": [
+                {
+                  "key": "opponent:active:0:Archaludon",
+                  "stableKey": "opponent:slot:0:Archaludon",
+                  "teamSlot": 0,
+                  "zone": "active",
+                  "zoneIndex": 0,
+                  "side": "opponent",
+                  "status": "active",
+                  "displayName": "Archaludon",
+                  "species": "Archaludon",
+                  "types": [
+                    "Steel",
+                    "Dragon"
+                  ],
+                  "hp": 100,
+                  "hp_current": 165,
+                  "substitute_hp": 0,
+                  "perish_song_turns": 0,
+                  "hp_max": 165,
+                  "hpLabel": "100%",
+                  "level": 50,
+                  "item": "",
+                  "itemConsumed": false,
+                  "electric_charge": false,
+                  "mc_syrup_turns": 0,
+                  "mc_trap_turns": 0,
+                  "mc_partially_trapped": false,
+                  "ability": "Stamina",
+                  "moves": [
+                    "Electro Shot",
+                    "Splash"
+                  ],
+                  "move_pp": {
+                    "Electro Shot": {
+                      "current": 12,
+                      "max": 12
+                    },
+                    "Splash": {
+                      "current": 20,
+                      "max": 20
+                    }
+                  },
+                  "baseStatsLabel": "90/105/130/125/65/85",
+                  "calculatedStats": "165/125/150/145/85/105"
+                },
+                {
+                  "key": "opponent:active:1:Weezing",
+                  "stableKey": "opponent:slot:1:Weezing",
+                  "teamSlot": 1,
+                  "zone": "active",
+                  "zoneIndex": 1,
+                  "side": "opponent",
+                  "status": "active",
+                  "displayName": "Weezing",
+                  "species": "Weezing",
+                  "types": [
+                    "Poison"
+                  ],
+                  "hp": 1,
+                  "hp_current": 1,
+                  "substitute_hp": 0,
+                  "perish_song_turns": 0,
+                  "hp_max": 140,
+                  "hpLabel": "1%",
+                  "level": 50,
+                  "item": "",
+                  "itemConsumed": false,
+                  "electric_charge": false,
+                  "mc_syrup_turns": 0,
+                  "mc_trap_turns": 0,
+                  "mc_partially_trapped": false,
+                  "ability": "Neutralizing Gas",
+                  "moves": [
+                    "U-turn",
+                    "Splash"
+                  ],
+                  "move_pp": {
+                    "U-turn": {
+                      "current": 20,
+                      "max": 20
+                    },
+                    "Splash": {
+                      "current": 20,
+                      "max": 20
+                    }
+                  },
+                  "baseStatsLabel": "65/90/120/85/70/60",
+                  "calculatedStats": "140/110/140/105/90/80"
+                },
+                {
+                  "key": "opponent:bench:0:Magikarp",
+                  "stableKey": "opponent:slot:2:Magikarp",
+                  "teamSlot": 2,
+                  "zone": "bench",
+                  "zoneIndex": 0,
+                  "side": "opponent",
+                  "status": "bench",
+                  "displayName": "Magikarp",
+                  "species": "Magikarp",
+                  "types": [
+                    "Water"
+                  ],
+                  "hp": 100,
+                  "hp_current": 95,
+                  "substitute_hp": 0,
+                  "perish_song_turns": 0,
+                  "hp_max": 95,
+                  "hpLabel": "100%",
+                  "level": 50,
+                  "item": "",
+                  "itemConsumed": false,
+                  "electric_charge": false,
+                  "mc_syrup_turns": 0,
+                  "mc_trap_turns": 0,
+                  "mc_partially_trapped": false,
+                  "ability": "Swift Swim",
+                  "moves": [
+                    "Splash"
+                  ],
+                  "move_pp": {
+                    "Splash": {
+                      "current": 20,
+                      "max": 20
+                    }
+                  },
+                  "baseStatsLabel": "20/10/55/15/20/80",
+                  "calculatedStats": "95/30/75/35/40/100"
+                },
+                {
+                  "key": "opponent:bench:1:Raichu",
+                  "stableKey": "opponent:slot:3:Raichu",
+                  "teamSlot": 3,
+                  "zone": "bench",
+                  "zoneIndex": 1,
+                  "side": "opponent",
+                  "status": "bench",
+                  "displayName": "Raichu",
+                  "species": "Raichu",
+                  "types": [
+                    "Electric"
+                  ],
+                  "hp": 100,
+                  "hp_current": 135,
+                  "substitute_hp": 0,
+                  "perish_song_turns": 0,
+                  "hp_max": 135,
+                  "hpLabel": "100%",
+                  "level": 50,
+                  "item": "",
+                  "itemConsumed": false,
+                  "electric_charge": false,
+                  "mc_syrup_turns": 0,
+                  "mc_trap_turns": 0,
+                  "mc_partially_trapped": false,
+                  "ability": "Static",
+                  "moves": [
+                    "Splash"
+                  ],
+                  "move_pp": {
+                    "Splash": {
+                      "current": 20,
+                      "max": 20
+                    }
+                  },
+                  "baseStatsLabel": "60/90/55/90/80/110",
+                  "calculatedStats": "135/110/75/110/100/130"
+                }
+              ]
+            },
+            "status": {
+              "opponent:active:1:Weezing": "burn"
+            },
+            "status_stable": {
+              "opponent:slot:1:Weezing": "burn"
+            },
+            "stat_boosts": {},
+            "stat_boosts_stable": {},
+            "field": {
+              "weather": null,
+              "weather_turns": 0,
+              "gravity_turns": 0,
+              "terrain": null,
+              "terrain_turns": 0,
+              "trick_room": 0
+            },
+            "speed_control": {
+              "player": {
+                "tailwind_turns": 0,
+                "screens": {
+                  "reflect": 0,
+                  "light": 0,
+                  "aurora": 0
+                }
+              },
+              "opponent": {
+                "tailwind_turns": 0,
+                "screens": {
+                  "reflect": 0,
+                  "light": 0,
+                  "aurora": 0
+                }
+              }
+            },
+            "speed_order": [
+              "Archaludon",
+              "Pelipper",
+              "Weezing",
+              "Snorlax"
+            ],
+            "speed_order_keys": [
+              "opponent:active:0:Archaludon",
+              "player:active:0:Pelipper",
+              "opponent:active:1:Weezing",
+              "player:active:1:Snorlax"
+            ],
+            "speed_order_stable_keys": [
+              "opponent:slot:0:Archaludon",
+              "player:slot:0:Pelipper",
+              "opponent:slot:1:Weezing",
+              "player:slot:1:Snorlax"
+            ],
+            "speed_order_details": [
+              {
+                "side": "opponent",
+                "key": "opponent:active:0:Archaludon",
+                "stableKey": "opponent:slot:0:Archaludon",
+                "pokemon": "Archaludon",
+                "stat_format": "champions",
+                "nature": "Hardy",
+                "speed_points": 0,
+                "species_base_speed": 85,
+                "base_speed": 105,
+                "calculated_speed": 105,
+                "speed_stage": 0,
+                "effective_speed": 105,
+                "item": "",
+                "ability": "Stamina",
+                "status": "",
+                "tailwind": false,
+                "trick_room": false,
+                "weather": "none",
+                "exact_speed_tie": false
+              },
+              {
+                "side": "player",
+                "key": "player:active:0:Pelipper",
+                "stableKey": "player:slot:0:Pelipper",
+                "pokemon": "Pelipper",
+                "stat_format": "champions",
+                "nature": "Hardy",
+                "speed_points": 0,
+                "species_base_speed": 65,
+                "base_speed": 85,
+                "calculated_speed": 85,
+                "speed_stage": 0,
+                "effective_speed": 85,
+                "item": "",
+                "ability": "Drizzle",
+                "status": "",
+                "tailwind": false,
+                "trick_room": false,
+                "weather": "none",
+                "exact_speed_tie": false
+              },
+              {
+                "side": "opponent",
+                "key": "opponent:active:1:Weezing",
+                "stableKey": "opponent:slot:1:Weezing",
+                "pokemon": "Weezing",
+                "stat_format": "champions",
+                "nature": "Hardy",
+                "speed_points": 0,
+                "species_base_speed": 60,
+                "base_speed": 80,
+                "calculated_speed": 80,
+                "speed_stage": 0,
+                "effective_speed": 80,
+                "item": "",
+                "ability": "Neutralizing Gas",
+                "status": "burn",
+                "tailwind": false,
+                "trick_room": false,
+                "weather": "none",
+                "exact_speed_tie": false
+              },
+              {
+                "side": "player",
+                "key": "player:active:1:Snorlax",
+                "stableKey": "player:slot:1:Snorlax",
+                "pokemon": "Snorlax",
+                "stat_format": "champions",
+                "nature": "Hardy",
+                "speed_points": 0,
+                "species_base_speed": 30,
+                "base_speed": 50,
+                "calculated_speed": 50,
+                "speed_stage": 0,
+                "effective_speed": 50,
+                "item": "",
+                "ability": "Immunity",
+                "status": "",
+                "tailwind": false,
+                "trick_room": false,
+                "weather": "none",
+                "exact_speed_tie": false
+              }
+            ],
+            "legal_options": {},
+            "position_score": 0.535,
+            "win_probability": null
+          },
+          "playerHP": [
+            1,
+            1,
+            1,
+            1
+          ],
+          "oppHP": [
+            1,
+            0.007,
+            1,
+            1
+          ],
+          "activePair": [
+            "Pelipper",
+            "Snorlax",
+            "Archaludon",
+            "Weezing"
+          ],
+          "action": "Pelipper:Splash | Snorlax:Splash | Archaludon:Electro Shot | Weezing:Splash",
+          "positionScore": 0.535,
+          "pre": {
+            "active": {
+              "player": [
+                "Pelipper",
+                "Snorlax"
+              ],
+              "opponent": [
+                "Archaludon",
+                "Weezing"
+              ]
+            },
+            "bench": {
+              "player": [
+                "Pikachu",
+                "Venusaur"
+              ],
+              "opponent": [
+                "Magikarp",
+                "Raichu"
+              ]
+            },
+            "active_keys": {
+              "player": [
+                "player:active:0:Pelipper",
+                "player:active:1:Snorlax"
+              ],
+              "opponent": [
+                "opponent:active:0:Archaludon",
+                "opponent:active:1:Weezing"
+              ]
+            },
+            "bench_keys": {
+              "player": [
+                "player:bench:0:Pikachu",
+                "player:bench:1:Venusaur"
+              ],
+              "opponent": [
+                "opponent:bench:0:Magikarp",
+                "opponent:bench:1:Raichu"
+              ]
+            },
+            "active_stable_keys": {
+              "player": [
+                "player:slot:0:Pelipper",
+                "player:slot:1:Snorlax"
+              ],
+              "opponent": [
+                "opponent:slot:0:Archaludon",
+                "opponent:slot:1:Weezing"
+              ]
+            },
+            "bench_stable_keys": {
+              "player": [
+                "player:slot:2:Pikachu",
+                "player:slot:3:Venusaur"
+              ],
+              "opponent": [
+                "opponent:slot:2:Magikarp",
+                "opponent:slot:3:Raichu"
+              ]
+            },
+            "hp_pct": {
+              "player:active:0:Pelipper": 1,
+              "player:active:1:Snorlax": 1,
+              "player:bench:0:Pikachu": 1,
+              "player:bench:1:Venusaur": 1,
+              "opponent:active:0:Archaludon": 1,
+              "opponent:active:1:Weezing": 0.007,
+              "opponent:bench:0:Magikarp": 1,
+              "opponent:bench:1:Raichu": 1
+            },
+            "hp_pct_stable": {
+              "player:slot:0:Pelipper": 1,
+              "player:slot:1:Snorlax": 1,
+              "player:slot:2:Pikachu": 1,
+              "player:slot:3:Venusaur": 1,
+              "opponent:slot:0:Archaludon": 1,
+              "opponent:slot:1:Weezing": 0.007,
+              "opponent:slot:2:Magikarp": 1,
+              "opponent:slot:3:Raichu": 1
+            },
+            "score_state": {
+              "player": {
+                "active": [
+                  "Pelipper",
+                  "Snorlax"
+                ],
+                "bench": [
+                  "Pikachu",
+                  "Venusaur"
+                ],
+                "active_keys": [
+                  "player:active:0:Pelipper",
+                  "player:active:1:Snorlax"
+                ],
+                "bench_keys": [
+                  "player:bench:0:Pikachu",
+                  "player:bench:1:Venusaur"
+                ],
+                "active_stable_keys": [
+                  "player:slot:0:Pelipper",
+                  "player:slot:1:Snorlax"
+                ],
+                "bench_stable_keys": [
+                  "player:slot:2:Pikachu",
+                  "player:slot:3:Venusaur"
+                ],
+                "alive_count": 4,
+                "hp_total": 4,
+                "max_count": 4
+              },
+              "opponent": {
+                "active": [
+                  "Archaludon",
+                  "Weezing"
+                ],
+                "bench": [
+                  "Magikarp",
+                  "Raichu"
+                ],
+                "active_keys": [
+                  "opponent:active:0:Archaludon",
+                  "opponent:active:1:Weezing"
+                ],
+                "bench_keys": [
+                  "opponent:bench:0:Magikarp",
+                  "opponent:bench:1:Raichu"
+                ],
+                "active_stable_keys": [
+                  "opponent:slot:0:Archaludon",
+                  "opponent:slot:1:Weezing"
+                ],
+                "bench_stable_keys": [
+                  "opponent:slot:2:Magikarp",
+                  "opponent:slot:3:Raichu"
+                ],
+                "alive_count": 4,
+                "hp_total": 3.007142857142857,
+                "max_count": 4
+              }
+            },
+            "roster": {
+              "player": [
+                {
+                  "key": "player:active:0:Pelipper",
+                  "stableKey": "player:slot:0:Pelipper",
+                  "teamSlot": 0,
+                  "zone": "active",
+                  "zoneIndex": 0,
+                  "side": "player",
+                  "status": "active",
+                  "displayName": "Pelipper",
+                  "species": "Pelipper",
+                  "types": [
+                    "Water",
+                    "Flying"
+                  ],
+                  "hp": 100,
+                  "hp_current": 135,
+                  "substitute_hp": 0,
+                  "perish_song_turns": 0,
+                  "hp_max": 135,
+                  "hpLabel": "100%",
+                  "level": 50,
+                  "item": "",
+                  "itemConsumed": false,
+                  "electric_charge": false,
+                  "mc_syrup_turns": 0,
+                  "mc_trap_turns": 0,
+                  "mc_partially_trapped": false,
+                  "ability": "Drizzle",
+                  "moves": [
+                    "Splash",
+                    "Psychic"
+                  ],
+                  "move_pp": {
+                    "Splash": {
+                      "current": 20,
+                      "max": 20
+                    },
+                    "Psychic": {
+                      "current": 12,
+                      "max": 12
+                    }
+                  },
+                  "baseStatsLabel": "60/50/100/95/70/65",
+                  "calculatedStats": "135/70/120/115/90/85"
+                },
+                {
+                  "key": "player:active:1:Snorlax",
+                  "stableKey": "player:slot:1:Snorlax",
+                  "teamSlot": 1,
+                  "zone": "active",
+                  "zoneIndex": 1,
+                  "side": "player",
+                  "status": "active",
+                  "displayName": "Snorlax",
+                  "species": "Snorlax",
+                  "types": [
+                    "Normal"
+                  ],
+                  "hp": 100,
+                  "hp_current": 235,
+                  "substitute_hp": 0,
+                  "perish_song_turns": 0,
+                  "hp_max": 235,
+                  "hpLabel": "100%",
+                  "level": 50,
+                  "item": "",
+                  "itemConsumed": false,
+                  "electric_charge": false,
+                  "mc_syrup_turns": 0,
+                  "mc_trap_turns": 0,
+                  "mc_partially_trapped": false,
+                  "ability": "Immunity",
+                  "moves": [
+                    "Splash"
+                  ],
+                  "move_pp": {
+                    "Splash": {
+                      "current": 20,
+                      "max": 20
+                    }
+                  },
+                  "baseStatsLabel": "160/110/65/65/110/30",
+                  "calculatedStats": "235/130/85/85/130/50"
+                },
+                {
+                  "key": "player:bench:0:Pikachu",
+                  "stableKey": "player:slot:2:Pikachu",
+                  "teamSlot": 2,
+                  "zone": "bench",
+                  "zoneIndex": 0,
+                  "side": "player",
+                  "status": "bench",
+                  "displayName": "Pikachu",
+                  "species": "Pikachu",
+                  "types": [
+                    "Electric"
+                  ],
+                  "hp": 100,
+                  "hp_current": 110,
+                  "substitute_hp": 0,
+                  "perish_song_turns": 0,
+                  "hp_max": 110,
+                  "hpLabel": "100%",
+                  "level": 50,
+                  "item": "",
+                  "itemConsumed": false,
+                  "electric_charge": false,
+                  "mc_syrup_turns": 0,
+                  "mc_trap_turns": 0,
+                  "mc_partially_trapped": false,
+                  "ability": "Static",
+                  "moves": [
+                    "Splash"
+                  ],
+                  "move_pp": {
+                    "Splash": {
+                      "current": 20,
+                      "max": 20
+                    }
+                  },
+                  "baseStatsLabel": "35/55/40/50/50/90",
+                  "calculatedStats": "110/75/60/70/70/110"
+                },
+                {
+                  "key": "player:bench:1:Venusaur",
+                  "stableKey": "player:slot:3:Venusaur",
+                  "teamSlot": 3,
+                  "zone": "bench",
+                  "zoneIndex": 1,
+                  "side": "player",
+                  "status": "bench",
+                  "displayName": "Venusaur",
+                  "species": "Venusaur",
+                  "types": [
+                    "Grass",
+                    "Poison"
+                  ],
+                  "hp": 100,
+                  "hp_current": 155,
+                  "substitute_hp": 0,
+                  "perish_song_turns": 0,
+                  "hp_max": 155,
+                  "hpLabel": "100%",
+                  "level": 50,
+                  "item": "",
+                  "itemConsumed": false,
+                  "electric_charge": false,
+                  "mc_syrup_turns": 0,
+                  "mc_trap_turns": 0,
+                  "mc_partially_trapped": false,
+                  "ability": "Overgrow",
+                  "moves": [
+                    "Splash"
+                  ],
+                  "move_pp": {
+                    "Splash": {
+                      "current": 20,
+                      "max": 20
+                    }
+                  },
+                  "baseStatsLabel": "80/82/83/100/100/80",
+                  "calculatedStats": "155/102/103/120/120/100"
+                }
+              ],
+              "opponent": [
+                {
+                  "key": "opponent:active:0:Archaludon",
+                  "stableKey": "opponent:slot:0:Archaludon",
+                  "teamSlot": 0,
+                  "zone": "active",
+                  "zoneIndex": 0,
+                  "side": "opponent",
+                  "status": "active",
+                  "displayName": "Archaludon",
+                  "species": "Archaludon",
+                  "types": [
+                    "Steel",
+                    "Dragon"
+                  ],
+                  "hp": 100,
+                  "hp_current": 165,
+                  "substitute_hp": 0,
+                  "perish_song_turns": 0,
+                  "hp_max": 165,
+                  "hpLabel": "100%",
+                  "level": 50,
+                  "item": "",
+                  "itemConsumed": false,
+                  "electric_charge": false,
+                  "mc_syrup_turns": 0,
+                  "mc_trap_turns": 0,
+                  "mc_partially_trapped": false,
+                  "ability": "Stamina",
+                  "moves": [
+                    "Electro Shot",
+                    "Splash"
+                  ],
+                  "move_pp": {
+                    "Electro Shot": {
+                      "current": 12,
+                      "max": 12
+                    },
+                    "Splash": {
+                      "current": 20,
+                      "max": 20
+                    }
+                  },
+                  "baseStatsLabel": "90/105/130/125/65/85",
+                  "calculatedStats": "165/125/150/145/85/105"
+                },
+                {
+                  "key": "opponent:active:1:Weezing",
+                  "stableKey": "opponent:slot:1:Weezing",
+                  "teamSlot": 1,
+                  "zone": "active",
+                  "zoneIndex": 1,
+                  "side": "opponent",
+                  "status": "active",
+                  "displayName": "Weezing",
+                  "species": "Weezing",
+                  "types": [
+                    "Poison"
+                  ],
+                  "hp": 1,
+                  "hp_current": 1,
+                  "substitute_hp": 0,
+                  "perish_song_turns": 0,
+                  "hp_max": 140,
+                  "hpLabel": "1%",
+                  "level": 50,
+                  "item": "",
+                  "itemConsumed": false,
+                  "electric_charge": false,
+                  "mc_syrup_turns": 0,
+                  "mc_trap_turns": 0,
+                  "mc_partially_trapped": false,
+                  "ability": "Neutralizing Gas",
+                  "moves": [
+                    "U-turn",
+                    "Splash"
+                  ],
+                  "move_pp": {
+                    "U-turn": {
+                      "current": 20,
+                      "max": 20
+                    },
+                    "Splash": {
+                      "current": 20,
+                      "max": 20
+                    }
+                  },
+                  "baseStatsLabel": "65/90/120/85/70/60",
+                  "calculatedStats": "140/110/140/105/90/80"
+                },
+                {
+                  "key": "opponent:bench:0:Magikarp",
+                  "stableKey": "opponent:slot:2:Magikarp",
+                  "teamSlot": 2,
+                  "zone": "bench",
+                  "zoneIndex": 0,
+                  "side": "opponent",
+                  "status": "bench",
+                  "displayName": "Magikarp",
+                  "species": "Magikarp",
+                  "types": [
+                    "Water"
+                  ],
+                  "hp": 100,
+                  "hp_current": 95,
+                  "substitute_hp": 0,
+                  "perish_song_turns": 0,
+                  "hp_max": 95,
+                  "hpLabel": "100%",
+                  "level": 50,
+                  "item": "",
+                  "itemConsumed": false,
+                  "electric_charge": false,
+                  "mc_syrup_turns": 0,
+                  "mc_trap_turns": 0,
+                  "mc_partially_trapped": false,
+                  "ability": "Swift Swim",
+                  "moves": [
+                    "Splash"
+                  ],
+                  "move_pp": {
+                    "Splash": {
+                      "current": 20,
+                      "max": 20
+                    }
+                  },
+                  "baseStatsLabel": "20/10/55/15/20/80",
+                  "calculatedStats": "95/30/75/35/40/100"
+                },
+                {
+                  "key": "opponent:bench:1:Raichu",
+                  "stableKey": "opponent:slot:3:Raichu",
+                  "teamSlot": 3,
+                  "zone": "bench",
+                  "zoneIndex": 1,
+                  "side": "opponent",
+                  "status": "bench",
+                  "displayName": "Raichu",
+                  "species": "Raichu",
+                  "types": [
+                    "Electric"
+                  ],
+                  "hp": 100,
+                  "hp_current": 135,
+                  "substitute_hp": 0,
+                  "perish_song_turns": 0,
+                  "hp_max": 135,
+                  "hpLabel": "100%",
+                  "level": 50,
+                  "item": "",
+                  "itemConsumed": false,
+                  "electric_charge": false,
+                  "mc_syrup_turns": 0,
+                  "mc_trap_turns": 0,
+                  "mc_partially_trapped": false,
+                  "ability": "Static",
+                  "moves": [
+                    "Splash"
+                  ],
+                  "move_pp": {
+                    "Splash": {
+                      "current": 20,
+                      "max": 20
+                    }
+                  },
+                  "baseStatsLabel": "60/90/55/90/80/110",
+                  "calculatedStats": "135/110/75/110/100/130"
+                }
+              ]
+            },
+            "status": {
+              "opponent:active:1:Weezing": "burn"
+            },
+            "status_stable": {
+              "opponent:slot:1:Weezing": "burn"
+            },
+            "stat_boosts": {},
+            "stat_boosts_stable": {},
+            "field": {
+              "weather": null,
+              "weather_turns": 0,
+              "gravity_turns": 0,
+              "terrain": null,
+              "terrain_turns": 0,
+              "trick_room": 0
+            },
+            "speed_control": {
+              "player": {
+                "tailwind_turns": 0,
+                "screens": {
+                  "reflect": 0,
+                  "light": 0,
+                  "aurora": 0
+                }
+              },
+              "opponent": {
+                "tailwind_turns": 0,
+                "screens": {
+                  "reflect": 0,
+                  "light": 0,
+                  "aurora": 0
+                }
+              }
+            },
+            "speed_order": [
+              "Archaludon",
+              "Pelipper",
+              "Weezing",
+              "Snorlax"
+            ],
+            "speed_order_keys": [
+              "opponent:active:0:Archaludon",
+              "player:active:0:Pelipper",
+              "opponent:active:1:Weezing",
+              "player:active:1:Snorlax"
+            ],
+            "speed_order_stable_keys": [
+              "opponent:slot:0:Archaludon",
+              "player:slot:0:Pelipper",
+              "opponent:slot:1:Weezing",
+              "player:slot:1:Snorlax"
+            ],
+            "speed_order_details": [
+              {
+                "side": "opponent",
+                "key": "opponent:active:0:Archaludon",
+                "stableKey": "opponent:slot:0:Archaludon",
+                "pokemon": "Archaludon",
+                "stat_format": "champions",
+                "nature": "Hardy",
+                "speed_points": 0,
+                "species_base_speed": 85,
+                "base_speed": 105,
+                "calculated_speed": 105,
+                "speed_stage": 0,
+                "effective_speed": 105,
+                "item": "",
+                "ability": "Stamina",
+                "status": "",
+                "tailwind": false,
+                "trick_room": false,
+                "weather": "none",
+                "exact_speed_tie": false
+              },
+              {
+                "side": "player",
+                "key": "player:active:0:Pelipper",
+                "stableKey": "player:slot:0:Pelipper",
+                "pokemon": "Pelipper",
+                "stat_format": "champions",
+                "nature": "Hardy",
+                "speed_points": 0,
+                "species_base_speed": 65,
+                "base_speed": 85,
+                "calculated_speed": 85,
+                "speed_stage": 0,
+                "effective_speed": 85,
+                "item": "",
+                "ability": "Drizzle",
+                "status": "",
+                "tailwind": false,
+                "trick_room": false,
+                "weather": "none",
+                "exact_speed_tie": false
+              },
+              {
+                "side": "opponent",
+                "key": "opponent:active:1:Weezing",
+                "stableKey": "opponent:slot:1:Weezing",
+                "pokemon": "Weezing",
+                "stat_format": "champions",
+                "nature": "Hardy",
+                "speed_points": 0,
+                "species_base_speed": 60,
+                "base_speed": 80,
+                "calculated_speed": 80,
+                "speed_stage": 0,
+                "effective_speed": 80,
+                "item": "",
+                "ability": "Neutralizing Gas",
+                "status": "burn",
+                "tailwind": false,
+                "trick_room": false,
+                "weather": "none",
+                "exact_speed_tie": false
+              },
+              {
+                "side": "player",
+                "key": "player:active:1:Snorlax",
+                "stableKey": "player:slot:1:Snorlax",
+                "pokemon": "Snorlax",
+                "stat_format": "champions",
+                "nature": "Hardy",
+                "speed_points": 0,
+                "species_base_speed": 30,
+                "base_speed": 50,
+                "calculated_speed": 50,
+                "speed_stage": 0,
+                "effective_speed": 50,
+                "item": "",
+                "ability": "Immunity",
+                "status": "",
+                "tailwind": false,
+                "trick_room": false,
+                "weather": "none",
+                "exact_speed_tie": false
+              }
+            ],
+            "legal_options": {
+              "Pelipper": [
+                "Splash -> Archaludon",
+                "Psychic -> Archaludon"
+              ],
+              "Snorlax": [
+                "Splash -> Archaludon"
+              ]
+            },
+            "position_score": 0.535,
+            "win_probability": null
+          },
+          "actions": {
+            "player": [
+              {
+                "actor": "Pelipper",
+                "actor_key": "player:slot:0:Pelipper",
+                "kind": "move",
+                "move": "Splash",
+                "target": "Archaludon",
+                "target_key": "opponent:slot:0:Archaludon",
+                "target_side": "opponent"
+              },
+              {
+                "actor": "Snorlax",
+                "actor_key": "player:slot:1:Snorlax",
+                "kind": "move",
+                "move": "Splash",
+                "target": "Archaludon",
+                "target_key": "opponent:slot:0:Archaludon",
+                "target_side": "opponent"
+              }
+            ],
+            "opponent": [
+              {
+                "actor": "Archaludon",
+                "actor_key": "opponent:slot:0:Archaludon",
+                "kind": "move",
+                "move": "Electro Shot",
+                "target": "Pelipper",
+                "target_key": "player:slot:0:Pelipper",
+                "target_side": "player"
+              },
+              {
+                "actor": "Weezing",
+                "actor_key": "opponent:slot:1:Weezing",
+                "kind": "move",
+                "move": "Splash",
+                "target": "Snorlax",
+                "target_key": "player:slot:1:Snorlax",
+                "target_side": "player"
+              }
+            ]
+          },
+          "events": [
+            {
+              "type": "log",
+              "text": "Archaludon's Special Attack rose!"
+            },
+            {
+              "type": "log",
+              "text": "Archaludon used Electro Shot!",
+              "actor": "Archaludon",
+              "actor_key": "opponent:slot:0:Archaludon",
+              "side": "opponent",
+              "move": "Electro Shot",
+              "target": "Pelipper",
+              "target_key": "player:slot:0:Pelipper",
+              "target_side": "player",
+              "log_index": 1,
+              "called_by": null
+            },
+            {
+              "type": "log",
+              "text": "Archaludon began charging Electro Shot!"
+            },
+            {
+              "type": "log",
+              "text": "Pelipper used Splash!",
+              "actor": "Pelipper",
+              "actor_key": "player:slot:0:Pelipper",
+              "side": "player",
+              "move": "Splash",
+              "target": "Archaludon",
+              "target_key": "opponent:slot:0:Archaludon",
+              "target_side": "opponent",
+              "log_index": 3,
+              "called_by": null
+            },
+            {
+              "type": "log",
+              "text": "Splash had no effect on Archaludon!"
+            },
+            {
+              "type": "log",
+              "text": "Weezing used Splash!",
+              "actor": "Weezing",
+              "actor_key": "opponent:slot:1:Weezing",
+              "side": "opponent",
+              "move": "Splash",
+              "target": "Snorlax",
+              "target_key": "player:slot:1:Snorlax",
+              "target_side": "player",
+              "log_index": 5,
+              "called_by": null
+            },
+            {
+              "type": "log",
+              "text": "Splash had no effect on Snorlax!"
+            },
+            {
+              "type": "log",
+              "text": "Snorlax used Splash!",
+              "actor": "Snorlax",
+              "actor_key": "player:slot:1:Snorlax",
+              "side": "player",
+              "move": "Splash",
+              "target": "Archaludon",
+              "target_key": "opponent:slot:0:Archaludon",
+              "target_side": "opponent",
+              "log_index": 7,
+              "called_by": null
+            },
+            {
+              "type": "log",
+              "text": "Splash had no effect on Archaludon!"
+            },
+            {
+              "type": "damage",
+              "text": "Weezing is hurt by its burn! [8 dmg]"
+            },
+            {
+              "type": "ko",
+              "text": "Weezing fainted!"
+            },
+            {
+              "type": "log",
+              "text": "Pelipper's Drizzle summoned rain!"
+            },
+            {
+              "type": "log",
+              "text": "Magikarp was sent out!"
+            }
+          ],
+          "damage_events": [],
+          "effect_events": [
+            {
+              "actor": "Weezing",
+              "actor_key": "opponent:slot:1:Weezing",
+              "side": "opponent",
+              "move": "Burn",
+              "effect_kind": "status-damage",
+              "hp_before": 1,
+              "hp_after": 0,
+              "hp_delta": -1,
+              "max_hp": 140,
+              "source": "engine status rule",
+              "move_context": "",
+              "rule": {
+                "numerator": 1,
+                "denominator": 16,
+                "basis": "max_hp",
+                "rounding": "down"
+              },
+              "damage_applied": 1
+            }
+          ],
+          "post": {
+            "active": {
+              "player": [
+                "Pelipper",
+                "Snorlax"
+              ],
+              "opponent": [
+                "Archaludon",
+                "Magikarp"
+              ]
+            },
+            "bench": {
+              "player": [
+                "Pikachu",
+                "Venusaur"
+              ],
+              "opponent": [
+                "Raichu"
+              ]
+            },
+            "active_keys": {
+              "player": [
+                "player:active:0:Pelipper",
+                "player:active:1:Snorlax"
+              ],
+              "opponent": [
+                "opponent:active:0:Archaludon",
+                "opponent:active:1:Magikarp"
+              ]
+            },
+            "bench_keys": {
+              "player": [
+                "player:bench:0:Pikachu",
+                "player:bench:1:Venusaur"
+              ],
+              "opponent": [
+                "opponent:bench:0:Raichu"
+              ]
+            },
+            "active_stable_keys": {
+              "player": [
+                "player:slot:0:Pelipper",
+                "player:slot:1:Snorlax"
+              ],
+              "opponent": [
+                "opponent:slot:0:Archaludon",
+                "opponent:slot:2:Magikarp"
+              ]
+            },
+            "bench_stable_keys": {
+              "player": [
+                "player:slot:2:Pikachu",
+                "player:slot:3:Venusaur"
+              ],
+              "opponent": [
+                "opponent:slot:3:Raichu"
+              ]
+            },
+            "hp_pct": {
+              "player:active:0:Pelipper": 1,
+              "player:active:1:Snorlax": 1,
+              "player:bench:0:Pikachu": 1,
+              "player:bench:1:Venusaur": 1,
+              "opponent:active:0:Archaludon": 1,
+              "opponent:active:1:Magikarp": 1,
+              "opponent:bench:0:Raichu": 1
+            },
+            "hp_pct_stable": {
+              "player:slot:0:Pelipper": 1,
+              "player:slot:1:Snorlax": 1,
+              "player:slot:2:Pikachu": 1,
+              "player:slot:3:Venusaur": 1,
+              "opponent:slot:0:Archaludon": 1,
+              "opponent:slot:2:Magikarp": 1,
+              "opponent:slot:3:Raichu": 1
+            },
+            "score_state": {
+              "player": {
+                "active": [
+                  "Pelipper",
+                  "Snorlax"
+                ],
+                "bench": [
+                  "Pikachu",
+                  "Venusaur"
+                ],
+                "active_keys": [
+                  "player:active:0:Pelipper",
+                  "player:active:1:Snorlax"
+                ],
+                "bench_keys": [
+                  "player:bench:0:Pikachu",
+                  "player:bench:1:Venusaur"
+                ],
+                "active_stable_keys": [
+                  "player:slot:0:Pelipper",
+                  "player:slot:1:Snorlax"
+                ],
+                "bench_stable_keys": [
+                  "player:slot:2:Pikachu",
+                  "player:slot:3:Venusaur"
+                ],
+                "alive_count": 4,
+                "hp_total": 4,
+                "max_count": 4
+              },
+              "opponent": {
+                "active": [
+                  "Archaludon",
+                  "Magikarp"
+                ],
+                "bench": [
+                  "Raichu"
+                ],
+                "active_keys": [
+                  "opponent:active:0:Archaludon",
+                  "opponent:active:1:Magikarp"
+                ],
+                "bench_keys": [
+                  "opponent:bench:0:Raichu"
+                ],
+                "active_stable_keys": [
+                  "opponent:slot:0:Archaludon",
+                  "opponent:slot:2:Magikarp"
+                ],
+                "bench_stable_keys": [
+                  "opponent:slot:3:Raichu"
+                ],
+                "alive_count": 3,
+                "hp_total": 3,
+                "max_count": 3
+              }
+            },
+            "roster": {
+              "player": [
+                {
+                  "key": "player:active:0:Pelipper",
+                  "stableKey": "player:slot:0:Pelipper",
+                  "teamSlot": 0,
+                  "zone": "active",
+                  "zoneIndex": 0,
+                  "side": "player",
+                  "status": "active",
+                  "displayName": "Pelipper",
+                  "species": "Pelipper",
+                  "types": [
+                    "Water",
+                    "Flying"
+                  ],
+                  "hp": 100,
+                  "hp_current": 135,
+                  "substitute_hp": 0,
+                  "perish_song_turns": 0,
+                  "hp_max": 135,
+                  "hpLabel": "100%",
+                  "level": 50,
+                  "item": "",
+                  "itemConsumed": false,
+                  "electric_charge": false,
+                  "mc_syrup_turns": 0,
+                  "mc_trap_turns": 0,
+                  "mc_partially_trapped": false,
+                  "ability": "Drizzle",
+                  "moves": [
+                    "Splash",
+                    "Psychic"
+                  ],
+                  "move_pp": {
+                    "Splash": {
+                      "current": 19,
+                      "max": 20
+                    },
+                    "Psychic": {
+                      "current": 12,
+                      "max": 12
+                    }
+                  },
+                  "baseStatsLabel": "60/50/100/95/70/65",
+                  "calculatedStats": "135/70/120/115/90/85"
+                },
+                {
+                  "key": "player:active:1:Snorlax",
+                  "stableKey": "player:slot:1:Snorlax",
+                  "teamSlot": 1,
+                  "zone": "active",
+                  "zoneIndex": 1,
+                  "side": "player",
+                  "status": "active",
+                  "displayName": "Snorlax",
+                  "species": "Snorlax",
+                  "types": [
+                    "Normal"
+                  ],
+                  "hp": 100,
+                  "hp_current": 235,
+                  "substitute_hp": 0,
+                  "perish_song_turns": 0,
+                  "hp_max": 235,
+                  "hpLabel": "100%",
+                  "level": 50,
+                  "item": "",
+                  "itemConsumed": false,
+                  "electric_charge": false,
+                  "mc_syrup_turns": 0,
+                  "mc_trap_turns": 0,
+                  "mc_partially_trapped": false,
+                  "ability": "Immunity",
+                  "moves": [
+                    "Splash"
+                  ],
+                  "move_pp": {
+                    "Splash": {
+                      "current": 19,
+                      "max": 20
+                    }
+                  },
+                  "baseStatsLabel": "160/110/65/65/110/30",
+                  "calculatedStats": "235/130/85/85/130/50"
+                },
+                {
+                  "key": "player:bench:0:Pikachu",
+                  "stableKey": "player:slot:2:Pikachu",
+                  "teamSlot": 2,
+                  "zone": "bench",
+                  "zoneIndex": 0,
+                  "side": "player",
+                  "status": "bench",
+                  "displayName": "Pikachu",
+                  "species": "Pikachu",
+                  "types": [
+                    "Electric"
+                  ],
+                  "hp": 100,
+                  "hp_current": 110,
+                  "substitute_hp": 0,
+                  "perish_song_turns": 0,
+                  "hp_max": 110,
+                  "hpLabel": "100%",
+                  "level": 50,
+                  "item": "",
+                  "itemConsumed": false,
+                  "electric_charge": false,
+                  "mc_syrup_turns": 0,
+                  "mc_trap_turns": 0,
+                  "mc_partially_trapped": false,
+                  "ability": "Static",
+                  "moves": [
+                    "Splash"
+                  ],
+                  "move_pp": {
+                    "Splash": {
+                      "current": 20,
+                      "max": 20
+                    }
+                  },
+                  "baseStatsLabel": "35/55/40/50/50/90",
+                  "calculatedStats": "110/75/60/70/70/110"
+                },
+                {
+                  "key": "player:bench:1:Venusaur",
+                  "stableKey": "player:slot:3:Venusaur",
+                  "teamSlot": 3,
+                  "zone": "bench",
+                  "zoneIndex": 1,
+                  "side": "player",
+                  "status": "bench",
+                  "displayName": "Venusaur",
+                  "species": "Venusaur",
+                  "types": [
+                    "Grass",
+                    "Poison"
+                  ],
+                  "hp": 100,
+                  "hp_current": 155,
+                  "substitute_hp": 0,
+                  "perish_song_turns": 0,
+                  "hp_max": 155,
+                  "hpLabel": "100%",
+                  "level": 50,
+                  "item": "",
+                  "itemConsumed": false,
+                  "electric_charge": false,
+                  "mc_syrup_turns": 0,
+                  "mc_trap_turns": 0,
+                  "mc_partially_trapped": false,
+                  "ability": "Overgrow",
+                  "moves": [
+                    "Splash"
+                  ],
+                  "move_pp": {
+                    "Splash": {
+                      "current": 20,
+                      "max": 20
+                    }
+                  },
+                  "baseStatsLabel": "80/82/83/100/100/80",
+                  "calculatedStats": "155/102/103/120/120/100"
+                }
+              ],
+              "opponent": [
+                {
+                  "key": "opponent:active:0:Archaludon",
+                  "stableKey": "opponent:slot:0:Archaludon",
+                  "teamSlot": 0,
+                  "zone": "active",
+                  "zoneIndex": 0,
+                  "side": "opponent",
+                  "status": "active",
+                  "displayName": "Archaludon",
+                  "species": "Archaludon",
+                  "types": [
+                    "Steel",
+                    "Dragon"
+                  ],
+                  "hp": 100,
+                  "hp_current": 165,
+                  "substitute_hp": 0,
+                  "perish_song_turns": 0,
+                  "hp_max": 165,
+                  "hpLabel": "100%",
+                  "level": 50,
+                  "item": "",
+                  "itemConsumed": false,
+                  "electric_charge": false,
+                  "mc_syrup_turns": 0,
+                  "mc_trap_turns": 0,
+                  "mc_partially_trapped": false,
+                  "ability": "Stamina",
+                  "moves": [
+                    "Electro Shot",
+                    "Splash"
+                  ],
+                  "move_pp": {
+                    "Electro Shot": {
+                      "current": 11,
+                      "max": 12
+                    },
+                    "Splash": {
+                      "current": 20,
+                      "max": 20
+                    }
+                  },
+                  "baseStatsLabel": "90/105/130/125/65/85",
+                  "calculatedStats": "165/125/150/145/85/105"
+                },
+                {
+                  "key": "opponent:fainted:1:Weezing",
+                  "stableKey": "opponent:slot:1:Weezing",
+                  "teamSlot": 1,
+                  "zone": "fainted",
+                  "zoneIndex": 1,
+                  "side": "opponent",
+                  "status": "fainted",
+                  "displayName": "Weezing",
+                  "species": "Weezing",
+                  "types": [
+                    "Poison"
+                  ],
+                  "hp": 0,
+                  "hp_current": 0,
+                  "substitute_hp": 0,
+                  "perish_song_turns": 0,
+                  "hp_max": 140,
+                  "hpLabel": "0%",
+                  "level": 50,
+                  "item": "",
+                  "itemConsumed": false,
+                  "electric_charge": false,
+                  "mc_syrup_turns": 0,
+                  "mc_trap_turns": 0,
+                  "mc_partially_trapped": false,
+                  "ability": "Neutralizing Gas",
+                  "moves": [
+                    "U-turn",
+                    "Splash"
+                  ],
+                  "move_pp": {
+                    "U-turn": {
+                      "current": 20,
+                      "max": 20
+                    },
+                    "Splash": {
+                      "current": 19,
+                      "max": 20
+                    }
+                  },
+                  "baseStatsLabel": "65/90/120/85/70/60",
+                  "calculatedStats": "140/110/140/105/90/80"
+                },
+                {
+                  "key": "opponent:active:1:Magikarp",
+                  "stableKey": "opponent:slot:2:Magikarp",
+                  "teamSlot": 2,
+                  "zone": "active",
+                  "zoneIndex": 1,
+                  "side": "opponent",
+                  "status": "active",
+                  "displayName": "Magikarp",
+                  "species": "Magikarp",
+                  "types": [
+                    "Water"
+                  ],
+                  "hp": 100,
+                  "hp_current": 95,
+                  "substitute_hp": 0,
+                  "perish_song_turns": 0,
+                  "hp_max": 95,
+                  "hpLabel": "100%",
+                  "level": 50,
+                  "item": "",
+                  "itemConsumed": false,
+                  "electric_charge": false,
+                  "mc_syrup_turns": 0,
+                  "mc_trap_turns": 0,
+                  "mc_partially_trapped": false,
+                  "ability": "Swift Swim",
+                  "moves": [
+                    "Splash"
+                  ],
+                  "move_pp": {
+                    "Splash": {
+                      "current": 20,
+                      "max": 20
+                    }
+                  },
+                  "baseStatsLabel": "20/10/55/15/20/80",
+                  "calculatedStats": "95/30/75/35/40/100"
+                },
+                {
+                  "key": "opponent:bench:0:Raichu",
+                  "stableKey": "opponent:slot:3:Raichu",
+                  "teamSlot": 3,
+                  "zone": "bench",
+                  "zoneIndex": 0,
+                  "side": "opponent",
+                  "status": "bench",
+                  "displayName": "Raichu",
+                  "species": "Raichu",
+                  "types": [
+                    "Electric"
+                  ],
+                  "hp": 100,
+                  "hp_current": 135,
+                  "substitute_hp": 0,
+                  "perish_song_turns": 0,
+                  "hp_max": 135,
+                  "hpLabel": "100%",
+                  "level": 50,
+                  "item": "",
+                  "itemConsumed": false,
+                  "electric_charge": false,
+                  "mc_syrup_turns": 0,
+                  "mc_trap_turns": 0,
+                  "mc_partially_trapped": false,
+                  "ability": "Static",
+                  "moves": [
+                    "Splash"
+                  ],
+                  "move_pp": {
+                    "Splash": {
+                      "current": 20,
+                      "max": 20
+                    }
+                  },
+                  "baseStatsLabel": "60/90/55/90/80/110",
+                  "calculatedStats": "135/110/75/110/100/130"
+                }
+              ]
+            },
+            "status": {},
+            "status_stable": {},
+            "stat_boosts": {
+              "opponent:active:0:Archaludon": {
+                "atk": 0,
+                "def": 0,
+                "spa": 1,
+                "spd": 0,
+                "spe": 0,
+                "acc": 0,
+                "eva": 0
+              }
+            },
+            "stat_boosts_stable": {
+              "opponent:slot:0:Archaludon": {
+                "atk": 0,
+                "def": 0,
+                "spa": 1,
+                "spd": 0,
+                "spe": 0,
+                "acc": 0,
+                "eva": 0
+              }
+            },
+            "field": {
+              "weather": "rain",
+              "weather_turns": 5,
+              "gravity_turns": 0,
+              "terrain": null,
+              "terrain_turns": 0,
+              "trick_room": 0
+            },
+            "speed_control": {
+              "player": {
+                "tailwind_turns": 0,
+                "screens": {
+                  "reflect": 0,
+                  "light": 0,
+                  "aurora": 0
+                }
+              },
+              "opponent": {
+                "tailwind_turns": 0,
+                "screens": {
+                  "reflect": 0,
+                  "light": 0,
+                  "aurora": 0
+                }
+              }
+            },
+            "speed_order": [
+              "Magikarp",
+              "Archaludon",
+              "Pelipper",
+              "Snorlax"
+            ],
+            "speed_order_keys": [
+              "opponent:active:1:Magikarp",
+              "opponent:active:0:Archaludon",
+              "player:active:0:Pelipper",
+              "player:active:1:Snorlax"
+            ],
+            "speed_order_stable_keys": [
+              "opponent:slot:2:Magikarp",
+              "opponent:slot:0:Archaludon",
+              "player:slot:0:Pelipper",
+              "player:slot:1:Snorlax"
+            ],
+            "speed_order_details": [
+              {
+                "side": "opponent",
+                "key": "opponent:active:1:Magikarp",
+                "stableKey": "opponent:slot:2:Magikarp",
+                "pokemon": "Magikarp",
+                "stat_format": "champions",
+                "nature": "Hardy",
+                "speed_points": 0,
+                "species_base_speed": 80,
+                "base_speed": 100,
+                "calculated_speed": 100,
+                "speed_stage": 0,
+                "effective_speed": 200,
+                "item": "",
+                "ability": "Swift Swim",
+                "status": "",
+                "tailwind": false,
+                "trick_room": false,
+                "weather": "rain",
+                "exact_speed_tie": false
+              },
+              {
+                "side": "opponent",
+                "key": "opponent:active:0:Archaludon",
+                "stableKey": "opponent:slot:0:Archaludon",
+                "pokemon": "Archaludon",
+                "stat_format": "champions",
+                "nature": "Hardy",
+                "speed_points": 0,
+                "species_base_speed": 85,
+                "base_speed": 105,
+                "calculated_speed": 105,
+                "speed_stage": 0,
+                "effective_speed": 105,
+                "item": "",
+                "ability": "Stamina",
+                "status": "",
+                "tailwind": false,
+                "trick_room": false,
+                "weather": "rain",
+                "exact_speed_tie": false
+              },
+              {
+                "side": "player",
+                "key": "player:active:0:Pelipper",
+                "stableKey": "player:slot:0:Pelipper",
+                "pokemon": "Pelipper",
+                "stat_format": "champions",
+                "nature": "Hardy",
+                "speed_points": 0,
+                "species_base_speed": 65,
+                "base_speed": 85,
+                "calculated_speed": 85,
+                "speed_stage": 0,
+                "effective_speed": 85,
+                "item": "",
+                "ability": "Drizzle",
+                "status": "",
+                "tailwind": false,
+                "trick_room": false,
+                "weather": "rain",
+                "exact_speed_tie": false
+              },
+              {
+                "side": "player",
+                "key": "player:active:1:Snorlax",
+                "stableKey": "player:slot:1:Snorlax",
+                "pokemon": "Snorlax",
+                "stat_format": "champions",
+                "nature": "Hardy",
+                "speed_points": 0,
+                "species_base_speed": 30,
+                "base_speed": 50,
+                "calculated_speed": 50,
+                "speed_stage": 0,
+                "effective_speed": 50,
+                "item": "",
+                "ability": "Immunity",
+                "status": "",
+                "tailwind": false,
+                "trick_room": false,
+                "weather": "rain",
+                "exact_speed_tie": false
+              }
+            ],
+            "legal_options": {},
+            "position_score": 0.573,
+            "win_probability": null
+          },
+          "delta": {
+            "position_score": 0.038,
+            "win_probability": null,
+            "primary_cause": "position_improved",
+            "explanation": ""
+          }
+        }
+      ]
+    }
+  ]
+}

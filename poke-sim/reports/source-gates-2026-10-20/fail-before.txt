@@ -1,0 +1,48 @@
+Γ£û aggregate identity binds owning tests, runners, fixtures, DB inputs and discovery additions/removals (7.7999ms)
+Γ£û blocked or unidentified roster fragments retain baseline and incomplete required health (16.079ms)
+Γ£ö notice and Nintendo heading changes are observed without turning mentions into rules (2.9013ms)
+Γ£ö official grid changes are detected even when visible text is unchanged (1.0201ms)
+Γ£ö missing, duplicate, unknown flag and executable roster payloads fail closed (0.971ms)
+Γ£ö surrounding rules remain bound and cross-host roster redirects fail (1.3539ms)
+Γ£ö registered official hosts fetch but unknown redirects and lookalikes never fetch (0.7762ms)
+Γ£ö roster fetch failure retains prior facts and recovery detects removal without promotion (1.6176ms)
+Γä╣ tests 8
+Γä╣ suites 0
+Γä╣ pass 6
+Γä╣ fail 2
+Γä╣ cancelled 0
+Γä╣ skipped 0
+Γä╣ todo 0
+Γä╣ duration_ms 338.8295
+
+Γ£û failing tests:
+
+test at ..\official-watch-clean\poke-sim\tests\lifecycle_inventory_tests.mjs:8:1
+Γ£û aggregate identity binds owning tests, runners, fixtures, DB inputs and discovery additions/removals (7.7999ms)
+  AssertionError [ERR_ASSERTION]: Added input tests/charge_herb_suppression_tests.mjs
+      at TestContext.<anonymous> (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-14/task-2/official-watch-clean/poke-sim/tests/lifecycle_inventory_tests.mjs:14:110)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1201:25)
+      at Test.start (node:internal/test_runner/test:1096:17)
+      at startSubtestAfterBootstrap (node:internal/test_runner/harness:385:17) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: '698339e486daf79d70ec2a6f7d93f7c17b3312806ea15ddb224db50d9658353f',
+    expected: '698339e486daf79d70ec2a6f7d93f7c17b3312806ea15ddb224db50d9658353f',
+    operator: 'notStrictEqual',
+    diff: 'simple'
+  }
+
+test at ..\official-watch-clean\poke-sim\tests\official_source_watch_tests.mjs:14:1
+Γ£û blocked or unidentified roster fragments retain baseline and incomplete required health (16.079ms)
+  AssertionError [ERR_ASSERTION]: Missing expected exception.
+      at TestContext.<anonymous> (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-14/task-2/official-watch-clean/poke-sim/tests/official_source_watch_tests.mjs:24:12)
+      at async Test.run (node:internal/test_runner/test:1208:7)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:385:3) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: undefined,
+    expected: /challenge|identity/,
+    operator: 'throws',
+    diff: 'simple'
+  }

@@ -1,0 +1,93 @@
+Γ£ö six captured assertions remain historical passes without client promotion (2757.3649ms)
+Γ£ö Fly implementation invalidates all six earlier current assertions (2185.866ms)
+Γ£ö real engine change invalidates: engine.js (2283.12ms)
+Γ£ö real engine change invalidates: outcome_policy.js (2248.2271ms)
+Γ£ö real engine change invalidates: rulesets.js (2219.1686ms)
+Γ£ö real engine change invalidates: move_legality.js (2230.2826ms)
+Γ£ö real engine change invalidates: mc_review.js (2192.7859ms)
+Γ£ö real engine change invalidates: legality.js (2159.2056ms)
+Γ£ö real data change invalidates: data.js (2129.0882ms)
+Γ£ö real data change invalidates: runtime_data.js (1946.4264ms)
+Γ£ö real data change invalidates: generated/pokemon_showdown_legal_data.js (1659.8168ms)
+Γ£ö real data change invalidates: generated/pokemon_showdown_species_weights.js (1867.1534ms)
+Γ£ö real data change invalidates: generated/champions_move_overrides.js (1908.4582ms)
+Γ£ö real data change invalidates: generated/champions_move_pools.js (2062.8565ms)
+Γ£ö real data change invalidates: generated/mc_review_reference.js (1828.9688ms)
+Γ£ö real data change invalidates: package-lock.json (1837.4642ms)
+Γ£ö real data change invalidates: source/bounded-assertions/reference-target.json (1856.3096ms)
+Γ£ö real runner change invalidates: tools/bounded-runtime-capture.mjs (1867.0721ms)
+Γ£ö real runner change invalidates: tools/showdown-reference.mjs (1859.0956ms)
+Γ£ö real runner change invalidates: tools/prepare-mc-reference-candidate.mjs (1865.6946ms)
+Γ£ö real test change invalidates: tests/fixtures/bounded_runtime_cases.mjs (1878.8935ms)
+Γ£ö real checker change invalidates: tools/bounded-assertions.mjs (2008.6824ms)
+Γ£ö real checker change invalidates: tools/bounded-register.mjs (2141.7951ms)
+Γ£ö real checker change invalidates: tools/current-bounded-core.mjs (2194.3995ms)
+Γ£ö real checker change invalidates: tools/regulation-watch-core.mjs (2375.5094ms)
+Γ£ö documentation-only Git commit changes HEAD but not dependency identity (1115.0756ms)
+Γ£ö wrong item label (495.3134ms)
+Γ£ö wrong move label (456.0158ms)
+Γ£ö missing review (482.0573ms)
+Γ£ö future capture time (421.4731ms)
+Γ£ö missing dependency (416.2498ms)
+Γ£ö scope promotion (439.4876ms)
+Γ£ö changing a pinned review without changing its anchor rejects (472.175ms)
+Γ£ö missing per-case review (447.8672ms)
+Γ£ö duplicate review case (410.1721ms)
+Γ£ö wrong independently observed value (407.0484ms)
+Γ£ö opaque execution attachments (404.3298ms)
+Γ£ö Fly receipt binds executed source, bounded fields and retained gaps (532.915ms)
+Γ£ö v2 evidence preserves causal confusion and partial charge outcomes (0.5215ms)
+Γ£ö original v1 source bindings remain archived with confusion coverage correction (46.7373ms)
+Γ£ö checked-in canonical current/history exports are refreshed (3825.3397ms)
+Γ£ö new reviewed rerun becomes dated current and preserves prior stale record (0.2209ms)
+Γ£ö stale never checked (0.0987ms)
+Γ£ö failed never checked (0.0829ms)
+Γ£ö blocked never checked (0.0933ms)
+Γ£ö missing independent evidence cannot yield green (0.6507ms)
+Γ£ö skipped refresh is rejected (2217.2001ms)
+Γ£ö changed runtime cannot retain stale green export (1187.8546ms)
+Γ£ö missing receipt fails closed (1126.4952ms)
+Γ£ö failed capture persists blocked attempt instead of old green (10.2379ms)
+Γ£ö exact validated checkpoint never means merged/deployed/competitive (0.3322ms)
+Γ£ö source change blocks prior completed status (0.1388ms)
+Γ£ö publication wrong commit rejects (0.4013ms)
+Γ£ö hosted wrong commit rejects (0.1027ms)
+Γ£ö failed CI and missing hosted job cannot complete (0.1559ms)
+Γ£ö unsupported deployment promotion rejects (0.2144ms)
+Γ£û canonical lifecycle export is refreshed when present (1.9649ms)
+Γ£ö old unbound local or review evidence cannot complete new candidate (0.0993ms)
+Γ£ö single and doubles scope never share a current checkmark (0.1179ms)
+Γä╣ tests 59
+Γä╣ suites 0
+Γä╣ pass 58
+Γä╣ fail 1
+Γä╣ cancelled 0
+Γä╣ skipped 0
+Γä╣ todo 0
+Γä╣ duration_ms 57814.9252
+
+Γ£û failing tests:
+
+test at ..\tracker-clean-checkout\poke-sim\tests\validation_cycle_tests.mjs:22:1
+Γ£û canonical lifecycle export is refreshed when present (1.9649ms)
+  AssertionError [ERR_ASSERTION]: Lifecycle evidence mismatch
+  + actual - expected
+  
+  + '8f425641f09edb918a3fee9890cf771cd73b09a7f314632e7584a0ed510d956a'
+  - '76455c89f796fc216c79ac4fb3139c7926ec6c25b7079a85963be391381f89ef'
+  
+      at refreshLifecycle (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-14/task-2/tracker-clean-checkout/poke-sim/tools/validation-lifecycle.mjs:34:235)
+      at TestContext.<anonymous> (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-14/task-2/tracker-clean-checkout/poke-sim/tests/validation_cycle_tests.mjs:22:65)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1201:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:831:18)
+      at Test.postRun (node:internal/test_runner/test:1330:19)
+      at Test.run (node:internal/test_runner/test:1258:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:831:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: '8f425641f09edb918a3fee9890cf771cd73b09a7f314632e7584a0ed510d956a',
+    expected: '76455c89f796fc216c79ac4fb3139c7926ec6c25b7079a85963be391381f89ef',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }

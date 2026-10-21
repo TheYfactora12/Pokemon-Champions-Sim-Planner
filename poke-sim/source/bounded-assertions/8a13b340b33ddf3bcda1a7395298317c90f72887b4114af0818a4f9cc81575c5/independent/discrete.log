@@ -1,0 +1,11 @@
+✔ Champions damage has sixteen independent discrete percentage buckets (311.5187ms)
+✔ discrete damage executed reference gen9championsdoublescustomgame (472.2549ms)
+✔ discrete damage executed reference gen9championsvgc2026regmc (133.8723ms)
+ℹ tests 3
+ℹ suites 0
+ℹ pass 3
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 1136.134

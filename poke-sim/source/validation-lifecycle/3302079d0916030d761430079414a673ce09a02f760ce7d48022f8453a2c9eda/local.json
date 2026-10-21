@@ -1,0 +1,29 @@
+{
+  "source_commit": "b263f002f9f6f108189a8ccfadfa1685210ee2de",
+  "started_at": "2026-10-21T01:22:16.265Z",
+  "completed_at": "2026-10-21T01:30:59.307Z",
+  "project": {
+    "fast_files": 277,
+    "offline_db_files": 12,
+    "failures": 0
+  },
+  "battle": {
+    "deterministic_test_files": 100,
+    "failures": 0,
+    "current_golden_expectations": "not_approved"
+  },
+  "browser": {
+    "games": 2,
+    "pairs": 3,
+    "turns": 31,
+    "mismatches": 0,
+    "page_errors": 0
+  },
+  "syntax_files": 14,
+  "bundle_sha256": "525bd719c745f25ea18acea4657f285699d6a7d8c53ab5effb47edc5c2ebd35a",
+  "limitations": [
+    "Offline database tests only",
+    "Previous interrupted aggregate is not a pass",
+    "No current-client or official regulation certification"
+  ]
+}

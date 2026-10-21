@@ -1,0 +1,5099 @@
+[
+  {
+    "regulation_id": "champions_reg_m_c_2026",
+    "format": "doubles",
+    "reference_pin": "9b136a8c8cdb860a8ab96fa063f906604e352547",
+    "competitive_use": false,
+    "official_eligibility": "unresolved",
+    "client_verification": "unknown",
+    "implementation_status": "unknown",
+    "review_status": "unreviewed_candidate",
+    "evidence_ids": [
+      "pinned-reference-intake"
+    ],
+    "assertion_ids": [],
+    "test_ids": [],
+    "id": "adaptability",
+    "name": "Adaptability",
+    "species_ids": [
+      "basculegion",
+      "basculegionf",
+      "beedrillmega",
+      "dragalge",
+      "glimmoramega",
+      "lucariomega"
+    ]
+  },
+  {
+    "regulation_id": "champions_reg_m_c_2026",
+    "format": "doubles",
+    "reference_pin": "9b136a8c8cdb860a8ab96fa063f906604e352547",
+    "competitive_use": false,
+    "official_eligibility": "unresolved",
+    "client_verification": "unknown",
+    "implementation_status": "unknown",
+    "review_status": "unreviewed_candidate",
+    "evidence_ids": [
+      "pinned-reference-intake"
+    ],
+    "assertion_ids": [],
+    "test_ids": [],
+    "id": "aerilate",
+    "name": "Aerilate",
+    "species_ids": [
+      "pinsirmega",
+      "salamencemega"
+    ]
+  },
+  {
+    "regulation_id": "champions_reg_m_c_2026",
+    "format": "doubles",
+    "reference_pin": "9b136a8c8cdb860a8ab96fa063f906604e352547",
+    "competitive_use": false,
+    "official_eligibility": "unresolved",
+    "client_verification": "unknown",
+    "implementation_status": "unknown",
+    "review_status": "unreviewed_candidate",
+    "evidence_ids": [
+      "pinned-reference-intake"
+    ],
+    "assertion_ids": [],
+    "test_ids": [],
+    "id": "aftermath",
+    "name": "Aftermath",
+    "species_ids": [
+      "garbodor"
+    ]
+  },
+  {
+    "regulation_id": "champions_reg_m_c_2026",
+    "format": "doubles",
+    "reference_pin": "9b136a8c8cdb860a8ab96fa063f906604e352547",
+    "competitive_use": false,
+    "official_eligibility": "unresolved",
+    "client_verification": "unknown",
+    "implementation_status": "unknown",
+    "review_status": "unreviewed_candidate",
+    "evidence_ids": [
+      "pinned-reference-intake"
+    ],
+    "assertion_ids": [],
+    "test_ids": [],
+    "id": "analytic",
+    "name": "Analytic",
+    "species_ids": [
+      "starmie",
+      "watchog"
+    ]
+  },
+  {
+    "regulation_id": "champions_reg_m_c_2026",
+    "format": "doubles",
+    "reference_pin": "9b136a8c8cdb860a8ab96fa063f906604e352547",
+    "competitive_use": false,
+    "official_eligibility": "unresolved",
+    "client_verification": "unknown",
+    "implementation_status": "unknown",
+    "review_status": "unreviewed_candidate",
+    "evidence_ids": [
+      "pinned-reference-intake"
+    ],
+    "assertion_ids": [],
+    "test_ids": [],
+    "id": "angerpoint",
+    "name": "Anger Point",
+    "species_ids": [
+      "camerupt",
+      "crabominable",
+      "krookodile",
+      "tauros",
+      "taurospaldeaaqua",
+      "taurospaldeablaze",
+      "taurospaldeacombat"
+    ]
+  },
+  {
+    "regulation_id": "champions_reg_m_c_2026",
+    "format": "doubles",
+    "reference_pin": "9b136a8c8cdb860a8ab96fa063f906604e352547",
+    "competitive_use": false,
+    "official_eligibility": "unresolved",
+    "client_verification": "unknown",
+    "implementation_status": "unknown",
+    "review_status": "unreviewed_candidate",
+    "evidence_ids": [
+      "pinned-reference-intake"
+    ],
+    "assertion_ids": [],
+    "test_ids": [],
+    "id": "anticipation",
+    "name": "Anticipation",
+    "species_ids": [
+      "hatterene",
+      "toxicroak"
+    ]
+  },
+  {
+    "regulation_id": "champions_reg_m_c_2026",
+    "format": "doubles",
+    "reference_pin": "9b136a8c8cdb860a8ab96fa063f906604e352547",
+    "competitive_use": false,
+    "official_eligibility": "unresolved",
+    "client_verification": "unknown",
+    "implementation_status": "unknown",
+    "review_status": "unreviewed_candidate",
+    "evidence_ids": [
+      "pinned-reference-intake"
+    ],
+    "assertion_ids": [],
+    "test_ids": [],
+    "id": "armortail",
+    "name": "Armor Tail",
+    "species_ids": [
+      "farigiraf"
+    ]
+  },
+  {
+    "regulation_id": "champions_reg_m_c_2026",
+    "format": "doubles",
+    "reference_pin": "9b136a8c8cdb860a8ab96fa063f906604e352547",
+    "competitive_use": false,
+    "official_eligibility": "unresolved",
+    "client_verification": "unknown",
+    "implementation_status": "unknown",
+    "review_status": "unreviewed_candidate",
+    "evidence_ids": [
+      "pinned-reference-intake"
+    ],
+    "assertion_ids": [],
+    "test_ids": [],
+    "id": "aromaveil",
+    "name": "Aroma Veil",
+    "species_ids": [
+      "alcremie",
+      "alcremiecaramelswirl",
+      "alcremielemoncream",
+      "alcremiematchacream",
+      "alcremiemintcream",
+      "alcremierainbowswirl",
+      "alcremierubycream",
+      "alcremierubyswirl",
+      "aromatisse"
+    ]
+  },
+  {
+    "regulation_id": "champions_reg_m_c_2026",
+    "format": "doubles",
+    "reference_pin": "9b136a8c8cdb860a8ab96fa063f906604e352547",
+    "competitive_use": false,
+    "official_eligibility": "unresolved",
+    "client_verification": "unknown",
+    "implementation_status": "unknown",
+    "review_status": "unreviewed_candidate",
+    "evidence_ids": [
+      "pinned-reference-intake"
+    ],
+    "assertion_ids": [],
+    "test_ids": [],
+    "id": "auraguard",
+    "name": "Aura Guard",
+    "species_ids": [
+      "lucariomegaz"
+    ]
+  },
+  {
+    "regulation_id": "champions_reg_m_c_2026",
+    "format": "doubles",
+    "reference_pin": "9b136a8c8cdb860a8ab96fa063f906604e352547",
+    "competitive_use": false,
+    "official_eligibility": "unresolved",
+    "client_verification": "unknown",
+    "implementation_status": "unknown",
+    "review_status": "unreviewed_candidate",
+    "evidence_ids": [
+      "pinned-reference-intake"
+    ],
+    "assertion_ids": [],
+    "test_ids": [],
+    "id": "battlearmor",
+    "name": "Battle Armor",
+    "species_ids": [
+      "falinks",
+      "perrserker"
+    ]
+  },
+  {
+    "regulation_id": "champions_reg_m_c_2026",
+    "format": "doubles",
+    "reference_pin": "9b136a8c8cdb860a8ab96fa063f906604e352547",
+    "competitive_use": false,
+    "official_eligibility": "unresolved",
+    "client_verification": "unknown",
+    "implementation_status": "unknown",
+    "review_status": "unreviewed_candidate",
+    "evidence_ids": [
+      "pinned-reference-intake"
+    ],
+    "assertion_ids": [],
+    "test_ids": [],
+    "id": "battlebond",
+    "name": "Battle Bond",
+    "species_ids": [
+      "greninja"
+    ]
+  },
+  {
+    "regulation_id": "champions_reg_m_c_2026",
+    "format": "doubles",
+    "reference_pin": "9b136a8c8cdb860a8ab96fa063f906604e352547",
+    "competitive_use": false,
+    "official_eligibility": "unresolved",
+    "client_verification": "unknown",
+    "implementation_status": "unknown",
+    "review_status": "unreviewed_candidate",
+    "evidence_ids": [
+      "pinned-reference-intake"
+    ],
+    "assertion_ids": [],
+    "test_ids": [],
+    "id": "berserk",
+    "name": "Berserk",
+    "species_ids": [
+      "drampa",
+      "drampamega"
+    ]
+  },
+  {
+    "regulation_id": "champions_reg_m_c_2026",
+    "format": "doubles",
+    "reference_pin": "9b136a8c8cdb860a8ab96fa063f906604e352547",
+    "competitive_use": false,
+    "official_eligibility": "unresolved",
+    "client_verification": "unknown",
+    "implementation_status": "unknown",
+    "review_status": "unreviewed_candidate",
+    "evidence_ids": [
+      "pinned-reference-intake"
+    ],
+    "assertion_ids": [],
+    "test_ids": [],
+    "id": "bigpecks",
+    "name": "Big Pecks",
+    "species_ids": [
+      "pidgeot"
+    ]
+  },
+  {
+    "regulation_id": "champions_reg_m_c_2026",
+    "format": "doubles",
+    "reference_pin": "9b136a8c8cdb860a8ab96fa063f906604e352547",
+    "competitive_use": false,
+    "official_eligibility": "unresolved",
+    "client_verification": "unknown",
+    "implementation_status": "unknown",
+    "review_status": "unreviewed_candidate",
+    "evidence_ids": [
+      "pinned-reference-intake"
+    ],
+    "assertion_ids": [],
+    "test_ids": [],
+    "id": "blaze",
+    "name": "Blaze",
+    "species_ids": [
+      "blaziken",
+      "charizard",
+      "cinderace",
+      "delphox",
+      "emboar",
+      "incineroar",
+      "infernape",
+      "simisear",
+      "skeledirge",
+      "typhlosion",
+      "typhlosionhisui"
+    ]
+  },
+  {
+    "regulation_id": "champions_reg_m_c_2026",
+    "format": "doubles",
+    "reference_pin": "9b136a8c8cdb860a8ab96fa063f906604e352547",
+    "competitive_use": false,
+    "official_eligibility": "unresolved",
+    "client_verification": "unknown",
+    "implementation_status": "unknown",
+    "review_status": "unreviewed_candidate",
+    "evidence_ids": [
+      "pinned-reference-intake"
+    ],
+    "assertion_ids": [],
+    "test_ids": [],
+    "id": "bulletproof",
+    "name": "Bulletproof",
+    "species_ids": [
+      "chesnaught",
+      "chesnaughtmega",
+      "kommoo"
+    ]
+  },
+  {
+    "regulation_id": "champions_reg_m_c_2026",
+    "format": "doubles",
+    "reference_pin": "9b136a8c8cdb860a8ab96fa063f906604e352547",
+    "competitive_use": false,
+    "official_eligibility": "unresolved",
+    "client_verification": "unknown",
+    "implementation_status": "unknown",
+    "review_status": "unreviewed_candidate",
+    "evidence_ids": [
+      "pinned-reference-intake"
+    ],
+    "assertion_ids": [],
+    "test_ids": [],
+    "id": "cheekpouch",
+    "name": "Cheek Pouch",
+    "species_ids": [
+      "dedenne",
+      "diggersby",
+      "maushold",
+      "mausholdfour"
+    ]
+  },
+  {
+    "regulation_id": "champions_reg_m_c_2026",
+    "format": "doubles",
+    "reference_pin": "9b136a8c8cdb860a8ab96fa063f906604e352547",
+    "competitive_use": false,
+    "official_eligibility": "unresolved",
+    "client_verification": "unknown",
+    "implementation_status": "unknown",
+    "review_status": "unreviewed_candidate",
+    "evidence_ids": [
+      "pinned-reference-intake"
+    ],
+    "assertion_ids": [],
+    "test_ids": [],
+    "id": "chlorophyll",
+    "name": "Chlorophyll",
+    "species_ids": [
+      "leafeon",
+      "scovillain",
+      "venusaur",
+      "victreebel",
+      "vileplume",
+      "whimsicott"
+    ]
+  },
+  {
+    "regulation_id": "champions_reg_m_c_2026",
+    "format": "doubles",
+    "reference_pin": "9b136a8c8cdb860a8ab96fa063f906604e352547",
+    "competitive_use": false,
+    "official_eligibility": "unresolved",
+    "client_verification": "unknown",
+    "implementation_status": "unknown",
+    "review_status": "unreviewed_candidate",
+    "evidence_ids": [
+      "pinned-reference-intake"
+    ],
+    "assertion_ids": [],
+    "test_ids": [],
+    "id": "clearbody",
+    "name": "Clear Body",
+    "species_ids": [
+      "dragapult",
+      "garganacl",
+      "metagross"
+    ]
+  },
+  {
+    "regulation_id": "champions_reg_m_c_2026",
+    "format": "doubles",
+    "reference_pin": "9b136a8c8cdb860a8ab96fa063f906604e352547",
+    "competitive_use": false,
+    "official_eligibility": "unresolved",
+    "client_verification": "unknown",
+    "implementation_status": "unknown",
+    "review_status": "unreviewed_candidate",
+    "evidence_ids": [
+      "pinned-reference-intake"
+    ],
+    "assertion_ids": [],
+    "test_ids": [],
+    "id": "cloudnine",
+    "name": "Cloud Nine",
+    "species_ids": [
+      "altaria",
+      "drampa"
+    ]
+  },
+  {
+    "regulation_id": "champions_reg_m_c_2026",
+    "format": "doubles",
+    "reference_pin": "9b136a8c8cdb860a8ab96fa063f906604e352547",
+    "competitive_use": false,
+    "official_eligibility": "unresolved",
+    "client_verification": "unknown",
+    "implementation_status": "unknown",
+    "review_status": "unreviewed_candidate",
+    "evidence_ids": [
+      "pinned-reference-intake"
+    ],
+    "assertion_ids": [],
+    "test_ids": [],
+    "id": "competitive",
+    "name": "Competitive",
+    "species_ids": [
+      "empoleon",
+      "meowsticf",
+      "milotic",
+      "wigglytuff"
+    ]
+  },
+  {
+    "regulation_id": "champions_reg_m_c_2026",
+    "format": "doubles",
+    "reference_pin": "9b136a8c8cdb860a8ab96fa063f906604e352547",
+    "competitive_use": false,
+    "official_eligibility": "unresolved",
+    "client_verification": "unknown",
+    "implementation_status": "unknown",
+    "review_status": "unreviewed_candidate",
+    "evidence_ids": [
+      "pinned-reference-intake"
+    ],
+    "assertion_ids": [],
+    "test_ids": [],
+    "id": "compoundeyes",
+    "name": "Compound Eyes",
+    "species_ids": [
+      "vivillon",
+      "vivillonarchipelago",
+      "vivilloncontinental",
+      "vivillonelegant",
+      "vivillonfancy",
+      "vivillongarden",
+      "vivillonhighplains",
+      "vivillonicysnow",
+      "vivillonjungle",
+      "vivillonmarine",
+      "vivillonmodern",
+      "vivillonmonsoon",
+      "vivillonocean",
+      "vivillonpokeball",
+      "vivillonpolar",
+      "vivillonriver",
+      "vivillonsandstorm",
+      "vivillonsavanna",
+      "vivillonsun",
+      "vivillontundra"
+    ]
+  },
+  {
+    "regulation_id": "champions_reg_m_c_2026",
+    "format": "doubles",
+    "reference_pin": "9b136a8c8cdb860a8ab96fa063f906604e352547",
+    "competitive_use": false,
+    "official_eligibility": "unresolved",
+    "client_verification": "unknown",
+    "implementation_status": "unknown",
+    "review_status": "unreviewed_candidate",
+    "evidence_ids": [
+      "pinned-reference-intake"
+    ],
+    "assertion_ids": [],
+    "test_ids": [],
+    "id": "contrary",
+    "name": "Contrary",
+    "species_ids": [
+      "malamar",
+      "malamarmega",
+      "serperior",
+      "staraptormega"
+    ]
+  },
+  {
+    "regulation_id": "champions_reg_m_c_2026",
+    "format": "doubles",
+    "reference_pin": "9b136a8c8cdb860a8ab96fa063f906604e352547",
+    "competitive_use": false,
+    "official_eligibility": "unresolved",
+    "client_verification": "unknown",
+    "implementation_status": "unknown",
+    "review_status": "unreviewed_candidate",
+    "evidence_ids": [
+      "pinned-reference-intake"
+    ],
+    "assertion_ids": [],
+    "test_ids": [],
+    "id": "corrosion",
+    "name": "Corrosion",
+    "species_ids": [
+      "glimmora",
+      "salazzle"
+    ]
+  },
+  {
+    "regulation_id": "champions_reg_m_c_2026",
+    "format": "doubles",
+    "reference_pin": "9b136a8c8cdb860a8ab96fa063f906604e352547",
+    "competitive_use": false,
+    "official_eligibility": "unresolved",
+    "client_verification": "unknown",
+    "implementation_status": "unknown",
+    "review_status": "unreviewed_candidate",
+    "evidence_ids": [
+      "pinned-reference-intake"
+    ],
+    "assertion_ids": [],
+    "test_ids": [],
+    "id": "cudchew",
+    "name": "Cud Chew",
+    "species_ids": [
+      "farigiraf",
+      "taurospaldeaaqua",
+      "taurospaldeablaze",
+      "taurospaldeacombat"
+    ]
+  },
+  {
+    "regulation_id": "champions_reg_m_c_2026",
+    "format": "doubles",
+    "reference_pin": "9b136a8c8cdb860a8ab96fa063f906604e352547",
+    "competitive_use": false,
+    "official_eligibility": "unresolved",
+    "client_verification": "unknown",
+    "implementation_status": "unknown",
+    "review_status": "unreviewed_candidate",
+    "evidence_ids": [
+      "pinned-reference-intake"
+    ],
+    "assertion_ids": [],
+    "test_ids": [],
+    "id": "curiousmedicine",
+    "name": "Curious Medicine",
+    "species_ids": [
+      "slowkinggalar"
+    ]
+  },
+  {
+    "regulation_id": "champions_reg_m_c_2026",
+    "format": "doubles",
+    "reference_pin": "9b136a8c8cdb860a8ab96fa063f906604e352547",
+    "competitive_use": false,
+    "official_eligibility": "unresolved",
+    "client_verification": "unknown",
+    "implementation_status": "unknown",
+    "review_status": "unreviewed_candidate",
+    "evidence_ids": [
+      "pinned-reference-intake"
+    ],
+    "assertion_ids": [],
+    "test_ids": [],
+    "id": "cursedbody",
+    "name": "Cursed Body",
+    "species_ids": [
+      "banette",
+      "dragapult",
+      "froslass",
+      "gengar",
+      "polteageist",
+      "polteageistantique"
+    ]
+  },
+  {
+    "regulation_id": "champions_reg_m_c_2026",
+    "format": "doubles",
+    "reference_pin": "9b136a8c8cdb860a8ab96fa063f906604e352547",
+    "competitive_use": false,
+    "official_eligibility": "unresolved",
+    "client_verification": "unknown",
+    "implementation_status": "unknown",
+    "review_status": "unreviewed_candidate",
+    "evidence_ids": [
+      "pinned-reference-intake"
+    ],
+    "assertion_ids": [],
+    "test_ids": [],
+    "id": "cutecharm",
+    "name": "Cute Charm",
+    "species_ids": [
+      "clefable",
+      "lopunny",
+      "milotic",
+      "sylveon",
+      "wigglytuff"
+    ]
+  },
+  {
+    "regulation_id": "champions_reg_m_c_2026",
+    "format": "doubles",
+    "reference_pin": "9b136a8c8cdb860a8ab96fa063f906604e352547",
+    "competitive_use": false,
+    "official_eligibility": "unresolved",
+    "client_verification": "unknown",
+    "implementation_status": "unknown",
+    "review_status": "unreviewed_candidate",
+    "evidence_ids": [
+      "pinned-reference-intake"
+    ],
+    "assertion_ids": [],
+    "test_ids": [],
+    "id": "damp",
+    "name": "Damp",
+    "species_ids": [
+      "bellibolt",
+      "politoed",
+      "swampert"
+    ]
+  },
+  {
+    "regulation_id": "champions_reg_m_c_2026",
+    "format": "doubles",
+    "reference_pin": "9b136a8c8cdb860a8ab96fa063f906604e352547",
+    "competitive_use": false,
+    "official_eligibility": "unresolved",
+    "client_verification": "unknown",
+    "implementation_status": "unknown",
+    "review_status": "unreviewed_candidate",
+    "evidence_ids": [
+      "pinned-reference-intake"
+    ],
+    "assertion_ids": [],
+    "test_ids": [],
+    "id": "defiant",
+    "name": "Defiant",
+    "species_ids": [
+      "annihilape",
+      "falinks",
+      "falinksmega",
+      "farfetchd",
+      "kingambit",
+      "passimian"
+    ]
+  },
+  {
+    "regulation_id": "champions_reg_m_c_2026",
+    "format": "doubles",
+    "reference_pin": "9b136a8c8cdb860a8ab96fa063f906604e352547",
+    "competitive_use": false,
+    "official_eligibility": "unresolved",
+    "client_verification": "unknown",
+    "implementation_status": "unknown",
+    "review_status": "unreviewed_candidate",
+    "evidence_ids": [
+      "pinned-reference-intake"
+    ],
+    "assertion_ids": [],
+    "test_ids": [],
+    "id": "disguise",
+    "name": "Disguise",
+    "species_ids": [
+      "mimikyu",
+      "mimikyubusted"
+    ]
+  },
+  {
+    "regulation_id": "champions_reg_m_c_2026",
+    "format": "doubles",
+    "reference_pin": "9b136a8c8cdb860a8ab96fa063f906604e352547",
+    "competitive_use": false,
+    "official_eligibility": "unresolved",
+    "client_verification": "unknown",
+    "implementation_status": "unknown",
+    "review_status": "unreviewed_candidate",
+    "evidence_ids": [
+      "pinned-reference-intake"
+    ],
+    "assertion_ids": [],
+    "test_ids": [],
+    "id": "dragonize",
+    "name": "Dragonize",
+    "species_ids": [
+      "feraligatrmega"
+    ]
+  },
+  {
+    "regulation_id": "champions_reg_m_c_2026",
+    "format": "doubles",
+    "reference_pin": "9b136a8c8cdb860a8ab96fa063f906604e352547",
+    "competitive_use": false,
+    "official_eligibility": "unresolved",
+    "client_verification": "unknown",
+    "implementation_status": "unknown",
+    "review_status": "unreviewed_candidate",
+    "evidence_ids": [
+      "pinned-reference-intake"
+    ],
+    "assertion_ids": [],
+    "test_ids": [],
+    "id": "drizzle",
+    "name": "Drizzle",
+    "species_ids": [
+      "pelipper",
+      "politoed"
+    ]
+  },
+  {
+    "regulation_id": "champions_reg_m_c_2026",
+    "format": "doubles",
+    "reference_pin": "9b136a8c8cdb860a8ab96fa063f906604e352547",
+    "competitive_use": false,
+    "official_eligibility": "unresolved",
+    "client_verification": "unknown",
+    "implementation_status": "unknown",
+    "review_status": "unreviewed_candidate",
+    "evidence_ids": [
+      "pinned-reference-intake"
+    ],
+    "assertion_ids": [],
+    "test_ids": [],
+    "id": "drought",
+    "name": "Drought",
+    "species_ids": [
+      "charizardmegay",
+      "ninetales",
+      "torkoal"
+    ]
+  },
+  {
+    "regulation_id": "champions_reg_m_c_2026",
+    "format": "doubles",
+    "reference_pin": "9b136a8c8cdb860a8ab96fa063f906604e352547",
+    "competitive_use": false,
+    "official_eligibility": "unresolved",
+    "client_verification": "unknown",
+    "implementation_status": "unknown",
+    "review_status": "unreviewed_candidate",
+    "evidence_ids": [
+      "pinned-reference-intake"
+    ],
+    "assertion_ids": [],
+    "test_ids": [],
+    "id": "dryskin",
+    "name": "Dry Skin",
+    "species_ids": [
+      "heliolisk",
+      "toxicroak"
+    ]
+  },
+  {
+    "regulation_id": "champions_reg_m_c_2026",
+    "format": "doubles",
+    "reference_pin": "9b136a8c8cdb860a8ab96fa063f906604e352547",
+    "competitive_use": false,
+    "official_eligibility": "unresolved",
+    "client_verification": "unknown",
+    "implementation_status": "unknown",
+    "review_status": "unreviewed_candidate",
+    "evidence_ids": [
+      "pinned-reference-intake"
+    ],
+    "assertion_ids": [],
+    "test_ids": [],
+    "id": "earlybird",
+    "name": "Early Bird",
+    "species_ids": [
+      "houndoom",
+      "kangaskhan"
+    ]
+  },
+  {
+    "regulation_id": "champions_reg_m_c_2026",
+    "format": "doubles",
+    "reference_pin": "9b136a8c8cdb860a8ab96fa063f906604e352547",
+    "competitive_use": false,
+    "official_eligibility": "unresolved",
+    "client_verification": "unknown",
+    "implementation_status": "unknown",
+    "review_status": "unreviewed_candidate",
+    "evidence_ids": [
+      "pinned-reference-intake"
+    ],
+    "assertion_ids": [],
+    "test_ids": [],
+    "id": "eartheater",
+    "name": "Earth Eater",
+    "species_ids": [
+      "orthworm"
+    ]
+  },
+  {
+    "regulation_id": "champions_reg_m_c_2026",
+    "format": "doubles",
+    "reference_pin": "9b136a8c8cdb860a8ab96fa063f906604e352547",
+    "competitive_use": false,
+    "official_eligibility": "unresolved",
+    "client_verification": "unknown",
+    "implementation_status": "unknown",
+    "review_status": "unreviewed_candidate",
+    "evidence_ids": [
+      "pinned-reference-intake"
+    ],
+    "assertion_ids": [],
+    "test_ids": [],
+    "id": "eelevate",
+    "name": "Eelevate",
+    "species_ids": [
+      "eelektrossmega"
+    ]
+  },
+  {
+    "regulation_id": "champions_reg_m_c_2026",
+    "format": "doubles",
+    "reference_pin": "9b136a8c8cdb860a8ab96fa063f906604e352547",
+    "competitive_use": false,
+    "official_eligibility": "unresolved",
+    "client_verification": "unknown",
+    "implementation_status": "unknown",
+    "review_status": "unreviewed_candidate",
+    "evidence_ids": [
+      "pinned-reference-intake"
+    ],
+    "assertion_ids": [],
+    "test_ids": [],
+    "id": "effectspore",
+    "name": "Effect Spore",
+    "species_ids": [
+      "vileplume"
+    ]
+  },
+  {
+    "regulation_id": "champions_reg_m_c_2026",
+    "format": "doubles",
+    "reference_pin": "9b136a8c8cdb860a8ab96fa063f906604e352547",
+    "competitive_use": false,
+    "official_eligibility": "unresolved",
+    "client_verification": "unknown",
+    "implementation_status": "unknown",
+    "review_status": "unreviewed_candidate",
+    "evidence_ids": [
+      "pinned-reference-intake"
+    ],
+    "assertion_ids": [],
+    "test_ids": [],
+    "id": "electricsurge",
+    "name": "Electric Surge",
+    "species_ids": [
+      "pincurchin",
+      "raichumegax"
+    ]
+  },
+  {
+    "regulation_id": "champions_reg_m_c_2026",
+    "format": "doubles",
+    "reference_pin": "9b136a8c8cdb860a8ab96fa063f906604e352547",
+    "competitive_use": false,
+    "official_eligibility": "unresolved",
+    "client_verification": "unknown",
+    "implementation_status": "unknown",
+    "review_status": "unreviewed_candidate",
+    "evidence_ids": [
+      "pinned-reference-intake"
+    ],
+    "assertion_ids": [],
+    "test_ids": [],
+    "id": "electromorphosis",
+    "name": "Electromorphosis",
+    "species_ids": [
+      "bellibolt"
+    ]
+  },
+  {
+    "regulation_id": "champions_reg_m_c_2026",
+    "format": "doubles",
+    "reference_pin": "9b136a8c8cdb860a8ab96fa063f906604e352547",
+    "competitive_use": false,
+    "official_eligibility": "unresolved",
+    "client_verification": "unknown",
+    "implementation_status": "unknown",
+    "review_status": "unreviewed_candidate",
+    "evidence_ids": [
+      "pinned-reference-intake"
+    ],
+    "assertion_ids": [],
+    "test_ids": [],
+    "id": "embodyaspectcornerstone",
+    "name": "Embody Aspect (Cornerstone)",
+    "species_ids": [
+      "ogerponcornerstonetera"
+    ]
+  },
+  {
+    "regulation_id": "champions_reg_m_c_2026",
+    "format": "doubles",
+    "reference_pin": "9b136a8c8cdb860a8ab96fa063f906604e352547",
+    "competitive_use": false,
+    "official_eligibility": "unresolved",
+    "client_verification": "unknown",
+    "implementation_status": "unknown",
+    "review_status": "unreviewed_candidate",
+    "evidence_ids": [
+      "pinned-reference-intake"
+    ],
+    "assertion_ids": [],
+    "test_ids": [],
+    "id": "embodyaspecthearthflame",
+    "name": "Embody Aspect (Hearthflame)",
+    "species_ids": [
+      "ogerponhearthflametera"
+    ]
+  },
+  {
+    "regulation_id": "champions_reg_m_c_2026",
+    "format": "doubles",
+    "reference_pin": "9b136a8c8cdb860a8ab96fa063f906604e352547",
+    "competitive_use": false,
+    "official_eligibility": "unresolved",
+    "client_verification": "unknown",
+    "implementation_status": "unknown",
+    "review_status": "unreviewed_candidate",
+    "evidence_ids": [
+      "pinned-reference-intake"
+    ],
+    "assertion_ids": [],
+    "test_ids": [],
+    "id": "embodyaspectteal",
+    "name": "Embody Aspect (Teal)",
+    "species_ids": [
+      "ogerpontealtera"
+    ]
+  },
+  {
+    "regulation_id": "champions_reg_m_c_2026",
+    "format": "doubles",
+    "reference_pin": "9b136a8c8cdb860a8ab96fa063f906604e352547",
+    "competitive_use": false,
+    "official_eligibility": "unresolved",
+    "client_verification": "unknown",
+    "implementation_status": "unknown",
+    "review_status": "unreviewed_candidate",
+    "evidence_ids": [
+      "pinned-reference-intake"
+    ],
+    "assertion_ids": [],
+    "test_ids": [],
+    "id": "embodyaspectwellspring",
+    "name": "Embody Aspect (Wellspring)",
+    "species_ids": [
+      "ogerponwellspringtera"
+    ]
+  },
+  {
+    "regulation_id": "champions_reg_m_c_2026",
+    "format": "doubles",
+    "reference_pin": "9b136a8c8cdb860a8ab96fa063f906604e352547",
+    "competitive_use": false,
+    "official_eligibility": "unresolved",
+    "client_verification": "unknown",
+    "implementation_status": "unknown",
+    "review_status": "unreviewed_candidate",
+    "evidence_ids": [
+      "pinned-reference-intake"
+    ],
+    "assertion_ids": [],
+    "test_ids": [],
+    "id": "emergencyexit",
+    "name": "Emergency Exit",
+    "species_ids": [
+      "golisopod"
+    ]
+  },
+  {
+    "regulation_id": "champions_reg_m_c_2026",
+    "format": "doubles",
+    "reference_pin": "9b136a8c8cdb860a8ab96fa063f906604e352547",
+    "competitive_use": false,
+    "official_eligibility": "unresolved",
+    "client_verification": "unknown",
+    "implementation_status": "unknown",
+    "review_status": "unreviewed_candidate",
+    "evidence_ids": [
+      "pinned-reference-intake"
+    ],
+    "assertion_ids": [],
+    "test_ids": [],
+    "id": "fairyaura",
+    "name": "Fairy Aura",
+    "species_ids": [
+      "floettemega"
+    ]
+  },
+  {
+    "regulation_id": "champions_reg_m_c_2026",
+    "format": "doubles",
+    "reference_pin": "9b136a8c8cdb860a8ab96fa063f906604e352547",
+    "competitive_use": false,
+    "official_eligibility": "unresolved",
+    "client_verification": "unknown",
+    "implementation_status": "unknown",
+    "review_status": "unreviewed_candidate",
+    "evidence_ids": [
+      "pinned-reference-intake"
+    ],
+    "assertion_ids": [],
+    "test_ids": [],
+    "id": "filter",
+    "name": "Filter",
+    "species_ids": [
+      "aggronmega",
+      "mrmime"
+    ]
+  },
+  {
+    "regulation_id": "champions_reg_m_c_2026",
+    "format": "doubles",
+    "reference_pin": "9b136a8c8cdb860a8ab96fa063f906604e352547",
+    "competitive_use": false,
+    "official_eligibility": "unresolved",
+    "client_verification": "unknown",
+    "implementation_status": "unknown",
+    "review_status": "unreviewed_candidate",
+    "evidence_ids": [
+      "pinned-reference-intake"
+    ],
+    "assertion_ids": [],
+    "test_ids": [],
+    "id": "firemane",
+    "name": "Fire Mane",
+    "species_ids": [
+      "pyroarmega"
+    ]
+  },
+  {
+    "regulation_id": "champions_reg_m_c_2026",
+    "format": "doubles",
+    "reference_pin": "9b136a8c8cdb860a8ab96fa063f906604e352547",
+    "competitive_use": false,
+    "official_eligibility": "unresolved",
+    "client_verification": "unknown",
+    "implementation_status": "unknown",
+    "review_status": "unreviewed_candidate",
+    "evidence_ids": [
+      "pinned-reference-intake"
+    ],
+    "assertion_ids": [],
+    "test_ids": [],
+    "id": "flamebody",
+    "name": "Flame Body",
+    "species_ids": [
+      "chandelure",
+      "talonflame",
+      "volcarona"
+    ]
+  },
+  {
+    "regulation_id": "champions_reg_m_c_2026",
+    "format": "doubles",
+    "reference_pin": "9b136a8c8cdb860a8ab96fa063f906604e352547",
+    "competitive_use": false,
+    "official_eligibility": "unresolved",
+    "client_verification": "unknown",
+    "implementation_status": "unknown",
+    "review_status": "unreviewed_candidate",
+    "evidence_ids": [
+      "pinned-reference-intake"
+    ],
+    "assertion_ids": [],
+    "test_ids": [],
+    "id": "flashfire",
+    "name": "Flash Fire",
+    "species_ids": [
+      "arcanine",
+      "arcaninehisui",
+      "armarouge",
+      "ceruledge",
+      "chandelure",
+      "flareon",
+      "houndoom",
+      "ninetales",
+      "typhlosion"
+    ]
+  },
+  {
+    "regulation_id": "champions_reg_m_c_2026",
+    "format": "doubles",
+    "reference_pin": "9b136a8c8cdb860a8ab96fa063f906604e352547",
+    "competitive_use": false,
+    "official_eligibility": "unresolved",
+    "client_verification": "unknown",
+    "implementation_status": "unknown",
+    "review_status": "unreviewed_candidate",
+    "evidence_ids": [
+      "pinned-reference-intake"
+    ],
+    "assertion_ids": [],
+    "test_ids": [],
+    "id": "flowerveil",
+    "name": "Flower Veil",
+    "species_ids": [
+      "floetteeternal",
+      "florges"
+    ]
+  },
+  {
+    "regulation_id": "champions_reg_m_c_2026",
+    "format": "doubles",
+    "reference_pin": "9b136a8c8cdb860a8ab96fa063f906604e352547",
+    "competitive_use": false,
+    "official_eligibility": "unresolved",
+    "client_verification": "unknown",
+    "implementation_status": "unknown",
+    "review_status": "unreviewed_candidate",
+    "evidence_ids": [
+      "pinned-reference-intake"
+    ],
+    "assertion_ids": [],
+    "test_ids": [],
+    "id": "fluffy",
+    "name": "Fluffy",
+    "species_ids": [
+      "houndstone"
+    ]
+  },
+  {
+    "regulation_id": "champions_reg_m_c_2026",
+    "format": "doubles",
+    "reference_pin": "9b136a8c8cdb860a8ab96fa063f906604e352547",
+    "competitive_use": false,
+    "official_eligibility": "unresolved",
+    "client_verification": "unknown",
+    "implementation_status": "unknown",
+    "review_status": "unreviewed_candidate",
+    "evidence_ids": [
+      "pinned-reference-intake"
+    ],
+    "assertion_ids": [],
+    "test_ids": [],
+    "id": "forecast",
+    "name": "Forecast",
+    "species_ids": [
+      "castform",
+      "castformrainy",
+      "castformsnowy",
+      "castformsunny"
+    ]
+  },
+  {
+    "regulation_id": "champions_reg_m_c_2026",
+    "format": "doubles",
+    "reference_pin": "9b136a8c8cdb860a8ab96fa063f906604e352547",
+    "competitive_use": false,
+    "official_eligibility": "unresolved",
+    "client_verification": "unknown",
+    "implementation_status": "unknown",
+    "review_status": "unreviewed_candidate",
+    "evidence_ids": [
+      "pinned-reference-intake"
+    ],
+    "assertion_ids": [],
+    "test_ids": [],
+    "id": "forewarn",
+    "name": "Forewarn",
+    "species_ids": [
+      "musharna"
+    ]
+  },
+  {
+    "regulation_id": "champions_reg_m_c_2026",
+    "format": "doubles",
+    "reference_pin": "9b136a8c8cdb860a8ab96fa063f906604e352547",
+    "competitive_use": false,
+    "official_eligibility": "unresolved",
+    "client_verification": "unknown",
+    "implementation_status": "unknown",
+    "review_status": "unreviewed_candidate",
+    "evidence_ids": [
+      "pinned-reference-intake"
+    ],
+    "assertion_ids": [],
+    "test_ids": [],
+    "id": "friendguard",
+    "name": "Friend Guard",
+    "species_ids": [
+      "maushold",
+      "mausholdfour",
+      "vivillon",
+      "vivillonarchipelago",
+      "vivilloncontinental",
+      "vivillonelegant",
+      "vivillonfancy",
+      "vivillongarden",
+      "vivillonhighplains",
+      "vivillonicysnow",
+      "vivillonjungle",
+      "vivillonmarine",
+      "vivillonmodern",
+      "vivillonmonsoon",
+      "vivillonocean",
+      "vivillonpokeball",
+      "vivillonpolar",
+      "vivillonriver",
+      "vivillonsandstorm",
+      "vivillonsavanna",
+      "vivillonsun",
+      "vivillontundra"
+    ]
+  },
+  {
+    "regulation_id": "champions_reg_m_c_2026",
+    "format": "doubles",
+    "reference_pin": "9b136a8c8cdb860a8ab96fa063f906604e352547",
+    "competitive_use": false,
+    "official_eligibility": "unresolved",
+    "client_verification": "unknown",
+    "implementation_status": "unknown",
+    "review_status": "unreviewed_candidate",
+    "evidence_ids": [
+      "pinned-reference-intake"
+    ],
+    "assertion_ids": [],
+    "test_ids": [],
+    "id": "frisk",
+    "name": "Frisk",
+    "species_ids": [
+      "banette",
+      "espathra",
+      "gourgeist",
+      "gourgeistlarge",
+      "gourgeistsmall",
+      "gourgeistsuper",
+      "grimmsnarl",
+      "noivern",
+      "trevenant",
+      "typhlosionhisui",
+      "wigglytuff",
+      "wyrdeer"
+    ]
+  },
+  {
+    "regulation_id": "champions_reg_m_c_2026",
+    "format": "doubles",
+    "reference_pin": "9b136a8c8cdb860a8ab96fa063f906604e352547",
+    "competitive_use": false,
+    "official_eligibility": "unresolved",
+    "client_verification": "unknown",
+    "implementation_status": "unknown",
+    "review_status": "unreviewed_candidate",
+    "evidence_ids": [
+      "pinned-reference-intake"
+    ],
+    "assertion_ids": [],
+    "test_ids": [],
+    "id": "furcoat",
+    "name": "Fur Coat",
+    "species_ids": [
+      "furfrou",
+      "persianalola"
+    ]
+  },
+  {
+    "regulation_id": "champions_reg_m_c_2026",
+    "format": "doubles",
+    "reference_pin": "9b136a8c8cdb860a8ab96fa063f906604e352547",
+    "competitive_use": false,
+    "official_eligibility": "unresolved",
+    "client_verification": "unknown",
+    "implementation_status": "unknown",
+    "review_status": "unreviewed_candidate",
+    "evidence_ids": [
+      "pinned-reference-intake"
+    ],
+    "assertion_ids": [],
+    "test_ids": [],
+    "id": "galewings",
+    "name": "Gale Wings",
+    "species_ids": [
+      "talonflame"
+    ]
+  },
+  {
+    "regulation_id": "champions_reg_m_c_2026",
+    "format": "doubles",
+    "reference_pin": "9b136a8c8cdb860a8ab96fa063f906604e352547",
+    "competitive_use": false,
+    "official_eligibility": "unresolved",
+    "client_verification": "unknown",
+    "implementation_status": "unknown",
+    "review_status": "unreviewed_candidate",
+    "evidence_ids": [
+      "pinned-reference-intake"
+    ],
+    "assertion_ids": [],
+    "test_ids": [],
+    "id": "gluttony",
+    "name": "Gluttony",
+    "species_ids": [
+      "appletun",
+      "flapple",
+      "simipour",
+      "simisage",
+      "simisear",
+      "snorlax",
+      "swalot",
+      "victreebel"
+    ]
+  },
+  {
+    "regulation_id": "champions_reg_m_c_2026",
+    "format": "doubles",
+    "reference_pin": "9b136a8c8cdb860a8ab96fa063f906604e352547",
+    "competitive_use": false,
+    "official_eligibility": "unresolved",
+    "client_verification": "unknown",
+    "implementation_status": "unknown",
+    "review_status": "unreviewed_candidate",
+    "evidence_ids": [
+      "pinned-reference-intake"
+    ],
+    "assertion_ids": [],
+    "test_ids": [],
+    "id": "goodasgold",
+    "name": "Good as Gold",
+    "species_ids": [
+      "gholdengo"
+    ]
+  },
+  {
+    "regulation_id": "champions_reg_m_c_2026",
+    "format": "doubles",
+    "reference_pin": "9b136a8c8cdb860a8ab96fa063f906604e352547",
+    "competitive_use": false,
+    "official_eligibility": "unresolved",
+    "client_verification": "unknown",
+    "implementation_status": "unknown",
+    "review_status": "unreviewed_candidate",
+    "evidence_ids": [
+      "pinned-reference-intake"
+    ],
+    "assertion_ids": [],
+    "test_ids": [],
+    "id": "gooey",
+    "name": "Gooey",
+    "species_ids": [
+      "goodra",
+      "goodrahisui"
+    ]
+  },
+  {
+    "regulation_id": "champions_reg_m_c_2026",
+    "format": "doubles",
+    "reference_pin": "9b136a8c8cdb860a8ab96fa063f906604e352547",
+    "competitive_use": false,
+    "official_eligibility": "unresolved",
+    "client_verification": "unknown",
+    "implementation_status": "unknown",
+    "review_status": "unreviewed_candidate",
+    "evidence_ids": [
+      "pinned-reference-intake"
+    ],
+    "assertion_ids": [],
+    "test_ids": [],
+    "id": "grasspelt",
+    "name": "Grass Pelt",
+    "species_ids": [
+      "gogoat"
+    ]
+  },
+  {
+    "regulation_id": "champions_reg_m_c_2026",
+    "format": "doubles",
+    "reference_pin": "9b136a8c8cdb860a8ab96fa063f906604e352547",
+    "competitive_use": false,
+    "official_eligibility": "unresolved",
+    "client_verification": "unknown",
+    "implementation_status": "unknown",
+    "review_status": "unreviewed_candidate",
+    "evidence_ids": [
+      "pinned-reference-intake"
+    ],
+    "assertion_ids": [],
+    "test_ids": [],
+    "id": "grassysurge",
+    "name": "Grassy Surge",
+    "species_ids": [
+      "rillaboom"
+    ]
+  },
+  {
+    "regulation_id": "champions_reg_m_c_2026",
+    "format": "doubles",
+    "reference_pin": "9b136a8c8cdb860a8ab96fa063f906604e352547",
+    "competitive_use": false,
+    "official_eligibility": "unresolved",
+    "client_verification": "unknown",
+    "implementation_status": "unknown",
+    "review_status": "unreviewed_candidate",
+    "evidence_ids": [
+      "pinned-reference-intake"
+    ],
+    "assertion_ids": [],
+    "test_ids": [],
+    "id": "guarddog",
+    "name": "Guard Dog",
+    "species_ids": [
+      "mabosstiff"
+    ]
+  },
+  {
+    "regulation_id": "champions_reg_m_c_2026",
+    "format": "doubles",
+    "reference_pin": "9b136a8c8cdb860a8ab96fa063f906604e352547",
+    "competitive_use": false,
+    "official_eligibility": "unresolved",
+    "client_verification": "unknown",
+    "implementation_status": "unknown",
+    "review_status": "unreviewed_candidate",
+    "evidence_ids": [
+      "pinned-reference-intake"
+    ],
+    "assertion_ids": [],
+    "test_ids": [],
+    "id": "gulpmissile",
+    "name": "Gulp Missile",
+    "species_ids": [
+      "cramorantgorging",
+      "cramorantgulping"
+    ]
+  },
+  {
+    "regulation_id": "champions_reg_m_c_2026",
+    "format": "doubles",
+    "reference_pin": "9b136a8c8cdb860a8ab96fa063f906604e352547",
+    "competitive_use": false,
+    "official_eligibility": "unresolved",
+    "client_verification": "unknown",
+    "implementation_status": "unknown",
+    "review_status": "unreviewed_candidate",
+    "evidence_ids": [
+      "pinned-reference-intake"
+    ],
+    "assertion_ids": [],
+    "test_ids": [],
+    "id": "guts",
+    "name": "Guts",
+    "species_ids": [
+      "conkeldurr",
+      "flareon",
+      "heracross",
+      "luxray",
+      "machamp",
+      "squawkabilly",
+      "squawkabillyblue"
+    ]
+  },
+  {
+    "regulation_id": "champions_reg_m_c_2026",
+    "format": "doubles",
+    "reference_pin": "9b136a8c8cdb860a8ab96fa063f906604e352547",
+    "competitive_use": false,
+    "official_eligibility": "unresolved",
+    "client_verification": "unknown",
+    "implementation_status": "unknown",
+    "review_status": "unreviewed_candidate",
+    "evidence_ids": [
+      "pinned-reference-intake"
+    ],
+    "assertion_ids": [],
+    "test_ids": [],
+    "id": "harvest",
+    "name": "Harvest",
+    "species_ids": [
+      "arboliva",
+      "trevenant"
+    ]
+  },
+  {
+    "regulation_id": "champions_reg_m_c_2026",
+    "format": "doubles",
+    "reference_pin": "9b136a8c8cdb860a8ab96fa063f906604e352547",
+    "competitive_use": false,
+    "official_eligibility": "unresolved",
+    "client_verification": "unknown",
+    "implementation_status": "unknown",
+    "review_status": "unreviewed_candidate",
+    "evidence_ids": [
+      "pinned-reference-intake"
+    ],
+    "assertion_ids": [],
+    "test_ids": [],
+    "id": "healer",
+    "name": "Healer",
+    "species_ids": [
+      "aromatisse",
+      "audino",
+      "audinomega",
+      "hatterene"
+    ]
+  },
+  {
+    "regulation_id": "champions_reg_m_c_2026",
+    "format": "doubles",
+    "reference_pin": "9b136a8c8cdb860a8ab96fa063f906604e352547",
+    "competitive_use": false,
+    "official_eligibility": "unresolved",
+    "client_verification": "unknown",
+    "implementation_status": "unknown",
+    "review_status": "unreviewed_candidate",
+    "evidence_ids": [
+      "pinned-reference-intake"
+    ],
+    "assertion_ids": [],
+    "test_ids": [],
+    "id": "heatproof",
+    "name": "Heatproof",
+    "species_ids": [
+      "sinistcha",
+      "sinistchamasterpiece"
+    ]
+  },
+  {
+    "regulation_id": "champions_reg_m_c_2026",
+    "format": "doubles",
+    "reference_pin": "9b136a8c8cdb860a8ab96fa063f906604e352547",
+    "competitive_use": false,
+    "official_eligibility": "unresolved",
+    "client_verification": "unknown",
+    "implementation_status": "unknown",
+    "review_status": "unreviewed_candidate",
+    "evidence_ids": [
+      "pinned-reference-intake"
+    ],
+    "assertion_ids": [],
+    "test_ids": [],
+    "id": "heavymetal",
+    "name": "Heavy Metal",
+    "species_ids": [
+      "aggron"
+    ]
+  },
+  {
+    "regulation_id": "champions_reg_m_c_2026",
+    "format": "doubles",
+    "reference_pin": "9b136a8c8cdb860a8ab96fa063f906604e352547",
+    "competitive_use": false,
+    "official_eligibility": "unresolved",
+    "client_verification": "unknown",
+    "implementation_status": "unknown",
+    "review_status": "unreviewed_candidate",
+    "evidence_ids": [
+      "pinned-reference-intake"
+    ],
+    "assertion_ids": [],
+    "test_ids": [],
+    "id": "hospitality",
+    "name": "Hospitality",
+    "species_ids": [
+      "sinistcha",
+      "sinistchamasterpiece"
+    ]
+  },
+  {
+    "regulation_id": "champions_reg_m_c_2026",
+    "format": "doubles",
+    "reference_pin": "9b136a8c8cdb860a8ab96fa063f906604e352547",
+    "competitive_use": false,
+    "official_eligibility": "unresolved",
+    "client_verification": "unknown",
+    "implementation_status": "unknown",
+    "review_status": "unreviewed_candidate",
+    "evidence_ids": [
+      "pinned-reference-intake"
+    ],
+    "assertion_ids": [],
+    "test_ids": [],
+    "id": "hugepower",
+    "name": "Huge Power",
+    "species_ids": [
+      "azumarill",
+      "diggersby",
+      "mawilemega",
+      "starmiemega"
+    ]
+  },
+  {
+    "regulation_id": "champions_reg_m_c_2026",
+    "format": "doubles",
+    "reference_pin": "9b136a8c8cdb860a8ab96fa063f906604e352547",
+    "competitive_use": false,
+    "official_eligibility": "unresolved",
+    "client_verification": "unknown",
+    "implementation_status": "unknown",
+    "review_status": "unreviewed_candidate",
+    "evidence_ids": [
+      "pinned-reference-intake"
+    ],
+    "assertion_ids": [],
+    "test_ids": [],
+    "id": "hungerswitch",
+    "name": "Hunger Switch",
+    "species_ids": [
+      "morpeko",
+      "morpekohangry"
+    ]
+  },
+  {
+    "regulation_id": "champions_reg_m_c_2026",
+    "format": "doubles",
+    "reference_pin": "9b136a8c8cdb860a8ab96fa063f906604e352547",
+    "competitive_use": false,
+    "official_eligibility": "unresolved",
+    "client_verification": "unknown",
+    "implementation_status": "unknown",
+    "review_status": "unreviewed_candidate",
+    "evidence_ids": [
+      "pinned-reference-intake"
+    ],
+    "assertion_ids": [],
+    "test_ids": [],
+    "id": "hustle",
+    "name": "Hustle",
+    "species_ids": [
+      "flapple",
+      "squawkabilly",
+      "squawkabillyblue",
+      "squawkabillywhite",
+      "squawkabillyyellow"
+    ]
+  },
+  {
+    "regulation_id": "champions_reg_m_c_2026",
+    "format": "doubles",
+    "reference_pin": "9b136a8c8cdb860a8ab96fa063f906604e352547",
+    "competitive_use": false,
+    "official_eligibility": "unresolved",
+    "client_verification": "unknown",
+    "implementation_status": "unknown",
+    "review_status": "unreviewed_candidate",
+    "evidence_ids": [
+      "pinned-reference-intake"
+    ],
+    "assertion_ids": [],
+    "test_ids": [],
+    "id": "hydration",
+    "name": "Hydration",
+    "species_ids": [
+      "goodra",
+      "vaporeon"
+    ]
+  },
+  {
+    "regulation_id": "champions_reg_m_c_2026",
+    "format": "doubles",
+    "reference_pin": "9b136a8c8cdb860a8ab96fa063f906604e352547",
+    "competitive_use": false,
+    "official_eligibility": "unresolved",
+    "client_verification": "unknown",
+    "implementation_status": "unknown",
+    "review_status": "unreviewed_candidate",
+    "evidence_ids": [
+      "pinned-reference-intake"
+    ],
+    "assertion_ids": [],
+    "test_ids": [],
+    "id": "hypercutter",
+    "name": "Hyper Cutter",
+    "species_ids": [
+      "crabominable",
+      "gliscor",
+      "mawile",
+      "pinsir"
+    ]
+  },
+  {
+    "regulation_id": "champions_reg_m_c_2026",
+    "format": "doubles",
+    "reference_pin": "9b136a8c8cdb860a8ab96fa063f906604e352547",
+    "competitive_use": false,
+    "official_eligibility": "unresolved",
+    "client_verification": "unknown",
+    "implementation_status": "unknown",
+    "review_status": "unreviewed_candidate",
+    "evidence_ids": [
+      "pinned-reference-intake"
+    ],
+    "assertion_ids": [],
+    "test_ids": [],
+    "id": "icebody",
+    "name": "Ice Body",
+    "species_ids": [
+      "avalugg",
+      "avalugghisui",
+      "baxcalibur",
+      "glaceon",
+      "glalie",
+      "mrrime",
+      "vanilluxe"
+    ]
+  },
+  {
+    "regulation_id": "champions_reg_m_c_2026",
+    "format": "doubles",
+    "reference_pin": "9b136a8c8cdb860a8ab96fa063f906604e352547",
+    "competitive_use": false,
+    "official_eligibility": "unresolved",
+    "client_verification": "unknown",
+    "implementation_status": "unknown",
+    "review_status": "unreviewed_candidate",
+    "evidence_ids": [
+      "pinned-reference-intake"
+    ],
+    "assertion_ids": [],
+    "test_ids": [],
+    "id": "iceface",
+    "name": "Ice Face",
+    "species_ids": [
+      "eiscuenoice"
+    ]
+  },
+  {
+    "regulation_id": "champions_reg_m_c_2026",
+    "format": "doubles",
+    "reference_pin": "9b136a8c8cdb860a8ab96fa063f906604e352547",
+    "competitive_use": false,
+    "official_eligibility": "unresolved",
+    "client_verification": "unknown",
+    "implementation_status": "unknown",
+    "review_status": "unreviewed_candidate",
+    "evidence_ids": [
+      "pinned-reference-intake"
+    ],
+    "assertion_ids": [],
+    "test_ids": [],
+    "id": "illuminate",
+    "name": "Illuminate",
+    "species_ids": [
+      "starmie",
+      "watchog"
+    ]
+  },
+  {
+    "regulation_id": "champions_reg_m_c_2026",
+    "format": "doubles",
+    "reference_pin": "9b136a8c8cdb860a8ab96fa063f906604e352547",
+    "competitive_use": false,
+    "official_eligibility": "unresolved",
+    "client_verification": "unknown",
+    "implementation_status": "unknown",
+    "review_status": "unreviewed_candidate",
+    "evidence_ids": [
+      "pinned-reference-intake"
+    ],
+    "assertion_ids": [],
+    "test_ids": [],
+    "id": "illusion",
+    "name": "Illusion",
+    "species_ids": [
+      "zoroark",
+      "zoroarkhisui"
+    ]
+  },
+  {
+    "regulation_id": "champions_reg_m_c_2026",
+    "format": "doubles",
+    "reference_pin": "9b136a8c8cdb860a8ab96fa063f906604e352547",
+    "competitive_use": false,
+    "official_eligibility": "unresolved",
+    "client_verification": "unknown",
+    "implementation_status": "unknown",
+    "review_status": "unreviewed_candidate",
+    "evidence_ids": [
+      "pinned-reference-intake"
+    ],
+    "assertion_ids": [],
+    "test_ids": [],
+    "id": "immunity",
+    "name": "Immunity",
+    "species_ids": [
+      "snorlax"
+    ]
+  },
+  {
+    "regulation_id": "champions_reg_m_c_2026",
+    "format": "doubles",
+    "reference_pin": "9b136a8c8cdb860a8ab96fa063f906604e352547",
+    "competitive_use": false,
+    "official_eligibility": "unresolved",
+    "client_verification": "unknown",
+    "implementation_status": "unknown",
+    "review_status": "unreviewed_candidate",
+    "evidence_ids": [
+      "pinned-reference-intake"
+    ],
+    "assertion_ids": [],
+    "test_ids": [],
+    "id": "imposter",
+    "name": "Imposter",
+    "species_ids": [
+      "ditto"
+    ]
+  },
+  {
+    "regulation_id": "champions_reg_m_c_2026",
+    "format": "doubles",
+    "reference_pin": "9b136a8c8cdb860a8ab96fa063f906604e352547",
+    "competitive_use": false,
+    "official_eligibility": "unresolved",
+    "client_verification": "unknown",
+    "implementation_status": "unknown",
+    "review_status": "unreviewed_candidate",
+    "evidence_ids": [
+      "pinned-reference-intake"
+    ],
+    "assertion_ids": [],
+    "test_ids": [],
+    "id": "infiltrator",
+    "name": "Infiltrator",
+    "species_ids": [
+      "chandelure",
+      "chandeluremega",
+      "dragapult",
+      "malamar",
+      "meowstic",
+      "meowsticf",
+      "noivern",
+      "spiritomb",
+      "whimsicott"
+    ]
+  },
+  {
+    "regulation_id": "champions_reg_m_c_2026",
+    "format": "doubles",
+    "reference_pin": "9b136a8c8cdb860a8ab96fa063f906604e352547",
+    "competitive_use": false,
+    "official_eligibility": "unresolved",
+    "client_verification": "unknown",
+    "implementation_status": "unknown",
+    "review_status": "unreviewed_candidate",
+    "evidence_ids": [
+      "pinned-reference-intake"
+    ],
+    "assertion_ids": [],
+    "test_ids": [],
+    "id": "innardsout",
+    "name": "Innards Out",
+    "species_ids": [
+      "victreebelmega"
+    ]
+  },
+  {
+    "regulation_id": "champions_reg_m_c_2026",
+    "format": "doubles",
+    "reference_pin": "9b136a8c8cdb860a8ab96fa063f906604e352547",
+    "competitive_use": false,
+    "official_eligibility": "unresolved",
+    "client_verification": "unknown",
+    "implementation_status": "unknown",
+    "review_status": "unreviewed_candidate",
+    "evidence_ids": [
+      "pinned-reference-intake"
+    ],
+    "assertion_ids": [],
+    "test_ids": [],
+    "id": "innerfocus",
+    "name": "Inner Focus",
+    "species_ids": [
+      "alakazam",
+      "annihilape",
+      "dragonite",
+      "farfetchd",
+      "gallademega",
+      "glalie",
+      "indeedee",
+      "kangaskhan",
+      "lucario",
+      "mudsdale",
+      "oranguru",
+      "umbreon"
+    ]
+  },
+  {
+    "regulation_id": "champions_reg_m_c_2026",
+    "format": "doubles",
+    "reference_pin": "9b136a8c8cdb860a8ab96fa063f906604e352547",
+    "competitive_use": false,
+    "official_eligibility": "unresolved",
+    "client_verification": "unknown",
+    "implementation_status": "unknown",
+    "review_status": "unreviewed_candidate",
+    "evidence_ids": [
+      "pinned-reference-intake"
+    ],
+    "assertion_ids": [],
+    "test_ids": [],
+    "id": "insomnia",
+    "name": "Insomnia",
+    "species_ids": [
+      "ariados",
+      "banette",
+      "gourgeist",
+      "gourgeistlarge",
+      "gourgeistsmall",
+      "gourgeistsuper",
+      "scovillain"
+    ]
+  },
+  {
+    "regulation_id": "champions_reg_m_c_2026",
+    "format": "doubles",
+    "reference_pin": "9b136a8c8cdb860a8ab96fa063f906604e352547",
+    "competitive_use": false,
+    "official_eligibility": "unresolved",
+    "client_verification": "unknown",
+    "implementation_status": "unknown",
+    "review_status": "unreviewed_candidate",
+    "evidence_ids": [
+      "pinned-reference-intake"
+    ],
+    "assertion_ids": [],
+    "test_ids": [],
+    "id": "intimidate",
+    "name": "Intimidate",
+    "species_ids": [
+      "arbok",
+      "arcanine",
+      "arcaninehisui",
+      "gyarados",
+      "incineroar",
+      "krookodile",
+      "luxray",
+      "mabosstiff",
+      "manectricmega",
+      "mawile",
+      "overqwil",
+      "qwilfish",
+      "salamence",
+      "scrafty",
+      "scraftymega",
+      "squawkabilly",
+      "squawkabillyblue",
+      "squawkabillywhite",
+      "squawkabillyyellow",
+      "staraptor",
+      "tauros",
+      "taurospaldeaaqua",
+      "taurospaldeablaze",
+      "taurospaldeacombat",
+      "wyrdeer"
+    ]
+  },
+  {
+    "regulation_id": "champions_reg_m_c_2026",
+    "format": "doubles",
+    "reference_pin": "9b136a8c8cdb860a8ab96fa063f906604e352547",
+    "competitive_use": false,
+    "official_eligibility": "unresolved",
+    "client_verification": "unknown",
+    "implementation_status": "unknown",
+    "review_status": "unreviewed_candidate",
+    "evidence_ids": [
+      "pinned-reference-intake"
+    ],
+    "assertion_ids": [],
+    "test_ids": [],
+    "id": "ironfist",
+    "name": "Iron Fist",
+    "species_ids": [
+      "conkeldurr",
+      "crabominable",
+      "crabominablemega",
+      "golurk",
+      "infernape",
+      "pangoro",
+      "pawmot"
+    ]
+  },
+  {
+    "regulation_id": "champions_reg_m_c_2026",
+    "format": "doubles",
+    "reference_pin": "9b136a8c8cdb860a8ab96fa063f906604e352547",
+    "competitive_use": false,
+    "official_eligibility": "unresolved",
+    "client_verification": "unknown",
+    "implementation_status": "unknown",
+    "review_status": "unreviewed_candidate",
+    "evidence_ids": [
+      "pinned-reference-intake"
+    ],
+    "assertion_ids": [],
+    "test_ids": [],
+    "id": "justified",
+    "name": "Justified",
+    "species_ids": [
+      "absol",
+      "arcanine",
+      "gallade",
+      "lucario"
+    ]
+  },
+  {
+    "regulation_id": "champions_reg_m_c_2026",
+    "format": "doubles",
+    "reference_pin": "9b136a8c8cdb860a8ab96fa063f906604e352547",
+    "competitive_use": false,
+    "official_eligibility": "unresolved",
+    "client_verification": "unknown",
+    "implementation_status": "unknown",
+    "review_status": "unreviewed_candidate",
+    "evidence_ids": [
+      "pinned-reference-intake"
+    ],
+    "assertion_ids": [],
+    "test_ids": [],
+    "id": "keeneye",
+    "name": "Keen Eye",
+    "species_ids": [
+      "farfetchd",
+      "lycanroc",
+      "lycanrocmidnight",
+      "meowstic",
+      "meowsticf",
+      "pelipper",
+      "pidgeot",
+      "sableye",
+      "skarmory",
+      "toucannon",
+      "watchog"
+    ]
+  },
+  {
+    "regulation_id": "champions_reg_m_c_2026",
+    "format": "doubles",
+    "reference_pin": "9b136a8c8cdb860a8ab96fa063f906604e352547",
+    "competitive_use": false,
+    "official_eligibility": "unresolved",
+    "client_verification": "unknown",
+    "implementation_status": "unknown",
+    "review_status": "unreviewed_candidate",
+    "evidence_ids": [
+      "pinned-reference-intake"
+    ],
+    "assertion_ids": [],
+    "test_ids": [],
+    "id": "klutz",
+    "name": "Klutz",
+    "species_ids": [
+      "audino",
+      "golurk",
+      "lopunny"
+    ]
+  },
+  {
+    "regulation_id": "champions_reg_m_c_2026",
+    "format": "doubles",
+    "reference_pin": "9b136a8c8cdb860a8ab96fa063f906604e352547",
+    "competitive_use": false,
+    "official_eligibility": "unresolved",
+    "client_verification": "unknown",
+    "implementation_status": "unknown",
+    "review_status": "unreviewed_candidate",
+    "evidence_ids": [
+      "pinned-reference-intake"
+    ],
+    "assertion_ids": [],
+    "test_ids": [],
+    "id": "leafguard",
+    "name": "Leaf Guard",
+    "species_ids": [
+      "leafeon",
+      "meganium",
+      "tsareena"
+    ]
+  },
+  {
+    "regulation_id": "champions_reg_m_c_2026",
+    "format": "doubles",
+    "reference_pin": "9b136a8c8cdb860a8ab96fa063f906604e352547",
+    "competitive_use": false,
+    "official_eligibility": "unresolved",
+    "client_verification": "unknown",
+    "implementation_status": "unknown",
+    "review_status": "unreviewed_candidate",
+    "evidence_ids": [
+      "pinned-reference-intake"
+    ],
+    "assertion_ids": [],
+    "test_ids": [],
+    "id": "levitate",
+    "name": "Levitate",
+    "species_ids": [
+      "chimecho",
+      "chimechomega",
+      "delphoxmega",
+      "eelektross",
+      "garchompmegaz",
+      "hydreigon",
+      "rotom",
+      "rotomfan",
+      "rotomfrost",
+      "rotomheat",
+      "rotommow",
+      "rotomwash"
+    ]
+  },
+  {
+    "regulation_id": "champions_reg_m_c_2026",
+    "format": "doubles",
+    "reference_pin": "9b136a8c8cdb860a8ab96fa063f906604e352547",
+    "competitive_use": false,
+    "official_eligibility": "unresolved",
+    "client_verification": "unknown",
+    "implementation_status": "unknown",
+    "review_status": "unreviewed_candidate",
+    "evidence_ids": [
+      "pinned-reference-intake"
+    ],
+    "assertion_ids": [],
+    "test_ids": [],
+    "id": "libero",
+    "name": "Libero",
+    "species_ids": [
+      "cinderace"
+    ]
+  },
+  {
+    "regulation_id": "champions_reg_m_c_2026",
+    "format": "doubles",
+    "reference_pin": "9b136a8c8cdb860a8ab96fa063f906604e352547",
+    "competitive_use": false,
+    "official_eligibility": "unresolved",
+    "client_verification": "unknown",
+    "implementation_status": "unknown",
+    "review_status": "unreviewed_candidate",
+    "evidence_ids": [
+      "pinned-reference-intake"
+    ],
+    "assertion_ids": [],
+    "test_ids": [],
+    "id": "lightmetal",
+    "name": "Light Metal",
+    "species_ids": [
+      "metagross",
+      "scizor"
+    ]
+  },
+  {
+    "regulation_id": "champions_reg_m_c_2026",
+    "format": "doubles",
+    "reference_pin": "9b136a8c8cdb860a8ab96fa063f906604e352547",
+    "competitive_use": false,
+    "official_eligibility": "unresolved",
+    "client_verification": "unknown",
+    "implementation_status": "unknown",
+    "review_status": "unreviewed_candidate",
+    "evidence_ids": [
+      "pinned-reference-intake"
+    ],
+    "assertion_ids": [],
+    "test_ids": [],
+    "id": "lightningrod",
+    "name": "Lightning Rod",
+    "species_ids": [
+      "manectric",
+      "pikachu",
+      "pincurchin",
+      "raichu",
+      "rhyperior",
+      "sceptilemega"
+    ]
+  },
+  {
+    "regulation_id": "champions_reg_m_c_2026",
+    "format": "doubles",
+    "reference_pin": "9b136a8c8cdb860a8ab96fa063f906604e352547",
+    "competitive_use": false,
+    "official_eligibility": "unresolved",
+    "client_verification": "unknown",
+    "implementation_status": "unknown",
+    "review_status": "unreviewed_candidate",
+    "evidence_ids": [
+      "pinned-reference-intake"
+    ],
+    "assertion_ids": [],
+    "test_ids": [],
+    "id": "limber",
+    "name": "Limber",
+    "species_ids": [
+      "ditto",
+      "grapploct",
+      "hawlucha",
+      "liepard",
+      "lopunny",
+      "persian",
+      "stunfisk",
+      "toxapex"
+    ]
+  },
+  {
+    "regulation_id": "champions_reg_m_c_2026",
+    "format": "doubles",
+    "reference_pin": "9b136a8c8cdb860a8ab96fa063f906604e352547",
+    "competitive_use": false,
+    "official_eligibility": "unresolved",
+    "client_verification": "unknown",
+    "implementation_status": "unknown",
+    "review_status": "unreviewed_candidate",
+    "evidence_ids": [
+      "pinned-reference-intake"
+    ],
+    "assertion_ids": [],
+    "test_ids": [],
+    "id": "liquidooze",
+    "name": "Liquid Ooze",
+    "species_ids": [
+      "swalot"
+    ]
+  },
+  {
+    "regulation_id": "champions_reg_m_c_2026",
+    "format": "doubles",
+    "reference_pin": "9b136a8c8cdb860a8ab96fa063f906604e352547",
+    "competitive_use": false,
+    "official_eligibility": "unresolved",
+    "client_verification": "unknown",
+    "implementation_status": "unknown",
+    "review_status": "unreviewed_candidate",
+    "evidence_ids": [
+      "pinned-reference-intake"
+    ],
+    "assertion_ids": [],
+    "test_ids": [],
+    "id": "liquidvoice",
+    "name": "Liquid Voice",
+    "species_ids": [
+      "primarina"
+    ]
+  },
+  {
+    "regulation_id": "champions_reg_m_c_2026",
+    "format": "doubles",
+    "reference_pin": "9b136a8c8cdb860a8ab96fa063f906604e352547",
+    "competitive_use": false,
+    "official_eligibility": "unresolved",
+    "client_verification": "unknown",
+    "implementation_status": "unknown",
+    "review_status": "unreviewed_candidate",
+    "evidence_ids": [
+      "pinned-reference-intake"
+    ],
+    "assertion_ids": [],
+    "test_ids": [],
+    "id": "longreach",
+    "name": "Long Reach",
+    "species_ids": [
+      "decidueye"
+    ]
+  },
+  {
+    "regulation_id": "champions_reg_m_c_2026",
+    "format": "doubles",
+    "reference_pin": "9b136a8c8cdb860a8ab96fa063f906604e352547",
+    "competitive_use": false,
+    "official_eligibility": "unresolved",
+    "client_verification": "unknown",
+    "implementation_status": "unknown",
+    "review_status": "unreviewed_candidate",
+    "evidence_ids": [
+      "pinned-reference-intake"
+    ],
+    "assertion_ids": [],
+    "test_ids": [],
+    "id": "magicbounce",
+    "name": "Magic Bounce",
+    "species_ids": [
+      "absolmega",
+      "clefablemega",
+      "espeon",
+      "hatterene",
+      "sableyemega"
+    ]
+  },
+  {
+    "regulation_id": "champions_reg_m_c_2026",
+    "format": "doubles",
+    "reference_pin": "9b136a8c8cdb860a8ab96fa063f906604e352547",
+    "competitive_use": false,
+    "official_eligibility": "unresolved",
+    "client_verification": "unknown",
+    "implementation_status": "unknown",
+    "review_status": "unreviewed_candidate",
+    "evidence_ids": [
+      "pinned-reference-intake"
+    ],
+    "assertion_ids": [],
+    "test_ids": [],
+    "id": "magicguard",
+    "name": "Magic Guard",
+    "species_ids": [
+      "alakazam",
+      "clefable",
+      "reuniclus"
+    ]
+  },
+  {
+    "regulation_id": "champions_reg_m_c_2026",
+    "format": "doubles",
+    "reference_pin": "9b136a8c8cdb860a8ab96fa063f906604e352547",
+    "competitive_use": false,
+    "official_eligibility": "unresolved",
+    "client_verification": "unknown",
+    "implementation_status": "unknown",
+    "review_status": "unreviewed_candidate",
+    "evidence_ids": [
+      "pinned-reference-intake"
+    ],
+    "assertion_ids": [],
+    "test_ids": [],
+    "id": "magician",
+    "name": "Magician",
+    "species_ids": [
+      "delphox",
+      "klefki"
+    ]
+  },
+  {
+    "regulation_id": "champions_reg_m_c_2026",
+    "format": "doubles",
+    "reference_pin": "9b136a8c8cdb860a8ab96fa063f906604e352547",
+    "competitive_use": false,
+    "official_eligibility": "unresolved",
+    "client_verification": "unknown",
+    "implementation_status": "unknown",
+    "review_status": "unreviewed_candidate",
+    "evidence_ids": [
+      "pinned-reference-intake"
+    ],
+    "assertion_ids": [],
+    "test_ids": [],
+    "id": "magmaarmor",
+    "name": "Magma Armor",
+    "species_ids": [
+      "camerupt"
+    ]
+  },
+  {
+    "regulation_id": "champions_reg_m_c_2026",
+    "format": "doubles",
+    "reference_pin": "9b136a8c8cdb860a8ab96fa063f906604e352547",
+    "competitive_use": false,
+    "official_eligibility": "unresolved",
+    "client_verification": "unknown",
+    "implementation_status": "unknown",
+    "review_status": "unreviewed_candidate",
+    "evidence_ids": [
+      "pinned-reference-intake"
+    ],
+    "assertion_ids": [],
+    "test_ids": [],
+    "id": "marvelscale",
+    "name": "Marvel Scale",
+    "species_ids": [
+      "milotic"
+    ]
+  },
+  {
+    "regulation_id": "champions_reg_m_c_2026",
+    "format": "doubles",
+    "reference_pin": "9b136a8c8cdb860a8ab96fa063f906604e352547",
+    "competitive_use": false,
+    "official_eligibility": "unresolved",
+    "client_verification": "unknown",
+    "implementation_status": "unknown",
+    "review_status": "unreviewed_candidate",
+    "evidence_ids": [
+      "pinned-reference-intake"
+    ],
+    "assertion_ids": [],
+    "test_ids": [],
+    "id": "megalauncher",
+    "name": "Mega Launcher",
+    "species_ids": [
+      "blastoisemega",
+      "clawitzer"
+    ]
+  },
+  {
+    "regulation_id": "champions_reg_m_c_2026",
+    "format": "doubles",
+    "reference_pin": "9b136a8c8cdb860a8ab96fa063f906604e352547",
+    "competitive_use": false,
+    "official_eligibility": "unresolved",
+    "client_verification": "unknown",
+    "implementation_status": "unknown",
+    "review_status": "unreviewed_candidate",
+    "evidence_ids": [
+      "pinned-reference-intake"
+    ],
+    "assertion_ids": [],
+    "test_ids": [],
+    "id": "megasol",
+    "name": "Mega Sol",
+    "species_ids": [
+      "meganiummega"
+    ]
+  },
+  {
+    "regulation_id": "champions_reg_m_c_2026",
+    "format": "doubles",
+    "reference_pin": "9b136a8c8cdb860a8ab96fa063f906604e352547",
+    "competitive_use": false,
+    "official_eligibility": "unresolved",
+    "client_verification": "unknown",
+    "implementation_status": "unknown",
+    "review_status": "unreviewed_candidate",
+    "evidence_ids": [
+      "pinned-reference-intake"
+    ],
+    "assertion_ids": [],
+    "test_ids": [],
+    "id": "merciless",
+    "name": "Merciless",
+    "species_ids": [
+      "toxapex"
+    ]
+  },
+  {
+    "regulation_id": "champions_reg_m_c_2026",
+    "format": "doubles",
+    "reference_pin": "9b136a8c8cdb860a8ab96fa063f906604e352547",
+    "competitive_use": false,
+    "official_eligibility": "unresolved",
+    "client_verification": "unknown",
+    "implementation_status": "unknown",
+    "review_status": "unreviewed_candidate",
+    "evidence_ids": [
+      "pinned-reference-intake"
+    ],
+    "assertion_ids": [],
+    "test_ids": [],
+    "id": "mimicry",
+    "name": "Mimicry",
+    "species_ids": [
+      "stunfiskgalar"
+    ]
+  },
+  {
+    "regulation_id": "champions_reg_m_c_2026",
+    "format": "doubles",
+    "reference_pin": "9b136a8c8cdb860a8ab96fa063f906604e352547",
+    "competitive_use": false,
+    "official_eligibility": "unresolved",
+    "client_verification": "unknown",
+    "implementation_status": "unknown",
+    "review_status": "unreviewed_candidate",
+    "evidence_ids": [
+      "pinned-reference-intake"
+    ],
+    "assertion_ids": [],
+    "test_ids": [],
+    "id": "minus",
+    "name": "Minus",
+    "species_ids": [
+      "manectric",
+      "toxtricitylowkey"
+    ]
+  },
+  {
+    "regulation_id": "champions_reg_m_c_2026",
+    "format": "doubles",
+    "reference_pin": "9b136a8c8cdb860a8ab96fa063f906604e352547",
+    "competitive_use": false,
+    "official_eligibility": "unresolved",
+    "client_verification": "unknown",
+    "implementation_status": "unknown",
+    "review_status": "unreviewed_candidate",
+    "evidence_ids": [
+      "pinned-reference-intake"
+    ],
+    "assertion_ids": [],
+    "test_ids": [],
+    "id": "mirrorarmor",
+    "name": "Mirror Armor",
+    "species_ids": [
+      "corviknight"
+    ]
+  },
+  {
+    "regulation_id": "champions_reg_m_c_2026",
+    "format": "doubles",
+    "reference_pin": "9b136a8c8cdb860a8ab96fa063f906604e352547",
+    "competitive_use": false,
+    "official_eligibility": "unresolved",
+    "client_verification": "unknown",
+    "implementation_status": "unknown",
+    "review_status": "unreviewed_candidate",
+    "evidence_ids": [
+      "pinned-reference-intake"
+    ],
+    "assertion_ids": [],
+    "test_ids": [],
+    "id": "moldbreaker",
+    "name": "Mold Breaker",
+    "species_ids": [
+      "ampharosmega",
+      "basculegion",
+      "basculegionf",
+      "emboarmega",
+      "excadrill",
+      "gyaradosmega",
+      "hawlucha",
+      "pangoro",
+      "pinsir",
+      "rampardos",
+      "tinkaton"
+    ]
+  },
+  {
+    "regulation_id": "champions_reg_m_c_2026",
+    "format": "doubles",
+    "reference_pin": "9b136a8c8cdb860a8ab96fa063f906604e352547",
+    "competitive_use": false,
+    "official_eligibility": "unresolved",
+    "client_verification": "unknown",
+    "implementation_status": "unknown",
+    "review_status": "unreviewed_candidate",
+    "evidence_ids": [
+      "pinned-reference-intake"
+    ],
+    "assertion_ids": [],
+    "test_ids": [],
+    "id": "moody",
+    "name": "Moody",
+    "species_ids": [
+      "glalie",
+      "scovillain"
+    ]
+  },
+  {
+    "regulation_id": "champions_reg_m_c_2026",
+    "format": "doubles",
+    "reference_pin": "9b136a8c8cdb860a8ab96fa063f906604e352547",
+    "competitive_use": false,
+    "official_eligibility": "unresolved",
+    "client_verification": "unknown",
+    "implementation_status": "unknown",
+    "review_status": "unreviewed_candidate",
+    "evidence_ids": [
+      "pinned-reference-intake"
+    ],
+    "assertion_ids": [],
+    "test_ids": [],
+    "id": "motordrive",
+    "name": "Motor Drive",
+    "species_ids": [
+      "emolga"
+    ]
+  },
+  {
+    "regulation_id": "champions_reg_m_c_2026",
+    "format": "doubles",
+    "reference_pin": "9b136a8c8cdb860a8ab96fa063f906604e352547",
+    "competitive_use": false,
+    "official_eligibility": "unresolved",
+    "client_verification": "unknown",
+    "implementation_status": "unknown",
+    "review_status": "unreviewed_candidate",
+    "evidence_ids": [
+      "pinned-reference-intake"
+    ],
+    "assertion_ids": [],
+    "test_ids": [],
+    "id": "moxie",
+    "name": "Moxie",
+    "species_ids": [
+      "gyarados",
+      "heracross",
+      "krookodile",
+      "pinsir",
+      "pyroar",
+      "quaquaval",
+      "salamence",
+      "scrafty"
+    ]
+  },
+  {
+    "regulation_id": "champions_reg_m_c_2026",
+    "format": "doubles",
+    "reference_pin": "9b136a8c8cdb860a8ab96fa063f906604e352547",
+    "competitive_use": false,
+    "official_eligibility": "unresolved",
+    "client_verification": "unknown",
+    "implementation_status": "unknown",
+    "review_status": "unreviewed_candidate",
+    "evidence_ids": [
+      "pinned-reference-intake"
+    ],
+    "assertion_ids": [],
+    "test_ids": [],
+    "id": "multiscale",
+    "name": "Multiscale",
+    "species_ids": [
+      "dragonite",
+      "dragonitemega"
+    ]
+  },
+  {
+    "regulation_id": "champions_reg_m_c_2026",
+    "format": "doubles",
+    "reference_pin": "9b136a8c8cdb860a8ab96fa063f906604e352547",
+    "competitive_use": false,
+    "official_eligibility": "unresolved",
+    "client_verification": "unknown",
+    "implementation_status": "unknown",
+    "review_status": "unreviewed_candidate",
+    "evidence_ids": [
+      "pinned-reference-intake"
+    ],
+    "assertion_ids": [],
+    "test_ids": [],
+    "id": "mummy",
+    "name": "Mummy",
+    "species_ids": [
+      "cofagrigus"
+    ]
+  },
+  {
+    "regulation_id": "champions_reg_m_c_2026",
+    "format": "doubles",
+    "reference_pin": "9b136a8c8cdb860a8ab96fa063f906604e352547",
+    "competitive_use": false,
+    "official_eligibility": "unresolved",
+    "client_verification": "unknown",
+    "implementation_status": "unknown",
+    "review_status": "unreviewed_candidate",
+    "evidence_ids": [
+      "pinned-reference-intake"
+    ],
+    "assertion_ids": [],
+    "test_ids": [],
+    "id": "naturalcure",
+    "name": "Natural Cure",
+    "species_ids": [
+      "altaria",
+      "pawmot",
+      "roserade",
+      "starmie",
+      "trevenant"
+    ]
+  },
+  {
+    "regulation_id": "champions_reg_m_c_2026",
+    "format": "doubles",
+    "reference_pin": "9b136a8c8cdb860a8ab96fa063f906604e352547",
+    "competitive_use": false,
+    "official_eligibility": "unresolved",
+    "client_verification": "unknown",
+    "implementation_status": "unknown",
+    "review_status": "unreviewed_candidate",
+    "evidence_ids": [
+      "pinned-reference-intake"
+    ],
+    "assertion_ids": [],
+    "test_ids": [],
+    "id": "noguard",
+    "name": "No Guard",
+    "species_ids": [
+      "golurk",
+      "hawluchamega",
+      "lycanrocmidnight",
+      "machamp",
+      "pidgeotmega",
+      "raichumegay"
+    ]
+  },
+  {
+    "regulation_id": "champions_reg_m_c_2026",
+    "format": "doubles",
+    "reference_pin": "9b136a8c8cdb860a8ab96fa063f906604e352547",
+    "competitive_use": false,
+    "official_eligibility": "unresolved",
+    "client_verification": "unknown",
+    "implementation_status": "unknown",
+    "review_status": "unreviewed_candidate",
+    "evidence_ids": [
+      "pinned-reference-intake"
+    ],
+    "assertion_ids": [],
+    "test_ids": [],
+    "id": "oblivious",
+    "name": "Oblivious",
+    "species_ids": [
+      "mamoswine",
+      "salazzle",
+      "slowbro",
+      "slowking"
+    ]
+  },
+  {
+    "regulation_id": "champions_reg_m_c_2026",
+    "format": "doubles",
+    "reference_pin": "9b136a8c8cdb860a8ab96fa063f906604e352547",
+    "competitive_use": false,
+    "official_eligibility": "unresolved",
+    "client_verification": "unknown",
+    "implementation_status": "unknown",
+    "review_status": "unreviewed_candidate",
+    "evidence_ids": [
+      "pinned-reference-intake"
+    ],
+    "assertion_ids": [],
+    "test_ids": [],
+    "id": "opportunist",
+    "name": "Opportunist",
+    "species_ids": [
+      "espathra"
+    ]
+  },
+  {
+    "regulation_id": "champions_reg_m_c_2026",
+    "format": "doubles",
+    "reference_pin": "9b136a8c8cdb860a8ab96fa063f906604e352547",
+    "competitive_use": false,
+    "official_eligibility": "unresolved",
+    "client_verification": "unknown",
+    "implementation_status": "unknown",
+    "review_status": "unreviewed_candidate",
+    "evidence_ids": [
+      "pinned-reference-intake"
+    ],
+    "assertion_ids": [],
+    "test_ids": [],
+    "id": "overcoat",
+    "name": "Overcoat",
+    "species_ids": [
+      "forretress",
+      "kommoo",
+      "reuniclus"
+    ]
+  },
+  {
+    "regulation_id": "champions_reg_m_c_2026",
+    "format": "doubles",
+    "reference_pin": "9b136a8c8cdb860a8ab96fa063f906604e352547",
+    "competitive_use": false,
+    "official_eligibility": "unresolved",
+    "client_verification": "unknown",
+    "implementation_status": "unknown",
+    "review_status": "unreviewed_candidate",
+    "evidence_ids": [
+      "pinned-reference-intake"
+    ],
+    "assertion_ids": [],
+    "test_ids": [],
+    "id": "overgrow",
+    "name": "Overgrow",
+    "species_ids": [
+      "chesnaught",
+      "decidueye",
+      "decidueyehisui",
+      "meganium",
+      "meowscarada",
+      "rillaboom",
+      "sceptile",
+      "serperior",
+      "simisage",
+      "torterra",
+      "venusaur"
+    ]
+  },
+  {
+    "regulation_id": "champions_reg_m_c_2026",
+    "format": "doubles",
+    "reference_pin": "9b136a8c8cdb860a8ab96fa063f906604e352547",
+    "competitive_use": false,
+    "official_eligibility": "unresolved",
+    "client_verification": "unknown",
+    "implementation_status": "unknown",
+    "review_status": "unreviewed_candidate",
+    "evidence_ids": [
+      "pinned-reference-intake"
+    ],
+    "assertion_ids": [],
+    "test_ids": [],
+    "id": "owntempo",
+    "name": "Own Tempo",
+    "species_ids": [
+      "avalugg",
+      "indeedeef",
+      "mudsdale",
+      "slowbro",
+      "slowbrogalar",
+      "slowking",
+      "slowkinggalar",
+      "tinkaton"
+    ]
+  },
+  {
+    "regulation_id": "champions_reg_m_c_2026",
+    "format": "doubles",
+    "reference_pin": "9b136a8c8cdb860a8ab96fa063f906604e352547",
+    "competitive_use": false,
+    "official_eligibility": "unresolved",
+    "client_verification": "unknown",
+    "implementation_status": "unknown",
+    "review_status": "unreviewed_candidate",
+    "evidence_ids": [
+      "pinned-reference-intake"
+    ],
+    "assertion_ids": [],
+    "test_ids": [],
+    "id": "parentalbond",
+    "name": "Parental Bond",
+    "species_ids": [
+      "kangaskhanmega"
+    ]
+  },
+  {
+    "regulation_id": "champions_reg_m_c_2026",
+    "format": "doubles",
+    "reference_pin": "9b136a8c8cdb860a8ab96fa063f906604e352547",
+    "competitive_use": false,
+    "official_eligibility": "unresolved",
+    "client_verification": "unknown",
+    "implementation_status": "unknown",
+    "review_status": "unreviewed_candidate",
+    "evidence_ids": [
+      "pinned-reference-intake"
+    ],
+    "assertion_ids": [],
+    "test_ids": [],
+    "id": "pickpocket",
+    "name": "Pickpocket",
+    "species_ids": [
+      "barbaracle",
+      "grimmsnarl",
+      "tinkaton",
+      "weavile"
+    ]
+  },
+  {
+    "regulation_id": "champions_reg_m_c_2026",
+    "format": "doubles",
+    "reference_pin": "9b136a8c8cdb860a8ab96fa063f906604e352547",
+    "competitive_use": false,
+    "official_eligibility": "unresolved",
+    "client_verification": "unknown",
+    "implementation_status": "unknown",
+    "review_status": "unreviewed_candidate",
+    "evidence_ids": [
+      "pinned-reference-intake"
+    ],
+    "assertion_ids": [],
+    "test_ids": [],
+    "id": "pickup",
+    "name": "Pickup",
+    "species_ids": [
+      "dedenne",
+      "diggersby",
+      "gourgeist",
+      "gourgeistlarge",
+      "gourgeistsmall",
+      "gourgeistsuper"
+    ]
+  },
+  {
+    "regulation_id": "champions_reg_m_c_2026",
+    "format": "doubles",
+    "reference_pin": "9b136a8c8cdb860a8ab96fa063f906604e352547",
+    "competitive_use": false,
+    "official_eligibility": "unresolved",
+    "client_verification": "unknown",
+    "implementation_status": "unknown",
+    "review_status": "unreviewed_candidate",
+    "evidence_ids": [
+      "pinned-reference-intake"
+    ],
+    "assertion_ids": [],
+    "test_ids": [],
+    "id": "piercingdrill",
+    "name": "Piercing Drill",
+    "species_ids": [
+      "excadrillmega"
+    ]
+  },
+  {
+    "regulation_id": "champions_reg_m_c_2026",
+    "format": "doubles",
+    "reference_pin": "9b136a8c8cdb860a8ab96fa063f906604e352547",
+    "competitive_use": false,
+    "official_eligibility": "unresolved",
+    "client_verification": "unknown",
+    "implementation_status": "unknown",
+    "review_status": "unreviewed_candidate",
+    "evidence_ids": [
+      "pinned-reference-intake"
+    ],
+    "assertion_ids": [],
+    "test_ids": [],
+    "id": "pixilate",
+    "name": "Pixilate",
+    "species_ids": [
+      "altariamega",
+      "gardevoirmega",
+      "sylveon"
+    ]
+  },
+  {
+    "regulation_id": "champions_reg_m_c_2026",
+    "format": "doubles",
+    "reference_pin": "9b136a8c8cdb860a8ab96fa063f906604e352547",
+    "competitive_use": false,
+    "official_eligibility": "unresolved",
+    "client_verification": "unknown",
+    "implementation_status": "unknown",
+    "review_status": "unreviewed_candidate",
+    "evidence_ids": [
+      "pinned-reference-intake"
+    ],
+    "assertion_ids": [],
+    "test_ids": [],
+    "id": "plus",
+    "name": "Plus",
+    "species_ids": [
+      "ampharos",
+      "dedenne",
+      "toxtricity"
+    ]
+  },
+  {
+    "regulation_id": "champions_reg_m_c_2026",
+    "format": "doubles",
+    "reference_pin": "9b136a8c8cdb860a8ab96fa063f906604e352547",
+    "competitive_use": false,
+    "official_eligibility": "unresolved",
+    "client_verification": "unknown",
+    "implementation_status": "unknown",
+    "review_status": "unreviewed_candidate",
+    "evidence_ids": [
+      "pinned-reference-intake"
+    ],
+    "assertion_ids": [],
+    "test_ids": [],
+    "id": "poisonheal",
+    "name": "Poison Heal",
+    "species_ids": [
+      "gliscor"
+    ]
+  },
+  {
+    "regulation_id": "champions_reg_m_c_2026",
+    "format": "doubles",
+    "reference_pin": "9b136a8c8cdb860a8ab96fa063f906604e352547",
+    "competitive_use": false,
+    "official_eligibility": "unresolved",
+    "client_verification": "unknown",
+    "implementation_status": "unknown",
+    "review_status": "unreviewed_candidate",
+    "evidence_ids": [
+      "pinned-reference-intake"
+    ],
+    "assertion_ids": [],
+    "test_ids": [],
+    "id": "poisonpoint",
+    "name": "Poison Point",
+    "species_ids": [
+      "dragalge",
+      "overqwil",
+      "qwilfish",
+      "roserade",
+      "scolipede"
+    ]
+  },
+  {
+    "regulation_id": "champions_reg_m_c_2026",
+    "format": "doubles",
+    "reference_pin": "9b136a8c8cdb860a8ab96fa063f906604e352547",
+    "competitive_use": false,
+    "official_eligibility": "unresolved",
+    "client_verification": "unknown",
+    "implementation_status": "unknown",
+    "review_status": "unreviewed_candidate",
+    "evidence_ids": [
+      "pinned-reference-intake"
+    ],
+    "assertion_ids": [],
+    "test_ids": [],
+    "id": "poisontouch",
+    "name": "Poison Touch",
+    "species_ids": [
+      "dragalge",
+      "sneasler",
+      "toxicroak"
+    ]
+  },
+  {
+    "regulation_id": "champions_reg_m_c_2026",
+    "format": "doubles",
+    "reference_pin": "9b136a8c8cdb860a8ab96fa063f906604e352547",
+    "competitive_use": false,
+    "official_eligibility": "unresolved",
+    "client_verification": "unknown",
+    "implementation_status": "unknown",
+    "review_status": "unreviewed_candidate",
+    "evidence_ids": [
+      "pinned-reference-intake"
+    ],
+    "assertion_ids": [],
+    "test_ids": [],
+    "id": "prankster",
+    "name": "Prankster",
+    "species_ids": [
+      "banettemega",
+      "grimmsnarl",
+      "klefki",
+      "liepard",
+      "meowstic",
+      "sableye",
+      "whimsicott"
+    ]
+  },
+  {
+    "regulation_id": "champions_reg_m_c_2026",
+    "format": "doubles",
+    "reference_pin": "9b136a8c8cdb860a8ab96fa063f906604e352547",
+    "competitive_use": false,
+    "official_eligibility": "unresolved",
+    "client_verification": "unknown",
+    "implementation_status": "unknown",
+    "review_status": "unreviewed_candidate",
+    "evidence_ids": [
+      "pinned-reference-intake"
+    ],
+    "assertion_ids": [],
+    "test_ids": [],
+    "id": "pressure",
+    "name": "Pressure",
+    "species_ids": [
+      "absol",
+      "aerodactyl",
+      "corviknight",
+      "kingambit",
+      "sneasler",
+      "spiritomb",
+      "weavile"
+    ]
+  },
+  {
+    "regulation_id": "champions_reg_m_c_2026",
+    "format": "doubles",
+    "reference_pin": "9b136a8c8cdb860a8ab96fa063f906604e352547",
+    "competitive_use": false,
+    "official_eligibility": "unresolved",
+    "client_verification": "unknown",
+    "implementation_status": "unknown",
+    "review_status": "unreviewed_candidate",
+    "evidence_ids": [
+      "pinned-reference-intake"
+    ],
+    "assertion_ids": [],
+    "test_ids": [],
+    "id": "protean",
+    "name": "Protean",
+    "species_ids": [
+      "greninja",
+      "greninjamega",
+      "meowscarada"
+    ]
+  },
+  {
+    "regulation_id": "champions_reg_m_c_2026",
+    "format": "doubles",
+    "reference_pin": "9b136a8c8cdb860a8ab96fa063f906604e352547",
+    "competitive_use": false,
+    "official_eligibility": "unresolved",
+    "client_verification": "unknown",
+    "implementation_status": "unknown",
+    "review_status": "unreviewed_candidate",
+    "evidence_ids": [
+      "pinned-reference-intake"
+    ],
+    "assertion_ids": [],
+    "test_ids": [],
+    "id": "psychicsurge",
+    "name": "Psychic Surge",
+    "species_ids": [
+      "indeedee",
+      "indeedeef"
+    ]
+  },
+  {
+    "regulation_id": "champions_reg_m_c_2026",
+    "format": "doubles",
+    "reference_pin": "9b136a8c8cdb860a8ab96fa063f906604e352547",
+    "competitive_use": false,
+    "official_eligibility": "unresolved",
+    "client_verification": "unknown",
+    "implementation_status": "unknown",
+    "review_status": "unreviewed_candidate",
+    "evidence_ids": [
+      "pinned-reference-intake"
+    ],
+    "assertion_ids": [],
+    "test_ids": [],
+    "id": "punkrock",
+    "name": "Punk Rock",
+    "species_ids": [
+      "toxtricity",
+      "toxtricitylowkey"
+    ]
+  },
+  {
+    "regulation_id": "champions_reg_m_c_2026",
+    "format": "doubles",
+    "reference_pin": "9b136a8c8cdb860a8ab96fa063f906604e352547",
+    "competitive_use": false,
+    "official_eligibility": "unresolved",
+    "client_verification": "unknown",
+    "implementation_status": "unknown",
+    "review_status": "unreviewed_candidate",
+    "evidence_ids": [
+      "pinned-reference-intake"
+    ],
+    "assertion_ids": [],
+    "test_ids": [],
+    "id": "purepower",
+    "name": "Pure Power",
+    "species_ids": [
+      "medicham",
+      "medichammega"
+    ]
+  },
+  {
+    "regulation_id": "champions_reg_m_c_2026",
+    "format": "doubles",
+    "reference_pin": "9b136a8c8cdb860a8ab96fa063f906604e352547",
+    "competitive_use": false,
+    "official_eligibility": "unresolved",
+    "client_verification": "unknown",
+    "implementation_status": "unknown",
+    "review_status": "unreviewed_candidate",
+    "evidence_ids": [
+      "pinned-reference-intake"
+    ],
+    "assertion_ids": [],
+    "test_ids": [],
+    "id": "purifyingsalt",
+    "name": "Purifying Salt",
+    "species_ids": [
+      "garganacl"
+    ]
+  },
+  {
+    "regulation_id": "champions_reg_m_c_2026",
+    "format": "doubles",
+    "reference_pin": "9b136a8c8cdb860a8ab96fa063f906604e352547",
+    "competitive_use": false,
+    "official_eligibility": "unresolved",
+    "client_verification": "unknown",
+    "implementation_status": "unknown",
+    "review_status": "unreviewed_candidate",
+    "evidence_ids": [
+      "pinned-reference-intake"
+    ],
+    "assertion_ids": [],
+    "test_ids": [],
+    "id": "queenlymajesty",
+    "name": "Queenly Majesty",
+    "species_ids": [
+      "tsareena"
+    ]
+  },
+  {
+    "regulation_id": "champions_reg_m_c_2026",
+    "format": "doubles",
+    "reference_pin": "9b136a8c8cdb860a8ab96fa063f906604e352547",
+    "competitive_use": false,
+    "official_eligibility": "unresolved",
+    "client_verification": "unknown",
+    "implementation_status": "unknown",
+    "review_status": "unreviewed_candidate",
+    "evidence_ids": [
+      "pinned-reference-intake"
+    ],
+    "assertion_ids": [],
+    "test_ids": [],
+    "id": "quickdraw",
+    "name": "Quick Draw",
+    "species_ids": [
+      "slowbrogalar"
+    ]
+  },
+  {
+    "regulation_id": "champions_reg_m_c_2026",
+    "format": "doubles",
+    "reference_pin": "9b136a8c8cdb860a8ab96fa063f906604e352547",
+    "competitive_use": false,
+    "official_eligibility": "unresolved",
+    "client_verification": "unknown",
+    "implementation_status": "unknown",
+    "review_status": "unreviewed_candidate",
+    "evidence_ids": [
+      "pinned-reference-intake"
+    ],
+    "assertion_ids": [],
+    "test_ids": [],
+    "id": "quickfeet",
+    "name": "Quick Feet",
+    "species_ids": [
+      "jolteon"
+    ]
+  },
+  {
+    "regulation_id": "champions_reg_m_c_2026",
+    "format": "doubles",
+    "reference_pin": "9b136a8c8cdb860a8ab96fa063f906604e352547",
+    "competitive_use": false,
+    "official_eligibility": "unresolved",
+    "client_verification": "unknown",
+    "implementation_status": "unknown",
+    "review_status": "unreviewed_candidate",
+    "evidence_ids": [
+      "pinned-reference-intake"
+    ],
+    "assertion_ids": [],
+    "test_ids": [],
+    "id": "raindish",
+    "name": "Rain Dish",
+    "species_ids": [
+      "blastoise",
+      "pelipper"
+    ]
+  },
+  {
+    "regulation_id": "champions_reg_m_c_2026",
+    "format": "doubles",
+    "reference_pin": "9b136a8c8cdb860a8ab96fa063f906604e352547",
+    "competitive_use": false,
+    "official_eligibility": "unresolved",
+    "client_verification": "unknown",
+    "implementation_status": "unknown",
+    "review_status": "unreviewed_candidate",
+    "evidence_ids": [
+      "pinned-reference-intake"
+    ],
+    "assertion_ids": [],
+    "test_ids": [],
+    "id": "rattled",
+    "name": "Rattled",
+    "species_ids": [
+      "persianalola"
+    ]
+  },
+  {
+    "regulation_id": "champions_reg_m_c_2026",
+    "format": "doubles",
+    "reference_pin": "9b136a8c8cdb860a8ab96fa063f906604e352547",
+    "competitive_use": false,
+    "official_eligibility": "unresolved",
+    "client_verification": "unknown",
+    "implementation_status": "unknown",
+    "review_status": "unreviewed_candidate",
+    "evidence_ids": [
+      "pinned-reference-intake"
+    ],
+    "assertion_ids": [],
+    "test_ids": [],
+    "id": "receiver",
+    "name": "Receiver",
+    "species_ids": [
+      "passimian"
+    ]
+  },
+  {
+    "regulation_id": "champions_reg_m_c_2026",
+    "format": "doubles",
+    "reference_pin": "9b136a8c8cdb860a8ab96fa063f906604e352547",
+    "competitive_use": false,
+    "official_eligibility": "unresolved",
+    "client_verification": "unknown",
+    "implementation_status": "unknown",
+    "review_status": "unreviewed_candidate",
+    "evidence_ids": [
+      "pinned-reference-intake"
+    ],
+    "assertion_ids": [],
+    "test_ids": [],
+    "id": "reckless",
+    "name": "Reckless",
+    "species_ids": [
+      "emboar",
+      "rhyperior",
+      "staraptor"
+    ]
+  },
+  {
+    "regulation_id": "champions_reg_m_c_2026",
+    "format": "doubles",
+    "reference_pin": "9b136a8c8cdb860a8ab96fa063f906604e352547",
+    "competitive_use": false,
+    "official_eligibility": "unresolved",
+    "client_verification": "unknown",
+    "implementation_status": "unknown",
+    "review_status": "unreviewed_candidate",
+    "evidence_ids": [
+      "pinned-reference-intake"
+    ],
+    "assertion_ids": [],
+    "test_ids": [],
+    "id": "refrigerate",
+    "name": "Refrigerate",
+    "species_ids": [
+      "aurorus",
+      "glaliemega"
+    ]
+  },
+  {
+    "regulation_id": "champions_reg_m_c_2026",
+    "format": "doubles",
+    "reference_pin": "9b136a8c8cdb860a8ab96fa063f906604e352547",
+    "competitive_use": false,
+    "official_eligibility": "unresolved",
+    "client_verification": "unknown",
+    "implementation_status": "unknown",
+    "review_status": "unreviewed_candidate",
+    "evidence_ids": [
+      "pinned-reference-intake"
+    ],
+    "assertion_ids": [],
+    "test_ids": [],
+    "id": "regenerator",
+    "name": "Regenerator",
+    "species_ids": [
+      "audino",
+      "dragalgemega",
+      "hydrapple",
+      "reuniclus",
+      "slowbro",
+      "slowbrogalar",
+      "slowking",
+      "slowkinggalar",
+      "toxapex"
+    ]
+  },
+  {
+    "regulation_id": "champions_reg_m_c_2026",
+    "format": "doubles",
+    "reference_pin": "9b136a8c8cdb860a8ab96fa063f906604e352547",
+    "competitive_use": false,
+    "official_eligibility": "unresolved",
+    "client_verification": "unknown",
+    "implementation_status": "unknown",
+    "review_status": "unreviewed_candidate",
+    "evidence_ids": [
+      "pinned-reference-intake"
+    ],
+    "assertion_ids": [],
+    "test_ids": [],
+    "id": "ripen",
+    "name": "Ripen",
+    "species_ids": [
+      "appletun",
+      "flapple"
+    ]
+  },
+  {
+    "regulation_id": "champions_reg_m_c_2026",
+    "format": "doubles",
+    "reference_pin": "9b136a8c8cdb860a8ab96fa063f906604e352547",
+    "competitive_use": false,
+    "official_eligibility": "unresolved",
+    "client_verification": "unknown",
+    "implementation_status": "unknown",
+    "review_status": "unreviewed_candidate",
+    "evidence_ids": [
+      "pinned-reference-intake"
+    ],
+    "assertion_ids": [],
+    "test_ids": [],
+    "id": "rivalry",
+    "name": "Rivalry",
+    "species_ids": [
+      "luxray",
+      "pyroar"
+    ]
+  },
+  {
+    "regulation_id": "champions_reg_m_c_2026",
+    "format": "doubles",
+    "reference_pin": "9b136a8c8cdb860a8ab96fa063f906604e352547",
+    "competitive_use": false,
+    "official_eligibility": "unresolved",
+    "client_verification": "unknown",
+    "implementation_status": "unknown",
+    "review_status": "unreviewed_candidate",
+    "evidence_ids": [
+      "pinned-reference-intake"
+    ],
+    "assertion_ids": [],
+    "test_ids": [],
+    "id": "rockhead",
+    "name": "Rock Head",
+    "species_ids": [
+      "aerodactyl",
+      "aggron",
+      "arcaninehisui",
+      "steelix",
+      "tyrantrum"
+    ]
+  },
+  {
+    "regulation_id": "champions_reg_m_c_2026",
+    "format": "doubles",
+    "reference_pin": "9b136a8c8cdb860a8ab96fa063f906604e352547",
+    "competitive_use": false,
+    "official_eligibility": "unresolved",
+    "client_verification": "unknown",
+    "implementation_status": "unknown",
+    "review_status": "unreviewed_candidate",
+    "evidence_ids": [
+      "pinned-reference-intake"
+    ],
+    "assertion_ids": [],
+    "test_ids": [],
+    "id": "roughskin",
+    "name": "Rough Skin",
+    "species_ids": [
+      "garchomp",
+      "sharpedo"
+    ]
+  },
+  {
+    "regulation_id": "champions_reg_m_c_2026",
+    "format": "doubles",
+    "reference_pin": "9b136a8c8cdb860a8ab96fa063f906604e352547",
+    "competitive_use": false,
+    "official_eligibility": "unresolved",
+    "client_verification": "unknown",
+    "implementation_status": "unknown",
+    "review_status": "unreviewed_candidate",
+    "evidence_ids": [
+      "pinned-reference-intake"
+    ],
+    "assertion_ids": [],
+    "test_ids": [],
+    "id": "runaway",
+    "name": "Run Away",
+    "species_ids": [
+      "thievul"
+    ]
+  },
+  {
+    "regulation_id": "champions_reg_m_c_2026",
+    "format": "doubles",
+    "reference_pin": "9b136a8c8cdb860a8ab96fa063f906604e352547",
+    "competitive_use": false,
+    "official_eligibility": "unresolved",
+    "client_verification": "unknown",
+    "implementation_status": "unknown",
+    "review_status": "unreviewed_candidate",
+    "evidence_ids": [
+      "pinned-reference-intake"
+    ],
+    "assertion_ids": [],
+    "test_ids": [],
+    "id": "sandforce",
+    "name": "Sand Force",
+    "species_ids": [
+      "excadrill",
+      "garchompmega",
+      "hippowdon",
+      "steelixmega"
+    ]
+  },
+  {
+    "regulation_id": "champions_reg_m_c_2026",
+    "format": "doubles",
+    "reference_pin": "9b136a8c8cdb860a8ab96fa063f906604e352547",
+    "competitive_use": false,
+    "official_eligibility": "unresolved",
+    "client_verification": "unknown",
+    "implementation_status": "unknown",
+    "review_status": "unreviewed_candidate",
+    "evidence_ids": [
+      "pinned-reference-intake"
+    ],
+    "assertion_ids": [],
+    "test_ids": [],
+    "id": "sandrush",
+    "name": "Sand Rush",
+    "species_ids": [
+      "excadrill",
+      "houndstone",
+      "lycanroc"
+    ]
+  },
+  {
+    "regulation_id": "champions_reg_m_c_2026",
+    "format": "doubles",
+    "reference_pin": "9b136a8c8cdb860a8ab96fa063f906604e352547",
+    "competitive_use": false,
+    "official_eligibility": "unresolved",
+    "client_verification": "unknown",
+    "implementation_status": "unknown",
+    "review_status": "unreviewed_candidate",
+    "evidence_ids": [
+      "pinned-reference-intake"
+    ],
+    "assertion_ids": [],
+    "test_ids": [],
+    "id": "sandspit",
+    "name": "Sand Spit",
+    "species_ids": [
+      "sandaconda"
+    ]
+  },
+  {
+    "regulation_id": "champions_reg_m_c_2026",
+    "format": "doubles",
+    "reference_pin": "9b136a8c8cdb860a8ab96fa063f906604e352547",
+    "competitive_use": false,
+    "official_eligibility": "unresolved",
+    "client_verification": "unknown",
+    "implementation_status": "unknown",
+    "review_status": "unreviewed_candidate",
+    "evidence_ids": [
+      "pinned-reference-intake"
+    ],
+    "assertion_ids": [],
+    "test_ids": [],
+    "id": "sandstream",
+    "name": "Sand Stream",
+    "species_ids": [
+      "hippowdon",
+      "tyranitar",
+      "tyranitarmega"
+    ]
+  },
+  {
+    "regulation_id": "champions_reg_m_c_2026",
+    "format": "doubles",
+    "reference_pin": "9b136a8c8cdb860a8ab96fa063f906604e352547",
+    "competitive_use": false,
+    "official_eligibility": "unresolved",
+    "client_verification": "unknown",
+    "implementation_status": "unknown",
+    "review_status": "unreviewed_candidate",
+    "evidence_ids": [
+      "pinned-reference-intake"
+    ],
+    "assertion_ids": [],
+    "test_ids": [],
+    "id": "sandveil",
+    "name": "Sand Veil",
+    "species_ids": [
+      "garchomp",
+      "gliscor",
+      "heliolisk",
+      "orthworm",
+      "sandaconda",
+      "stunfisk"
+    ]
+  },
+  {
+    "regulation_id": "champions_reg_m_c_2026",
+    "format": "doubles",
+    "reference_pin": "9b136a8c8cdb860a8ab96fa063f906604e352547",
+    "competitive_use": false,
+    "official_eligibility": "unresolved",
+    "client_verification": "unknown",
+    "implementation_status": "unknown",
+    "review_status": "unreviewed_candidate",
+    "evidence_ids": [
+      "pinned-reference-intake"
+    ],
+    "assertion_ids": [],
+    "test_ids": [],
+    "id": "sapsipper",
+    "name": "Sap Sipper",
+    "species_ids": [
+      "azumarill",
+      "drampa",
+      "farigiraf",
+      "gogoat",
+      "goodra",
+      "goodrahisui",
+      "wyrdeer"
+    ]
+  },
+  {
+    "regulation_id": "champions_reg_m_c_2026",
+    "format": "doubles",
+    "reference_pin": "9b136a8c8cdb860a8ab96fa063f906604e352547",
+    "competitive_use": false,
+    "official_eligibility": "unresolved",
+    "client_verification": "unknown",
+    "implementation_status": "unknown",
+    "review_status": "unreviewed_candidate",
+    "evidence_ids": [
+      "pinned-reference-intake"
+    ],
+    "assertion_ids": [],
+    "test_ids": [],
+    "id": "scrappy",
+    "name": "Scrappy",
+    "species_ids": [
+      "decidueyehisui",
+      "kangaskhan",
+      "lopunnymega",
+      "pangoro",
+      "sirfetchd"
+    ]
+  },
+  {
+    "regulation_id": "champions_reg_m_c_2026",
+    "format": "doubles",
+    "reference_pin": "9b136a8c8cdb860a8ab96fa063f906604e352547",
+    "competitive_use": false,
+    "official_eligibility": "unresolved",
+    "client_verification": "unknown",
+    "implementation_status": "unknown",
+    "review_status": "unreviewed_candidate",
+    "evidence_ids": [
+      "pinned-reference-intake"
+    ],
+    "assertion_ids": [],
+    "test_ids": [],
+    "id": "screencleaner",
+    "name": "Screen Cleaner",
+    "species_ids": [
+      "mrrime"
+    ]
+  },
+  {
+    "regulation_id": "champions_reg_m_c_2026",
+    "format": "doubles",
+    "reference_pin": "9b136a8c8cdb860a8ab96fa063f906604e352547",
+    "competitive_use": false,
+    "official_eligibility": "unresolved",
+    "client_verification": "unknown",
+    "implementation_status": "unknown",
+    "review_status": "unreviewed_candidate",
+    "evidence_ids": [
+      "pinned-reference-intake"
+    ],
+    "assertion_ids": [],
+    "test_ids": [],
+    "id": "seedsower",
+    "name": "Seed Sower",
+    "species_ids": [
+      "arboliva"
+    ]
+  },
+  {
+    "regulation_id": "champions_reg_m_c_2026",
+    "format": "doubles",
+    "reference_pin": "9b136a8c8cdb860a8ab96fa063f906604e352547",
+    "competitive_use": false,
+    "official_eligibility": "unresolved",
+    "client_verification": "unknown",
+    "implementation_status": "unknown",
+    "review_status": "unreviewed_candidate",
+    "evidence_ids": [
+      "pinned-reference-intake"
+    ],
+    "assertion_ids": [],
+    "test_ids": [],
+    "id": "serenegrace",
+    "name": "Serene Grace",
+    "species_ids": [
+      "meloettapirouette"
+    ]
+  },
+  {
+    "regulation_id": "champions_reg_m_c_2026",
+    "format": "doubles",
+    "reference_pin": "9b136a8c8cdb860a8ab96fa063f906604e352547",
+    "competitive_use": false,
+    "official_eligibility": "unresolved",
+    "client_verification": "unknown",
+    "implementation_status": "unknown",
+    "review_status": "unreviewed_candidate",
+    "evidence_ids": [
+      "pinned-reference-intake"
+    ],
+    "assertion_ids": [],
+    "test_ids": [],
+    "id": "shadowtag",
+    "name": "Shadow Tag",
+    "species_ids": [
+      "gengarmega"
+    ]
+  },
+  {
+    "regulation_id": "champions_reg_m_c_2026",
+    "format": "doubles",
+    "reference_pin": "9b136a8c8cdb860a8ab96fa063f906604e352547",
+    "competitive_use": false,
+    "official_eligibility": "unresolved",
+    "client_verification": "unknown",
+    "implementation_status": "unknown",
+    "review_status": "unreviewed_candidate",
+    "evidence_ids": [
+      "pinned-reference-intake"
+    ],
+    "assertion_ids": [],
+    "test_ids": [],
+    "id": "sharpness",
+    "name": "Sharpness",
+    "species_ids": [
+      "absolmegaz",
+      "gallade",
+      "kleavor",
+      "samurotthisui"
+    ]
+  },
+  {
+    "regulation_id": "champions_reg_m_c_2026",
+    "format": "doubles",
+    "reference_pin": "9b136a8c8cdb860a8ab96fa063f906604e352547",
+    "competitive_use": false,
+    "official_eligibility": "unresolved",
+    "client_verification": "unknown",
+    "implementation_status": "unknown",
+    "review_status": "unreviewed_candidate",
+    "evidence_ids": [
+      "pinned-reference-intake"
+    ],
+    "assertion_ids": [],
+    "test_ids": [],
+    "id": "shedskin",
+    "name": "Shed Skin",
+    "species_ids": [
+      "arbok",
+      "sandaconda",
+      "scrafty"
+    ]
+  },
+  {
+    "regulation_id": "champions_reg_m_c_2026",
+    "format": "doubles",
+    "reference_pin": "9b136a8c8cdb860a8ab96fa063f906604e352547",
+    "competitive_use": false,
+    "official_eligibility": "unresolved",
+    "client_verification": "unknown",
+    "implementation_status": "unknown",
+    "review_status": "unreviewed_candidate",
+    "evidence_ids": [
+      "pinned-reference-intake"
+    ],
+    "assertion_ids": [],
+    "test_ids": [],
+    "id": "sheerforce",
+    "name": "Sheer Force",
+    "species_ids": [
+      "cameruptmega",
+      "conkeldurr",
+      "feraligatr",
+      "kleavor",
+      "mawile",
+      "rampardos",
+      "squawkabillywhite",
+      "squawkabillyyellow",
+      "steelix",
+      "tauros",
+      "toucannon"
+    ]
+  },
+  {
+    "regulation_id": "champions_reg_m_c_2026",
+    "format": "doubles",
+    "reference_pin": "9b136a8c8cdb860a8ab96fa063f906604e352547",
+    "competitive_use": false,
+    "official_eligibility": "unresolved",
+    "client_verification": "unknown",
+    "implementation_status": "unknown",
+    "review_status": "unreviewed_candidate",
+    "evidence_ids": [
+      "pinned-reference-intake"
+    ],
+    "assertion_ids": [],
+    "test_ids": [],
+    "id": "shellarmor",
+    "name": "Shell Armor",
+    "species_ids": [
+      "goodrahisui",
+      "samurott",
+      "scolipedemega",
+      "slowbromega",
+      "torkoal",
+      "torterra"
+    ]
+  },
+  {
+    "regulation_id": "champions_reg_m_c_2026",
+    "format": "doubles",
+    "reference_pin": "9b136a8c8cdb860a8ab96fa063f906604e352547",
+    "competitive_use": false,
+    "official_eligibility": "unresolved",
+    "client_verification": "unknown",
+    "implementation_status": "unknown",
+    "review_status": "unreviewed_candidate",
+    "evidence_ids": [
+      "pinned-reference-intake"
+    ],
+    "assertion_ids": [],
+    "test_ids": [],
+    "id": "shielddust",
+    "name": "Shield Dust",
+    "species_ids": [
+      "vivillon",
+      "vivillonarchipelago",
+      "vivilloncontinental",
+      "vivillonelegant",
+      "vivillonfancy",
+      "vivillongarden",
+      "vivillonhighplains",
+      "vivillonicysnow",
+      "vivillonjungle",
+      "vivillonmarine",
+      "vivillonmodern",
+      "vivillonmonsoon",
+      "vivillonocean",
+      "vivillonpokeball",
+      "vivillonpolar",
+      "vivillonriver",
+      "vivillonsandstorm",
+      "vivillonsavanna",
+      "vivillonsun",
+      "vivillontundra"
+    ]
+  },
+  {
+    "regulation_id": "champions_reg_m_c_2026",
+    "format": "doubles",
+    "reference_pin": "9b136a8c8cdb860a8ab96fa063f906604e352547",
+    "competitive_use": false,
+    "official_eligibility": "unresolved",
+    "client_verification": "unknown",
+    "implementation_status": "unknown",
+    "review_status": "unreviewed_candidate",
+    "evidence_ids": [
+      "pinned-reference-intake"
+    ],
+    "assertion_ids": [],
+    "test_ids": [],
+    "id": "shieldsdown",
+    "name": "Shields Down",
+    "species_ids": [
+      "miniormeteor"
+    ]
+  },
+  {
+    "regulation_id": "champions_reg_m_c_2026",
+    "format": "doubles",
+    "reference_pin": "9b136a8c8cdb860a8ab96fa063f906604e352547",
+    "competitive_use": false,
+    "official_eligibility": "unresolved",
+    "client_verification": "unknown",
+    "implementation_status": "unknown",
+    "review_status": "unreviewed_candidate",
+    "evidence_ids": [
+      "pinned-reference-intake"
+    ],
+    "assertion_ids": [],
+    "test_ids": [],
+    "id": "skilllink",
+    "name": "Skill Link",
+    "species_ids": [
+      "heracrossmega",
+      "toucannon"
+    ]
+  },
+  {
+    "regulation_id": "champions_reg_m_c_2026",
+    "format": "doubles",
+    "reference_pin": "9b136a8c8cdb860a8ab96fa063f906604e352547",
+    "competitive_use": false,
+    "official_eligibility": "unresolved",
+    "client_verification": "unknown",
+    "implementation_status": "unknown",
+    "review_status": "unreviewed_candidate",
+    "evidence_ids": [
+      "pinned-reference-intake"
+    ],
+    "assertion_ids": [],
+    "test_ids": [],
+    "id": "slushrush",
+    "name": "Slush Rush",
+    "species_ids": [
+      "beartic"
+    ]
+  },
+  {
+    "regulation_id": "champions_reg_m_c_2026",
+    "format": "doubles",
+    "reference_pin": "9b136a8c8cdb860a8ab96fa063f906604e352547",
+    "competitive_use": false,
+    "official_eligibility": "unresolved",
+    "client_verification": "unknown",
+    "implementation_status": "unknown",
+    "review_status": "unreviewed_candidate",
+    "evidence_ids": [
+      "pinned-reference-intake"
+    ],
+    "assertion_ids": [],
+    "test_ids": [],
+    "id": "sniper",
+    "name": "Sniper",
+    "species_ids": [
+      "ariados",
+      "barbaracle",
+      "beedrill",
+      "inteleon"
+    ]
+  },
+  {
+    "regulation_id": "champions_reg_m_c_2026",
+    "format": "doubles",
+    "reference_pin": "9b136a8c8cdb860a8ab96fa063f906604e352547",
+    "competitive_use": false,
+    "official_eligibility": "unresolved",
+    "client_verification": "unknown",
+    "implementation_status": "unknown",
+    "review_status": "unreviewed_candidate",
+    "evidence_ids": [
+      "pinned-reference-intake"
+    ],
+    "assertion_ids": [],
+    "test_ids": [],
+    "id": "snowcloak",
+    "name": "Snow Cloak",
+    "species_ids": [
+      "beartic",
+      "froslass",
+      "glaceon",
+      "mamoswine",
+      "ninetalesalola"
+    ]
+  },
+  {
+    "regulation_id": "champions_reg_m_c_2026",
+    "format": "doubles",
+    "reference_pin": "9b136a8c8cdb860a8ab96fa063f906604e352547",
+    "competitive_use": false,
+    "official_eligibility": "unresolved",
+    "client_verification": "unknown",
+    "implementation_status": "unknown",
+    "review_status": "unreviewed_candidate",
+    "evidence_ids": [
+      "pinned-reference-intake"
+    ],
+    "assertion_ids": [],
+    "test_ids": [],
+    "id": "snowwarning",
+    "name": "Snow Warning",
+    "species_ids": [
+      "abomasnow",
+      "abomasnowmega",
+      "aurorus",
+      "froslassmega",
+      "ninetalesalola",
+      "vanilluxe"
+    ]
+  },
+  {
+    "regulation_id": "champions_reg_m_c_2026",
+    "format": "doubles",
+    "reference_pin": "9b136a8c8cdb860a8ab96fa063f906604e352547",
+    "competitive_use": false,
+    "official_eligibility": "unresolved",
+    "client_verification": "unknown",
+    "implementation_status": "unknown",
+    "review_status": "unreviewed_candidate",
+    "evidence_ids": [
+      "pinned-reference-intake"
+    ],
+    "assertion_ids": [],
+    "test_ids": [],
+    "id": "solarpower",
+    "name": "Solar Power",
+    "species_ids": [
+      "charizard",
+      "heliolisk",
+      "houndoommega"
+    ]
+  },
+  {
+    "regulation_id": "champions_reg_m_c_2026",
+    "format": "doubles",
+    "reference_pin": "9b136a8c8cdb860a8ab96fa063f906604e352547",
+    "competitive_use": false,
+    "official_eligibility": "unresolved",
+    "client_verification": "unknown",
+    "implementation_status": "unknown",
+    "review_status": "unreviewed_candidate",
+    "evidence_ids": [
+      "pinned-reference-intake"
+    ],
+    "assertion_ids": [],
+    "test_ids": [],
+    "id": "solidrock",
+    "name": "Solid Rock",
+    "species_ids": [
+      "camerupt",
+      "rhyperior"
+    ]
+  },
+  {
+    "regulation_id": "champions_reg_m_c_2026",
+    "format": "doubles",
+    "reference_pin": "9b136a8c8cdb860a8ab96fa063f906604e352547",
+    "competitive_use": false,
+    "official_eligibility": "unresolved",
+    "client_verification": "unknown",
+    "implementation_status": "unknown",
+    "review_status": "unreviewed_candidate",
+    "evidence_ids": [
+      "pinned-reference-intake"
+    ],
+    "assertion_ids": [],
+    "test_ids": [],
+    "id": "soundproof",
+    "name": "Soundproof",
+    "species_ids": [
+      "abomasnow",
+      "bastiodon",
+      "kommoo",
+      "mrmime"
+    ]
+  },
+  {
+    "regulation_id": "champions_reg_m_c_2026",
+    "format": "doubles",
+    "reference_pin": "9b136a8c8cdb860a8ab96fa063f906604e352547",
+    "competitive_use": false,
+    "official_eligibility": "unresolved",
+    "client_verification": "unknown",
+    "implementation_status": "unknown",
+    "review_status": "unreviewed_candidate",
+    "evidence_ids": [
+      "pinned-reference-intake"
+    ],
+    "assertion_ids": [],
+    "test_ids": [],
+    "id": "speedboost",
+    "name": "Speed Boost",
+    "species_ids": [
+      "blaziken",
+      "blazikenmega",
+      "espathra",
+      "scolipede",
+      "sharpedo"
+    ]
+  },
+  {
+    "regulation_id": "champions_reg_m_c_2026",
+    "format": "doubles",
+    "reference_pin": "9b136a8c8cdb860a8ab96fa063f906604e352547",
+    "competitive_use": false,
+    "official_eligibility": "unresolved",
+    "client_verification": "unknown",
+    "implementation_status": "unknown",
+    "review_status": "unreviewed_candidate",
+    "evidence_ids": [
+      "pinned-reference-intake"
+    ],
+    "assertion_ids": [],
+    "test_ids": [],
+    "id": "spicyspray",
+    "name": "Spicy Spray",
+    "species_ids": [
+      "scovillainmega"
+    ]
+  },
+  {
+    "regulation_id": "champions_reg_m_c_2026",
+    "format": "doubles",
+    "reference_pin": "9b136a8c8cdb860a8ab96fa063f906604e352547",
+    "competitive_use": false,
+    "official_eligibility": "unresolved",
+    "client_verification": "unknown",
+    "implementation_status": "unknown",
+    "review_status": "unreviewed_candidate",
+    "evidence_ids": [
+      "pinned-reference-intake"
+    ],
+    "assertion_ids": [],
+    "test_ids": [],
+    "id": "stakeout",
+    "name": "Stakeout",
+    "species_ids": [
+      "mabosstiff",
+      "thievul"
+    ]
+  },
+  {
+    "regulation_id": "champions_reg_m_c_2026",
+    "format": "doubles",
+    "reference_pin": "9b136a8c8cdb860a8ab96fa063f906604e352547",
+    "competitive_use": false,
+    "official_eligibility": "unresolved",
+    "client_verification": "unknown",
+    "implementation_status": "unknown",
+    "review_status": "unreviewed_candidate",
+    "evidence_ids": [
+      "pinned-reference-intake"
+    ],
+    "assertion_ids": [],
+    "test_ids": [],
+    "id": "stall",
+    "name": "Stall",
+    "species_ids": [
+      "sableye"
+    ]
+  },
+  {
+    "regulation_id": "champions_reg_m_c_2026",
+    "format": "doubles",
+    "reference_pin": "9b136a8c8cdb860a8ab96fa063f906604e352547",
+    "competitive_use": false,
+    "official_eligibility": "unresolved",
+    "client_verification": "unknown",
+    "implementation_status": "unknown",
+    "review_status": "unreviewed_candidate",
+    "evidence_ids": [
+      "pinned-reference-intake"
+    ],
+    "assertion_ids": [],
+    "test_ids": [],
+    "id": "stalwart",
+    "name": "Stalwart",
+    "species_ids": [
+      "archaludon",
+      "skarmorymega"
+    ]
+  },
+  {
+    "regulation_id": "champions_reg_m_c_2026",
+    "format": "doubles",
+    "reference_pin": "9b136a8c8cdb860a8ab96fa063f906604e352547",
+    "competitive_use": false,
+    "official_eligibility": "unresolved",
+    "client_verification": "unknown",
+    "implementation_status": "unknown",
+    "review_status": "unreviewed_candidate",
+    "evidence_ids": [
+      "pinned-reference-intake"
+    ],
+    "assertion_ids": [],
+    "test_ids": [],
+    "id": "stamina",
+    "name": "Stamina",
+    "species_ids": [
+      "archaludon",
+      "mudsdale"
+    ]
+  },
+  {
+    "regulation_id": "champions_reg_m_c_2026",
+    "format": "doubles",
+    "reference_pin": "9b136a8c8cdb860a8ab96fa063f906604e352547",
+    "competitive_use": false,
+    "official_eligibility": "unresolved",
+    "client_verification": "unknown",
+    "implementation_status": "unknown",
+    "review_status": "unreviewed_candidate",
+    "evidence_ids": [
+      "pinned-reference-intake"
+    ],
+    "assertion_ids": [],
+    "test_ids": [],
+    "id": "stancechange",
+    "name": "Stance Change",
+    "species_ids": [
+      "aegislash",
+      "aegislashblade"
+    ]
+  },
+  {
+    "regulation_id": "champions_reg_m_c_2026",
+    "format": "doubles",
+    "reference_pin": "9b136a8c8cdb860a8ab96fa063f906604e352547",
+    "competitive_use": false,
+    "official_eligibility": "unresolved",
+    "client_verification": "unknown",
+    "implementation_status": "unknown",
+    "review_status": "unreviewed_candidate",
+    "evidence_ids": [
+      "pinned-reference-intake"
+    ],
+    "assertion_ids": [],
+    "test_ids": [],
+    "id": "static",
+    "name": "Static",
+    "species_ids": [
+      "ampharos",
+      "bellibolt",
+      "emolga",
+      "manectric",
+      "pikachu",
+      "raichu",
+      "stunfisk"
+    ]
+  },
+  {
+    "regulation_id": "champions_reg_m_c_2026",
+    "format": "doubles",
+    "reference_pin": "9b136a8c8cdb860a8ab96fa063f906604e352547",
+    "competitive_use": false,
+    "official_eligibility": "unresolved",
+    "client_verification": "unknown",
+    "implementation_status": "unknown",
+    "review_status": "unreviewed_candidate",
+    "evidence_ids": [
+      "pinned-reference-intake"
+    ],
+    "assertion_ids": [],
+    "test_ids": [],
+    "id": "steadfast",
+    "name": "Steadfast",
+    "species_ids": [
+      "gallade",
+      "lucario",
+      "lycanroc",
+      "machamp",
+      "sirfetchd"
+    ]
+  },
+  {
+    "regulation_id": "champions_reg_m_c_2026",
+    "format": "doubles",
+    "reference_pin": "9b136a8c8cdb860a8ab96fa063f906604e352547",
+    "competitive_use": false,
+    "official_eligibility": "unresolved",
+    "client_verification": "unknown",
+    "implementation_status": "unknown",
+    "review_status": "unreviewed_candidate",
+    "evidence_ids": [
+      "pinned-reference-intake"
+    ],
+    "assertion_ids": [],
+    "test_ids": [],
+    "id": "steelyspirit",
+    "name": "Steely Spirit",
+    "species_ids": [
+      "perrserker"
+    ]
+  },
+  {
+    "regulation_id": "champions_reg_m_c_2026",
+    "format": "doubles",
+    "reference_pin": "9b136a8c8cdb860a8ab96fa063f906604e352547",
+    "competitive_use": false,
+    "official_eligibility": "unresolved",
+    "client_verification": "unknown",
+    "implementation_status": "unknown",
+    "review_status": "unreviewed_candidate",
+    "evidence_ids": [
+      "pinned-reference-intake"
+    ],
+    "assertion_ids": [],
+    "test_ids": [],
+    "id": "stench",
+    "name": "Stench",
+    "species_ids": [
+      "garbodor"
+    ]
+  },
+  {
+    "regulation_id": "champions_reg_m_c_2026",
+    "format": "doubles",
+    "reference_pin": "9b136a8c8cdb860a8ab96fa063f906604e352547",
+    "competitive_use": false,
+    "official_eligibility": "unresolved",
+    "client_verification": "unknown",
+    "implementation_status": "unknown",
+    "review_status": "unreviewed_candidate",
+    "evidence_ids": [
+      "pinned-reference-intake"
+    ],
+    "assertion_ids": [],
+    "test_ids": [],
+    "id": "stickyhold",
+    "name": "Sticky Hold",
+    "species_ids": [
+      "hydrapple",
+      "swalot"
+    ]
+  },
+  {
+    "regulation_id": "champions_reg_m_c_2026",
+    "format": "doubles",
+    "reference_pin": "9b136a8c8cdb860a8ab96fa063f906604e352547",
+    "competitive_use": false,
+    "official_eligibility": "unresolved",
+    "client_verification": "unknown",
+    "implementation_status": "unknown",
+    "review_status": "unreviewed_candidate",
+    "evidence_ids": [
+      "pinned-reference-intake"
+    ],
+    "assertion_ids": [],
+    "test_ids": [],
+    "id": "strongjaw",
+    "name": "Strong Jaw",
+    "species_ids": [
+      "avalugghisui",
+      "sharpedomega",
+      "tyrantrum"
+    ]
+  },
+  {
+    "regulation_id": "champions_reg_m_c_2026",
+    "format": "doubles",
+    "reference_pin": "9b136a8c8cdb860a8ab96fa063f906604e352547",
+    "competitive_use": false,
+    "official_eligibility": "unresolved",
+    "client_verification": "unknown",
+    "implementation_status": "unknown",
+    "review_status": "unreviewed_candidate",
+    "evidence_ids": [
+      "pinned-reference-intake"
+    ],
+    "assertion_ids": [],
+    "test_ids": [],
+    "id": "sturdy",
+    "name": "Sturdy",
+    "species_ids": [
+      "aggron",
+      "archaludon",
+      "avalugg",
+      "avalugghisui",
+      "bastiodon",
+      "forretress",
+      "garganacl",
+      "skarmory",
+      "steelix"
+    ]
+  },
+  {
+    "regulation_id": "champions_reg_m_c_2026",
+    "format": "doubles",
+    "reference_pin": "9b136a8c8cdb860a8ab96fa063f906604e352547",
+    "competitive_use": false,
+    "official_eligibility": "unresolved",
+    "client_verification": "unknown",
+    "implementation_status": "unknown",
+    "review_status": "unreviewed_candidate",
+    "evidence_ids": [
+      "pinned-reference-intake"
+    ],
+    "assertion_ids": [],
+    "test_ids": [],
+    "id": "suctioncups",
+    "name": "Suction Cups",
+    "species_ids": [
+      "malamar"
+    ]
+  },
+  {
+    "regulation_id": "champions_reg_m_c_2026",
+    "format": "doubles",
+    "reference_pin": "9b136a8c8cdb860a8ab96fa063f906604e352547",
+    "competitive_use": false,
+    "official_eligibility": "unresolved",
+    "client_verification": "unknown",
+    "implementation_status": "unknown",
+    "review_status": "unreviewed_candidate",
+    "evidence_ids": [
+      "pinned-reference-intake"
+    ],
+    "assertion_ids": [],
+    "test_ids": [],
+    "id": "superluck",
+    "name": "Super Luck",
+    "species_ids": [
+      "absol"
+    ]
+  },
+  {
+    "regulation_id": "champions_reg_m_c_2026",
+    "format": "doubles",
+    "reference_pin": "9b136a8c8cdb860a8ab96fa063f906604e352547",
+    "competitive_use": false,
+    "official_eligibility": "unresolved",
+    "client_verification": "unknown",
+    "implementation_status": "unknown",
+    "review_status": "unreviewed_candidate",
+    "evidence_ids": [
+      "pinned-reference-intake"
+    ],
+    "assertion_ids": [],
+    "test_ids": [],
+    "id": "supersweetsyrup",
+    "name": "Supersweet Syrup",
+    "species_ids": [
+      "hydrapple"
+    ]
+  },
+  {
+    "regulation_id": "champions_reg_m_c_2026",
+    "format": "doubles",
+    "reference_pin": "9b136a8c8cdb860a8ab96fa063f906604e352547",
+    "competitive_use": false,
+    "official_eligibility": "unresolved",
+    "client_verification": "unknown",
+    "implementation_status": "unknown",
+    "review_status": "unreviewed_candidate",
+    "evidence_ids": [
+      "pinned-reference-intake"
+    ],
+    "assertion_ids": [],
+    "test_ids": [],
+    "id": "supremeoverlord",
+    "name": "Supreme Overlord",
+    "species_ids": [
+      "kingambit"
+    ]
+  },
+  {
+    "regulation_id": "champions_reg_m_c_2026",
+    "format": "doubles",
+    "reference_pin": "9b136a8c8cdb860a8ab96fa063f906604e352547",
+    "competitive_use": false,
+    "official_eligibility": "unresolved",
+    "client_verification": "unknown",
+    "implementation_status": "unknown",
+    "review_status": "unreviewed_candidate",
+    "evidence_ids": [
+      "pinned-reference-intake"
+    ],
+    "assertion_ids": [],
+    "test_ids": [],
+    "id": "surgesurfer",
+    "name": "Surge Surfer",
+    "species_ids": [
+      "raichualola"
+    ]
+  },
+  {
+    "regulation_id": "champions_reg_m_c_2026",
+    "format": "doubles",
+    "reference_pin": "9b136a8c8cdb860a8ab96fa063f906604e352547",
+    "competitive_use": false,
+    "official_eligibility": "unresolved",
+    "client_verification": "unknown",
+    "implementation_status": "unknown",
+    "review_status": "unreviewed_candidate",
+    "evidence_ids": [
+      "pinned-reference-intake"
+    ],
+    "assertion_ids": [],
+    "test_ids": [],
+    "id": "swarm",
+    "name": "Swarm",
+    "species_ids": [
+      "ariados",
+      "beedrill",
+      "heracross",
+      "kleavor",
+      "scizor",
+      "scolipede",
+      "volcarona"
+    ]
+  },
+  {
+    "regulation_id": "champions_reg_m_c_2026",
+    "format": "doubles",
+    "reference_pin": "9b136a8c8cdb860a8ab96fa063f906604e352547",
+    "competitive_use": false,
+    "official_eligibility": "unresolved",
+    "client_verification": "unknown",
+    "implementation_status": "unknown",
+    "review_status": "unreviewed_candidate",
+    "evidence_ids": [
+      "pinned-reference-intake"
+    ],
+    "assertion_ids": [],
+    "test_ids": [],
+    "id": "sweetveil",
+    "name": "Sweet Veil",
+    "species_ids": [
+      "alcremie",
+      "alcremiecaramelswirl",
+      "alcremielemoncream",
+      "alcremiematchacream",
+      "alcremiemintcream",
+      "alcremierainbowswirl",
+      "alcremierubycream",
+      "alcremierubyswirl",
+      "slurpuff",
+      "tsareena"
+    ]
+  },
+  {
+    "regulation_id": "champions_reg_m_c_2026",
+    "format": "doubles",
+    "reference_pin": "9b136a8c8cdb860a8ab96fa063f906604e352547",
+    "competitive_use": false,
+    "official_eligibility": "unresolved",
+    "client_verification": "unknown",
+    "implementation_status": "unknown",
+    "review_status": "unreviewed_candidate",
+    "evidence_ids": [
+      "pinned-reference-intake"
+    ],
+    "assertion_ids": [],
+    "test_ids": [],
+    "id": "swiftswim",
+    "name": "Swift Swim",
+    "species_ids": [
+      "basculegion",
+      "basculegionf",
+      "beartic",
+      "overqwil",
+      "qwilfish",
+      "swampertmega"
+    ]
+  },
+  {
+    "regulation_id": "champions_reg_m_c_2026",
+    "format": "doubles",
+    "reference_pin": "9b136a8c8cdb860a8ab96fa063f906604e352547",
+    "competitive_use": false,
+    "official_eligibility": "unresolved",
+    "client_verification": "unknown",
+    "implementation_status": "unknown",
+    "review_status": "unreviewed_candidate",
+    "evidence_ids": [
+      "pinned-reference-intake"
+    ],
+    "assertion_ids": [],
+    "test_ids": [],
+    "id": "symbiosis",
+    "name": "Symbiosis",
+    "species_ids": [
+      "floetteeternal",
+      "florges",
+      "oranguru"
+    ]
+  },
+  {
+    "regulation_id": "champions_reg_m_c_2026",
+    "format": "doubles",
+    "reference_pin": "9b136a8c8cdb860a8ab96fa063f906604e352547",
+    "competitive_use": false,
+    "official_eligibility": "unresolved",
+    "client_verification": "unknown",
+    "implementation_status": "unknown",
+    "review_status": "unreviewed_candidate",
+    "evidence_ids": [
+      "pinned-reference-intake"
+    ],
+    "assertion_ids": [],
+    "test_ids": [],
+    "id": "synchronize",
+    "name": "Synchronize",
+    "species_ids": [
+      "alakazam",
+      "espeon",
+      "gardevoir",
+      "indeedee",
+      "indeedeef",
+      "musharna",
+      "umbreon"
+    ]
+  },
+  {
+    "regulation_id": "champions_reg_m_c_2026",
+    "format": "doubles",
+    "reference_pin": "9b136a8c8cdb860a8ab96fa063f906604e352547",
+    "competitive_use": false,
+    "official_eligibility": "unresolved",
+    "client_verification": "unknown",
+    "implementation_status": "unknown",
+    "review_status": "unreviewed_candidate",
+    "evidence_ids": [
+      "pinned-reference-intake"
+    ],
+    "assertion_ids": [],
+    "test_ids": [],
+    "id": "tangledfeet",
+    "name": "Tangled Feet",
+    "species_ids": [
+      "mrrime",
+      "pidgeot"
+    ]
+  },
+  {
+    "regulation_id": "champions_reg_m_c_2026",
+    "format": "doubles",
+    "reference_pin": "9b136a8c8cdb860a8ab96fa063f906604e352547",
+    "competitive_use": false,
+    "official_eligibility": "unresolved",
+    "client_verification": "unknown",
+    "implementation_status": "unknown",
+    "review_status": "unreviewed_candidate",
+    "evidence_ids": [
+      "pinned-reference-intake"
+    ],
+    "assertion_ids": [],
+    "test_ids": [],
+    "id": "technician",
+    "name": "Technician",
+    "species_ids": [
+      "grapploct",
+      "maushold",
+      "mausholdfour",
+      "mrmime",
+      "persian",
+      "persianalola",
+      "roserade",
+      "scizor",
+      "scizormega",
+      "toxtricity",
+      "toxtricitylowkey"
+    ]
+  },
+  {
+    "regulation_id": "champions_reg_m_c_2026",
+    "format": "doubles",
+    "reference_pin": "9b136a8c8cdb860a8ab96fa063f906604e352547",
+    "competitive_use": false,
+    "official_eligibility": "unresolved",
+    "client_verification": "unknown",
+    "implementation_status": "unknown",
+    "review_status": "unreviewed_candidate",
+    "evidence_ids": [
+      "pinned-reference-intake"
+    ],
+    "assertion_ids": [],
+    "test_ids": [],
+    "id": "telepathy",
+    "name": "Telepathy",
+    "species_ids": [
+      "gardevoir",
+      "medicham",
+      "musharna",
+      "noivern",
+      "oranguru"
+    ]
+  },
+  {
+    "regulation_id": "champions_reg_m_c_2026",
+    "format": "doubles",
+    "reference_pin": "9b136a8c8cdb860a8ab96fa063f906604e352547",
+    "competitive_use": false,
+    "official_eligibility": "unresolved",
+    "client_verification": "unknown",
+    "implementation_status": "unknown",
+    "review_status": "unreviewed_candidate",
+    "evidence_ids": [
+      "pinned-reference-intake"
+    ],
+    "assertion_ids": [],
+    "test_ids": [],
+    "id": "terashell",
+    "name": "Tera Shell",
+    "species_ids": [
+      "terapagosterastal"
+    ]
+  },
+  {
+    "regulation_id": "champions_reg_m_c_2026",
+    "format": "doubles",
+    "reference_pin": "9b136a8c8cdb860a8ab96fa063f906604e352547",
+    "competitive_use": false,
+    "official_eligibility": "unresolved",
+    "client_verification": "unknown",
+    "implementation_status": "unknown",
+    "review_status": "unreviewed_candidate",
+    "evidence_ids": [
+      "pinned-reference-intake"
+    ],
+    "assertion_ids": [],
+    "test_ids": [],
+    "id": "thermalexchange",
+    "name": "Thermal Exchange",
+    "species_ids": [
+      "baxcalibur",
+      "baxcaliburmega"
+    ]
+  },
+  {
+    "regulation_id": "champions_reg_m_c_2026",
+    "format": "doubles",
+    "reference_pin": "9b136a8c8cdb860a8ab96fa063f906604e352547",
+    "competitive_use": false,
+    "official_eligibility": "unresolved",
+    "client_verification": "unknown",
+    "implementation_status": "unknown",
+    "review_status": "unreviewed_candidate",
+    "evidence_ids": [
+      "pinned-reference-intake"
+    ],
+    "assertion_ids": [],
+    "test_ids": [],
+    "id": "thickfat",
+    "name": "Thick Fat",
+    "species_ids": [
+      "appletun",
+      "azumarill",
+      "mamoswine",
+      "snorlax",
+      "venusaurmega"
+    ]
+  },
+  {
+    "regulation_id": "champions_reg_m_c_2026",
+    "format": "doubles",
+    "reference_pin": "9b136a8c8cdb860a8ab96fa063f906604e352547",
+    "competitive_use": false,
+    "official_eligibility": "unresolved",
+    "client_verification": "unknown",
+    "implementation_status": "unknown",
+    "review_status": "unreviewed_candidate",
+    "evidence_ids": [
+      "pinned-reference-intake"
+    ],
+    "assertion_ids": [],
+    "test_ids": [],
+    "id": "torrent",
+    "name": "Torrent",
+    "species_ids": [
+      "blastoise",
+      "empoleon",
+      "feraligatr",
+      "greninja",
+      "inteleon",
+      "primarina",
+      "quaquaval",
+      "samurott",
+      "samurotthisui",
+      "simipour",
+      "swampert"
+    ]
+  },
+  {
+    "regulation_id": "champions_reg_m_c_2026",
+    "format": "doubles",
+    "reference_pin": "9b136a8c8cdb860a8ab96fa063f906604e352547",
+    "competitive_use": false,
+    "official_eligibility": "unresolved",
+    "client_verification": "unknown",
+    "implementation_status": "unknown",
+    "review_status": "unreviewed_candidate",
+    "evidence_ids": [
+      "pinned-reference-intake"
+    ],
+    "assertion_ids": [],
+    "test_ids": [],
+    "id": "toughclaws",
+    "name": "Tough Claws",
+    "species_ids": [
+      "aerodactylmega",
+      "barbaracle",
+      "barbaraclemega",
+      "charizardmegax",
+      "golisopodmega",
+      "lycanrocdusk",
+      "metagrossmega",
+      "perrserker"
+    ]
+  },
+  {
+    "regulation_id": "champions_reg_m_c_2026",
+    "format": "doubles",
+    "reference_pin": "9b136a8c8cdb860a8ab96fa063f906604e352547",
+    "competitive_use": false,
+    "official_eligibility": "unresolved",
+    "client_verification": "unknown",
+    "implementation_status": "unknown",
+    "review_status": "unreviewed_candidate",
+    "evidence_ids": [
+      "pinned-reference-intake"
+    ],
+    "assertion_ids": [],
+    "test_ids": [],
+    "id": "toxicdebris",
+    "name": "Toxic Debris",
+    "species_ids": [
+      "glimmora"
+    ]
+  },
+  {
+    "regulation_id": "champions_reg_m_c_2026",
+    "format": "doubles",
+    "reference_pin": "9b136a8c8cdb860a8ab96fa063f906604e352547",
+    "competitive_use": false,
+    "official_eligibility": "unresolved",
+    "client_verification": "unknown",
+    "implementation_status": "unknown",
+    "review_status": "unreviewed_candidate",
+    "evidence_ids": [
+      "pinned-reference-intake"
+    ],
+    "assertion_ids": [],
+    "test_ids": [],
+    "id": "trace",
+    "name": "Trace",
+    "species_ids": [
+      "alakazammega",
+      "gardevoir",
+      "meowsticfmega",
+      "meowsticmmega"
+    ]
+  },
+  {
+    "regulation_id": "champions_reg_m_c_2026",
+    "format": "doubles",
+    "reference_pin": "9b136a8c8cdb860a8ab96fa063f906604e352547",
+    "competitive_use": false,
+    "official_eligibility": "unresolved",
+    "client_verification": "unknown",
+    "implementation_status": "unknown",
+    "review_status": "unreviewed_candidate",
+    "evidence_ids": [
+      "pinned-reference-intake"
+    ],
+    "assertion_ids": [],
+    "test_ids": [],
+    "id": "unaware",
+    "name": "Unaware",
+    "species_ids": [
+      "clefable",
+      "skeledirge"
+    ]
+  },
+  {
+    "regulation_id": "champions_reg_m_c_2026",
+    "format": "doubles",
+    "reference_pin": "9b136a8c8cdb860a8ab96fa063f906604e352547",
+    "competitive_use": false,
+    "official_eligibility": "unresolved",
+    "client_verification": "unknown",
+    "implementation_status": "unknown",
+    "review_status": "unreviewed_candidate",
+    "evidence_ids": [
+      "pinned-reference-intake"
+    ],
+    "assertion_ids": [],
+    "test_ids": [],
+    "id": "unburden",
+    "name": "Unburden",
+    "species_ids": [
+      "hawlucha",
+      "liepard",
+      "sceptile",
+      "slurpuff",
+      "sneasler",
+      "thievul"
+    ]
+  },
+  {
+    "regulation_id": "champions_reg_m_c_2026",
+    "format": "doubles",
+    "reference_pin": "9b136a8c8cdb860a8ab96fa063f906604e352547",
+    "competitive_use": false,
+    "official_eligibility": "unresolved",
+    "client_verification": "unknown",
+    "implementation_status": "unknown",
+    "review_status": "unreviewed_candidate",
+    "evidence_ids": [
+      "pinned-reference-intake"
+    ],
+    "assertion_ids": [],
+    "test_ids": [],
+    "id": "unnerve",
+    "name": "Unnerve",
+    "species_ids": [
+      "aerodactyl",
+      "arbok",
+      "corviknight",
+      "houndoom",
+      "persian",
+      "pyroar",
+      "tyranitar"
+    ]
+  },
+  {
+    "regulation_id": "champions_reg_m_c_2026",
+    "format": "doubles",
+    "reference_pin": "9b136a8c8cdb860a8ab96fa063f906604e352547",
+    "competitive_use": false,
+    "official_eligibility": "unresolved",
+    "client_verification": "unknown",
+    "implementation_status": "unknown",
+    "review_status": "unreviewed_candidate",
+    "evidence_ids": [
+      "pinned-reference-intake"
+    ],
+    "assertion_ids": [],
+    "test_ids": [],
+    "id": "unseenfist",
+    "name": "Unseen Fist",
+    "species_ids": [
+      "golurkmega"
+    ]
+  },
+  {
+    "regulation_id": "champions_reg_m_c_2026",
+    "format": "doubles",
+    "reference_pin": "9b136a8c8cdb860a8ab96fa063f906604e352547",
+    "competitive_use": false,
+    "official_eligibility": "unresolved",
+    "client_verification": "unknown",
+    "implementation_status": "unknown",
+    "review_status": "unreviewed_candidate",
+    "evidence_ids": [
+      "pinned-reference-intake"
+    ],
+    "assertion_ids": [],
+    "test_ids": [],
+    "id": "vitalspirit",
+    "name": "Vital Spirit",
+    "species_ids": [
+      "annihilape",
+      "lycanrocmidnight"
+    ]
+  },
+  {
+    "regulation_id": "champions_reg_m_c_2026",
+    "format": "doubles",
+    "reference_pin": "9b136a8c8cdb860a8ab96fa063f906604e352547",
+    "competitive_use": false,
+    "official_eligibility": "unresolved",
+    "client_verification": "unknown",
+    "implementation_status": "unknown",
+    "review_status": "unreviewed_candidate",
+    "evidence_ids": [
+      "pinned-reference-intake"
+    ],
+    "assertion_ids": [],
+    "test_ids": [],
+    "id": "voltabsorb",
+    "name": "Volt Absorb",
+    "species_ids": [
+      "jolteon",
+      "pawmot"
+    ]
+  },
+  {
+    "regulation_id": "champions_reg_m_c_2026",
+    "format": "doubles",
+    "reference_pin": "9b136a8c8cdb860a8ab96fa063f906604e352547",
+    "competitive_use": false,
+    "official_eligibility": "unresolved",
+    "client_verification": "unknown",
+    "implementation_status": "unknown",
+    "review_status": "unreviewed_candidate",
+    "evidence_ids": [
+      "pinned-reference-intake"
+    ],
+    "assertion_ids": [],
+    "test_ids": [],
+    "id": "wanderingspirit",
+    "name": "Wandering Spirit",
+    "species_ids": [
+      "runerigus"
+    ]
+  },
+  {
+    "regulation_id": "champions_reg_m_c_2026",
+    "format": "doubles",
+    "reference_pin": "9b136a8c8cdb860a8ab96fa063f906604e352547",
+    "competitive_use": false,
+    "official_eligibility": "unresolved",
+    "client_verification": "unknown",
+    "implementation_status": "unknown",
+    "review_status": "unreviewed_candidate",
+    "evidence_ids": [
+      "pinned-reference-intake"
+    ],
+    "assertion_ids": [],
+    "test_ids": [],
+    "id": "waterabsorb",
+    "name": "Water Absorb",
+    "species_ids": [
+      "araquanid",
+      "politoed",
+      "vaporeon"
+    ]
+  },
+  {
+    "regulation_id": "champions_reg_m_c_2026",
+    "format": "doubles",
+    "reference_pin": "9b136a8c8cdb860a8ab96fa063f906604e352547",
+    "competitive_use": false,
+    "official_eligibility": "unresolved",
+    "client_verification": "unknown",
+    "implementation_status": "unknown",
+    "review_status": "unreviewed_candidate",
+    "evidence_ids": [
+      "pinned-reference-intake"
+    ],
+    "assertion_ids": [],
+    "test_ids": [],
+    "id": "waterbubble",
+    "name": "Water Bubble",
+    "species_ids": [
+      "araquanid"
+    ]
+  },
+  {
+    "regulation_id": "champions_reg_m_c_2026",
+    "format": "doubles",
+    "reference_pin": "9b136a8c8cdb860a8ab96fa063f906604e352547",
+    "competitive_use": false,
+    "official_eligibility": "unresolved",
+    "client_verification": "unknown",
+    "implementation_status": "unknown",
+    "review_status": "unreviewed_candidate",
+    "evidence_ids": [
+      "pinned-reference-intake"
+    ],
+    "assertion_ids": [],
+    "test_ids": [],
+    "id": "weakarmor",
+    "name": "Weak Armor",
+    "species_ids": [
+      "armarouge",
+      "ceruledge",
+      "garbodor",
+      "polteageist",
+      "polteageistantique",
+      "skarmory",
+      "vanilluxe"
+    ]
+  },
+  {
+    "regulation_id": "champions_reg_m_c_2026",
+    "format": "doubles",
+    "reference_pin": "9b136a8c8cdb860a8ab96fa063f906604e352547",
+    "competitive_use": false,
+    "official_eligibility": "unresolved",
+    "client_verification": "unknown",
+    "implementation_status": "unknown",
+    "review_status": "unreviewed_candidate",
+    "evidence_ids": [
+      "pinned-reference-intake"
+    ],
+    "assertion_ids": [],
+    "test_ids": [],
+    "id": "whitesmoke",
+    "name": "White Smoke",
+    "species_ids": [
+      "torkoal"
+    ]
+  },
+  {
+    "regulation_id": "champions_reg_m_c_2026",
+    "format": "doubles",
+    "reference_pin": "9b136a8c8cdb860a8ab96fa063f906604e352547",
+    "competitive_use": false,
+    "official_eligibility": "unresolved",
+    "client_verification": "unknown",
+    "implementation_status": "unknown",
+    "review_status": "unreviewed_candidate",
+    "evidence_ids": [
+      "pinned-reference-intake"
+    ],
+    "assertion_ids": [],
+    "test_ids": [],
+    "id": "zerotohero",
+    "name": "Zero to Hero",
+    "species_ids": [
+      "palafin",
+      "palafinhero"
+    ]
+  }
+]

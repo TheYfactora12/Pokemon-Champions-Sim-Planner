@@ -1,0 +1,11 @@
+# Item activation ordering evidence
+
+Hosted run39466078935 at1610d1a found four observed-action-order errors in4624 doubles battles, reproduced locally. Two were White Herb/Unburden and two mirror-name Sitrus/Unburden. Battle execution order was unchanged and consistent with item activation; the legacy text-only Sitrus reconstruction lacked evidence for these cases.
+
+The engine now records identity-bound item-speed activation with consumed item, source action and turn-relative log position. The validator independently applies the Unburden multiplier to the pre-action speed only with matching pre/post identity, item transition and earlier source action. It declines Gas and mixed-modifier reconstruction. A valid transition is evaluated before the old snapshot ordering, so deliberately reversed action order still fails. Thresholds and error severities are unchanged.
+
+Four retained CI inputs pass; missing, wrong-identity/source, late and unconsumed proof mutations fail. Reviewer caught duplicate emission from nested Sleep Talk; the parent action now preserves the child transition. Both-side Sleep Talk/Seismic Toss cases assert one proof and50damage. Independent6/6 pass;32legacy validator tests and3unchangedgoldens pass. First full sweep after repair:4624doubles+4624singles,0state/validator/warning/repeat failures. Final deduplicated sweep also passes4624doubles+4624singles with zero state/validator/warning/repeat failures. BrowserSz2W8m passes2captures/3pairs/28turns, zero mismatches/page errors. This establishes bounded internal evidence consistency, not client mechanics parity or universal battle accuracy.
+
+Candidate v2.2.236-item-speed-evidence / engine1.1.37; bundle11532457bytes, SHA256fd171a147554898c95fb066ee145f25d695fee48afb9073cdb7caec7c4f7f41a. Existing bundle ceiling11534336 unchanged. No goldens regenerated.
+
+Separate register repair rejects original12controls plus4reviewer controls;10tests and independent scoped review pass. Latest candidate030bb0c172c43d67d45596b29b7ed1dbe92f4331ccd3e12380750a998f02771f remains unverified reference inventory. Source refresh, Sirfetchd/Meteor Assault, complete M-C eligibility, case links and bounded receipt enrollment remain open. Discrete85–100roll repair and broader Struggle cases remain pending. No merge to main, deployment, live DB or security-setting changes.

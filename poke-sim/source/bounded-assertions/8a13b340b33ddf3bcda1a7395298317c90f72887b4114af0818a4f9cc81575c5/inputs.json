@@ -1,0 +1,305 @@
+{
+  "schema_version": "bounded-inputs-v1",
+  "assertion_id": "DAMAGE-ROLL-DISCRETE-016.tackle-vector.v1",
+  "case_id": "DAMAGE-ROLL-DISCRETE-016",
+  "scope": {
+    "oracle_kind": "shared_reference",
+    "format": "gen9championsdoublescustomgame",
+    "regulation_id": null,
+    "client_version": null,
+    "boundaries": [
+      "Snorlax Tackle into Venusaur",
+      "level50 Hardy zero EVs",
+      "no crit",
+      "16 discrete RNG bucket midpoints",
+      "doubles custom format"
+    ]
+  },
+  "contract_sha256": "f65ef90248be67ebded59563e0bf6cf30d5c63e8b6927f6a14b7a5c42388e563",
+  "teams": [
+    {
+      "format": "champions",
+      "members": [
+        {
+          "name": "Snorlax",
+          "ability": "Immunity",
+          "moves": [
+            "Tackle"
+          ],
+          "item": "",
+          "nature": "Hardy",
+          "level": 50,
+          "evs": {
+            "hp": 0,
+            "atk": 0,
+            "def": 0,
+            "spa": 0,
+            "spd": 0,
+            "spe": 0
+          }
+        },
+        {
+          "name": "Venusaur",
+          "ability": "Overgrow",
+          "moves": [
+            "Protect"
+          ],
+          "item": "",
+          "nature": "Hardy",
+          "level": 50,
+          "evs": {
+            "hp": 0,
+            "atk": 0,
+            "def": 0,
+            "spa": 0,
+            "spd": 0,
+            "spe": 0
+          }
+        },
+        {
+          "name": "Blastoise",
+          "ability": "Torrent",
+          "moves": [
+            "Protect"
+          ],
+          "item": "",
+          "nature": "Hardy",
+          "level": 50,
+          "evs": {
+            "hp": 0,
+            "atk": 0,
+            "def": 0,
+            "spa": 0,
+            "spd": 0,
+            "spe": 0
+          }
+        },
+        {
+          "name": "Dragonite",
+          "ability": "Inner Focus",
+          "moves": [
+            "Protect"
+          ],
+          "item": "",
+          "nature": "Hardy",
+          "level": 50,
+          "evs": {
+            "hp": 0,
+            "atk": 0,
+            "def": 0,
+            "spa": 0,
+            "spd": 0,
+            "spe": 0
+          }
+        },
+        {
+          "name": "Garchomp",
+          "ability": "Sand Veil",
+          "moves": [
+            "Protect"
+          ],
+          "item": "",
+          "nature": "Hardy",
+          "level": 50,
+          "evs": {
+            "hp": 0,
+            "atk": 0,
+            "def": 0,
+            "spa": 0,
+            "spd": 0,
+            "spe": 0
+          }
+        },
+        {
+          "name": "Raichu",
+          "ability": "Static",
+          "moves": [
+            "Protect"
+          ],
+          "item": "",
+          "nature": "Hardy",
+          "level": 50,
+          "evs": {
+            "hp": 0,
+            "atk": 0,
+            "def": 0,
+            "spa": 0,
+            "spd": 0,
+            "spe": 0
+          }
+        }
+      ]
+    },
+    {
+      "format": "champions",
+      "members": [
+        {
+          "name": "Venusaur",
+          "ability": "Overgrow",
+          "moves": [
+            "Protect"
+          ],
+          "item": "",
+          "nature": "Hardy",
+          "level": 50,
+          "evs": {
+            "hp": 0,
+            "atk": 0,
+            "def": 0,
+            "spa": 0,
+            "spd": 0,
+            "spe": 0
+          }
+        },
+        {
+          "name": "Venusaur",
+          "ability": "Overgrow",
+          "moves": [
+            "Protect"
+          ],
+          "item": "",
+          "nature": "Hardy",
+          "level": 50,
+          "evs": {
+            "hp": 0,
+            "atk": 0,
+            "def": 0,
+            "spa": 0,
+            "spd": 0,
+            "spe": 0
+          }
+        },
+        {
+          "name": "Blastoise",
+          "ability": "Torrent",
+          "moves": [
+            "Protect"
+          ],
+          "item": "",
+          "nature": "Hardy",
+          "level": 50,
+          "evs": {
+            "hp": 0,
+            "atk": 0,
+            "def": 0,
+            "spa": 0,
+            "spd": 0,
+            "spe": 0
+          }
+        },
+        {
+          "name": "Dragonite",
+          "ability": "Inner Focus",
+          "moves": [
+            "Protect"
+          ],
+          "item": "",
+          "nature": "Hardy",
+          "level": 50,
+          "evs": {
+            "hp": 0,
+            "atk": 0,
+            "def": 0,
+            "spa": 0,
+            "spd": 0,
+            "spe": 0
+          }
+        },
+        {
+          "name": "Garchomp",
+          "ability": "Sand Veil",
+          "moves": [
+            "Protect"
+          ],
+          "item": "",
+          "nature": "Hardy",
+          "level": 50,
+          "evs": {
+            "hp": 0,
+            "atk": 0,
+            "def": 0,
+            "spa": 0,
+            "spd": 0,
+            "spe": 0
+          }
+        },
+        {
+          "name": "Raichu",
+          "ability": "Static",
+          "moves": [
+            "Protect"
+          ],
+          "item": "",
+          "nature": "Hardy",
+          "level": 50,
+          "evs": {
+            "hp": 0,
+            "atk": 0,
+            "def": 0,
+            "spa": 0,
+            "spd": 0,
+            "spe": 0
+          }
+        }
+      ]
+    }
+  ],
+  "actions": [
+    {
+      "actor": "p1:slot0",
+      "move": "Tackle",
+      "target": "p2:slot0",
+      "method": "direct getDamage/calcDamage"
+    }
+  ],
+  "seed": [
+    3,
+    7,
+    11,
+    13
+  ],
+  "initial_state": {
+    "selection": "team1234",
+    "weather": null,
+    "critical": false
+  },
+  "rng_controls": {
+    "local_midpoints": [
+      0.03125,
+      0.09375,
+      0.15625,
+      0.21875,
+      0.28125,
+      0.34375,
+      0.40625,
+      0.46875,
+      0.53125,
+      0.59375,
+      0.65625,
+      0.71875,
+      0.78125,
+      0.84375,
+      0.90625,
+      0.96875
+    ],
+    "reference_random_index": [
+      15,
+      14,
+      13,
+      12,
+      11,
+      10,
+      9,
+      8,
+      7,
+      6,
+      5,
+      4,
+      3,
+      2,
+      1,
+      0
+    ],
+    "critical": false
+  }
+}

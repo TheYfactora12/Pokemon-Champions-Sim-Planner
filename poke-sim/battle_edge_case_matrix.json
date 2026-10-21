@@ -14,13 +14,204 @@
   },
   "cases": [
     {
+      "id": "ITEM-EVIOLITE-DEFENSIVE-ROUNDING",
+      "family": "items",
+      "behavior": "Truncate defensive stages before weather, and weather before Eviolite.",
+      "status": "partial",
+      "tests": [
+        "tests/eviolite_order_tests.mjs"
+      ],
+      "oracle": "Showdown9b136a8c8cdb860a8ab96fa063f906604e352547; 221 frozen Champions custom doubles vectors; Eviolite Past, not ranked/client proof.",
+      "boundary_vectors": [
+        "both-orientations",
+        "stats31-95-97-255",
+        "stages-minus6-minus1-0-1-6",
+        "physical-Def-special-SpD-special-Def",
+        "snow-clear-sand-rain-sun",
+        "no-item-critical-controls",
+        "sand-SpD65-to145",
+        "four-mutation-controls"
+      ],
+      "known_gap": "Activation and Body Press follow-up cases retain this ordering contract. Singles, arbitrary combined modifiers and fresh client proof remain unverified."
+    },
+    {
+      "id": "ITEM-RED-CARD-WHITE-HERB",
+      "family": "items",
+      "behavior": "Red Card resolves after complete damage and White Herb clears negative stages at lifecycle boundaries before pivot entry.",
+      "status": "partial",
+      "tests": [
+        "tests/red_card_reference_tests.mjs",
+        "tests/white_herb_reference_tests.mjs",
+        "tests/item_lifecycle_reference_tests.mjs"
+      ],
+      "oracle": "Current upstream Showdown 9b136a8c8cdb860a8ab96fa063f906604e352547 Champions/M-C; historical npm 0.11.11 compared separately with explicit Sheer Force and Herb-before-drag differences.",
+      "boundary_vectors": [
+        "full-six-M-C-bilateral",
+        "both-sides-slots",
+        "Protect-immunity-Substitute-KO",
+        "no-live-bench",
+        "multi-hit-spread",
+        "Klutz-Gas",
+        "Suction-Cups-Guard-Dog-Shadow-Tag",
+        "Knock-Off-pivot",
+        "multiple-stat-drops-positive-cap-Contrary-Defiant",
+        "Herb-before-drag",
+        "Parting-Shot-before-replacement-Intimidate",
+        "pre-action-event-speed",
+        "random-eligible-reserves"
+      ],
+      "known_gap": "No fresh client proof. Magic Room, Embargo, Ingrain, complete forced-switch interactions, suppression chains, Mega/re-entry and residual cross-products remain unproved. Synthetic diagnostic abilities/items are not M-C legality proof. Recoil Emergency Exit activation log parity is not claimed."
+    },
+    {
+      "id": "ITEM-ROCKY-HELMET-CONTACT",
+      "family": "items",
+      "behavior": "Contact damage, fixed multi-hit frequency and contact KO are explicit and identity-preserving.",
+      "status": "partial",
+      "tests": [
+        "tests/rocky_helmet_reference_tests.mjs",
+        "tests/rough_skin_reference_tests.mjs"
+      ],
+      "oracle": "Pinned pokemon-showdown 0.11.11 Champions custom battle; items onDamagingHitOrder2 and RoughSkin order1.",
+      "boundary_vectors": [
+        "both-sides",
+        "Protect-Substitute",
+        "consumed-Klutz-Pads",
+        "LongReach-MagicGuard-Gas-Shield",
+        "two-hit-SkillLink",
+        "attacker-holder-KO",
+        "RoughSkin-order",
+        "pivot-stop"
+      ],
+      "known_gap": "Synthetic mechanics, not legal-team/client certification. General contact effect ordering and Rough Skin suppression remain unproved."
+    },
+    {
+      "id": "DEFAULT-POLICY-BOUNDARY",
+      "family": "moves-effects",
+      "behavior": "Production default snapshots own primitives and target occupancy, excluding hidden opponent scoring.",
+      "status": "partial",
+      "tests": [
+        "tests/default_policy_boundary_tests.js",
+        "tests/utility_information_policy_tests.js",
+        "tests/priority_selection_policy_tests.js"
+      ],
+      "oracle": "Production input mutation and throwing-accessor contract; no strength oracle.",
+      "boundary_vectors": [
+        "both-sides",
+        "40-hidden-state-mutations",
+        "no-damage-preview-RNG",
+        "own-PP-lock-healing",
+        "aggregate-provenance",
+        "Mega-slot-choice"
+      ],
+      "known_gap": "No opponent reveal ledger or verified Champions visibility. Conservative static scoring can choose ineffective moves. Simultaneous Mega/switch execution order remains unproved."
+    },
+    {
+      "id": "OWN-STATE-DIAGNOSTIC",
+      "family": "moves-effects",
+      "behavior": "Opt-in diagnostic choices use detached own-state primitives and target occupancy only.",
+      "status": "partial",
+      "tests": [
+        "tests/own_state_policy_tests.js"
+      ],
+      "oracle": "Information-boundary contract with throwing getters, mutation invariance and actual engine integration; no strength oracle.",
+      "boundary_vectors": [
+        "both-sides",
+        "immutable-DTO",
+        "snapshot-before-choice",
+        "no-RNG",
+        "hidden-state-mutations",
+        "forced-action-provenance"
+      ],
+      "known_gap": "Direct simulateBattle only. Limited own legality checks; execution may reject. No opponent estimates, reveal ledger, human visibility or competitive strength claim. Default greedy v3 remains full-state."
+    },
+    {
+      "id": "DAMAGE-PIVOT-TRAP-CAUSE",
+      "family": "identity-lifecycle",
+      "behavior": "Successful living-user U-turn, Flip Turn and Volt Switch bypass voluntary traps; Water Absorb blocks damaging Water moves through the shared immunity/healing path.",
+      "status": "partial",
+      "tests": [
+        "tests/damage_pivot_trapping_tests.mjs",
+        "tests/mc_mega_ability_tests.js"
+      ],
+      "oracle": "Pinned pokemon-showdown0.11.11 Champions custom synthetic probes; not official team legality or current-client certification.",
+      "boundary_vectors": [
+        "both-sides",
+        "both-slots",
+        "Shadow-Tag",
+        "Mean-Look",
+        "Protect",
+        "Substitute",
+        "forced-miss",
+        "Rough-Skin-user-KO",
+        "no-bench",
+        "HP-item-status-PP",
+        "entry-once",
+        "target-slot",
+        "no-extra-action",
+        "Water-Absorb",
+        "Heal-Block",
+        "Neutralizing-Gas",
+        "Ability-Shield",
+        "consumed-Shield",
+        "Mold-Breaker-family",
+        "Emergency-Exit-control"
+      ],
+      "known_gap": "Rocky Helmet contact damage is missing. Voluntary switches, other pivot moves, broader ability suppression, simultaneous switching/Mega ordering and current-client proof remain open."
+    },
+    {
+      "id": "POLICY-UTILITY-MOVE-INVENTORY",
+      "family": "moves-effects",
+      "behavior": "Utility scoring for Imprison, Quick Guard, contact shields and Taunt does not query enemy move inventories.",
+      "status": "partial",
+      "tests": [
+        "tests/utility_information_policy_tests.js",
+        "tests/imprison_policy_tests.js"
+      ],
+      "oracle": "Production-selector noninterference contract with throwing inventory getters; not Champions visibility proof or policy-strength parity.",
+      "boundary_vectors": [
+        "both-sides",
+        "seven-utility-moves",
+        "hidden-inventory-mutations",
+        "forbidden-read",
+        "PP",
+        "Taunt",
+        "Encore",
+        "Choice-lock",
+        "strong-damage-control",
+        "existing-seal"
+      ],
+      "known_gap": "Damage and priority scoring still use full opponent state. Fixed utility priors can choose unnecessary guards or Taunt; repeated-turn policy quality and a complete observation boundary remain unproved."
+    },
+    {
       "id": "PRIORITY-BLOCKER-SUPPRESSION",
       "family": "abilities",
       "behavior": "Priority blocking uses the protecting holder's Ability Shield, active Neutralizing Gas and Mold Breaker-family bypass for selection and execution.",
       "status": "partial",
-      "tests": ["tests/priority_suppression_reference_tests.mjs", "tests/priority_selection_policy_tests.js"],
+      "tests": [
+        "tests/priority_suppression_reference_tests.mjs",
+        "tests/priority_selection_policy_tests.js"
+      ],
       "oracle": "Pinned Showdown0.11.11 synthetic doubles; raw blocker events, damage presence and target flinch/PP, not official Champions legality.",
-      "boundary_vectors": ["both-sides", "direct-target", "protected-ally", "Armor-Tail", "Dazzling", "Queenly-Majesty", "Mold-Breaker", "Turboblaze", "Teravolt", "Neutralizing-Gas", "blocker-Shield", "target-only-Shield", "inactive-Gas", "removed-Gas", "consumed-Shield", "fainted-blocker", "Quick-Guard-isolation", "Psychic-Terrain-isolation"],
+      "boundary_vectors": [
+        "both-sides",
+        "direct-target",
+        "protected-ally",
+        "Armor-Tail",
+        "Dazzling",
+        "Queenly-Majesty",
+        "Mold-Breaker",
+        "Turboblaze",
+        "Teravolt",
+        "Neutralizing-Gas",
+        "blocker-Shield",
+        "target-only-Shield",
+        "inactive-Gas",
+        "removed-Gas",
+        "consumed-Shield",
+        "fainted-blocker",
+        "Quick-Guard-isolation",
+        "Psychic-Terrain-isolation"
+      ],
       "known_gap": "General Neutralizing Gas suppression outside priority blockers, Gastro Acid, transformed Gas, Magic Room/Embargo and full switch lifecycle parity remain unproved."
     },
     {
@@ -28,9 +219,29 @@
       "family": "transformations",
       "behavior": "Reference-only Mega identities, base ability retention, transition stats and selected ability interactions preserve historical descriptors.",
       "status": "partial",
-      "tests": ["tests/mc_expanded_mega_tests.js", "tests/mc_mega_ability_tests.js", "tests/mc_draft_import_tests.js"],
+      "tests": [
+        "tests/mc_expanded_mega_tests.js",
+        "tests/mc_mega_ability_tests.js",
+        "tests/mc_draft_import_tests.js"
+      ],
       "oracle": "Pinned Showdown efe4948570d5e8189751792136d26e71710c6c66; tools/verify-mc-expanded-megas.cjs and tools/verify-mc-mega-abilities.cjs. Experimental reference, not official game approval.",
-      "boundary_vectors": ["both-sides", "immediate-delayed-Mega", "base-active-form-registration", "female-male-Meowstic", "Eternal-Floette-aliases", "wrong-stone", "prior-regulation-isolation", "contact-fixed-point-damage", "global-Fairy-Aura", "Trace-Mega-switch-reentry", "Lightning-Rod-redirect", "Speed-Boost", "Thermal-Exchange", "Eelevate-highest-stat", "Emergency-Exit-threshold-berry-KO"],
+      "boundary_vectors": [
+        "both-sides",
+        "immediate-delayed-Mega",
+        "base-active-form-registration",
+        "female-male-Meowstic",
+        "Eternal-Floette-aliases",
+        "wrong-stone",
+        "prior-regulation-isolation",
+        "contact-fixed-point-damage",
+        "global-Fairy-Aura",
+        "Trace-Mega-switch-reentry",
+        "Lightning-Rod-redirect",
+        "Speed-Boost",
+        "Thermal-Exchange",
+        "Eelevate-highest-stat",
+        "Emergency-Exit-threshold-berry-KO"
+      ],
       "known_gap": "Exhaustive ability suppression/copying, simultaneous switches, multi-hit/recoil/residual combinations and current-client M-C evidence remain unproved. Official M-C stays gated."
     },
     {
@@ -38,9 +249,23 @@
       "family": "moves-effects",
       "behavior": "Heuristic selection deprioritizes the actor's already active same-move Imprison seal while preserving forced or sole usable choices.",
       "status": "partial",
-      "tests": ["tests/imprison_policy_tests.js"],
+      "tests": [
+        "tests/imprison_policy_tests.js"
+      ],
       "oracle": "Production selector and seeded synthetic doubles integration; policy contract only, not mechanics parity or competitive strength.",
-      "boundary_vectors": ["side-swap", "active-seal", "cleared-seal", "other-owner", "changed-moves", "sole-usable-choice", "Encore", "Choice-lock", "no-new-hidden-move-read", "deterministic-repeat", "input-preservation"],
+      "boundary_vectors": [
+        "side-swap",
+        "active-seal",
+        "cleared-seal",
+        "other-owner",
+        "changed-moves",
+        "sole-usable-choice",
+        "Encore",
+        "Choice-lock",
+        "no-new-hidden-move-read",
+        "deterministic-repeat",
+        "input-preservation"
+      ],
       "known_gap": "Full Imprison mechanics/lifecycle parity, opponent knowledge model, Armor Tail selection and calibrated policy/selection provenance remain unproved."
     },
     {
@@ -48,19 +273,62 @@
       "family": "items",
       "behavior": "Klutz suppresses Scarf speed/locking, Power Herb charge skipping and Focus Sash survival without losing ownership.",
       "status": "partial",
-      "tests": ["tests/klutz_item_paths_tests.js", "tests/klutz_item_reference_tests.mjs"],
-      "oracle": "Pinned pokemon-showdown 0.11.11 Champions synthetic custom games; not item eligibility.",
-      "boundary_vectors": ["active-control", "Klutz-control", "speed", "move-lock", "charge-preview", "charge-execution", "charge-turn-two", "sunlight", "consumption", "lethal-hit"],
-      "known_gap": "Ability changes, consumed-item transitions, Magic Room/Embargo and broader item inventory remain unproved."
+      "tests": [
+        "tests/klutz_item_paths_tests.js",
+        "tests/klutz_item_reference_tests.mjs",
+        "tests/charge_herb_suppression_tests.mjs"
+      ],
+      "oracle": "Pinned pokemon-showdown 0.11.11 Champions synthetic custom games; not item eligibility. Additional exact9b136a8 executable cases: reports/fly-repair-v2-2026-10-20/reference.json.",
+      "boundary_vectors": [
+        "active-control",
+        "Klutz-control",
+        "speed",
+        "move-lock",
+        "charge-preview",
+        "charge-execution",
+        "charge-turn-two",
+        "sunlight",
+        "consumption",
+        "lethal-hit",
+        "five-charge-moves-active-Gas-both-sides-slots",
+        "consumed-Herb-and-Gas-faint-restoration",
+        "five-raw-Klutz-reversal-controls"
+      ],
+      "known_gap": "Ability changes, Magic Room/Embargo and broader item inventory remain unproved. Meteor Beam/Electro Shot timing is tracked separately by MOVE-CHARGE-SPA-TIMING-001; historical discrepancies are retained.",
+      "move_ids": [
+        "fly",
+        "solarbeam",
+        "solarblade",
+        "meteorbeam",
+        "electroshot",
+        "phantomforce"
+      ]
     },
     {
       "id": "MOVE-FAKE-OUT-FLINCH",
       "family": "moves-effects",
       "behavior": "First-turn Fake Out denies an eligible target action without spending target PP.",
       "status": "partial",
-      "tests": ["tests/fake_out_flinch_tests.js", "tests/fake_out_reference_tests.mjs"],
+      "tests": [
+        "tests/fake_out_flinch_tests.js",
+        "tests/fake_out_reference_tests.mjs"
+      ],
       "oracle": "Pinned pokemon-showdown 0.11.11 synthetic doubles action-order and PP comparisons.",
-      "boundary_vectors": ["side-swap", "Inner-Focus", "Shield-Dust", "Covert-Cloak", "Klutz", "Mold-Breaker", "Ability-Shield", "Sheer-Force", "Substitute", "Infiltrator", "Protect", "Ghost", "next-turn-reset"],
+      "boundary_vectors": [
+        "side-swap",
+        "Inner-Focus",
+        "Shield-Dust",
+        "Covert-Cloak",
+        "Klutz",
+        "Mold-Breaker",
+        "Ability-Shield",
+        "Sheer-Force",
+        "Substitute",
+        "Infiltrator",
+        "Protect",
+        "Ghost",
+        "next-turn-reset"
+      ],
       "known_gap": "Champions disables late Fake Out selection; forced/Encore timing, broader flinch chance modifiers, multi-hit timing and in-game confirmation remain open."
     },
     {
@@ -68,9 +336,19 @@
       "family": "stats-forms",
       "behavior": "Mapped roster types and unboosted Speed agree with runtime stats; supported Eternal Flower aliases preserve species identity.",
       "status": "partial",
-      "tests": ["tests/roster_runtime_consumer_tests.mjs", "tests/reg_mb_roster_baseline_tests.mjs"],
+      "tests": [
+        "tests/roster_runtime_consumer_tests.mjs",
+        "tests/reg_mb_roster_baseline_tests.mjs"
+      ],
       "oracle": "Pinned Champions species baseline plus engine starting-stat contract; not battle ordering or official legality.",
-      "boundary_vectors": ["235-mapped-keys", "champions-SP-vs-SV-EV", "non-Speed-natures", "unknown-format", "alias-with-and-without-bridge", "species-only-radar-unknown"],
+      "boundary_vectors": [
+        "235-mapped-keys",
+        "champions-SP-vs-SV-EV",
+        "non-Speed-natures",
+        "unknown-format",
+        "alias-with-and-without-bridge",
+        "species-only-radar-unknown"
+      ],
       "known_gap": "All item/ability/field combinations, Mega alias transitions and in-game Champions confirmation remain unproved."
     },
     {
@@ -78,9 +356,16 @@
       "family": "identity-lifecycle",
       "behavior": "A Pokemon keeps its stable identity when active and bench positions change.",
       "status": "covered",
-      "tests": ["tests/phase5_turn_log_tests.js", "tests/turn_log_export_validator_tests.js"],
+      "tests": [
+        "tests/phase5_turn_log_tests.js",
+        "tests/turn_log_export_validator_tests.js"
+      ],
       "oracle": "Local stable-key contract validated across replacement snapshots.",
-      "boundary_vectors": ["active-to-bench", "bench-to-active", "fainted-row-not-reused"],
+      "boundary_vectors": [
+        "active-to-bench",
+        "bench-to-active",
+        "fainted-row-not-reused"
+      ],
       "known_gap": ""
     },
     {
@@ -88,9 +373,16 @@
       "family": "items",
       "behavior": "Held-item ownership remains attached to the same stable Pokemon through switches and replacements.",
       "status": "covered",
-      "tests": ["tests/turn_log_export_validator_tests.js", "tests/items_tests.js"],
+      "tests": [
+        "tests/turn_log_export_validator_tests.js",
+        "tests/items_tests.js"
+      ],
       "oracle": "Local roster and item continuity contract.",
-      "boundary_vectors": ["ordinary-switch", "faint-replacement", "consumed-item-state"],
+      "boundary_vectors": [
+        "ordinary-switch",
+        "faint-replacement",
+        "consumed-item-state"
+      ],
       "known_gap": ""
     },
     {
@@ -98,9 +390,15 @@
       "family": "identity-lifecycle",
       "behavior": "A damaging move can KO its target and then KO its user by recoil before replacements.",
       "status": "partial",
-      "tests": ["tests/recoil_faint_turn_log_tests.js"],
+      "tests": [
+        "tests/recoil_faint_turn_log_tests.js"
+      ],
       "oracle": "Pokemon Showdown recoil lifecycle baseline.",
-      "boundary_vectors": ["attacker-recoil-KO", "target-overkill", "replacement-after-faint"],
+      "boundary_vectors": [
+        "attacker-recoil-KO",
+        "target-overkill",
+        "replacement-after-faint"
+      ],
       "known_gap": "The existing fixture proves recoil cleanup but does not yet assert both sides replacing from the same attack."
     },
     {
@@ -108,9 +406,15 @@
       "family": "status",
       "behavior": "Multiple residual KOs resolve before replacement decisions without losing identity or source attribution.",
       "status": "partial",
-      "tests": ["tests/battle_edge_case_behavior_tests.js"],
+      "tests": [
+        "tests/battle_edge_case_behavior_tests.js"
+      ],
       "oracle": "Pokemon Showdown residual event queue.",
-      "boundary_vectors": ["burn-plus-poison", "weather-plus-status", "both-sides-faint"],
+      "boundary_vectors": [
+        "burn-plus-poison",
+        "weather-plus-status",
+        "both-sides-faint"
+      ],
       "known_gap": "Both-side poison KOs now have a 100-seed replacement fixture; mixed residual sources and full attribution remain unproved."
     },
     {
@@ -120,7 +424,11 @@
       "status": "open",
       "tests": [],
       "oracle": "Pokemon Showdown switch request and replacement queue.",
-      "boundary_vectors": ["two-fainted-slots", "one-bench-remaining", "two-bench-remaining"],
+      "boundary_vectors": [
+        "two-fainted-slots",
+        "one-bench-remaining",
+        "two-bench-remaining"
+      ],
       "known_gap": "Replacement selection is engine-policy driven and has no two-slot lifecycle fixture."
     },
     {
@@ -128,9 +436,14 @@
       "family": "identity-lifecycle",
       "behavior": "Both sides can replace fainted Pokemon from one resolved event without side-order corruption.",
       "status": "partial",
-      "tests": ["tests/battle_edge_case_behavior_tests.js"],
+      "tests": [
+        "tests/battle_edge_case_behavior_tests.js"
+      ],
       "oracle": "Pokemon Showdown simultaneous switch request behavior.",
-      "boundary_vectors": ["one-slot-each-side", "entry-abilities-on-both-sides"],
+      "boundary_vectors": [
+        "one-slot-each-side",
+        "entry-abilities-on-both-sides"
+      ],
       "known_gap": "Both fields now populate before entry abilities; mutual Intimidate passes 100 seeds. Wider entry-effect and multi-slot ordering still needs differential proof."
     },
     {
@@ -138,9 +451,16 @@
       "family": "abilities",
       "behavior": "Entry abilities after simultaneous replacements resolve using the correct ordering rules.",
       "status": "partial",
-      "tests": ["tests/ability_priority_targeting_tests.js", "tests/battle_edge_case_behavior_tests.js"],
+      "tests": [
+        "tests/ability_priority_targeting_tests.js",
+        "tests/battle_edge_case_behavior_tests.js"
+      ],
       "oracle": "Pokemon Showdown event ordering baseline.",
-      "boundary_vectors": ["Intimidate-vs-Defiant", "weather-vs-weather", "same-speed-entries"],
+      "boundary_vectors": [
+        "Intimidate-vs-Defiant",
+        "weather-vs-weather",
+        "same-speed-entries"
+      ],
       "known_gap": "Mutual Intimidate and side-swapped weather clashes with/without Trick Room are tested. Equal-Speed entry ordering and reactive abilities still need committed differential fixtures."
     },
     {
@@ -148,9 +468,15 @@
       "family": "abilities",
       "behavior": "Regenerator restores one third base max HP, rounded down, after a successful switch-out.",
       "status": "covered",
-      "tests": ["tests/battle_edge_case_behavior_tests.js"],
+      "tests": [
+        "tests/battle_edge_case_behavior_tests.js"
+      ],
       "oracle": "https://github.com/smogon/pokemon-showdown/blob/master/data/abilities.ts",
-      "boundary_vectors": ["damaged-user", "one-third-round-down", "successful-Teleport-switch"],
+      "boundary_vectors": [
+        "damaged-user",
+        "one-third-round-down",
+        "successful-Teleport-switch"
+      ],
       "known_gap": ""
     },
     {
@@ -158,9 +484,14 @@
       "family": "abilities",
       "behavior": "Regenerator does not activate when no legal replacement exists.",
       "status": "covered",
-      "tests": ["tests/battle_edge_case_behavior_tests.js"],
+      "tests": [
+        "tests/battle_edge_case_behavior_tests.js"
+      ],
       "oracle": "Pokemon Showdown onSwitchOut event semantics.",
-      "boundary_vectors": ["no-bench", "failed-switch"],
+      "boundary_vectors": [
+        "no-bench",
+        "failed-switch"
+      ],
       "known_gap": ""
     },
     {
@@ -168,9 +499,16 @@
       "family": "abilities",
       "behavior": "Regenerator activates after a successful U-turn, Volt Switch, or Flip Turn pivot.",
       "status": "partial",
-      "tests": ["tests/move_verification_registry_tests.js", "tests/battle_edge_case_behavior_tests.js"],
+      "tests": [
+        "tests/move_verification_registry_tests.js",
+        "tests/battle_edge_case_behavior_tests.js"
+      ],
       "oracle": "Pokemon Showdown self-switch plus onSwitchOut event semantics.",
-      "boundary_vectors": ["U-turn", "Volt-Switch", "Flip-Turn"],
+      "boundary_vectors": [
+        "U-turn",
+        "Volt-Switch",
+        "Flip-Turn"
+      ],
       "known_gap": "The shared switch hook is covered, but no dedicated damaging-pivot Regenerator fixture asserts all three moves."
     },
     {
@@ -178,9 +516,17 @@
       "family": "identity-lifecycle",
       "behavior": "Volatile state and stat stages reset on switch while major status and HP remain attached to the Pokemon.",
       "status": "partial",
-      "tests": ["tests/t9j17_tests.js", "tests/move_verification_registry_tests.js"],
+      "tests": [
+        "tests/t9j17_tests.js",
+        "tests/move_verification_registry_tests.js"
+      ],
       "oracle": "Pokemon Showdown switch lifecycle baseline.",
-      "boundary_vectors": ["toxic-counter", "stat-stages", "Substitute", "major-status"],
+      "boundary_vectors": [
+        "toxic-counter",
+        "stat-stages",
+        "Substitute",
+        "major-status"
+      ],
       "known_gap": "Several resets are source-contract tests rather than one executable leave-and-return fixture."
     },
     {
@@ -188,9 +534,16 @@
       "family": "turn-order",
       "behavior": "Move priority resolves before effective Speed.",
       "status": "covered",
-      "tests": ["tests/turn_order_priority_tests.js", "tests/ability_priority_targeting_tests.js"],
+      "tests": [
+        "tests/turn_order_priority_tests.js",
+        "tests/ability_priority_targeting_tests.js"
+      ],
       "oracle": "Pokemon Showdown action ordering baseline.",
-      "boundary_vectors": ["positive-vs-zero", "zero-vs-negative", "priority-ability"],
+      "boundary_vectors": [
+        "positive-vs-zero",
+        "zero-vs-negative",
+        "priority-ability"
+      ],
       "known_gap": ""
     },
     {
@@ -198,9 +551,15 @@
       "family": "turn-order",
       "behavior": "Trick Room reverses effective Speed only inside the same priority bracket.",
       "status": "covered",
-      "tests": ["tests/turn_order_priority_tests.js"],
+      "tests": [
+        "tests/turn_order_priority_tests.js"
+      ],
       "oracle": "Pokemon Showdown Trick Room ordering baseline.",
-      "boundary_vectors": ["same-priority", "different-priority", "four-action-doubles"],
+      "boundary_vectors": [
+        "same-priority",
+        "different-priority",
+        "four-action-doubles"
+      ],
       "known_gap": ""
     },
     {
@@ -208,9 +567,15 @@
       "family": "turn-order",
       "behavior": "Exact effective-Speed ties use deterministic seeded RNG.",
       "status": "covered",
-      "tests": ["tests/turn_order_priority_tests.js"],
+      "tests": [
+        "tests/turn_order_priority_tests.js"
+      ],
       "oracle": "Local deterministic replay contract aligned to Showdown random tie breaking.",
-      "boundary_vectors": ["normal-field", "Trick-Room", "SP-and-nature-break-tie"],
+      "boundary_vectors": [
+        "normal-field",
+        "Trick-Room",
+        "SP-and-nature-break-tie"
+      ],
       "known_gap": ""
     },
     {
@@ -218,9 +583,18 @@
       "family": "turn-order",
       "behavior": "Three or four actions in the same priority and effective-Speed bracket receive one stable seeded random order.",
       "status": "covered",
-      "tests": ["tests/battle_edge_case_behavior_tests.js", "tests/turn_order_priority_tests.js"],
+      "tests": [
+        "tests/battle_edge_case_behavior_tests.js",
+        "tests/turn_order_priority_tests.js"
+      ],
       "oracle": "Pokemon Showdown speed-sort random tie grouping.",
-      "boundary_vectors": ["three-way-tie", "four-way-tie", "normal-field", "Trick-Room", "same-seed-replay"],
+      "boundary_vectors": [
+        "three-way-tie",
+        "four-way-tie",
+        "normal-field",
+        "Trick-Room",
+        "same-seed-replay"
+      ],
       "known_gap": ""
     },
     {
@@ -228,9 +602,18 @@
       "family": "turn-order",
       "behavior": "A team played against an identical copy has no material player-side or opponent-side advantage across independent seed families.",
       "status": "partial",
-      "tests": ["tests/battle_edge_case_behavior_tests.js"],
+      "tests": [
+        "tests/battle_edge_case_behavior_tests.js"
+      ],
       "oracle": "Metamorphic mirror-match fairness invariant plus Pokemon Showdown event-order baseline.",
-      "boundary_vectors": ["identical-leads", "exact-speed-ties", "entry-hooks", "target-selection", "residual-order", "simultaneous-resolution"],
+      "boundary_vectors": [
+        "identical-leads",
+        "exact-speed-ties",
+        "entry-hooks",
+        "target-selection",
+        "residual-order",
+        "simultaneous-resolution"
+      ],
       "known_gap": "Sequential replacement Intimidate was causal and is fixed locally. Broader multi-team side symmetry and explicit bring-four parity remain release gates."
     },
     {
@@ -238,9 +621,16 @@
       "family": "stats-forms",
       "behavior": "Battle stat stages clamp at minus six and plus six.",
       "status": "covered",
-      "tests": ["tests/t9j9_tests.js", "tests/turn_order_priority_tests.js"],
+      "tests": [
+        "tests/t9j9_tests.js",
+        "tests/turn_order_priority_tests.js"
+      ],
       "oracle": "Pokemon Showdown boost stage baseline.",
-      "boundary_vectors": ["minus-six", "plus-six", "attempt-beyond-limit"],
+      "boundary_vectors": [
+        "minus-six",
+        "plus-six",
+        "attempt-beyond-limit"
+      ],
       "known_gap": ""
     },
     {
@@ -248,9 +638,16 @@
       "family": "moves-effects",
       "behavior": "Accuracy succeeds only when the random roll is strictly below the effective threshold.",
       "status": "covered",
-      "tests": ["tests/battle_edge_case_behavior_tests.js"],
+      "tests": [
+        "tests/battle_edge_case_behavior_tests.js"
+      ],
       "oracle": "https://github.com/smogon/pokemon-showdown/blob/master/sim/battle.ts",
-      "boundary_vectors": ["zero", "threshold-minus-epsilon", "exact-threshold", "one"],
+      "boundary_vectors": [
+        "zero",
+        "threshold-minus-epsilon",
+        "exact-threshold",
+        "one"
+      ],
       "known_gap": ""
     },
     {
@@ -258,9 +655,15 @@
       "family": "moves-effects",
       "behavior": "A standard single-target damaging move consumes one accuracy roll.",
       "status": "partial",
-      "tests": ["tests/battle_edge_case_behavior_tests.js"],
+      "tests": [
+        "tests/battle_edge_case_behavior_tests.js"
+      ],
       "oracle": "Pokemon Showdown hitStepAccuracy.",
-      "boundary_vectors": ["90-percent-move", "No-Guard", "always-hit"],
+      "boundary_vectors": [
+        "90-percent-move",
+        "No-Guard",
+        "always-hit"
+      ],
       "known_gap": "The duplicate engine check was removed, but an injected RNG call-count fixture is still needed."
     },
     {
@@ -268,9 +671,19 @@
       "family": "moves-effects",
       "behavior": "Targeted status moves use their Showdown-mirrored accuracy and consume the roll at the correct point in target resolution.",
       "status": "partial",
-      "tests": ["tests/move_verification_registry_tests.js", "tests/ability_priority_targeting_tests.js"],
+      "tests": [
+        "tests/move_verification_registry_tests.js",
+        "tests/ability_priority_targeting_tests.js"
+      ],
       "oracle": "Pokemon Showdown status-move hit-step ordering.",
-      "boundary_vectors": ["Will-O-Wisp-miss", "Sleep-Powder-miss", "type-immunity", "Good-as-Gold", "Magic-Bounce", "Substitute"],
+      "boundary_vectors": [
+        "Will-O-Wisp-miss",
+        "Sleep-Powder-miss",
+        "type-immunity",
+        "Good-as-Gold",
+        "Magic-Bounce",
+        "Substitute"
+      ],
       "known_gap": "Common hit and miss paths exist, but one fixture does not yet prove immunity, reflection, Substitute, and accuracy-roll ordering together."
     },
     {
@@ -278,9 +691,14 @@
       "family": "targeting-spread",
       "behavior": "A spread move performs an independent accuracy check for each target.",
       "status": "covered",
-      "tests": ["tests/battle_edge_case_behavior_tests.js"],
+      "tests": [
+        "tests/battle_edge_case_behavior_tests.js"
+      ],
       "oracle": "https://github.com/smogon/pokemon-showdown/blob/master/sim/battle-actions.ts",
-      "boundary_vectors": ["first-hit-second-miss", "fixed-seed-4-5-6-7"],
+      "boundary_vectors": [
+        "first-hit-second-miss",
+        "fixed-seed-4-5-6-7"
+      ],
       "known_gap": ""
     },
     {
@@ -288,9 +706,16 @@
       "family": "targeting-spread",
       "behavior": "Type and move immunities are resolved before consuming a target accuracy roll.",
       "status": "partial",
-      "tests": ["tests/battle_edge_case_behavior_tests.js", "tests/ability_damage_parity_tests.js"],
+      "tests": [
+        "tests/battle_edge_case_behavior_tests.js",
+        "tests/ability_damage_parity_tests.js"
+      ],
       "oracle": "Pokemon Showdown trySpreadMoveHit step ordering.",
-      "boundary_vectors": ["one-immune-one-vulnerable", "ability-immunity", "type-immunity"],
+      "boundary_vectors": [
+        "one-immune-one-vulnerable",
+        "ability-immunity",
+        "type-immunity"
+      ],
       "known_gap": "A mixed-target Earth Eater spread fixture is proved; dedicated type-immunity and single-target RNG-consumption fixtures remain."
     },
     {
@@ -298,9 +723,15 @@
       "family": "targeting-spread",
       "behavior": "No Guard bypasses accuracy for only the targets where attacker or target supplies it.",
       "status": "partial",
-      "tests": ["tests/ability_priority_targeting_tests.js"],
+      "tests": [
+        "tests/ability_priority_targeting_tests.js"
+      ],
       "oracle": "Pokemon Showdown ModifyAccuracy and Accuracy events per target.",
-      "boundary_vectors": ["attacker-No-Guard", "one-target-No-Guard", "mixed-spread-targets"],
+      "boundary_vectors": [
+        "attacker-No-Guard",
+        "one-target-No-Guard",
+        "mixed-spread-targets"
+      ],
       "known_gap": "Single-target No Guard is covered; mixed spread targets are not."
     },
     {
@@ -308,9 +739,16 @@
       "family": "targeting-spread",
       "behavior": "A later single-target action retargets when its intended opponent has already fainted.",
       "status": "covered",
-      "tests": ["tests/move_verification_registry_tests.js", "tests/turn_log_export_validator_tests.js"],
+      "tests": [
+        "tests/move_verification_registry_tests.js",
+        "tests/turn_log_export_validator_tests.js"
+      ],
       "oracle": "Pokemon Showdown doubles retargeting baseline.",
-      "boundary_vectors": ["intended-target-fainted", "other-foe-alive", "no-valid-target"],
+      "boundary_vectors": [
+        "intended-target-fainted",
+        "other-foe-alive",
+        "no-valid-target"
+      ],
       "known_gap": ""
     },
     {
@@ -318,9 +756,19 @@
       "family": "targeting-spread",
       "behavior": "Follow Me and Rage Powder redirect eligible single-target moves with documented bypasses.",
       "status": "covered",
-      "tests": ["tests/battle_system_mechanics_tests.js", "tests/ability_priority_targeting_tests.js"],
+      "tests": [
+        "tests/battle_system_mechanics_tests.js",
+        "tests/ability_priority_targeting_tests.js"
+      ],
       "oracle": "Pokemon Showdown redirection baseline.",
-      "boundary_vectors": ["Follow-Me", "Rage-Powder", "Grass-bypass", "Overcoat", "Safety-Goggles", "Stalwart"],
+      "boundary_vectors": [
+        "Follow-Me",
+        "Rage-Powder",
+        "Grass-bypass",
+        "Overcoat",
+        "Safety-Goggles",
+        "Stalwart"
+      ],
       "known_gap": ""
     },
     {
@@ -330,7 +778,11 @@
       "status": "open",
       "tests": [],
       "oracle": "Pokemon Showdown target-location semantics.",
-      "boundary_vectors": ["Ally-Switch-plus-Protect", "Ally-Switch-plus-redirection", "fainted-slot-before-action"],
+      "boundary_vectors": [
+        "Ally-Switch-plus-Protect",
+        "Ally-Switch-plus-redirection",
+        "fainted-slot-before-action"
+      ],
       "known_gap": "No deterministic interaction fixture covers this cross-product."
     },
     {
@@ -338,9 +790,16 @@
       "family": "targeting-spread",
       "behavior": "Wide Guard blocks eligible spread attacks without changing unrelated target resolution.",
       "status": "partial",
-      "tests": ["tests/battle_system_mechanics_tests.js", "tests/t9j11_tests.js"],
+      "tests": [
+        "tests/battle_system_mechanics_tests.js",
+        "tests/t9j11_tests.js"
+      ],
       "oracle": "Pokemon Showdown Wide Guard baseline.",
-      "boundary_vectors": ["all-foes-damage", "all-adjacent", "status-spread-exclusion"],
+      "boundary_vectors": [
+        "all-foes-damage",
+        "all-adjacent",
+        "status-spread-exclusion"
+      ],
       "known_gap": "Wide Guard basics are covered, but mixed per-target protection and accuracy ordering is not."
     },
     {
@@ -348,9 +807,20 @@
       "family": "status",
       "behavior": "Weather, abilities, status, seeds, delayed healing, items, terrain, and field expiry use the correct end-of-turn order.",
       "status": "partial",
-      "tests": ["tests/company_audit_regressions.mjs"],
+      "tests": [
+        "tests/company_audit_regressions.mjs"
+      ],
       "oracle": "Pokemon Showdown residual event priorities and suborders.",
-      "boundary_vectors": ["weather", "Solar-Power", "status", "Leech-Seed", "Wish", "Leftovers", "terrain", "field-expiry"],
+      "boundary_vectors": [
+        "weather",
+        "Solar-Power",
+        "status",
+        "Leech-Seed",
+        "Wish",
+        "Leftovers",
+        "terrain",
+        "field-expiry"
+      ],
       "known_gap": "Eight side-swapped Leftovers/Toxic probes cover full HP and ticks through five, including rounding before multiplication. Effects still use fixed family loops; mixed recovery, Heal Block expiry, lethal residual boundaries and full queue parity remain unproved."
     },
     {
@@ -360,7 +830,11 @@
       "status": "open",
       "tests": [],
       "oracle": "Pokemon Showdown residual event sorting.",
-      "boundary_vectors": ["different-speed", "exact-speed-tie", "Trick-Room"],
+      "boundary_vectors": [
+        "different-speed",
+        "exact-speed-tie",
+        "Trick-Room"
+      ],
       "known_gap": "Residual loops currently use side/slot array order."
     },
     {
@@ -368,9 +842,14 @@
       "family": "status",
       "behavior": "Wish heals the Pokemon occupying the original slot rather than following the original user identity.",
       "status": "covered",
-      "tests": ["tests/move_verification_registry_tests.js"],
+      "tests": [
+        "tests/move_verification_registry_tests.js"
+      ],
       "oracle": "Pokemon Showdown Wish slot-condition semantics.",
-      "boundary_vectors": ["user-switches", "replacement-occupies-slot"],
+      "boundary_vectors": [
+        "user-switches",
+        "replacement-occupies-slot"
+      ],
       "known_gap": ""
     },
     {
@@ -378,9 +857,16 @@
       "family": "status",
       "behavior": "Leech Seed damage and healing keep correct source/slot behavior through switches and faints.",
       "status": "partial",
-      "tests": ["tests/move_verification_registry_tests.js"],
+      "tests": [
+        "tests/move_verification_registry_tests.js"
+      ],
       "oracle": "Pokemon Showdown Leech Seed volatile semantics.",
-      "boundary_vectors": ["ordinary-drain", "source-switches", "source-faints", "recipient-slot-changes"],
+      "boundary_vectors": [
+        "ordinary-drain",
+        "source-switches",
+        "source-faints",
+        "recipient-slot-changes"
+      ],
       "known_gap": "Ordinary drain is covered; source and recipient lifecycle boundaries are not."
     },
     {
@@ -388,9 +874,24 @@
       "family": "status",
       "behavior": "Perish Song reaching zero on multiple Pokemon resolves all faints and the winner correctly.",
       "status": "partial",
-      "tests": ["tests/move_verification_registry_tests.js", "tests/perish_song_reference_tests.mjs"],
+      "tests": [
+        "tests/move_verification_registry_tests.js",
+        "tests/perish_song_reference_tests.mjs"
+      ],
       "oracle": "Pokemon Showdown Perish Song residual ordering.",
-      "boundary_vectors": ["single-faint", "both-sides-zero", "bench-available", "fourth-end-of-turn", "side-swapped", "Soundproof-source", "Soundproof-target", "Mold-Breaker", "Ability-Shield", "recast-does-not-reset", "replacement-lifecycle"],
+      "boundary_vectors": [
+        "single-faint",
+        "both-sides-zero",
+        "bench-available",
+        "fourth-end-of-turn",
+        "side-swapped",
+        "Soundproof-source",
+        "Soundproof-target",
+        "Mold-Breaker",
+        "Ability-Shield",
+        "recast-does-not-reset",
+        "replacement-lifecycle"
+      ],
       "known_gap": "Four-turn reference probes cover countdown, recast and named immunity gates; two-wave terminal winner/faint-order with/without Trick Room and Phantom Force/No Guard controls also pass. Tied residual speeds, voluntary switch/re-entry and other semi-invulnerability remain unproved. Replacement choices differ by policy; matching counts and legal membership do not prove identical tactical continuation."
     },
     {
@@ -398,9 +899,17 @@
       "family": "moves-effects",
       "behavior": "PP consumption, Pressure, move exhaustion, and Struggle are modeled together.",
       "status": "covered",
-      "tests": ["tests/pp_pressure_tests.mjs", "tests/showdown_complete_game_tests.mjs"],
+      "tests": [
+        "tests/pp_pressure_tests.mjs",
+        "tests/showdown_complete_game_tests.mjs"
+      ],
       "oracle": "Pokemon Showdown move-slot and Pressure behavior.",
-      "boundary_vectors": ["single-Pressure", "double-Pressure", "last-PP", "all-moves-empty"],
+      "boundary_vectors": [
+        "single-Pressure",
+        "double-Pressure",
+        "last-PP",
+        "all-moves-empty"
+      ],
       "known_gap": ""
     },
     {
@@ -408,29 +917,72 @@
       "family": "moves-effects",
       "behavior": "Spite and Eerie Spell respect Substitute bypass and relevant defensive or secondary-effect gates.",
       "status": "partial",
-      "tests": ["tests/pp_drain_move_tests.mjs", "tests/pp_substitute_reference_tests.mjs"],
+      "tests": [
+        "tests/pp_drain_move_tests.mjs",
+        "tests/pp_substitute_reference_tests.mjs"
+      ],
       "oracle": "Pinned pokemon-showdown 0.11.11 gen9championsdoublescustomgame synthetic probes, not Champions legality approval.",
-      "boundary_vectors": ["side-swapped", "Spite-bypass-Substitute", "Protect-before-Magic-Bounce", "Good-as-Gold", "reflected-Good-as-Gold", "Prankster-Dark", "Mold-Breaker", "Ability-Shield", "Infiltrator", "sound-bypass-Substitute", "Substitute-HP-preservation", "Soundproof", "Sheer-Force", "Shield-Dust", "Covert-Cloak", "knockout-suppresses-drain"],
+      "boundary_vectors": [
+        "side-swapped",
+        "Spite-bypass-Substitute",
+        "Protect-before-Magic-Bounce",
+        "Good-as-Gold",
+        "reflected-Good-as-Gold",
+        "Prankster-Dark",
+        "Mold-Breaker",
+        "Ability-Shield",
+        "Infiltrator",
+        "sound-bypass-Substitute",
+        "Substitute-HP-preservation",
+        "Soundproof",
+        "Sheer-Force",
+        "Shield-Dust",
+        "Covert-Cloak",
+        "knockout-suppresses-drain"
+      ],
       "known_gap": "Slot-1 and ally targeting, general reflection recursion, item suppression, exact random damage and complete-game/UI parity are not established by these bounded probes."
     },
     {
       "id": "RESOURCE-STRUGGLE-RESOLUTION",
       "family": "moves-effects",
-      "behavior": "Supported forced Struggle paths apply fixed damage, recoil, and faint cleanup.",
-      "status": "covered",
-      "tests": ["tests/t9j17_tests.js"],
-      "oracle": "Current project Struggle contract pending full PP integration.",
-      "boundary_vectors": ["target-damage", "user-recoil", "user-faints"],
-      "known_gap": ""
+      "behavior": "Champions request-time unavailability can select Struggle; an injected late Fake Out fails without inventing a second hit or recoil.",
+      "status": "partial",
+      "tests": [
+        "tests/t9j17_tests.js",
+        "tests/struggle_boundary_reference_tests.mjs"
+      ],
+      "oracle": "Pinned upstream9b136a8 data/mods/champions/moves.ts onDisableMove and data/moves.ts Fake Out onTry; request and execution scopes remain distinct.",
+      "boundary_vectors": [
+        "both-sides",
+        "late-injected-Fake-Out-fails",
+        "no-extra-hit-or-recoil",
+        "Protect-blocked-first-attempt-consumes-window",
+        "all-unavailable-selects-Struggle"
+      ],
+      "known_gap": "Bounded reference/request/execution probes, not current-client evidence or universal forced-action lifecycle.",
+      "move_ids": [
+        "fakeout",
+        "struggle"
+      ]
     },
     {
       "id": "FORM-MC-ADMISSION",
       "family": "transformations",
       "behavior": "Reference admission and construction resolve the same Mega identity and matching stone.",
       "status": "partial",
-      "tests": ["tests/mc_reference_execution_tests.js"],
+      "tests": [
+        "tests/mc_reference_execution_tests.js"
+      ],
       "oracle": "Pinned mirrored species/form and item megaStone metadata; lifecycle contract, not complete-game Champions parity.",
-      "boundary_vectors": ["case-and-ID-alias", "unsupported-on-either-side", "base-plus-X-or-Y-stone", "wrong-species-stone", "delayed-evolution", "one-Mega-per-side", "registration-preserved"],
+      "boundary_vectors": [
+        "case-and-ID-alias",
+        "unsupported-on-either-side",
+        "base-plus-X-or-Y-stone",
+        "wrong-species-stone",
+        "delayed-evolution",
+        "one-Mega-per-side",
+        "registration-preserved"
+      ],
       "known_gap": "Missing descriptors, form-specific weight/ability parity, all switch interactions and official M-C approval remain unproved."
     },
     {
@@ -438,9 +990,17 @@
       "family": "transformations",
       "behavior": "Mega, stance, and supported Tera state persist or reset correctly through switching.",
       "status": "partial",
-      "tests": ["tests/mega_runtime_form_guard_tests.js", "tests/stance_change_tests.js", "tests/t152_tera_activation_tests.js"],
+      "tests": [
+        "tests/mega_runtime_form_guard_tests.js",
+        "tests/stance_change_tests.js",
+        "tests/t152_tera_activation_tests.js"
+      ],
       "oracle": "Pokemon Showdown form and terastallization lifecycle baseline plus approved Champion overrides.",
-      "boundary_vectors": ["Mega-switch-return", "Aegislash-switch-reset", "Tera-switch-return"],
+      "boundary_vectors": [
+        "Mega-switch-return",
+        "Aegislash-switch-reset",
+        "Tera-switch-return"
+      ],
       "known_gap": "The individual systems are covered, but one lifecycle suite does not prove every supported transformation through switching."
     },
     {
@@ -450,7 +1010,12 @@
       "status": "open",
       "tests": [],
       "oracle": "Generated Showdown inventory plus executable differential fixtures.",
-      "boundary_vectors": ["all-imported-moves", "all-imported-abilities", "all-imported-items", "all-imported-forms"],
+      "boundary_vectors": [
+        "all-imported-moves",
+        "all-imported-abilities",
+        "all-imported-items",
+        "all-imported-forms"
+      ],
       "known_gap": "Import legality is broader than verified battle behavior."
     },
     {
@@ -458,9 +1023,19 @@
       "family": "abilities",
       "behavior": "Hospitality heals an eligible ally on either side.",
       "status": "covered",
-      "tests": ["tests/accuracy_boundary_tests.mjs"],
+      "tests": [
+        "tests/accuracy_boundary_tests.mjs"
+      ],
       "oracle": "Pokemon Showdown Hospitality onStart baseline.",
-      "boundary_vectors": ["player-entry", "opponent-entry", "full-hp-ally", "no-ally", "Heal-Block", "fainted-ally", "switch-entry-effect-math"],
+      "boundary_vectors": [
+        "player-entry",
+        "opponent-entry",
+        "full-hp-ally",
+        "no-ally",
+        "Heal-Block",
+        "fainted-ally",
+        "switch-entry-effect-math"
+      ],
       "known_gap": ""
     },
     {
@@ -468,9 +1043,22 @@
       "family": "legality-imports",
       "behavior": "Battle participants match the bring-four roster reported in the exported log.",
       "status": "covered",
-      "tests": ["tests/participant_identity_tests.js"],
+      "tests": [
+        "tests/participant_identity_tests.js"
+      ],
       "oracle": "Official VGC selected-four requirement; independent old-engine explicit-selection differential and roster/export consistency contract.",
-      "boundary_vectors": ["default-selection", "explicit-bring-four", "bench-replacements", "legacy-leads", "omitted-opponent", "duplicate-picks", "registered-member-id", "reordered-registration", "generic-six-member-fixture", "singles-three"],
+      "boundary_vectors": [
+        "default-selection",
+        "explicit-bring-four",
+        "bench-replacements",
+        "legacy-leads",
+        "omitted-opponent",
+        "duplicate-picks",
+        "registered-member-id",
+        "reordered-registration",
+        "generic-six-member-fixture",
+        "singles-three"
+      ],
       "known_gap": ""
     },
     {
@@ -478,9 +1066,21 @@
       "family": "moves-effects",
       "behavior": "Thousand Arrows hits Flying targets and applies grounding.",
       "status": "partial",
-      "tests": ["tests/accuracy_boundary_tests.mjs"],
+      "tests": [
+        "tests/accuracy_boundary_tests.mjs"
+      ],
       "oracle": "Pokemon Showdown Thousand Arrows immunity and grounding baseline.",
-      "boundary_vectors": ["Flying-type", "Levitate", "grounding-follow-up", "switch-reset", "Protect", "Substitute", "Tera-Flying", "Roost", "later-Protean-Flying"],
+      "boundary_vectors": [
+        "Flying-type",
+        "Levitate",
+        "grounding-follow-up",
+        "switch-reset",
+        "Protect",
+        "Substitute",
+        "Tera-Flying",
+        "Roost",
+        "later-Protean-Flying"
+      ],
       "known_gap": "Listed synthetic boundaries pass; Air Balloon, Gravity, semi-invulnerable states and approved Champion legality remain unproven."
     },
     {
@@ -488,9 +1088,20 @@
       "family": "turn-order",
       "behavior": "Positive-priority multi-hit attacks obey side ability, Quick Guard and Psychic Terrain protection.",
       "status": "partial",
-      "tests": ["tests/accuracy_boundary_tests.mjs", "tests/turn_log_export_validator_tests.js"],
+      "tests": [
+        "tests/accuracy_boundary_tests.mjs",
+        "tests/turn_log_export_validator_tests.js"
+      ],
       "oracle": "Pokemon Showdown priority protection baseline; synthetic Gale Wings Dual Wingbeat fixtures.",
-      "boundary_vectors": ["Armor-Tail", "Dazzling", "Queenly-Majesty", "Quick-Guard", "Psychic-Terrain", "injured-Gale-Wings", "exact-HP-priority-audit"],
+      "boundary_vectors": [
+        "Armor-Tail",
+        "Dazzling",
+        "Queenly-Majesty",
+        "Quick-Guard",
+        "Psychic-Terrain",
+        "injured-Gale-Wings",
+        "exact-HP-priority-audit"
+      ],
       "known_gap": "Protection boundaries pass locally; broader multi-hit accuracy, redirection and per-hit ability parity are not established."
     },
     {
@@ -498,9 +1109,20 @@
       "family": "turn-order",
       "behavior": "Tailwind changes the order of remaining moves during the same turn.",
       "status": "partial",
-      "tests": ["tests/showdown_reference_tests.mjs", "tests/tailwind_dynamic_order_tests.mjs"],
+      "tests": [
+        "tests/showdown_reference_tests.mjs",
+        "tests/tailwind_dynamic_order_tests.mjs"
+      ],
       "oracle": "pokemon-showdown@0.11.11 Champions custom doubles; tailwind-midturn-speed reference probe.",
-      "boundary_vectors": ["Prankster-Tailwind", "remaining-partner-overtakes-foe", "side-swapped", "priority-bracket", "Trick-Room-inversion", "Gale-Wings-priority-loss", "pending-tie-reshuffle"],
+      "boundary_vectors": [
+        "Prankster-Tailwind",
+        "remaining-partner-overtakes-foe",
+        "side-swapped",
+        "priority-bracket",
+        "Trick-Room-inversion",
+        "Gale-Wings-priority-loss",
+        "pending-tie-reshuffle"
+      ],
       "known_gap": "Pinned synthetic doubles probes agree for the listed boundaries. Other arbitrary mid-turn Speed or priority changes, exact ties after a change, full-game/UI parity and official Champions confirmation remain unproved. No production promotion."
     },
     {
@@ -508,9 +1130,27 @@
       "family": "damage-formula",
       "behavior": "Seismic Toss deals level-based damage to a valid nonimmune target.",
       "status": "partial",
-      "tests": ["tests/showdown_reference_tests.mjs", "tests/seismic_toss_tests.mjs"],
+      "tests": [
+        "tests/showdown_reference_tests.mjs",
+        "tests/seismic_toss_tests.mjs"
+      ],
       "oracle": "pokemon-showdown@0.11.11 Champions custom doubles; seismic-toss-fixed-damage reference probe.",
-      "boundary_vectors": ["side-swapped-level-50-reference", "Ghost-reference", "Protect-reference", "Unseen-Fist-Protect-reference", "Parental-Bond-two-hits-reference", "level-1-37-50-100-preview", "resistance-weakness-preview", "crit-and-damage-RNG-bypass", "burn-stages-screens-Helping-Hand-preview", "Scrappy-and-Tera-preview", "HP-cap", "Focus-Sash", "Sturdy", "Substitute"],
+      "boundary_vectors": [
+        "side-swapped-level-50-reference",
+        "Ghost-reference",
+        "Protect-reference",
+        "Unseen-Fist-Protect-reference",
+        "Parental-Bond-two-hits-reference",
+        "level-1-37-50-100-preview",
+        "resistance-weakness-preview",
+        "crit-and-damage-RNG-bypass",
+        "burn-stages-screens-Helping-Hand-preview",
+        "Scrappy-and-Tera-preview",
+        "HP-cap",
+        "Focus-Sash",
+        "Sturdy",
+        "Substitute"
+      ],
       "known_gap": "Ten isolated pinned doubles probes agree; additional preview and HP-application tests are local only. Other fixed-damage moves, arbitrary ability/item combinations, full-game/UI parity and official Champions confirmation remain unproved."
     },
     {
@@ -518,9 +1158,36 @@
       "family": "moves-effects",
       "behavior": "Growl and Leer lower the relevant stats of unprotected opposing targets.",
       "status": "partial",
-      "tests": ["tests/showdown_reference_tests.mjs", "tests/growl_leer_stage_tests.mjs"],
+      "tests": [
+        "tests/showdown_reference_tests.mjs",
+        "tests/growl_leer_stage_tests.mjs"
+      ],
       "oracle": "pokemon-showdown@0.11.11 Champions custom doubles; fixed-damage and Earthquake reference probes.",
-      "boundary_vectors": ["two-opposing-targets", "Protect-on-one-target", "Attack-stage", "Defense-stage", "side-swapped", "Clear-Body", "White-Smoke", "Hyper-Cutter", "Defiant", "Competitive", "Clear-Amulet", "Good-as-Gold", "Soundproof", "Contrary", "Mirror-Armor", "Mold-Breaker", "protected-Magic-Bounce", "dual-Magic-Bounce", "spread-Magic-Bounce", "allied-Bulldoze-drop", "Growl-bypass-Substitute", "Leer-accuracy-before-Substitute", "Magic-Bounce-before-accuracy"],
+      "boundary_vectors": [
+        "two-opposing-targets",
+        "Protect-on-one-target",
+        "Attack-stage",
+        "Defense-stage",
+        "side-swapped",
+        "Clear-Body",
+        "White-Smoke",
+        "Hyper-Cutter",
+        "Defiant",
+        "Competitive",
+        "Clear-Amulet",
+        "Good-as-Gold",
+        "Soundproof",
+        "Contrary",
+        "Mirror-Armor",
+        "Mold-Breaker",
+        "protected-Magic-Bounce",
+        "dual-Magic-Bounce",
+        "spread-Magic-Bounce",
+        "allied-Bulldoze-drop",
+        "Growl-bypass-Substitute",
+        "Leer-accuracy-before-Substitute",
+        "Magic-Bounce-before-accuracy"
+      ],
       "known_gap": "Pinned synthetic doubles probes agree for the listed boundaries. The broader stat-stage move, ability and item inventory, imported full games, UI parity and official Champions confirmation remain unproved."
     },
     {
@@ -528,9 +1195,18 @@
       "family": "items",
       "behavior": "Terrain seeds activate on their matching field independently of holder grounding.",
       "status": "partial",
-      "tests": ["tests/t9j17_tests.js", "tests/terrain_seed_lifecycle_tests.js"],
+      "tests": [
+        "tests/t9j17_tests.js",
+        "tests/terrain_seed_lifecycle_tests.js"
+      ],
       "oracle": "Showdown efe4948570d5e8189751792136d26e71710c6c66 data/items.ts seed callbacks.",
-      "boundary_vectors": ["Flying-holder", "Levitate-four-seeds", "matching-terrain", "wrong-terrain", "already-consumed"],
+      "boundary_vectors": [
+        "Flying-holder",
+        "Levitate-four-seeds",
+        "matching-terrain",
+        "wrong-terrain",
+        "already-consumed"
+      ],
       "known_gap": "Scoped Surge/Seed Sower dispatch, capped stages, Klutz and shared Simple/Contrary regressions plus synthetic doubles entry. Full Mega lifecycle, general suppression, item transfer, Unburden reset and official seasonal approval remain unproved."
     },
     {
@@ -538,9 +1214,27 @@
       "family": "moves-effects",
       "behavior": "Soak replaces current typing and successful switches restore current-form native types.",
       "status": "partial",
-      "tests": ["tests/soak_lifecycle_tests.js"],
+      "tests": [
+        "tests/soak_lifecycle_tests.js"
+      ],
       "oracle": "Showdown efe4948570d5e8189751792136d26e71710c6c66 Soak, setType, Magic Bounce and Water absorption handlers.",
-      "boundary_vectors": ["dual-type-replacement", "Water-dual-versus-pure", "Protect", "Substitute-Infiltrator", "Magic-Bounce-behind-Substitute", "allied-bounce", "Good-as-Gold", "Water-absorption", "Storm-Drain-redirection", "Mold-Breaker", "successful-and-failed-pivot", "Arceus-Silvally-Tera-locks", "grounding", "next-hit-effectiveness", "type-state-evidence"],
+      "boundary_vectors": [
+        "dual-type-replacement",
+        "Water-dual-versus-pure",
+        "Protect",
+        "Substitute-Infiltrator",
+        "Magic-Bounce-behind-Substitute",
+        "allied-bounce",
+        "Good-as-Gold",
+        "Water-absorption",
+        "Storm-Drain-redirection",
+        "Mold-Breaker",
+        "successful-and-failed-pivot",
+        "Arceus-Silvally-Tera-locks",
+        "grounding",
+        "next-hit-effectiveness",
+        "type-state-evidence"
+      ],
       "known_gap": "Scoped synthetic battles and direct-effect tests, not full imported-game parity. Full form-change, general suppression, ability redirection tie ordering and Champions-specific approval remain unproved."
     },
     {
@@ -548,9 +1242,28 @@
       "family": "abilities",
       "behavior": "Real damage activates nonstacking Electric charge; the next Electric action consumes it after all targets and hits.",
       "status": "partial",
-      "tests": ["tests/electromorphosis_lifecycle_tests.js"],
+      "tests": [
+        "tests/electromorphosis_lifecycle_tests.js"
+      ],
       "oracle": "Showdown efe4948570d5e8189751792136d26e71710c6c66 Electromorphosis and charge volatile callbacks.",
-      "boundary_vectors": ["damaging-hit", "spread-three-targets", "Substitute", "Protect", "type-immunity", "Electric-status", "non-Electric-retention", "switch-success-failure", "faint", "multihit-nonstacking", "preview-purity", "no-SpD-boost", "sleep-denial-original-type", "resolved-Terrain-Pulse", "Electro-Shot-windup", "Sleep-Talk-called-move"],
+      "boundary_vectors": [
+        "damaging-hit",
+        "spread-three-targets",
+        "Substitute",
+        "Protect",
+        "type-immunity",
+        "Electric-status",
+        "non-Electric-retention",
+        "switch-success-failure",
+        "faint",
+        "multihit-nonstacking",
+        "preview-purity",
+        "no-SpD-boost",
+        "sleep-denial-original-type",
+        "resolved-Terrain-Pulse",
+        "Electro-Shot-windup",
+        "Sleep-Talk-called-move"
+      ],
       "known_gap": "Scoped synthetic battles and reference probes, not full imported-game parity. General ability suppression, all combined modifier rounding, Charge/Wind Power activation and Champions-specific approval remain unproved."
     },
     {
@@ -558,9 +1271,24 @@
       "family": "items",
       "behavior": "Shuca halves an eligible Ground hit using current typing and is consumed by actual damage, not previews.",
       "status": "partial",
-      "tests": ["tests/shuca_lifecycle_tests.js"],
+      "tests": [
+        "tests/shuca_lifecycle_tests.js"
+      ],
       "oracle": "Showdown efe4948570d5e8189751792136d26e71710c6c66 data/items.ts shucaberry.",
-      "boundary_vectors": ["super-effective", "neutral-resistant-immune", "Protect", "Substitute", "Infiltrator", "Klutz", "Unnerve", "Soak-current-types", "spread-holders", "preview-purity", "multi-hit", "Unburden"],
+      "boundary_vectors": [
+        "super-effective",
+        "neutral-resistant-immune",
+        "Protect",
+        "Substitute",
+        "Infiltrator",
+        "Klutz",
+        "Unnerve",
+        "Soak-current-types",
+        "spread-holders",
+        "preview-purity",
+        "multi-hit",
+        "Unburden"
+      ],
       "known_gap": "General ability/item suppression, Ripen and berry-transfer/EatItem callbacks, combined modifier ordering, official seasonal approval and full-game parity remain unproved."
     },
     {
@@ -570,7 +1298,12 @@
       "status": "open",
       "tests": [],
       "oracle": "Approved official or captured Pokemon Champions evidence.",
-      "boundary_vectors": ["move-deltas", "ability-deltas", "item-deltas", "format-rules"],
+      "boundary_vectors": [
+        "move-deltas",
+        "ability-deltas",
+        "item-deltas",
+        "format-rules"
+      ],
       "known_gap": "Authoritative Regulation M-B evidence remains incomplete."
     },
     {
@@ -599,6 +1332,318 @@
         "Mountain-Gale-flinch-blockers"
       ],
       "known_gap": "Synthetic fixtures are not legal-team or full-game validation. Beak Blast, Snap Trap, Syrup Bomb, Strength Sap and Gravity have scoped side-swapped synthetic reference proof; arbitrary combinations and full-game parity remain open. Voluntary switching and complete Fly/Bounce/Sky Drop execution remain unsupported. Re-entry is tested as selector state, not a complete switch lifecycle. General redirection, suppression, Substitute combinations and exact-package official approval remain unproved."
+    },
+    {
+      "id": "SWITCH-SCRIPTED-DIAGNOSTIC",
+      "family": "identity-lifecycle",
+      "behavior": "Development-only explicit one-switch diagnostic follows pinned reference for admitted contexts.",
+      "status": "partial",
+      "tests": [
+        "tests/scripted_switch_reference_tests.mjs"
+      ],
+      "oracle": "Pinned pokemon-showdown 0.11.11 Champions doubles custom game; synthetic mechanics fixtures.",
+      "boundary_vectors": [
+        "both-sides-and-slots",
+        "explicit-replacement",
+        "enemy-and-ally-slot-targets",
+        "PP-status-item-identity",
+        "Regenerator-Intimidate",
+        "Trick-Room",
+        "script-rejection-history"
+      ],
+      "known_gap": "No public/automatic switching, client approval, simultaneous switches, switch-plus-Mega, hazards or unsupported lifecycle contexts. Incoming sleep/freeze rejected."
+    },
+    {
+      "id": "ABILITY-SWITCH-OUT-HOOKS",
+      "family": "abilities",
+      "behavior": "Natural Cure and Regenerator apply at successful switch-out with scoped Gas and Shield handling.",
+      "status": "partial",
+      "tests": [
+        "tests/switch_out_hooks_reference_tests.mjs",
+        "tests/scripted_switch_reference_tests.mjs"
+      ],
+      "oracle": "Pinned Showdown Champions doubles custom game; synthetic baseline evidence.",
+      "boundary_vectors": [
+        "both-sides",
+        "burn-poison-toxic-no-status",
+        "Gas-Shield-consumed-Shield",
+        "sleep-freeze-paralysis-diagnostic"
+      ],
+      "known_gap": "General ability suppression, suppressed Gas, other item disabling and Champions client parity remain unproved."
+    },
+    {
+      "id": "MOVE-AMNESIA-SELF-STAGE",
+      "family": "moves-effects",
+      "behavior": "Amnesia changes only user Special Defense with effective Contrary/Simple and stage caps; self action identity and one PP are preserved.",
+      "status": "partial",
+      "tests": [
+        "tests/amnesia_reference_tests.mjs"
+      ],
+      "oracle": "Pinned pokemon-showdown 0.11.11 custom battle; base definition also checked against upstream9b136a8. Synthetic ability boundaries are not legal-team proof.",
+      "boundary_vectors": [
+        "both-sides",
+        "self-only-stage-and-action-identity",
+        "upper-and-lower-cap",
+        "Contrary-Simple",
+        "Neutralizing-Gas",
+        "Ability-Shield-intact-consumed",
+        "PP-at-cap"
+      ],
+      "known_gap": "Current-client certification, called moves, wider stat-stage interactions and complete legal-team inventory remain unproved."
+    },
+    {
+      "id": "MOVE-REST-SLEEP-TIMING",
+      "family": "status",
+      "behavior": "Rest heals and sets a fixed three-count sleep; effective Early Bird doubles countdown and called Rest cannot reset sleep.",
+      "status": "partial",
+      "tests": [
+        "tests/rest_reference_tests.mjs"
+      ],
+      "oracle": "Showdown 9b136a8c8cdb860a8ab96fa063f906604e352547 data/moves.ts Rest and data/conditions.ts slp; executable current Champions custom reference.",
+      "boundary_vectors": [
+        "both-sides-and-active-slots",
+        "ordinary-burn-fullhp",
+        "EarlyBird-Gas-Shield-consumed",
+        "SleepTalk-calls-Rest",
+        "Insomnia-VitalSpirit-Comatose",
+        "Electric-Misty-terrain-no-heal",
+        "Levitate-Balloon-IronBall-Gravity",
+        "Gas-Shield-Klutz-consumed-items",
+        "active-ally-SweetVeil",
+        "failed-Rest-next-Tantrum-executed-damage"
+      ],
+      "known_gap": "Synthetic pinned-reference scope, not current-client or legal-roster certification. Generic sleep distribution, switching, cure then subsequent sleep, Roost/Tera grounding and wider immunity/lifecycle combinations remain unproved."
+    },
+    {
+      "id": "MOVE-STRUGGLE-NO-PP",
+      "family": "moves-effects",
+      "behavior": "Exhausted PP selects typeless physical base50 Struggle with rounded quarter-maxHP direct recoil and retained KO/resource evidence.",
+      "status": "partial",
+      "tests": [
+        "tests/struggle_reference_tests.mjs",
+        "tests/struggle_boundary_reference_tests.mjs",
+        "tests/test_method_mutation_tests.mjs"
+      ],
+      "oracle": "Showdown9b136a8c8cdb860a8ab96fa063f906604e352547 data/moves.ts Struggle and sim/battle-actions.ts direct struggleRecoil; exact executable Champions custom reference.",
+      "boundary_vectors": [
+        "both-sides-and-active-slots",
+        "maxHP235-238",
+        "ordinary-Ghost-target",
+        "recoil-KO",
+        "Protect-no-recoil",
+        "MagicGuard-RockHead",
+        "zero-PP-autoselection",
+        "fixed-damage-floor-recoil-Normal-type-mutants",
+        "Imprison-availability",
+        "both-side-slot-random-target",
+        "special-shields-contact-and-suppression",
+        "Disguise-cross-move-and-nonhit-boundaries",
+        "five-boundary-reversal-mutants"
+      ],
+      "known_gap": "Synthetic pinned-reference scope, not current-client or official legal M-C proof. Broader Disguise paths and unenumerated move/ability/lifecycle combinations remain unproved. Counts describe scoped executions, not full-move certification.",
+      "move_ids": [
+        "struggle"
+      ]
+    },
+    {
+      "id": "MOVE-ENCORE-QUEUE",
+      "family": "moves-effects",
+      "behavior": "Champions Encore replaces queued action, recalculates priority, spends executed PP, respects ordinary Mental Herb and after-action duration.",
+      "status": "partial",
+      "tests": [
+        "tests/encore_reference_tests.mjs",
+        "tests/test_method_mutation_tests.mjs"
+      ],
+      "oracle": "Pinned upstream9b136a8 data/mods/champions/moves.ts309-340 queue.changeAction; historical default reference kept distinct.",
+      "boundary_vectors": [
+        "both-sides-and-slots",
+        "before-after-target",
+        "changed-priority",
+        "last-PP",
+        "MentalHerb",
+        "HelpingHand-ally-target-evidence"
+      ],
+      "known_gap": "No current-client or legal-team proof. Suppressed Herb, full duration/switch lifecycle, immunity combinations and broader targetclasses remain unproved."
+    },
+    {
+      "id": "DAMAGE-ROLL-DISCRETE-016",
+      "family": "damage-formula",
+      "behavior": "Champions profile samples sixteen uniform integer percentages85\u2013100 and applies the pinned independent Tackle damage vector.",
+      "status": "partial",
+      "move_ids": [
+        "tackle"
+      ],
+      "tests": [
+        "tests/discrete_damage_reference_tests.mjs",
+        "tests/test_method_mutation_tests.mjs"
+      ],
+      "oracle": "Executable current Champions custom/M-C upstream9b136a8c8cdb860a8ab96fa063f906604e352547 sim/battle.ts2407\u20132409 and Champions inherited randomizer. Historical npm generic scope separate.",
+      "boundary_vectors": [
+        "all-sixteen-bucket-centers-and-boundaries",
+        "zero-and-just-below-one",
+        "synthetic-one-clamped",
+        "sixteen-executed-Tackle-damage-values",
+        "fifteen-bucket-and-continuous-mutants"
+      ],
+      "known_gap": "Not current-client observation or full move/damage pipeline certification. Equal semantic roll indices do not establish synchronized RNG seeds. Historical golden expectations remain unapproved for the separately loaded current runtime profile."
+    },
+    {
+      "id": "MOVE-FLY-CONTAINED-001",
+      "family": "moves-effects",
+      "behavior": "Development-only Fly airborne exceptions, effective No Guard/Power Herb, abort and grounding cancellation; public admission blocked.",
+      "status": "partial",
+      "move_ids": [
+        "fly"
+      ],
+      "tests": [
+        "tests/fly_repair_tests.mjs",
+        "tests/fly_lifecycle_tests.mjs",
+        "tests/fly_mutation_tests.mjs"
+      ],
+      "oracle": "Pinned Showdown9b136a8 Champions doubles custom; reports/fly-repair-v2-2026-10-20/reference.json. Synthetic teams, not official eligibility or client proof.",
+      "boundary_vectors": [
+        "seven-airborne-exceptions-both-sides",
+        "both-active-slots",
+        "Gust-Twister-final-damage-16-rolls",
+        "effective-NoGuard-Klutz-Gas-Shield",
+        "sleep-freeze-paralysis-flinch-confusion-Imprison-abort",
+        "SmackDown-ThousandArrows-Gravity-cancellation-and-next-action",
+        "FollowMe-charge-release-stored-slot",
+        "Soak-StrengthSap-DragonDarts-NoGuard",
+        "six-reversal-mutants",
+        "confusion33-of100-self-hit-causal-events-and-HP"
+      ],
+      "known_gap": "Eject Button unsupported (four retained discrepancies); forced-switch/re-entry, Coaching, target replacement/faint/ally selection and broader immunity/status combinations unproved. No client proof. Public Fly blocked."
+    },
+    {
+      "id": "MOVE-CHARGE-SPA-TIMING-001",
+      "family": "moves-effects",
+      "move_ids": [
+        "meteorbeam",
+        "electroshot"
+      ],
+      "behavior": "Special Attack rises on initial preparation and subsequent new uses, never again on release; interrupted release clears stored charge.",
+      "status": "partial",
+      "tests": [
+        "tests/charge_spa_timing_tests.mjs",
+        "tests/charge_herb_suppression_tests.mjs"
+      ],
+      "oracle": "Pinned9b136a8 Champions custom doubles executable; synthetic diagnostic teams, not client or regulation proof.",
+      "boundary_vectors": [
+        "first-release-repeat-both-sides-slots",
+        "Herb-consumed-Klutz-Gas",
+        "Simple-Contrary-Gas-Shield-caps",
+        "rain-CloudNine-Protect-miss",
+        "sleep-frozen-paralysis-flinch-confusion-causal-denial",
+        "missing-delayed-double-boost-mutants"
+      ],
+      "known_gap": "No current-client or legal-team proof. Switching/re-entry, all targeting or ability changes and other charge moves are not certified."
+    },
+    {
+      "id": "FIELD-WEATHER-GAS-001",
+      "family": "field-effects",
+      "move_ids": [
+        "electroshot"
+      ],
+      "behavior": "Effective weather setter entry and last-Gas weather-only restoration, Shield, duration and grouped faint boundaries.",
+      "status": "partial",
+      "tests": [
+        "tests/weather_gas_tests.mjs"
+      ],
+      "oracle": "Pinned9b136a8 Champions custom doubles executable; not official/client proof.",
+      "boundary_vectors": [
+        "four-weather-setters-both-sides",
+        "Gas-Shield-consumed-entry",
+        "pivot-faint-reentry-two-Gas",
+        "same-weather-duration-and-speed-order",
+        "residual-KO-and-simultaneous-spread-KO",
+        "reversal-controls"
+      ],
+      "known_gap": "Reference Gas-to-Gas switch ordering has upstream FIXME. Ice/snow physical damage, copied/transformed Gas, full residual/mixed-entry interactions and client proof remain open."
+    },
+    {
+      "id": "FIELD-SNOW-DEF-001",
+      "family": "field-effects",
+      "move_ids": [
+        "uturn",
+        "psyshock",
+        "psystrike",
+        "secretsword",
+        "bodypress",
+        "icebeam"
+      ],
+      "behavior": "Ice defensive Defense under effective snow, exact damage rolls and stage/critical boundaries.",
+      "status": "partial",
+      "tests": [
+        "tests/snow_defense_tests.mjs"
+      ],
+      "oracle": "Pinned9b136a8 Champions executable synthetic doubles; not official/client proof.",
+      "boundary_vectors": [
+        "sixteen-rolls",
+        "both-sides",
+        "defense-overrides",
+        "Body-Press-offense-exclusion",
+        "critical-stages",
+        "current-types",
+        "Cloud-Nine-Air-Lock",
+        "stage-zero-Eviolite",
+        "reversal"
+      ],
+      "known_gap": "Eviolite with negative stages, mixed suppression/restoration, full singles/doubles interaction coverage and client proof remain open."
+    },
+    {
+      "id": "TYPE-MATRIX-001",
+      "family": "damage-formula",
+      "behavior": "Baseline eighteen-type chart and ordered dual-type multiplication, including immunities, in direct doubles damage.",
+      "status": "partial",
+      "tests": [
+        "tests/type_effectiveness_reference_tests.mjs"
+      ],
+      "oracle": "Pinned Showdown Champions 9b136a8c8cdb860a8ab96fa063f906604e352547; reference only, no client proof.",
+      "boundary_vectors": [
+        "324-single-type",
+        "5508-ordered-dual-type",
+        "both-side-Uturn-Venusaur-16rolls",
+        "eight-reversal-controls"
+      ],
+      "known_gap": "Special move, ability/item, grounding and Tera exceptions are outside this baseline matrix. Full singles/doubles turn coverage remains incomplete."
+    },
+    {
+      "id": "ITEM-EVIOLITE-ACTIVATION-001",
+      "family": "items",
+      "behavior": "Exact registered species eligibility and effective item state govern defensive Eviolite.",
+      "status": "partial",
+      "tests": [
+        "tests/eviolite_activation_tests.mjs"
+      ],
+      "oracle": "Pinned Showdown9b136a8 Champions custom doubles; frozen16-roll vectors. Eviolite Past, not ranked admission or client proof.",
+      "boundary_vectors": [
+        "eligible-ineligible",
+        "exact-form-Basculin-White-Striped",
+        "Klutz-consumed-no-item",
+        "Klutz-under-Gas",
+        "Def-SpD-both-sides"
+      ],
+      "known_gap": "Magic Room, Embargo, transformation, all offensive ability/item combinations, singles and fresh client proof remain unverified."
+    },
+    {
+      "id": "DAMAGE-BODY-PRESS-DEFENSE-001",
+      "family": "damage-formula",
+      "behavior": "Body Press uses stage-adjusted offensive Defense without defensive Eviolite; target Eviolite still applies.",
+      "status": "partial",
+      "tests": [
+        "tests/eviolite_activation_tests.mjs"
+      ],
+      "oracle": "Pinned Showdown9b136a8 Champions custom doubles; frozen16-roll vectors. Eviolite Past, not ranked admission or client proof.",
+      "boundary_vectors": [
+        "both-sides",
+        "offensive-defensive-Eviolite",
+        "no-item-control",
+        "negative-positive-stages",
+        "critical-overrides",
+        "snow-clear"
+      ],
+      "known_gap": "Magic Room, Embargo, transformation, all offensive ability/item combinations, singles and fresh client proof remain unverified."
     }
   ]
 }

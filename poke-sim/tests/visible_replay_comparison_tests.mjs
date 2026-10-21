@@ -104,4 +104,79 @@ test('ingestion requires exact inventory, symmetric pairs and matching seeds', (
     fs.rmSync(directory, { recursive: true });
   }
 });
+
+test('omitting an identical repeated action fails without collapsing multiplicity',()=>rejects(p=>p.log.turnLog[0].events.push({text:'Mirror used Protect!'}),'resolved_move_order_or_omission'));
+test('externally bound candidate rejects coordinated stale labels and bytes',()=>{
+ const p=fixture(), expected={build_id:'build-1',commit:'a'.repeat(40),bundle_sha256:'b'.repeat(64)};
+ p.visual.candidate_bundle_sha256=expected.bundle_sha256;
+ assert.equal(compareVisibleReplay(p.log,p.visual,expected).issues.length,0);
+ p.log.build_id=p.log.exporter_build_id=p.log.provenance.build_id=p.visual.renderer_build_id='stale';
+ assert(compareVisibleReplay(p.log,p.visual,expected).issues.some(i=>i.code==='candidate_execution_mismatch'));
+ p.visual.candidate_bundle_sha256='c'.repeat(64);
+ assert(compareVisibleReplay(p.log,p.visual,expected).issues.some(i=>i.code==='candidate_bytes_mismatch'));
+});
+
+test('stable action anchors distinguish missed-move detail from a second action',()=>{
+ const p=fixture();p.log.turnLog[0].events=[{text:'Mirror used Hurricane!',actor_key:'player:slot:0:Mirror',move:'Hurricane',log_index:0},{text:'Mirror used Hurricane! It missed!'}];
+ p.visual.turns[0].lines=['Mirror used Hurricane! → Opponent It missed. Accuracy 70%.'];
+ assert.equal(compareVisibleReplay(p.log,p.visual).issues.length,0);
+ p.log.turnLog[0].events.push({text:'Mirror used Hurricane!',actor_key:'opponent:slot:0:Mirror',move:'Hurricane',log_index:2});
+ assert(compareVisibleReplay(p.log,p.visual).issues.some(i=>i.code==='resolved_move_order_or_omission'));
+});
+
+test('mixed and partial anchors never discard unanchored actions',()=>{
+ rejects(p=>{Object.assign(p.log.turnLog[0].events[0],{actor_key:'player:slot:0:Mirror',move:'Protect',log_index:0});p.log.turnLog[0].events.push({text:'Mirror used Protect!'});},'incomplete_action_anchors');
+ rejects(p=>{p.log.turnLog[0].events[0].actor_key='player:slot:0:Mirror';},'incomplete_action_anchors');
+ rejects(p=>{const e={text:'Mirror used Protect!',actor_key:'player:slot:0:Mirror',move:'Protect',log_index:0};p.log.turnLog[0].events=[e,{...e}];p.visual.turns[0].lines.push(e.text);},'invalid_action_anchor_order');
+});
+function damageFixture(amounts=[25,25]) {
+ const p=fixture();p.log.turnLog[0].events=amounts.map((n,i)=>({text:'Mirror used Tackle!',actor_key:'player:slot:0:Mirror',move:'Tackle',log_index:i*2}));
+ p.log.turnLog[0].damage_events=amounts.map(n=>({attacker:'Mirror',move:'Tackle',target:'Partner',applied_damage:n}));
+ p.visual.turns[0].lines=amounts.map(n=>`Mirror used Tackle! Partner lost ${n} HP`);return p;
+}
+test('damage details match ordered multiplicity one to one',()=>{
+ const p=damageFixture();assert.equal(compareVisibleReplay(p.log,p.visual).issues.length,0);
+ p.visual.turns[0].lines.pop();assert(compareVisibleReplay(p.log,p.visual).issues.some(i=>i.code==='damage_display_mismatch'));
+ const q=damageFixture([25,30]);q.visual.turns[0].lines.reverse();assert(compareVisibleReplay(q.log,q.visual).issues.some(i=>i.code==='damage_display_mismatch'));
+ const r=damageFixture([25]);r.visual.turns[0].lines.push(r.visual.turns[0].lines[0]);assert(compareVisibleReplay(r.log,r.visual).issues.some(i=>i.code==='damage_display_mismatch'));
+});
+test('raw damage records do not create extra actions or lose damage evidence',()=>{
+ const p=damageFixture([25]);p.log.turnLog[0].events.push({text:'Mirror used Tackle! → Partner [25 dmg, 75/100 HP]'});
+ assert.equal(compareVisibleReplay(p.log,p.visual).issues.length,0);
+ p.visual.turns[0].lines=['Mirror used Tackle! → Partner [25 dmg, 75/100 HP]'];
+ assert.equal(compareVisibleReplay(p.log,p.visual).issues.length,0);
+});
+test('duplicate inventory captures do not establish independent games',()=>{
+ const directory=fs.mkdtempSync(path.join(os.tmpdir(),'visible-counts-'));
+ try {
+  const p=fixture(),write=(name,v)=>fs.writeFileSync(path.join(directory,name),JSON.stringify(v));
+  write('capture-inventory.json',{schema_version:'champions-visual-inventory-v1',expected_game_count:2,cases:['a','b'].map(id=>({id,kind:'simulation',seed:p.log.seed}))});
+  for(const id of ['a','b']){write(id+'.log.json',p.log);write(id+'.visual.json',p.visual);}
+  const r=ingestDirectory(directory);assert.equal(r.pairs,2);assert.equal(r.unique_observations,1);assert.equal(r.unique_scenarios,1);assert.equal(r.unique_capture_pairs,1);assert.equal(r.repeated_captures,1);assert.equal(r.verified_execution_count,null);
+  p.log.exported_at='later';write('b.log.json',p.log);const repeated=ingestDirectory(directory);assert.equal(repeated.unique_observations,1);assert.equal(repeated.unique_capture_pairs,2);
+ } finally {assert.equal(path.dirname(path.resolve(directory)),path.resolve(os.tmpdir()));fs.rmSync(directory,{recursive:true});}
+});
+
+test('anchored failed action remains an action',()=>{
+ const p=fixture();Object.assign(p.log.turnLog[0].events[0],{text:'Mirror used Protect! But it failed!',actor_key:'player:slot:0:Mirror',move:'Protect',log_index:0});
+ p.visual.turns[0].lines=['Mirror used Protect! But it failed!'];assert.equal(compareVisibleReplay(p.log,p.visual).issues.length,0);
+});
+test('spread and repeated-hit details consume every semicolon segment',()=>{
+ for(const targets of [['Partner','Other'],['Partner','Partner']]) {
+ const p=damageFixture([25]);p.log.turnLog[0].damage_events=targets.map(target=>({attacker:'Mirror',move:'Tackle',target,applied_damage:25}));
+ p.visual.turns[0].lines=['Mirror used Tackle! '+targets.map(t=>t+' lost 25 HP (75/100) [spread]').join('; ')];
+ assert.equal(compareVisibleReplay(p.log,p.visual).issues.length,0);
+ p.visual.turns[0].lines[0]+='; Extra lost 25 HP';assert(compareVisibleReplay(p.log,p.visual).issues.some(i=>i.code==='damage_display_mismatch'));
+ p.visual.turns[0].lines=['Mirror used Tackle! '+targets[0]+' lost 25 HP'];assert(compareVisibleReplay(p.log,p.visual).issues.some(i=>i.code==='damage_display_mismatch'));
+ }
+});
+const retained=path.resolve('poke-sim/artifacts/browser-replay-JPtsTO');
+if(fs.existsSync(retained))test('retained browser evidence preserves actual duplicate damage findings',()=>{
+ const r=ingestDirectory(retained);assert(r.reports.find(p=>p.log_file==='practice-rapid.log.json').issues.some(i=>i.code==='damage_display_mismatch'&&i.location==='T10'));
+ assert.equal(r.reports.find(p=>p.log_file==='mc-baseline.log.json').issues.some(i=>i.location==='T2'),false,'legitimate spread rows agree');
+});
+for(const text of ['Mirror used Protect! But it failed!','Mirror used Hurricane! It missed!'])test('orphan action cannot disappear: '+text,()=>{
+ const f=fixture();f.log.turnLog[0].events=[{text}];f.visual.turns[0].lines=[];
+ assert(compareVisibleReplay(f.log,f.visual).issues.some(i=>i.code==='orphan_action_detail'));
+});
 console.log(`Visible replay comparison: ${passed}/${passed} passed`);

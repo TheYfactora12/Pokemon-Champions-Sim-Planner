@@ -5,6 +5,8 @@ import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { spawnSync } from 'node:child_process';
 import { createHash } from 'node:crypto';
+import { createRequire } from 'node:module';
+const require=createRequire(import.meta.url);
 
 const ROOT = dirname(dirname(fileURLToPath(import.meta.url)));
 const MANIFEST_PATH = join(ROOT, 'battle_audit_manifest.json');
@@ -149,9 +151,9 @@ function provenance(manifestPath = MANIFEST_PATH) {
   };
 }
 
-function runNode(relativePath) {
+function runNode(relativePath, args = []) {
   console.log(`\nRUN ${relativePath}`);
-  const result = spawnSync(process.execPath, [join(ROOT, relativePath)], {
+  const result = spawnSync(process.execPath, [join(ROOT, relativePath), ...args], {
     cwd: ROOT,
     env: process.env,
     stdio: 'inherit',
@@ -203,6 +205,11 @@ export function main(argv = process.argv.slice(2)) {
   }
 
   const golden = runNode('tests/golden_battles_runner.js');
+  const profileGate = runNode('tests/golden_runtime_profile_tests.mjs');
+  if(profileGate.failed)failures.push(`tests/golden_runtime_profile_tests.mjs: ${profileGate.message}`);
+  let currentProfile;
+  try { currentProfile=require('../tests/golden_battles_runner.js').currentProfileReport(); }
+  catch(error){failures.push('current golden profile integrity: '+error.message);currentProfile={current_integrity:'failed',current_golden_status:'not_approved',error:error.message};}
   if (golden.failed) failures.push(`tests/golden_battles_runner.js: ${golden.message}`);
 
   if (!skipStress) {
@@ -216,6 +223,10 @@ export function main(argv = process.argv.slice(2)) {
     generated_at: new Date().toISOString(),
     deterministic_test_files: tests.length,
     golden_trace: golden.failed ? 'failed' : 'passed',
+    golden_trace_scope:'historical-three-module-profile-only',
+    current_profile_integrity:currentProfile.current_integrity,
+    current_golden_expectations:'not_approved',
+    current_profile_comparison:currentProfile,
     seeded_stress: skipStress ? 'skipped' : failures.some((failure) => failure.startsWith('tests/audit.js')) ? 'failed' : 'passed',
     family_results: manifest.families.map((family) => ({
       id: family.id,

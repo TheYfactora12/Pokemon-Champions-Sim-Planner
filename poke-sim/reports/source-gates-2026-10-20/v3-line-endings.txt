@@ -1,0 +1,12 @@
+Γ£ö execution dates come from retained execution evidence, never observation time (2.8124ms)
+Γ£ö asserted DB documentation invalidates aggregate but not bounded mechanics dependencies (3826.787ms)
+Γ£ö aggregate identity binds owning tests, runners, fixtures, DB inputs and discovery additions/removals (95.3398ms)
+Γ£ö committed inventory and working bytes agree; documentation changes invalidate aggregate identity (1148.3014ms)
+Γä╣ tests 4
+Γä╣ suites 0
+Γä╣ pass 4
+Γä╣ fail 0
+Γä╣ cancelled 0
+Γä╣ skipped 0
+Γä╣ todo 0
+Γä╣ duration_ms 5317.0507

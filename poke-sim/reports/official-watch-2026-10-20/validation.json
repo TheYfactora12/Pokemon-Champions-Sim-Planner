@@ -1,0 +1,49 @@
+{
+  "source_commit": "43c5e0f5bbc45b3a2de5cad1793a5c89fdbffea7",
+  "observed_at": "2026-10-20T23:14:37.606Z",
+  "project": {
+    "fast_files": 275,
+    "offline_db_files": 12,
+    "failures": 0
+  },
+  "validation_mode": "Full offline aggregate plus clean-checkout controls; actual execution timestamps unavailable in aggregate log, observation time is not execution time.",
+  "initial_project_failures": 4,
+  "initial_failure_reasons": [
+    "Historical receipt source dependency changed",
+    "Stale generated bundle and sandbox Git fixture permissions",
+    "Current checks correctly stale before fresh enrollment",
+    "Sandbox Git Bash restriction"
+  ],
+  "clean_checkout": {
+    "node_tests": 98,
+    "node_failures": 0,
+    "manifest_checks": 12,
+    "workflow_checks": 29,
+    "migration_negative_controls": 11
+  },
+  "browser": {
+    "games": 2,
+    "pairs": 3,
+    "turns": 22,
+    "mismatch_pairs": 0,
+    "page_errors": 0
+  },
+  "independent": {
+    "bounded_cases": 6,
+    "negative_input_controls": 36
+  },
+  "current_assertions": 6,
+  "stale_assertions": 19,
+  "blocked_attempt_entries": 6,
+  "source_health": {
+    "registered_seed_urls": 15,
+    "parsed": 9,
+    "unavailable": 6,
+    "discovery_followed": false
+  },
+  "runtime_mechanics_changed": false,
+  "client_verified": false,
+  "hosted_source_candidate": "not_pushed",
+  "merge": "not_performed",
+  "deployment": "not_performed"
+}

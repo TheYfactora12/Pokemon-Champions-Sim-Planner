@@ -1,0 +1,20 @@
+[
+  {
+    "report": "RETEST_2769879.md",
+    "audited_head": "2769879d005f10102754d6fa539e5925bfe9a836",
+    "sha256": "4f073b14811cee955ec8d2d1ddcf65dbfedd0fedc5a7651144f41569ac9e0c4a",
+    "scope": "Independent agent report; not human regulation approval or client certification"
+  },
+  {
+    "report": "STRUGGLE_RETEST_91C8206.md",
+    "audited_head": "91c820655bfd36fd38c551ee8a947c5b85f3600c",
+    "sha256": "58ac6dfd444bdc3e838b7a20d8938577eb5f7e0a1ae34ae9059357e5e6979f1e",
+    "scope": "Independent agent report; not human regulation approval or client certification"
+  },
+  {
+    "report": "REST_RETEST_8BFCCD3.md",
+    "audited_head": "8bfccd3a35b2d2f8be185ef4e8196741235504f2",
+    "sha256": "5e2bb6a27a1b71120033e2077b32b63f12b631aa0d21ad6e478fe768c46d6445",
+    "scope": "Independent agent report; not human regulation approval or client certification"
+  }
+]

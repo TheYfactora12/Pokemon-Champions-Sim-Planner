@@ -1,0 +1,39 @@
+{
+  "schema_version": "champions-bounded-assertion-v1",
+  "assertion_id": "REST-ELECTRIC-CAPTURE.current-runtime.v10",
+  "case_id": "REST-ELECTRIC-CAPTURE",
+  "scope": {
+    "oracle_kind": "shared_reference",
+    "format": "gen9championsdoublescustomgame",
+    "regulation_id": null,
+    "client_version": null,
+    "boundaries": [
+      "grounded player slot0, missing20HP, ElectricTerrain admission rejection"
+    ]
+  },
+  "executed_at": "2026-10-21T04:20:34.443Z",
+  "dependencies": {
+    "engine": "a6d80894fbd5b5b70d8cfbf36a7d0588640c629533f334b6d93827222322973f",
+    "data": "dd258aec23104c305658a95eeb20c8af71204ef43311d7033d00f33a64943409",
+    "runner": "7324e992dc86371999bd2686edb4e2c649ea1d9b2e655ad3850ac5121608df08",
+    "test": "3d7cfd2e383fa6e32f8dc626c9a9bef27ac9b25d298e90646014bf95b1e524e1",
+    "checker": "d18159d8291af83e8fbd6bebac7fade9aa89c9400bb0641538b8bccd88de25a1",
+    "reference": "de66162a28b270bdf17ea17a804a7ec65c6d2f286815ae17eaa3336273405f61"
+  },
+  "contract": {
+    "path": "source/bounded-assertions/cycles/cycle-20261021-v10/REST-ELECTRIC-CAPTURE/contract.json",
+    "sha256": "6f834a880f4877643b221172e23e8ed9a7de41a655c6ae0bed8a4588e15a8a18"
+  },
+  "inputs": {
+    "path": "source/bounded-assertions/cycles/cycle-20261021-v10/REST-ELECTRIC-CAPTURE/inputs.json",
+    "sha256": "06816451df28b5f40dedcec7d68f8434e7a676d0ba00eeab8aa55a7751a8ba6e"
+  },
+  "local_result": {
+    "path": "source/bounded-assertions/cycles/cycle-20261021-v10/REST-ELECTRIC-CAPTURE/local_result.json",
+    "sha256": "d4e72fd69597d7bdff5253793aa1a9ff1abd545d6ff709c67fb54595e48649dc"
+  },
+  "reference_result": {
+    "path": "source/bounded-assertions/cycles/cycle-20261021-v10/REST-ELECTRIC-CAPTURE/reference_result.json",
+    "sha256": "b0bb2dba250141ff981cbe705cade373097a4e4d6ec2c748c4ba72270dd1857e"
+  }
+}

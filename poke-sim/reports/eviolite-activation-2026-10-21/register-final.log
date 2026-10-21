@@ -1,0 +1,20 @@
+Γ£ö complete canonical inventory never promotes catalog, pair or legacy tag to legality/client proof (112.3535ms)
+Γ£ö missing metadata, duplicate moves and edited sheet verification reject (1432.7923ms)
+Γ£ö all-row change detection includes formerly matching rows and stages stale claims (2797.834ms)
+Γ£ö CSV preserves boolean accuracy and neutralizes spreadsheet formulas (0.3175ms)
+Γ£ö committed candidate detects edits to metadata and provenance (836.0669ms)
+Γ£ö generated candidate matches current source and generator bytes (1107.1355ms)
+Γ£ö historical mode cannot disable stronger provenance checks (205.5728ms)
+Γ£ö six independent provenance counterexamples reject before snapshot hashing (1389.6163ms)
+Γ£ö original independent register counterexamples reject before snapshot hashing (4470.799ms)
+Γ£ö wrong source mod or locked reference pin cannot build an export (905.9973ms)
+Γ£ö source-only changes invalidate all dependent pairs and declarations (250.7895ms)
+Γ£ö CRLF generator bytes preserve the committed identity and formula prefixes stay inert (1363.9031ms)
+Γä╣ tests 12
+Γä╣ suites 0
+Γä╣ pass 12
+Γä╣ fail 0
+Γä╣ cancelled 0
+Γä╣ skipped 0
+Γä╣ todo 0
+Γä╣ duration_ms 15879.4964

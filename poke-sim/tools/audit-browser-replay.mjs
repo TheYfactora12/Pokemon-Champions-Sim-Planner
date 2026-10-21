@@ -1,4 +1,6 @@
 import assert from 'node:assert/strict';
+import {createHash} from 'node:crypto';
+import {candidateIdentity,verifyServedCandidate} from './candidate-identity.mjs';
 import fs from 'node:fs';
 import path from 'node:path';
 import { createRequire } from 'node:module';
@@ -7,7 +9,7 @@ import { captureVisibleReplay } from './capture-visible-replay.mjs';
 import { compareVisibleReplay, ingestDirectory } from './compare-visible-replay.mjs';
 import { assertRequestedReplay, assertReplayContinuity } from './browser-replay-contract.mjs';
 
-const require = createRequire(import.meta.url);
+const require = createRequire(process.env.CHAMPIONS_BROWSER_PACKAGE || import.meta.url);
 const { chromium } = require('playwright');
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const url = new URL(process.argv[2] || 'http://127.0.0.1:8770/pokemon-champion-2026.html?browser-audit=v160&fresh=1');
@@ -17,16 +19,35 @@ fs.mkdirSync(artifacts, { recursive: true });
 const directory = fs.mkdtempSync(path.join(artifacts, 'browser-replay-'));
 const write = (name, value) => fs.writeFileSync(path.join(directory, name), JSON.stringify(value, null, 2) + '\n');
 const inventory = { schema_version: 'champions-visual-inventory-v1', expected_game_count: 0, cases: [], runs: [] };
-const diagnostics = { url: url.href, page_errors: [], blocked_nonread_requests: [] };
+const expectedCandidate = candidateIdentity(root);
+write('candidate-identity.json',expectedCandidate);
+await verifyServedCandidate(url,expectedCandidate);
+inventory.candidate=expectedCandidate;
+const diagnostics = { url: url.href, page_errors: [], blocked_nonread_requests: [], loaded_external_assets:{} };
+const expectedResponses=new Map(Object.entries(expectedCandidate.external_assets).map(([name,digest])=>[new URL(name,url).pathname,{name,digest}]));
 const auditMemberEdit = process.env.AUDIT_MEMBER_EDIT === '1';
 const browser = await chromium.launch({ headless: true });
-const page = await browser.newPage({ viewport: { width: 1440, height: 1000 }, acceptDownloads: true });
+const page = await browser.newPage({ serviceWorkers:'block', viewport: { width: 1440, height: 1000 }, acceptDownloads: true });
 page.on('pageerror', error => diagnostics.page_errors.push(error.message));
-await page.route('**/*', route => {
+await page.route('**/*', async route => {
   const request = route.request();
   if (!['GET', 'HEAD', 'OPTIONS'].includes(request.method())) {
     diagnostics.blocked_nonread_requests.push({ method: request.method(), origin: new URL(request.url()).origin });
     return route.abort();
+  }
+  const external=expectedResponses.get(new URL(request.url()).pathname);
+  if(external){
+    const response=await route.fetch(),body=await response.body();
+    const digest=createHash('sha256').update(body).digest('hex');
+    assert.equal(digest,external.digest,`Loaded external asset differs: ${external.name}`);
+    diagnostics.loaded_external_assets[external.name]=digest;
+    return route.fulfill({response,body});
+  }
+  if(request.isNavigationRequest() && new URL(request.url()).pathname===url.pathname){
+    const response=await route.fetch(),body=await response.body();
+    diagnostics.navigation_bundle_sha256=createHash('sha256').update(body).digest('hex');
+    assert.equal(diagnostics.navigation_bundle_sha256,expectedCandidate.bundle_sha256,'Browser navigation response differs');
+    return route.fulfill({response,body});
   }
   return route.continue();
 });
@@ -44,6 +65,7 @@ async function capture(id, kind, original) {
   const exported = JSON.parse(fs.readFileSync(downloadPath, 'utf8'));
   const log = exported;
   const visual = await page.evaluate(captureVisibleReplay);
+  visual.candidate_bundle_sha256=diagnostics.navigation_bundle_sha256;
   const coaching = await card.locator('.replay-coach-summary').allTextContents();
   assert(!coaching.some(text => /execution rather than|clearer line on the turning turn/.test(text)), 'Unsupported causal replay coaching returned');
   write(`${id}.coaching.json`, { summaries: coaching });
@@ -65,7 +87,7 @@ async function capture(id, kind, original) {
     await card.locator('.replay-turn-row').nth(fieldIndex).locator('.replay-turn-main').scrollIntoViewIfNeeded();
     await page.screenshot({ path: path.join(directory, `${id}-field.png`) });
   }
-  const report = compareVisibleReplay(log, visual);
+  const report = compareVisibleReplay(log, visual, expectedCandidate);
   write(`${id}.comparison.json`, report);
   if (original) {
     assertReplayContinuity(original, exported);
@@ -174,6 +196,7 @@ async function prepareEditedTeam() {
 
 try {
   await page.goto(url.href, { waitUntil: 'domcontentloaded' });
+  assert.equal(diagnostics.navigation_bundle_sha256,expectedCandidate.bundle_sha256,'Browser navigation loaded different bytes');
   if (auditMemberEdit) await page.waitForLoadState('networkidle');
   const edited = auditMemberEdit ? await prepareEditedTeam() : null;
   const playerKey = edited ? edited.key : 'mega_dragonite';
@@ -203,7 +226,9 @@ try {
   await page.locator('#tab-btn-simulator').click();
   await run('swapped');
   await inspectReplayLayouts();
-  const report = ingestDirectory(directory);
+  for(const [name,digest] of Object.entries(expectedCandidate.external_assets).filter(([name])=>name.endsWith('.js')))
+    assert.equal(diagnostics.loaded_external_assets[name],digest,`Executable asset was not observed: ${name}`);
+  const report = ingestDirectory(directory, expectedCandidate);
   write('comparison-report.json', report);
   assert.equal(diagnostics.page_errors.length, 0, 'Browser page errors occurred');
   console.log(JSON.stringify({ directory, games: report.expected_game_count, pairs: report.pairs, turns: report.turns, mismatch_pairs: report.mismatch_pairs, page_errors: diagnostics.page_errors }));

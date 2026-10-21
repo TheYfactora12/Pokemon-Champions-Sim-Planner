@@ -53,7 +53,7 @@ T('1. Protect success drops on consecutive use', () => {
     moves: ['Tackle'],
     evs: { hp: 252, atk: 252, def: 0, spa: 0, spd: 0, spe: 0 }
   }]);
-  const battle = ctx.simulateBattle(playerTeam, oppTeam, { format: 'doubles', seed: [1, 3, 5, 7], maxTurns: 2 });
+  const battle = ctx.simulateBattle(playerTeam, oppTeam, { format: 'doubles', seed: [100, 123456700, 33700, 912312300], maxTurns: 2 });
   truthy(battle.log.some(line => String(line).includes('Cresselia used Protect!')),
     'first Protect should resolve');
   truthy(battle.log.some(line => String(line).includes('Cresselia used Protect! But it failed!')),

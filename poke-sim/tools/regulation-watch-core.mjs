@@ -2,7 +2,8 @@ import { createHash } from 'node:crypto';
 import { load } from 'cheerio';
 import { safeUrl } from './news-feed-core.mjs';
 
-export const HOSTS = ['champions.pokemon.com', 'www.pokemon.com', 'mcdn.pokemon.com', 'home.pokemon.com', 'support.pokemon.com', 'championships.pokemon.com'];
+export const HOSTS = ['champions.pokemon.com', 'www.pokemon.com', 'mcdn.pokemon.com', 'home.pokemon.com', 'support.pokemon.com', 'championships.pokemon.com', 'champions-news.pokemon-home.com', 'web-view.app.pokemonchampions.jp', 'en-americas-support.nintendo.com'];
+export const PARSER_VERSION = '2';
 export const sha256 = value => createHash('sha256').update(value).digest('hex');
 export function canonical(value) {
   if (value === null || typeof value === 'string' || typeof value === 'boolean') return JSON.stringify(value);
@@ -59,6 +60,29 @@ export function snapshot(source, response, teams = {}) {
   }
   if (!/text\/html/i.test(response.content_type)) throw new Error('Expected HTML content type');
   const $ = load(response.bytes.toString('utf8'));
+  // Reject blocked responses before any specialized extraction can return data.
+  const visible = $.root().clone();
+  visible.find('script, style, noscript').remove();
+  if (/access denied|just a moment|verify (?:that )?you are human|checking your browser|enable javascript and cookies|complete the security check/i.test(clean(visible.text()))) throw new Error('Source returned a challenge/error page');
+  // The official roster is a JSON array embedded in a script, not rendered text.
+  // Parse only the observed data grammar; never execute upstream JavaScript.
+  if (source.kind === 'official_roster') {
+    if ([source.url, response.final_url].some(url => new URL(url).hostname !== 'web-view.app.pokemonchampions.jp') || !$('#pokemons').length) throw new Error('Unrecognized official roster layout');
+    const scripts = $('script:not([src])').map((_, el) => $(el).html()).get();
+    const matches = scripts.flatMap(script => [...script.matchAll(/\bconst\s+pokemons\s*=\s*(\[[\s\S]*?\]);\s*const\s+noPrefix\s*=/g)]);
+    if (matches.length !== 1) throw new Error('Official roster data missing or ambiguous');
+    const rows = JSON.parse(matches[0][1]);
+    if (!Array.isArray(rows) || !rows.length || rows.length > 5000 || rows.some(row => !Array.isArray(row) || row.length !== 3 || !/^\d{4}-\d{3}$/.test(row[0]) || row[1] !== 1 || typeof row[2] !== 'string' || !row[2].trim() || row[2].length > 150) || new Set(rows.map(row => row[0])).size !== rows.length) throw new Error('Invalid official roster rows; manual review required');
+    const roster = rows.map(([form_id, source_flag, name]) => ({ form_id, source_flag, name })).sort((a, b) => a.form_id.localeCompare(b.form_id));
+    $('script, style, nav, footer, header, noscript').remove();
+    const context = clean($('main').text());
+    const title = clean($('main h1').first().text());
+    if (!title || !/eligible\s+pok[eé]mon/i.test(title)) throw new Error('Unrecognized official roster identity; manual parser review required');
+    const links = unique($('main a[href]').map((_, el) => safeUrl($(el).attr('href'), response.final_url, HOSTS)).get().filter(Boolean));
+    return { ...base, title, semantic_sha256: sha256(canonical({ roster, context, links })), paragraph_hashes: [sha256(context), ...roster.map(row => sha256(canonical(row)))],
+      mentions: { regulations: [], dates: [], entities: roster.map(row => row.name), rule_topics: ['eligible'] }, roster,
+      potential_team_ids: Object.entries(teams).filter(([, team]) => (team.members || []).some(member => roster.some(row => row.name === member.name))).map(([id]) => id).sort(), discovery: [], manual_pdf_review: false, manual_roster_mapping_review: true };
+  }
   $('script, style, nav, footer, header, noscript, [role="navigation"]').remove();
   const main = $('main').first().length ? $('main').first() :
     new URL(source.url).hostname === 'champions.pokemon.com' && $('#__next').length ? $('#__next') : $('article').first();
@@ -91,7 +115,7 @@ export function snapshot(source, response, teams = {}) {
 export function makeCandidate(current, previous, policy, occurrence = 1) {
   const changed_fields = previous ? ['mentions', 'paragraph_hashes', 'discovery', 'semantic_sha256', 'final_url'].filter(key => canonical(current[key]) !== canonical(previous[key])) : ['initial_observation'];
   if (!changed_fields.length) changed_fields.push('extraction_policy');
-  const envelope = { schema_version: 'regulation-review-envelope-v1', source_policy_sha256: policy, parser_version: '1',
+  const envelope = { schema_version: 'regulation-review-envelope-v1', source_policy_sha256: policy, parser_version: PARSER_VERSION,
     change_occurrence: occurrence,
     change_key: sha256(canonical({ policy, url: current.url, before: previous?.semantic_sha256 || null, after: current.semantic_sha256, final_url: current.final_url })),
     review_status: 'needs_review', competitive_use: false, source: current, previous: previous || null, changed_fields,
@@ -103,7 +127,7 @@ export function makeCandidate(current, previous, policy, occurrence = 1) {
 }
 
 export async function observe(registry, previous = null, { fetcher = fetch, teams = {}, now = new Date().toISOString(), captureSource = null } = {}) {
-  const policy = sha256(canonical({ parser_version: '1', hosts: HOSTS, sources: registry.public_sources, teams }));
+  const policy = sha256(canonical({ parser_version: PARSER_VERSION, hosts: HOSTS, sources: registry.public_sources, teams }));
   if (previous && (previous.schema_version !== 'regulation-watch-state-v1' || !previous.sources || typeof previous.sources !== 'object' || Array.isArray(previous.sources))) throw new Error('Invalid baseline; do not silently reset history');
   const samePolicy = previous?.source_policy_sha256 === policy;
   const old = previous?.sources || {};
@@ -136,11 +160,11 @@ export async function observe(registry, previous = null, { fetcher = fetch, team
       }
       state.sources[source.url] = current;
       state.source_policies[source.url] = policy;
-      health.push({ url: source.url, status: !before ? 'new' : changed ? 'changed' : 'unchanged', required: source.required !== false });
+      health.push({ url: source.url, checked_at: now, status: !before ? 'new' : changed ? 'changed' : 'unchanged', required: source.required !== false });
       for (const url of current.discovery) if (!seen.has(url)) { queue.push({ url, kind: /\.pdf$/i.test(new URL(url).pathname) ? 'official_rules_pdf' : 'discovered_official_article', required: true }); seen.add(url); }
     } catch (error) {
       if (old[source.url]) state.sources[source.url] = old[source.url];
-      health.push({ url: source.url, status: 'unavailable', required: source.required !== false, error: error.message });
+      health.push({ url: source.url, checked_at: now, status: 'unavailable', required: source.required !== false, error: error.message });
     }
   }
   // A failed source must never disappear from the next baseline.
