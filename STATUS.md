@@ -7,15 +7,13 @@ repository security change is authorized.
 
 ## Current development candidate
 
-Last completed published draft checkpoint is aba6fd33f150eb505364029a597aa7d1ea34e9f6; hosted run [39530027415](https://github.com/TheYfactora12/Pokemon-Champions-Sim-Planner/actions/runs/39530027415) succeeded at 2026-10-21T02:21:12Z. It is not deployed.
+Last completed published draft checkpoint is466c8bd78f6b65a09d1c6c4198bf78b0924397fb; hosted run [39540217296](https://github.com/TheYfactora12/Pokemon-Champions-Sim-Planner/actions/runs/39540217296) succeeded at2026-10-21T04:09:05Z. It is not deployed.
 
-Local candidate v2.2.244-weather-gas / engine 1.1.44 repairs bounded weather ability suppression/restoration and app-owned service-worker cache cleanup. [Weather scope](docs/release/WEATHER_GAS_2026-10-21.md) and [hosted validation boundary](docs/release/HOSTED_VALIDATION_2026-10-21.md) distinguish tested reference behavior from client proof and actual deployment. Focused tests are passing; aggregate, clean-checkout, tracker refresh and candidate hosted checks remain pending. No final readiness claim is made.
+Current local runtime99507bdb78f577b0b966cbaff8e10935e33ea698 is v2.2.245-snow-defense / engine1.1.45. The [snow repair](docs/release/SNOW_DEFENSE_2026-10-21.md) applies Ice defensive Defense under effective snow and fixes Gas suppression of Cloud Nine/Air Lock. The exact original eight full-turn probes now pass. Fresh v10 bounded tracker cases have independent review; aggregate, clean-checkout and hosted checks remain pending until recorded in lifecycle facts.
 
-Production was independently read at 2026-10-21T02:35:55Z: commit 1620ed14188ec87bc082d49b093d72bf793aee81, v2.2.216-beta-feedback. Existing CI browser checks use loopback, not that website. An isolated private Sites preview is proposed but neither created nor published; actual hosted E2E, production smoke and rollback remain required.
+Production remains v2.2.216-beta-feedback /1620ed14188ec87bc082d49b093d72bf793aee81, last HTTP identity read2026-10-21T03:45:33Z. CI browser evidence is loopback. No private preview has been created or published; approval remains pending. Actual hosted preview, production smoke and rollback gates are separate.
 
-Public Fly admission remains rejected, Eject Button and Ice/snow physical damage are unresolved; paired singles/doubles coverage, official eligibility and client proof remain incomplete. Workflow 349252390 remains disabled. Last source seed sample parsed 9 of 15 URLs without full discovery; no active watch claim is made.
-
-The [dated validation workflow](docs/release/DATED_VALIDATION_WORKFLOW.md) preserves historical receipts and invalidates changed dependencies. Generated lifecycle facts distinguish local tests, independent review, push, hosted checks, merge and deployment. M-C reference inventory is 392 forms, 537 moves, 166 items and 23,756 pairs; official completeness is unresolved.
+Open: Eviolite/negative-stage rounding, Bug-versus-Poison resistance, Fly/Eject Button, broader paired format coverage, official eligibility and current-client proof. Workflow349252390 remains disabled; last seed health parsed9/15 without full discovery. M-C candidate inventory392forms537moves166items23756pairs is reference coverage only. No percentage of universal accuracy is established.
 
 ## Historical development checkpoints
 

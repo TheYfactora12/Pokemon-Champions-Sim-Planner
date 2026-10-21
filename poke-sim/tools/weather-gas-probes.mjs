@@ -9,8 +9,9 @@ export const weatherAbilities={'Drizzle':['Pelipper','rain'],'Drought':['Torkoal
 const weatherMap={raindance:'rain',sunnyday:'sun',sandstorm:'sand',snowscape:'snow','':'none'};
 const mon=(name,ability,moves=['Splash'],item='')=>({name,ability,moves,item,level:50,nature:'Hardy',evs:{hp:0,atk:0,def:0,spa:0,spd:0,spe:0}});
 export function weatherProbe(input={},referencePath=process.env.CHAMPIONS_REFERENCE_SIM,mutate){
- const x={side:'player',ability:'Drizzle',shield:'none',mode:'entry',gas:true,secondGas:false,competing:false,...input};
- assert(Object.keys(input).every(k=>['side','ability','shield','mode','gas','secondGas','competing'].includes(k)),'unsupported weather probe input');
+ const x={side:'player',ability:'Drizzle',shield:'none',mode:'entry',gas:true,secondGas:false,competing:false,pivotTarget:'partner',...input};
+ assert(Object.keys(input).every(k=>['side','ability','shield','mode','gas','secondGas','competing','pivotTarget'].includes(k)),'unsupported weather probe input');
+ assert(['partner','setter'].includes(x.pivotTarget));
  assert(['player','opponent'].includes(x.side)&&weatherAbilities[x.ability]);
  assert(['none','active','consumed'].includes(x.shield)&&['entry','pivot','faint','reentry','last-gas','gas-replace','residual'].includes(x.mode));
  assert([x.gas,x.secondGas,x.competing].every(v=>typeof v==='boolean'));
@@ -36,7 +37,7 @@ export function weatherProbe(input={},referencePath=process.env.CHAMPIONS_REFERE
   const pivot=['pivot','reentry','last-gas','gas-replace'].includes(x.mode)&&turn===1;
   const back=x.mode==='reentry'&&turn===3;
   const fire=turn===turns;
-  const ownChoice=(fire?'move 1 1':'move 2')+', '+(back?'switch '+(b[rid].pokemon.indexOf(rg)+1):pivot?'move 1 2':rg===b[rid].active[1]?'move 2':'move 1');
+  const ownChoice=(fire?'move 1 1':'move 2')+', '+(back?'switch '+(b[rid].pokemon.indexOf(rg)+1):pivot?'move 1 '+(x.pivotTarget==='setter'?1:2):rg===b[rid].active[1]?'move 2':'move 1');
   const otherGas=b[oid].active[1].ability==='neutralizinggas';
   for(const id of ['p1','p2']){const choice=id===rid?ownChoice:(x.mode==='faint'?'move 2 2':'move 1')+', '+(x.mode==='last-gas'&&turn===2?'move 1 1':otherGas?'move 2':'move 1');commands.push({turn,side:id,choice});b.choose(id,choice);}
   if(turn<turns&&b[rid].activeRequest?.forceSwitch?.some(Boolean)){
@@ -58,7 +59,7 @@ export function weatherProbe(input={},referencePath=process.env.CHAMPIONS_REFERE
  const actions=[];
  for(let turn=1;turn<=turns;turn++)for(const side of ['player','opponent'])for(const slot of [0,1]){
   if(x.mode==='reentry'&&turn===3&&side===x.side&&slot===1)continue;
-  actions.push({turn,side,slot,move:side===x.side?(slot===0?(turn===turns?'Electro Shot':'Splash'):(turn===1&&['pivot','reentry','last-gas','gas-replace'].includes(x.mode)?'U-turn':'Splash')):(slot===0&&x.mode==='faint'?'Psychic':slot===1&&x.mode==='last-gas'&&turn===2?'U-turn':'Splash'),targetSlot:side===x.side&&slot===1&&turn===1?1:side!==x.side&&x.mode==='faint'?1:0});
+  actions.push({turn,side,slot,move:side===x.side?(slot===0?(turn===turns?'Electro Shot':'Splash'):(turn===1&&['pivot','reentry','last-gas','gas-replace'].includes(x.mode)?'U-turn':'Splash')):(slot===0&&x.mode==='faint'?'Psychic':slot===1&&x.mode==='last-gas'&&turn===2?'U-turn':'Splash'),targetSlot:side===x.side&&slot===1&&turn===1?(x.pivotTarget==='setter'?0:1):side!==x.side&&x.mode==='faint'?1:0});
  }
  // Re-entry is a development-only single scripted switch. No production allowlist is widened.
  const scripted=x.mode==='reentry'?[{turn:3,side:x.side,actorId:`${x.side}:2`,replacementId:`${x.side}:1`}]:null;

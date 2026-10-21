@@ -1,0 +1,188 @@
+{
+  "executed_at": "2026-10-21T04:15:21.789Z",
+  "reference_pin": "9b136a8c8cdb860a8ab96fa063f906604e352547",
+  "method": "Direct pinned getDamage: initialized stats101; max damage roll; noncritical; synthetic custom doubles. Only user typing changes for Body Press offense control.",
+  "script_sha256": "c9f1d72b15f4bd693f9397e1b26410c36b2b27bd110b24bdf70f7cafea8d1e61",
+  "rows": [
+    {
+      "move": "Tackle",
+      "snow": false,
+      "ice_user": false,
+      "initialized_stats": 101,
+      "damage": 19,
+      "modified_target_def": 101,
+      "weather": ""
+    },
+    {
+      "move": "Tackle",
+      "snow": false,
+      "ice_user": true,
+      "initialized_stats": 101,
+      "damage": 19,
+      "modified_target_def": 101,
+      "weather": ""
+    },
+    {
+      "move": "Tackle",
+      "snow": true,
+      "ice_user": false,
+      "initialized_stats": 101,
+      "damage": 13,
+      "modified_target_def": 151,
+      "weather": "snowscape"
+    },
+    {
+      "move": "Tackle",
+      "snow": true,
+      "ice_user": true,
+      "initialized_stats": 101,
+      "damage": 13,
+      "modified_target_def": 151,
+      "weather": "snowscape"
+    },
+    {
+      "move": "U-turn",
+      "snow": false,
+      "ice_user": false,
+      "initialized_stats": 101,
+      "damage": 64,
+      "modified_target_def": 101,
+      "weather": ""
+    },
+    {
+      "move": "U-turn",
+      "snow": false,
+      "ice_user": true,
+      "initialized_stats": 101,
+      "damage": 64,
+      "modified_target_def": 101,
+      "weather": ""
+    },
+    {
+      "move": "U-turn",
+      "snow": true,
+      "ice_user": false,
+      "initialized_stats": 101,
+      "damage": 44,
+      "modified_target_def": 151,
+      "weather": "snowscape"
+    },
+    {
+      "move": "U-turn",
+      "snow": true,
+      "ice_user": true,
+      "initialized_stats": 101,
+      "damage": 44,
+      "modified_target_def": 151,
+      "weather": "snowscape"
+    },
+    {
+      "move": "Psychic",
+      "snow": false,
+      "ice_user": false,
+      "initialized_stats": 101,
+      "damage": 61,
+      "modified_target_def": 101,
+      "weather": ""
+    },
+    {
+      "move": "Psychic",
+      "snow": false,
+      "ice_user": true,
+      "initialized_stats": 101,
+      "damage": 41,
+      "modified_target_def": 101,
+      "weather": ""
+    },
+    {
+      "move": "Psychic",
+      "snow": true,
+      "ice_user": false,
+      "initialized_stats": 101,
+      "damage": 61,
+      "modified_target_def": 151,
+      "weather": "snowscape"
+    },
+    {
+      "move": "Psychic",
+      "snow": true,
+      "ice_user": true,
+      "initialized_stats": 101,
+      "damage": 41,
+      "modified_target_def": 151,
+      "weather": "snowscape"
+    },
+    {
+      "move": "Psyshock",
+      "snow": false,
+      "ice_user": false,
+      "initialized_stats": 101,
+      "damage": 55,
+      "modified_target_def": 101,
+      "weather": ""
+    },
+    {
+      "move": "Psyshock",
+      "snow": false,
+      "ice_user": true,
+      "initialized_stats": 101,
+      "damage": 37,
+      "modified_target_def": 101,
+      "weather": ""
+    },
+    {
+      "move": "Psyshock",
+      "snow": true,
+      "ice_user": false,
+      "initialized_stats": 101,
+      "damage": 37,
+      "modified_target_def": 151,
+      "weather": "snowscape"
+    },
+    {
+      "move": "Psyshock",
+      "snow": true,
+      "ice_user": true,
+      "initialized_stats": 101,
+      "damage": 25,
+      "modified_target_def": 151,
+      "weather": "snowscape"
+    },
+    {
+      "move": "Body Press",
+      "snow": false,
+      "ice_user": false,
+      "initialized_stats": 101,
+      "damage": 74,
+      "modified_target_def": 101,
+      "weather": ""
+    },
+    {
+      "move": "Body Press",
+      "snow": false,
+      "ice_user": true,
+      "initialized_stats": 101,
+      "damage": 74,
+      "modified_target_def": 101,
+      "weather": ""
+    },
+    {
+      "move": "Body Press",
+      "snow": true,
+      "ice_user": false,
+      "initialized_stats": 101,
+      "damage": 50,
+      "modified_target_def": 151,
+      "weather": "snowscape"
+    },
+    {
+      "move": "Body Press",
+      "snow": true,
+      "ice_user": true,
+      "initialized_stats": 101,
+      "damage": 50,
+      "modified_target_def": 151,
+      "weather": "snowscape"
+    }
+  ]
+}

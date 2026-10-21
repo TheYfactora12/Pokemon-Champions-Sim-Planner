@@ -50,13 +50,13 @@ test('WEATHER-GAS-simultaneous-reversal',()=>{
 });
 
 for(const [id,input,before,after] of [
- ['raw-entry',{},'const ability = _contactEffects(field).ability(mon);','const ability = mon.ability;'],
+ ['raw-entry',{},"function applyWeatherAbility(mon, field, log) {\n  if (!mon || !mon.alive || !field) return false;\n  const ability = _contactEffects(field).ability(mon);","function applyWeatherAbility(mon, field, log) {\n  if (!mon || !mon.alive || !field) return false;\n  const ability = mon.ability;"],
  ['missing-restoration',{mode:'pivot'},'function endWeatherGas(mon) {','function endWeatherGas(mon) { return;'],
  ['shield-restart',{ability:'Drought',competing:true,shield:'active',mode:'pivot'},"orderedWeather(active.filter(m=>!(m.item==='Ability Shield' && !m.itemConsumed)));",'orderedWeather(active);'],
  ['remaining-gas',{mode:'pivot',secondGas:true},"if (active.some(m=>m.ability==='Neutralizing Gas' && !m._weatherGasEnded)) return;","for (const m of active) if (m.ability==='Neutralizing Gas') m._weatherGasEnded=true;"],
  ['reverse-order',{competing:true,gas:false},'_speedSort(entries,(a,b)=>b.speed-a.speed,rng);','_speedSort(entries,(a,b)=>a.speed-b.speed,rng);'],
  ['residual-duration',{mode:'residual'},'if (!this._weatherStartedInResidual) this.weatherTurns--;','this.weatherTurns--;'],
 ])test(`WEATHER-GAS-mutant-${id}`,()=>{
- const mutate=s=>{assert(s.includes(before),'mutant anchor');return s.replace(before,after);};
+ const mutate=s=>{s=s.replaceAll('\r\n','\n');assert.equal(s.split(before).length,2,'unique mutant anchor');return s.replace(before,after);};
  assert.throws(()=>check(weatherProbe(input,undefined,mutate)),/initial weather|weather\/charge/);
 });

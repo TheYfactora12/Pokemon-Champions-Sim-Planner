@@ -24,6 +24,10 @@
     {
       "path": "source/bounded-assertions/cycles/cycle-20261021-v9/attempt.json",
       "sha256": "ec4775348c1f0fa4489591397318fd5de206fc663503bca4f7da6ad182571051"
+    },
+    {
+      "path": "source/bounded-assertions/cycles/cycle-20261021-v10/attempt.json",
+      "sha256": "a9e6e5347277025920a898e5c5b96b5275dcde505d35fb40c1bf71c4aed9ae18"
     }
   ]
 }

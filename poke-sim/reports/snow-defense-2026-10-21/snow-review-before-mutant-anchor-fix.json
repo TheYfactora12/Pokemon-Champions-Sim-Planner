@@ -1,0 +1,26 @@
+{
+  "schema_version": "snow-defense-independent-review-v1",
+  "reviewed_at": "2026-10-21T04:20:35.8933903Z",
+  "engine_sha256": "081c9746fc599cefcf1518d8743991f23f299be195633e645b18f69f8caca3bd",
+  "reference_pin": "9b136a8c8cdb860a8ab96fa063f906604e352547",
+  "tests": {
+    "snow_passed": 67,
+    "total": 207,
+    "weather_passed": 139,
+    "passed": 206,
+    "failed": 1
+  },
+  "independent_counterexample": "Gas + Cloud Nine and Air Lock now match reference across all 16 damage rolls",
+  "blocker": "Weather raw-entry reversal mutates newly earlier helper occurrence; function-scope its anchor and rerun",
+  "evidence": [
+    "snow-final-focused.txt",
+    "snow-gas-cloud-fixed-probe.mjs",
+    "snow-gas-cloud-fixed-results.json"
+  ],
+  "limits": [
+    "Eviolite negative-stage rounding remains open; stage-zero item controls only",
+    "Tera unproved",
+    "Bug-versus-Poison chart mismatch separate",
+    "No client or whole-weather approval"
+  ]
+}
