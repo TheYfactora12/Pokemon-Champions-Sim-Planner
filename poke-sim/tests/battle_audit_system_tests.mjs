@@ -35,8 +35,8 @@ assert.ok(manifest.families.filter((family) => family.status !== 'regression_cov
 
 const summary = buildSummary(manifest, edgeMatrix);
 assert.equal(summary.total_families, 15);
-assert.equal(summary.family_counts.regression_covered, 3);
-assert.equal(summary.family_counts.partial, 10);
+assert.equal(summary.family_counts.regression_covered, 2);
+assert.equal(summary.family_counts.partial, 11);
 assert.equal(summary.family_counts.gap, 2);
 assert.equal(summary.universal_accuracy_proven, false);
 assert.equal(manifest.families.find(row => row.id === 'battle-determinism').status, 'partial');
@@ -44,10 +44,12 @@ assert.match(manifest.families.find(row => row.id === 'battle-determinism').know
 assert.equal(summary.total_inventories, 5);
 assert.equal(summary.inventory_counts.partial, 3);
 assert.equal(summary.inventory_counts.gap, 2);
-assert.equal(summary.total_edge_cases, 73);
+assert.equal(summary.total_edge_cases, 74);
+assert.equal(manifest.families.find(row=>row.id==='field-effects').status,'partial');
+assert.equal(edgeMatrix.cases.find(row=>row.id==='FIELD-SNOW-DEF-001').status,'partial');
 assert.equal(edgeMatrix.cases.find(row=>row.id==='MOVE-CHARGE-SPA-TIMING-001').status,'partial');
 assert.equal(edgeMatrix.cases.find(row=>row.id==='FIELD-WEATHER-GAS-001').status,'partial');
-assert.deepEqual(summary.edge_case_counts, { covered: 17, partial: 51, open: 5 });
+assert.deepEqual(summary.edge_case_counts, { covered: 17, partial: 52, open: 5 });
 assert.ok(summary.unproved_edge_case_ids.includes('MOVE-FLY-CONTAINED-001'));
 assert.equal(edgeMatrix.cases.find(row=>row.id==='MOVE-FLY-CONTAINED-001').status,'partial');
 assert.ok(summary.unproved_edge_case_ids.includes('MOVE-AMNESIA-SELF-STAGE'));
