@@ -9,7 +9,7 @@ repository security change is authorized.
 
 Source watcher checkpoint430368455dd52d6393cc1c3330613c0a2209ecc1 is published in draft PR279; its hosted checks remain separately tracked. Independent review confirmed the bounded mechanics, but found roster error-page/context acceptance and incomplete aggregate-test source binding. Follow-up repairs reject blocked/unidentified roster fragments and bind repository-wide aggregate inputs, including asserted documentation/configuration, separately from bounded mechanics dependencies. Completion is recorded only in the generated lifecycle export with its exact tested commit; this source note does not predeclare a result.
 
-Local shell remains v2.2.242-source-watch / engine1.1.42. Public Fly admission is rejected. Repeat-charge Meteor Beam/Electro Shot Special Attack and Eject Button remain explicit implementation gaps; paired singles/doubles coverage, official eligibility and client proof remain incomplete.
+Local shell is v2.2.243-charge-spa / engine1.1.43. The bounded charge-start/repeat Special Attack repair is documented in docs/release/CHARGE_SPA_2026-10-21.md; exact validation status belongs to the generated lifecycle export. Public Fly admission is rejected and Eject Button remains an implementation gap; paired singles/doubles coverage, official eligibility and client proof remain incomplete.
 
 Workflow349252390 remains manually disabled; the latest one-time seed health sample parsed9of15 registered URLs, without full discovery. [Source repair and operational limits](docs/release/OFFICIAL_WATCH_REPAIR_2026-10-20.md). No active monitoring claim is made.
 

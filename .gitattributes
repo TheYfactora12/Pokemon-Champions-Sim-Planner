@@ -30,3 +30,4 @@ poke-sim/reports/current-bounded-input-repair-2026-10-20/** -text
 # Lifecycle snapshots retain exact evidence bytes across checkouts.
 poke-sim/source/validation-lifecycle/** -text
 poke-sim/reports/source-gates-2026-10-20/** -text
+poke-sim/reports/charge-spa-2026-10-21/** -text

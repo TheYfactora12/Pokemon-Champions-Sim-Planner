@@ -157,7 +157,8 @@
         "tests/encore_reference_tests.mjs",
         "tests/fly_repair_tests.mjs",
         "tests/fly_lifecycle_tests.mjs",
-        "tests/fly_mutation_tests.mjs"
+        "tests/fly_mutation_tests.mjs",
+        "tests/charge_spa_timing_tests.mjs"
       ],
       "known_gaps": [
         "Imported legal moves may be baseline-supported without dedicated local behavior fixtures.",

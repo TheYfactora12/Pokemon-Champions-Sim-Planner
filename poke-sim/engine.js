@@ -979,10 +979,11 @@ function _moveOverrideDefensiveStat(move, isPhysical) {
   return isPhysical ? 'def' : 'spd';
 }
 
-function _preDamageSpaBoostDelta(mon, move) {
+function _preDamageSpaBoostDelta(mon, move, field) {
   if (move !== 'Electro Shot' && move !== 'Meteor Beam') return 0;
-  if (mon && mon.ability === 'Simple') return 2;
-  if (mon && mon.ability === 'Contrary') return -1;
+  const ability = mon && _contactEffects(field).ability(mon);
+  if (ability === 'Simple') return 2;
+  if (ability === 'Contrary') return -1;
   return 1;
 }
 
@@ -2501,7 +2502,7 @@ class Pokemon {
     // battle execution does not double count it.
     const _ctx = field && field._ctx ? field._ctx : null;
     const _spaPreviewBlocked = !!(_ctx && _ctx.preDamageSpaBoostMon === this && _ctx.preDamageSpaBoostMove === move);
-    const _spaPreviewDelta = (!isPhysical && !_spaPreviewBlocked) ? _preDamageSpaBoostDelta(this, move) : 0;
+    const _spaPreviewDelta = (!isPhysical && !_spaPreviewBlocked && this.chargingMove !== move) ? _preDamageSpaBoostDelta(this, move, field) : 0;
     const _spaPreviewApplied = _spaPreviewDelta ? _applyStageDelta(this, 'spa', _spaPreviewDelta) : 0;
 
     // Atk / Def with crit bypass.
@@ -4677,6 +4678,11 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
     }
 
     const _continuingCharge = attacker.chargingMove === move;
+    // These moves boost on preparation, including Herb/weather skips, never on release.
+    if (!_continuingCharge && (move === 'Electro Shot' || move === 'Meteor Beam')) {
+      const delta = _applyStageDelta(attacker, 'spa', _preDamageSpaBoostDelta(attacker, move, field));
+      if (delta) _logStageDelta(log, attacker, 'spa', delta);
+    }
     const _effectiveWeather = _effectiveFieldWeather(field);
     const _naturalChargeSkip = !_continuingCharge && (
       (move === 'Electro Shot' && _effectiveWeather === 'rain') ||
@@ -6204,8 +6210,6 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
     const _prevPreDamageBoostMon = field._ctx.preDamageSpaBoostMon;
     const _prevPreDamageBoostMove = field._ctx.preDamageSpaBoostMove;
     if (move === 'Electro Shot' || move === 'Meteor Beam') {
-      const _stageDelta = _applyStageDelta(attacker, 'spa', _preDamageSpaBoostDelta(attacker, move));
-      if (_stageDelta) _logStageDelta(log, attacker, 'spa', _stageDelta);
       field._ctx.preDamageSpaBoostMon = attacker;
       field._ctx.preDamageSpaBoostMove = move;
     }
@@ -6850,6 +6854,7 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
   function _shouldCancelStoredCharge(mon, move, reason) {
     if (!mon || mon.chargingMove !== move) return false;
     if (move === 'Phantom Force' || move === 'Fly') return true;
+    if (move === 'Meteor Beam' || move === 'Electro Shot') return true;
     if ((move === 'Solar Beam' || move === 'Solar Blade') &&
         (reason === 'flinch' || reason === 'paralysis')) {
       return true;
@@ -7947,7 +7952,7 @@ async function runAllMatchups(numBattles, onProgress, onMatchupDone, options) {
 //   top_loss_paths  — placeholder (requires loss-path tracking)
 //   critical_damage_calcs — placeholder for future calc layer
 //   traceable_log_refs    — first N seed refs for replayability
-const ENGINE_VERSION = '1.1.42'; // Increment on any mechanics change
+const ENGINE_VERSION = '1.1.43'; // Increment on any mechanics change
 
 function wilsonCI(wins, n, z = 1.96) {
   if (n === 0) return [0, 0];

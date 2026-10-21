@@ -4,8 +4,7 @@ const setups=[{}, {item:'Power Herb'}, {item:'Power Herb',ability:'Klutz'}, {ite
 for(const chargeMove of moves)for(const side of ['player','opponent'])for(const slot of [0,1])for(const [i,setup]of setups.entries())test(`CHARGE-HERB-${chargeMove}-${side}-${slot}-${i}`,()=>{
  const row=lifecycleProbe({chargeMove,side,slot,turns:2,...setup},process.env.CHAMPIONS_REFERENCE_SIM);
  for(const key of ['charging','pp_spent','actor_hp_loss','target_losses','item_consumed'])assert.deepEqual(row.candidate[key],row.reference[key],key);
- const stageGap=['Meteor Beam','Electro Shot'].includes(chargeMove)&&setup.item==='Power Herb'&&(!setup.ability||setup.gas);
- if(stageGap){assert.equal(row.reference.actor_spa,2);assert.equal(row.candidate.actor_spa,1,'retained pre-existing repeat-charge boost gap');}else assert.equal(row.candidate.actor_spa,row.reference.actor_spa);
+ assert.equal(row.candidate.actor_spa,row.reference.actor_spa);
  if(setup.gas){assert.equal(row.reference.item_consumed,true);assert.equal(row.reference.pp_spent,2);}
 });
 

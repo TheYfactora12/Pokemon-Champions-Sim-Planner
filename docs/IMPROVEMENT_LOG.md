@@ -1,5 +1,12 @@
 # Improvement Log
 
+## IMP-0127: Correct Bounded Charge Special Attack Timing
+
+- Move Meteor Beam/Electro Shot boosts to preparation, without duplicate release boosts.
+- Apply effective Simple/Contrary and clear interrupted charge state for these two moves.
+- Preserve eight original failures, causal interruption controls, reversal tests and historical tracker versions.
+- [Scope and evidence](release/CHARGE_SPA_2026-10-21.md). No Fly admission or release authorization.
+
 ## IMP-0125: Repair Official Source Observation
 
 - Add exact official M-C notice/roster and Nintendo update hosts, preserving redirect rejection.

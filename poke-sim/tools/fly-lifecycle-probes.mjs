@@ -4,14 +4,16 @@ import {localContext,teams} from './probe-fly-repair.mjs';
 import {mapTeam} from './showdown-reference.mjs';
 const require=createRequire(import.meta.url);
 const format='gen9championsdoublescustomgame',seed=[3,7,11,13];
-const allowed=new Set(['side','slot','move','item','ability','foeAbility','gas','consumed','species','roll','turns','interrupt','actorMove','foeMove2','redirectTurn','protectTurn','targetSlot','foeFirst','helpingHand','poisonFoe','actorMove2','chargeMove']);
+const allowed=new Set(['side','slot','move','item','ability','foeAbility','gas','consumed','species','roll','turns','interrupt','actorMove','foeMove2','redirectTurn','protectTurn','targetSlot','foeFirst','helpingHand','poisonFoe','actorMove2','chargeMove','initialSpa','miss']);
 export function lifecycleProbe(config={},referencePath,mutate){
  assert(Object.keys(config).every(k=>allowed.has(k)),'Unsupported Fly probe option');
  const x={side:'player',slot:0,move:'Tackle',item:'',ability:'Rock Head',foeAbility:'Torrent',gas:false,consumed:false,species:'Aerodactyl',roll:100,turns:1,interrupt:null,actorMove:'Fly',foeMove2:null,redirectTurn:0,protectTurn:0,targetSlot:0,foeFirst:false,helpingHand:false,poisonFoe:false,actorMove2:null,chargeMove:'Fly',...config};
  if(!Object.hasOwn(config,'actorMove'))x.actorMove=x.chargeMove;
  assert(['Fly','Solar Beam','Solar Blade','Meteor Beam','Electro Shot','Phantom Force'].includes(x.chargeMove),'Unsupported charge move');
- assert([1,2,3].includes(x.turns)&& (x.turns<3 || x.interrupt==='confusion' || (x.foeFirst&&['Smack Down','Thousand Arrows','Gravity'].includes(x.foeMove2))),'Unsupported continuation configuration');
- assert(x.chargeMove==='Fly'||x.turns<=2,'Unsupported charge continuation');
+ const boostCharge=['Meteor Beam','Electro Shot'].includes(x.chargeMove);
+ assert([1,2,3,4].includes(x.turns)&& (boostCharge || x.turns<3 || (x.turns===3&&(x.interrupt==='confusion' || (x.foeFirst&&['Smack Down','Thousand Arrows','Gravity'].includes(x.foeMove2))))),'Unsupported continuation configuration');
+ assert(x.initialSpa===undefined||(boostCharge&&Number.isInteger(x.initialSpa)&&Math.abs(x.initialSpa)<=6));
+ assert(x.miss===undefined||(boostCharge&&typeof x.miss==='boolean'));
  assert(['player','opponent'].includes(x.side)&&[0,1].includes(x.slot)&&[0,1].includes(x.targetSlot));
  assert(Number.isInteger(x.roll)&&x.roll>=85&&x.roll<=100);
  const own=teams(x.move,x.item,x.ability);
@@ -29,9 +31,10 @@ export function lifecycleProbe(config={},referencePath,mutate){
  assert.equal(b.dex.currentMod,'champions');assert.equal(b.gameType,'doubles');
  b.choose('p1','team 1234');b.choose('p2','team 1234');
  const ra=b[rid].active[x.slot],rt=b[oid].active[0];
+ if(x.initialSpa!==undefined)ra.boosts.spa=x.initialSpa;
  if(x.consumed)ra.setItem('');
  b.randomizer=n=>Math.floor(n*x.roll/100);
- b.randomChance=(n,d)=>x.interrupt==='paralysis'&&n===1&&d===8||x.interrupt==='confusion'&&n===33&&d===100||n/d>.5;
+ b.randomChance=(n,d)=>x.miss&&d===100&&n===90?false:x.interrupt==='paralysis'&&n===1&&d===8||x.interrupt==='confusion'&&n===33&&d===100||n/d>.5;
  const snapshots=[],commands=[];
  function refSnapshot(){return {actor_types:ra.getTypes(),actor_atk:ra.boosts.atk,actor_spa:ra.boosts.spa,charging:!!ra.volatiles.twoturnmove,pp_spent:ra.moveSlots[0].maxpp-ra.moveSlots[0].pp,tackle_pp_spent:ra.moveSlots[2].maxpp-ra.moveSlots[2].pp,actor_hp_loss:ra.maxhp-ra.hp,target_losses:b[oid].active.map(m=>m.maxhp-m.hp),item_consumed:!!x.item&&!ra.item,active:b[rid].active.includes(ra),status:ra.status,helped:!!ra.volatiles.helpinghand};}
  for(let turn=1;turn<=x.turns;turn++){
@@ -46,7 +49,7 @@ export function lifecycleProbe(config={},referencePath,mutate){
    const cmd=[0,1].map(slot=>{
     if(id===rid){if(slot!==x.slot)return x.helpingHand?`move 1 -${x.slot+1}`:'move 1';
      if(turn>1&&ra.volatiles.twoturnmove)return 'move 1';
-     const name=turn>2?'Tackle':turn===2&&x.actorMove2?x.actorMove2:x.actorMove;
+     const name=turn>2&&!boostCharge?'Tackle':turn===2&&x.actorMove2?x.actorMove2:x.actorMove;
      return `move ${spec.moves.indexOf(name)+1}`+(name==='Protect'?'':` ${x.targetSlot+1}`);
     }
     if(slot===1)return x.redirectTurn===turn?'move 2':'move 1';
@@ -59,7 +62,7 @@ export function lifecycleProbe(config={},referencePath,mutate){
  }
  const referenceLog=[...b.log];b.destroy();
  const c=localContext(true,mutate),build=c.buildTeam;let a,t,ownMons,foeMons,injected=false;
- c.buildTeam=function(...args){const mons=build(...args);if(args[1]===x.side){ownMons=mons;a=mons[x.slot];if(x.consumed)a.itemConsumed=true;
+ c.buildTeam=function(...args){const mons=build(...args);if(args[1]===x.side){ownMons=mons;a=mons[x.slot];if(x.consumed)a.itemConsumed=true;if(x.initialSpa!==undefined)a.statBoosts.spa=x.initialSpa;
    const speed=a.getEffSpeed;a.getEffSpeed=function(field){if(this.turnsSinceEntry===2&&!injected){injected=true;
     if(['sleep','frozen','paralysis'].includes(x.interrupt)){this.status=x.interrupt;this.statusTurns=3;this.sleepTurns=0;this.frozenTurns=0;}
     if(x.interrupt==='flinch')this._flinched=true;
@@ -68,14 +71,14 @@ export function lifecycleProbe(config={},referencePath,mutate){
    }return speed.call(this,field);};
   }else{foeMons=mons;t=mons[0];const speed=t.getEffSpeed;t.getEffSpeed=function(field){return x.foeFirst&&this.turnsSinceEntry>=2?999:speed.call(this,field);};}
   if(x.foeMove2==='Gravity'||x.move==='Strength Sap')for(const m of mons)m.referenceMode='champions_mc_reference';return mons;};
- c.CRIT_STAGES.fill(0);c._sampleDamageRoll=()=>x.roll/100;c._moveHits=()=>true;
+ c.CRIT_STAGES.fill(0);c._sampleDamageRoll=()=>x.roll/100;c._moveHits=(attacker,target,move)=>!(x.miss&&move==='Meteor Beam');
  c.makePRNG=()=>()=>x.interrupt&&x.interrupt!=='frozen'?.05:.99;
  const actions=[];
  for(let turn=1;turn<=x.turns;turn++)for(const side of ['player','opponent'])for(const slot of [0,1]){
   const isOwn=side===x.side,isActor=isOwn&&slot===x.slot;
   // Leave the continuation to the real stored-slot selection, not a forced target.
   if(isActor&&turn===2&&!x.actorMove2&&x.chargeMove==='Fly')continue;
-  const move=isActor?(turn>2?'Tackle':turn===2&&x.actorMove2?x.actorMove2:x.actorMove):isOwn?(x.helpingHand?'Helping Hand':'Protect'):slot===1?(x.redirectTurn===turn?'Follow Me':'Protect'):x.protectTurn===turn?'Protect':turn===2&&x.foeMove2?x.foeMove2:x.move;
+  const move=isActor?(turn>2&&!boostCharge?'Tackle':turn===2&&x.actorMove2?x.actorMove2:x.actorMove):isOwn?(x.helpingHand?'Helping Hand':'Protect'):slot===1?(x.redirectTurn===turn?'Follow Me':'Protect'):x.protectTurn===turn?'Protect':turn===2&&x.foeMove2?x.foeMove2:x.move;
   actions.push({turn,side,slot,move,targetSlot:isActor?x.targetSlot:x.slot,...(isOwn&&x.helpingHand&&!isActor?{targetSide:'ally'}:{})});
  }
  const result=c.simulateBattle(...inputs,{format:'doubles',maxTurns:x.turns,seed,forcedActions:actions});

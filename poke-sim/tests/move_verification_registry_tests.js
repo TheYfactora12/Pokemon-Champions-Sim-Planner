@@ -649,7 +649,7 @@ T('24. Solar Beam full paralysis on the release turn cancels the queued attack',
     'Solar Beam should not still fire after release-turn full paralysis');
 });
 
-T('25. Electro Shot sleep interruption pauses the queued hit instead of canceling it', () => {
+T('25. Electro Shot sleep interruption cancels the queued hit and restarts on waking', () => {
   const player = team('Electro Shot Sleep Pause', [{
     name: 'Archaludon',
     ability: '',
@@ -677,9 +677,10 @@ T('25. Electro Shot sleep interruption pauses the queued hit instead of cancelin
   const damageIndex = battle.log.findIndex((line) => includes(line, 'Archaludon used Electro Shot! →'));
   truthy(battle.log.some((line) => includes(line, 'Archaludon is fast asleep!')),
     'Electro Shot sleep-pause log missing');
-  truthy(damageIndex > turnTwoIndex, 'Electro Shot should still fire on the later wake-up turn');
-  truthy(!battle.log.some((line) => includes(line, 'Archaludon began charging Electro Shot!')),
-    'Electro Shot should remain queued rather than restarting its charge after sleep');
+  // Corrected against pinned9b136a8 causal interruption cases; no golden refresh.
+  eq(damageIndex, -1, 'Electro Shot cannot release a charge cancelled by sleep');
+  truthy(battle.log.findIndex((line) => includes(line, 'Archaludon began charging Electro Shot!')) > turnTwoIndex,
+    'Electro Shot must prepare again on waking');
 });
 
 T('26. stored charge keeps the original target slot when the locked foe is gone', () => {
