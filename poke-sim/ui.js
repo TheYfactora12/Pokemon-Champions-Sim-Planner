@@ -17855,36 +17855,8 @@ function _renderT9j16PdfSections(report) {
   return summaryHtml + identityHtml + planHtml + eliteHtml + warningsHtml + rulesHtml + trendHtml;
 }
 
-// T9j.16 (Refs #65) - Champions Coaching Engine
-// Pure analysis layer over shipped sim outputs. NO ENGINE CHANGES.
-//
-// Inputs: TEAMS[teamKey].members, ChampionsSim.state.lastResults, currentFormat
-// Outputs: structured Strategy Report (Sections 1-6 + Elite Decision
-// Analysis + human coaching summary), persisted via localStorage and
-// keyed on a stable team signature so any imported/custom team gets
-// continuous coaching history across sessions.
-//
-// Wiring points (no renderer churn):
-//   - PDF coaching section consumes coaching_rules + coaching_summary
-//   - Pilot Guide tab can render the full report behind a toggle
-//   - Inline pilot card shows top-2 critical rules + 1-line summary
-//
-// 17 coaching rules total:
-//   Base 6:    protect-pp-burn, fake-out-illegal-timing,
-//              redirection-vs-spread, double-switch-over-read,
-//              hazard-in-doubles-noise, single-mode-safe-lead
-//   Human 3:   win-condition-clarity, overprediction-risk,
-//              role-overlap-warning
-//   Elite 8:   tempo-control-loss, unnecessary-risk,
-//              passive-play-when-behind, win-path-overextension,
-//              information-neglect, positioning-over-damage,
-//              endgame-misalignment, predictable-pattern
-//
-// Primary-source citations (Bulbapedia, verified 2026-04-24):
-//   - Fake Out fails outside first turn out, +3 priority
-//   - Protect priority +4, success drops on consecutive use
-//   - Unseen Fist bypasses Protect on contact moves only
-// All rules below stay within these established mechanics.
+// T9j.16 (#65): coaching analysis of team/results/format; persisted by team signature.
+// PDF, Pilot Guide and inline cards consume the structured report. Engine rules are unchanged.
 
 var T9J16_STORAGE_KEY = 'champions_strategy_v1';
 var T9J16_HISTORY_BUFFER = 5; // rolling buffer of last N runs per team
