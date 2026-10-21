@@ -1447,7 +1447,7 @@
     {
       "id": "DAMAGE-ROLL-DISCRETE-016",
       "family": "damage-formula",
-      "behavior": "Champions profile samples sixteen uniform integer percentages85\u2013100 and applies the pinned independent Tackle damage vector.",
+      "behavior": "Champions profile samples sixteen uniform integer percentages85–100 and applies the pinned independent Tackle damage vector.",
       "status": "partial",
       "move_ids": [
         "tackle"
@@ -1456,7 +1456,7 @@
         "tests/discrete_damage_reference_tests.mjs",
         "tests/test_method_mutation_tests.mjs"
       ],
-      "oracle": "Executable current Champions custom/M-C upstream9b136a8c8cdb860a8ab96fa063f906604e352547 sim/battle.ts2407\u20132409 and Champions inherited randomizer. Historical npm generic scope separate.",
+      "oracle": "Executable current Champions custom/M-C upstream9b136a8c8cdb860a8ab96fa063f906604e352547 sim/battle.ts2407–2409 and Champions inherited randomizer. Historical npm generic scope separate.",
       "boundary_vectors": [
         "all-sixteen-bucket-centers-and-boundaries",
         "zero-and-just-below-one",
@@ -1539,6 +1539,36 @@
         "reversal-controls"
       ],
       "known_gap": "Reference Gas-to-Gas switch ordering has upstream FIXME. Ice/snow physical damage, copied/transformed Gas, full residual/mixed-entry interactions and client proof remain open."
+    },
+    {
+      "id": "FIELD-SNOW-DEF-001",
+      "family": "field-effects",
+      "move_ids": [
+        "uturn",
+        "psyshock",
+        "psystrike",
+        "secretsword",
+        "bodypress",
+        "icebeam"
+      ],
+      "behavior": "Ice defensive Defense under effective snow, exact damage rolls and stage/critical boundaries.",
+      "status": "partial",
+      "tests": [
+        "tests/snow_defense_tests.mjs"
+      ],
+      "oracle": "Pinned9b136a8 Champions executable synthetic doubles; not official/client proof.",
+      "boundary_vectors": [
+        "sixteen-rolls",
+        "both-sides",
+        "defense-overrides",
+        "Body-Press-offense-exclusion",
+        "critical-stages",
+        "current-types",
+        "Cloud-Nine-Air-Lock",
+        "stage-zero-Eviolite",
+        "reversal"
+      ],
+      "known_gap": "Eviolite with negative stages, mixed suppression/restoration, full singles/doubles interaction coverage and client proof remain open."
     }
   ]
 }

@@ -1339,7 +1339,8 @@ function _activeWeatherMons(field) {
 
 function _fieldHasWeatherSuppression(field) {
   return _activeWeatherMons(field).some(function(mon) {
-    return mon.ability === 'Cloud Nine' || mon.ability === 'Air Lock';
+    const ability = _contactEffects(field).ability(mon);
+    return ability === 'Cloud Nine' || ability === 'Air Lock';
   });
 }
 
@@ -2378,10 +2379,7 @@ class Pokemon {
     if (stat === 'spd' && effectiveWeather === 'sand' && Array.isArray(this.types) && this.types.includes('Rock')) val *= 1.5;
     // Eviolite for Dusclops
     if ((stat === 'def' || stat === 'spd') && this.item === 'Eviolite') val *= 1.5;
-    // T9j.6 (#18) — Choice Scarf +50% Spe (confirmed in Champions). Band/Specs
-    // absent from Champions launch (IGN Changes, games.gg); kept here as no-op
-    // safe: if user imports a legacy set with Band/Specs, they simply have no
-    // effect (matches in-game reality until items are added).
+    // Choice Scarf modifies Speed; Band/Specs remain outside this lane.
     if (stat === 'spe' && this.item === 'Choice Scarf' && this.ability !== 'Klutz' && !this.itemConsumed) val *= 1.5;
     // (Choice Band / Choice Specs multipliers removed — #11 WONTFIX pattern.)
     // T9j.6 (#11 WONTFIX) — Assault Vest absent from Champions launch item pool
@@ -2516,6 +2514,11 @@ class Pokemon {
         _targetPhysicalPowerIgnored = true;
       }
       def = target.getStat(dStatKey, field);
+      // Snow modifies defensive Defense, including special moves that use it.
+      if (dStatKey === 'def' && _effectiveFieldWeather(field) === 'snow' &&
+          (target.teraActivated && target.tera ? [target.tera] : target.types).includes('Ice')) {
+        def = _applyStatMod(def, 6144);
+      }
     } finally {
       if (_stageOverrideApplied) {
         attackStatSource.statBoosts[aStatKey] = _aSaved;
@@ -7944,7 +7947,7 @@ async function runAllMatchups(numBattles, onProgress, onMatchupDone, options) {
 //   top_loss_paths  — placeholder (requires loss-path tracking)
 //   critical_damage_calcs — placeholder for future calc layer
 //   traceable_log_refs    — first N seed refs for replayability
-const ENGINE_VERSION = '1.1.44'; // Increment on any mechanics change
+const ENGINE_VERSION = '1.1.45'; // Increment on any mechanics change
 
 function wilsonCI(wins, n, z = 1.96) {
   if (n === 0) return [0, 0];

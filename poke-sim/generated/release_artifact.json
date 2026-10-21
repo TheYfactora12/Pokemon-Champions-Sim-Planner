@@ -1,11 +1,11 @@
 {
   "schema_version": "champions-release-artifact-v1",
-  "build_id": "v2.2.244-weather-gas",
+  "build_id": "v2.2.245-snow-defense",
   "release_manifest": "release_manifest.js",
   "bundle_name": "pokemon-champion-2026.html",
   "pages_path": "poke-sim/pokemon-champion-2026.html",
-  "bundle_sha256": "93f6dd3e5b57adc214f13537c1dbcc4e23753775e5be22110b18b9df28f3ab75",
-  "bundle_bytes": 11534153,
+  "bundle_sha256": "7048d4059848d033e2b9600e078e1c1d1831f6a03d4adf27450c37d19bc177c6",
+  "bundle_bytes": 11534274,
   "hash_scope": "sha256 of committed poke-sim/pokemon-champion-2026.html bytes",
   "external_assets": {
     "generated/source_sync_status.js": {

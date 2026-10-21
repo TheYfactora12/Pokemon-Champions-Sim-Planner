@@ -222,14 +222,17 @@
     {
       "id": "field-effects",
       "name": "Weather, terrain, screens, Tailwind, Trick Room, and field duration",
-      "status": "regression_covered",
+      "status": "partial",
       "tests": [
         "tests/engine_terrain_tests.js",
         "tests/screens_terrain_item_tests.js",
         "tests/turn_order_priority_tests.js",
-        "tests/weather_gas_tests.mjs"
+        "tests/weather_gas_tests.mjs",
+        "tests/snow_defense_tests.mjs"
       ],
-      "known_gaps": []
+      "known_gaps": [
+        "Mixed weather suppression and full residual ordering remain incomplete; snow Eviolite with negative stages has a pre-existing truncation discrepancy."
+      ]
     },
     {
       "id": "targeting-spread",
