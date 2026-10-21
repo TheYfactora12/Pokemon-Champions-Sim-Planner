@@ -1,0 +1,111 @@
+{
+  "schema_version": 1,
+  "base": "c9d071da34821ca559daf8dfb5d1800026589acc",
+  "implementation": "e1ccfd0029aed2b2625f9abcd6d035f7911f4013",
+  "inventory": "9480d9a53ab22c940d8cf1d9d58324d352ff7bc6",
+  "decision": "ready for independent integration review; publication blocked",
+  "tests": {
+    "current_activation": "201/201",
+    "historical_activation": "201/201",
+    "ordering": "226/226",
+    "generator": "pass",
+    "source_truth": "pass",
+    "battle_audit": "pass, 4500 battles, zero JS errors; historical goldens unchanged",
+    "full": "283 fast + 12 mock DB files; 5 failed, inventory resolved separately; 4 remaining",
+    "inventory_rerun": "12/12",
+    "skipped": "4 manual/helper files; live administrative checks, hosted CI and fresh client verification not performed"
+  },
+  "remaining_failures": [
+    "security_readiness_reporting_tests.mjs: bundle cap",
+    "db_m1_wiring_tests.js: bundle cap",
+    "db_m9_hardening_tests.js: bundle cap",
+    "validation_cycle_tests.mjs: missing bounded export/lifecycle receipts"
+  ],
+  "files": [
+    {
+      "file": "activation-context-final.log",
+      "bytes": 16215,
+      "sha256": "04fc4ea0cf6565bbfea81e28c4081ef4657acd54a6d7bf12ada2951016d8e5b0"
+    },
+    {
+      "file": "after.json",
+      "bytes": 1301558,
+      "sha256": "1455b93583ab28a0f107c156ed828208b9c6fb9a11a575ec5d47ed208d0461b6"
+    },
+    {
+      "file": "artifact-identity.json",
+      "bytes": 1528,
+      "sha256": "f1e3585511ecc54888377e82594ff64dab21ee4ad05d65ee60a9f3894f8cad7d"
+    },
+    {
+      "file": "battle-audit.log",
+      "bytes": 252925,
+      "sha256": "baeaed01f6724eead6fc70fe107720003c8f4f3271eb1b35e505ab6995e69c1a"
+    },
+    {
+      "file": "before.json",
+      "bytes": 1282926,
+      "sha256": "64df440f819aa9eff00e38e13fcc5d2645e9f2e3dc570a11bfffbe1cdcbcb183"
+    },
+    {
+      "file": "build.log",
+      "bytes": 327,
+      "sha256": "45aed6f4e16bf485405f2e67dbbaf5492d943bb8ab45a5a27b83032feed594c5"
+    },
+    {
+      "file": "eviolite-c9d071d-receipt.json",
+      "bytes": 1907,
+      "sha256": "5486b3042653a3b2ddb06bd65af7055b1864471c1e43f7c4334211e316ff4204"
+    },
+    {
+      "file": "EVIOLITE_RETEST_C9D071D.md",
+      "bytes": 5007,
+      "sha256": "efe8b06a539ba5c248bb0a1030a1b214cc7a31d17d15b7bca086384446a06347"
+    },
+    {
+      "file": "fail-before.log",
+      "bytes": 165866,
+      "sha256": "82198da9d9dee3cf851ef1191b8c4f728630b309f612c138a8571c03bc476f36"
+    },
+    {
+      "file": "full.log",
+      "bytes": 401527,
+      "sha256": "397c504021d2173cffe0694663de34baab8fe16b887899fe15ea6b7a9a1d6881"
+    },
+    {
+      "file": "generator-check.log",
+      "bytes": 203,
+      "sha256": "46ab8d10f3ed117ec35547326946757663367263c06d805d288bcc1255f81f32"
+    },
+    {
+      "file": "independent-review.json",
+      "bytes": 779,
+      "sha256": "de683eb4f4a4466e9309e7711ec8fee2477c4ba2cd937af31776a67735f179fd"
+    },
+    {
+      "file": "ordering-final.log",
+      "bytes": 14408,
+      "sha256": "7125a0a847698f9e262974fa2018e299b954ccc60e51bb776b43e25446da3882"
+    },
+    {
+      "file": "register-final.log",
+      "bytes": 1278,
+      "sha256": "8c6e8a6fd9eb8075190ab9b1a94f47e2842523d96e1e1999a46f620af40a7c18"
+    },
+    {
+      "file": "shared-final.log",
+      "bytes": 16183,
+      "sha256": "ec12a723620deade4c5aa985108b35184f9c654a8031ad12abc193f97f99624a"
+    },
+    {
+      "file": "source-truth.log",
+      "bytes": 16456,
+      "sha256": "c0b8fa692eb90e22a24209cdc5a8965e64de309910ff96466368236bb0d3ebd1"
+    },
+    {
+      "file": "unaware-controls.json",
+      "bytes": 12541,
+      "sha256": "d211ddc2e9ce393b84a239be5a5fe2113c1a589f6bd4b44e1173e04bcf6d147e"
+    }
+  ]
+}

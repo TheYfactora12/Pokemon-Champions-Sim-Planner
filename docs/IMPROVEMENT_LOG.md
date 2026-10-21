@@ -1806,3 +1806,7 @@ that equal final damage can conceal wrong intermediate stats: observe the owning
 stat boundary too. Independent battle_auditor review found no further demonstrated
 defect. Local source proof only; eligibility/suppression and offensive Body Press
 remain unresolved. See [dated evidence](release/EVIOLITE_ORDER_2026-10-21.md).
+
+## EVIO-ACT-2026-10-21 - activation and offensive Defense
+
+Exact-species eligibility and effective-item state prevent Eviolite activating on fully evolved, consumed or Klutz holders. Body Press retains staged Defense without defensive modifiers. Preserve 192 pinned vectors and seven wrong-implementation mutations. Direct oracle damage probes must initialize active-move context; an exploratory Unaware concern was retracted after fixing that context, not patched into the engine. See [evidence and limitations](release/EVIOLITE_ACTIVATION_2026-10-21.md).

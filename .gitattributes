@@ -35,3 +35,7 @@ poke-sim/reports/charge-spa-2026-10-21/** -text
 # Preserve raw Eviolite regression captures byte-for-byte.
 poke-sim/reports/eviolite-order-2026-10-21/** -text
 poke-sim/reports/eviolite-order-2026-10-21/*.log binary
+
+poke-sim/reports/eviolite-activation-2026-10-21/** -text
+poke-sim/reports/eviolite-activation-2026-10-21/*.log binary
+poke-sim/reports/eviolite-activation-2026-10-21/eviolite-c9d071d-receipt.json binary

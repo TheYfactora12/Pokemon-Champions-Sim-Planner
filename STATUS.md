@@ -231,3 +231,7 @@ artifacts. Never treat historical runbooks or model prompts as current approval.
 
 Do not add paid services, premium work, LLM orchestration or new schedulers to
 this release queue. Optional ideas remain deferred, not deleted or completed.
+
+## Isolated Eviolite activation follow-up (2026-10-21)
+
+Bounded activation and Body Press repair passes 201 pinned-reference checks and retains 226 ordering checks. Source/custom-game evidence only. Bundle exceeds existing cap by 2,978 bytes; publication held pending integrated gates. See [evidence](docs/release/EVIOLITE_ACTIVATION_2026-10-21.md).
