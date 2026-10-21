@@ -32,7 +32,7 @@
         "sand-SpD65-to145",
         "four-mutation-controls"
       ],
-      "known_gap": "Eviolite eligibility, suppression, consumption, offensive Body Press, singles, arbitrary combined modifiers and fresh client semantics remain unverified."
+      "known_gap": "Activation and Body Press follow-up cases retain this ordering contract. Singles, arbitrary combined modifiers and fresh client proof remain unverified."
     },
     {
       "id": "ITEM-RED-CARD-WHITE-HERB",
@@ -1607,6 +1607,43 @@
         "eight-reversal-controls"
       ],
       "known_gap": "Special move, ability/item, grounding and Tera exceptions are outside this baseline matrix. Full singles/doubles turn coverage remains incomplete."
+    },
+    {
+      "id": "ITEM-EVIOLITE-ACTIVATION-001",
+      "family": "items",
+      "behavior": "Exact registered species eligibility and effective item state govern defensive Eviolite.",
+      "status": "partial",
+      "tests": [
+        "tests/eviolite_activation_tests.mjs"
+      ],
+      "oracle": "Pinned Showdown9b136a8 Champions custom doubles; frozen16-roll vectors. Eviolite Past, not ranked admission or client proof.",
+      "boundary_vectors": [
+        "eligible-ineligible",
+        "exact-form-Basculin-White-Striped",
+        "Klutz-consumed-no-item",
+        "Klutz-under-Gas",
+        "Def-SpD-both-sides"
+      ],
+      "known_gap": "Magic Room, Embargo, transformation, all offensive ability/item combinations, singles and fresh client proof remain unverified."
+    },
+    {
+      "id": "DAMAGE-BODY-PRESS-DEFENSE-001",
+      "family": "damage-formula",
+      "behavior": "Body Press uses stage-adjusted offensive Defense without defensive Eviolite; target Eviolite still applies.",
+      "status": "partial",
+      "tests": [
+        "tests/eviolite_activation_tests.mjs"
+      ],
+      "oracle": "Pinned Showdown9b136a8 Champions custom doubles; frozen16-roll vectors. Eviolite Past, not ranked admission or client proof.",
+      "boundary_vectors": [
+        "both-sides",
+        "offensive-defensive-Eviolite",
+        "no-item-control",
+        "negative-positive-stages",
+        "critical-overrides",
+        "snow-clear"
+      ],
+      "known_gap": "Magic Room, Embargo, transformation, all offensive ability/item combinations, singles and fresh client proof remain unverified."
     }
   ]
 }

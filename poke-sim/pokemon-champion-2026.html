@@ -10761,6 +10761,16 @@ var NON_REMOVABLE_KNOCK_OFF_ITEMS = new Set([
   'Wellspring Mask'
 ]);
 
+// BEGIN GENERATED EVIOLITE ELIGIBILITY
+// Exact registered species nfe, Champions reference 9b136a8; rebuild with tools/build-eviolite-eligibility.mjs.
+const EVIOLITE_ELIGIBLE_SPECIES = new Set('ababo abra aipom amaura anorith applin archen arctibax argalis aron arrokuda axew azurill bagon baltoy barboach basculinwhitestriped bayleef beldum bellsprout bergmite bidoof binacle bisharp blipbug blitzle boldore bonsly bounsweet braixen bramblin brattler breezi brionne bronzor budew buizel bulbasaur buneary bunnelby burmy burmysandy burmytrash cacnea caimanoe capsakid carkol carvanha cascoon caterpie cawdet cetoddle chansey charcadet charjabug charmander charmeleon cherubi chespin chewtle chikorita chimchar chinchou chingling chuggon clamperl clauncher clefairy cleffa clobbopus combee combusken coribalis corphish corsolagalar corvisquire cosmoem cosmog cottonee crabrawler cranidos croagunk crocalor croconaw cubchoo cubone cufant cupra cutiefly cyndaquil dartrix darumaka darumakagalar deerling deerlingautumn deerlingsummer deerlingwinter deino dewott dewpider diglett diglettalola dipplin doduo dolliv dorsoil dottler doublade draggalong dragonair drakloak dratini dreepy drifloon drilbur drizzile drowzee ducklett dunsparce duohm duosion duraludon dusclops duskull dwebble eelektrik eevee ekans electabuzz electrelk electrike elekid elgyem embirch espurr exeggcute farfetchdgalar fawnifer feebas fennekin ferroseed fidough finizen finneon flaaffy flabebe flarelm fletchinder fletchling flittle floatoy floette floragato flox fomantis foongus fraxure frigibax frillish froakie frogadier fuecoco gabite gastly geodude geodudealola gible gimmighoul gimmighoulroaming girafarig glameow gligar glimmet gloom golbat goldeen golett goomy gossifleur gothita gothorita graveler graveleralola greavard grimer grimeralola grookey grotle grovyle growlithe growlithehisui grubbin gulpin gurdurr hakamoo happiny hatenna hattrem haunter helioptile herdier hippopotas honedge hoothoot hoppip horsea houndour igglybuff impidimp inkay ivysaur jangmoo jigglypuff joltik justyke kabuto kadabra kakuna karrablast kirlia klang klink koffing krabby kricketot krokorok kubfu lairon lampent larvesta larvitar lechonk ledyba lickitung lileep lillipup linoonegalar litleo litten litwick lombre lotad loudred luxio machoke machop magby magikarp magmar magnemite magneton makuhita mankey mantyke mareanie mareep marill marshtomp maschiff meditite meowth meowthalola meowthgalar metang metapod miasmite mienfoo milcery mimejr minccino misdreavus monferno monohm morelull morgrem mrmimegalar mudbray mudkip mumbao munchlax munna murkrow nacli naclstack natu necturine nickit nidoranf nidoranm nidorina nidorino nincada nohface noibat nosepass numel nuzleaf nymble oddish omanyte onix oshawott palpitoad pancham panpour pansage pansear paras patrat pawmi pawmo pawniard petilil phanpy phantump pichu pidgeotto pidgey pidove pignite pikachu pikipek piloswine pineco piplup pluffle poipole poliwag poliwhirl poltchageist poltchageistartisan ponyta ponytagalar poochyena popplio porygon porygon2 primeape prinplup privatyke protowatt psyduck pumpkaboo pumpkaboolarge pumpkaboosmall pumpkaboosuper pupitar purrloin quaxly quaxwell quilava quilladin qwilfishhisui raboot ralts rattata rattataalola rebble rellor remoraid rhydon rhyhorn riolu rockruff rockruffdusk roggenrola rolycoly rookidee roselia rowlet rufflet saharascal salandit sandile sandshrew sandshrewalola sandygast scatterbug scattervein scorbunny scraggy scraptor scratchet scyther seadra sealeo seedot seel sentret servine sewaddle shelgon shellder shellos shelloseast shelmet shieldon shinx shroodle shroomish shuppet silcoon silicobra sinistea sinisteaantique sizzlipede skiddo skiploom skitty skorupi skrelp skwovet slakoth sliggoo sliggoohisui slowpoke slowpokegalar slugma smogecko smoguana smoliv smoochum sneasel sneaselhisui snivy snom snorunt snover snubbull snugglow sobble solosis solotl spearow spewpa spheal spinarak spoink sprigatito spritzee squirtle stantler staravia starly staryu steenee stufful stunky sunkern surskit swablu swadloon swinub swirlix swirlpool syclar tactite tadbulb taillow tandemaus tangela tarountula teddiursa tentacool tepig thwackey timburr tinkatink tinkatuff tirtouga toedscool togepi togetic torchic torracat totodile toxel tranquill trapinch treecko trubbish trumbeak turtwig tympole tynamo typenull tyrogue tyrunt ursaring vanillish vanillite varoom venipede venonat vibrava vigoroth volkritter voltorb voltorbhisui voodoll vullaby vulpix vulpixalola wailmer wartortle wattrel weedle weepinbell whirlipede whismur wiglett wimpod wingull woobat wooloo wooper wooperpaldea wurmple wynaut yamask yamaskgalar yamper yanma yungoos zigzagoon zigzagoongalar zorua zoruahisui zubat zweilous'.split(' '));
+// END GENERATED EVIOLITE ELIGIBILITY
+
+function _evioliteActive(mon, field) {
+  return !!mon && EVIOLITE_ELIGIBLE_SPECIES.has(_moveId(mon.name)) &&
+    _contactEffects(field).item(mon) === 'Eviolite';
+}
+
 function _hasUsableHeldItem(mon) {
   return !!(mon && mon.item && !mon.itemConsumed);
 }
@@ -12451,15 +12461,18 @@ class Pokemon {
     return Math.floor(Math.floor((2*base + iv + Math.floor(ev/4)) * this.level / 100 + 5) * nm);
   }
 
-  getStat(stat, field) {
+  getStat(stat, field, offensiveDefense = false) {
     field = field || { weather: 'none' };
     const effectiveWeather = _effectiveFieldWeather(field);
     const boostTable = [1, 1.5, 2, 2.5, 3, 3.5, 4];
     const base = { atk:this.baseAtk, def:this.baseDef, spa:this.baseSpa, spd:this.baseSpd, spe:this.baseSpe }[stat];
     const boost = this.statBoosts[stat] || 0;
     let val = boost >= 0 ? base * boostTable[boost] : base / boostTable[-boost];
+    // Body Press uses stage-adjusted Defense, then offensive modifier events.
+    // Eviolite and defensive weather modifiers do not belong to that lane.
+    if (offensiveDefense && stat === 'def') return Math.floor(val);
     // Eviolite's defensive lane: stage truncation precedes weather/item modifiers.
-    const evioliteDefense = (stat === 'def' || stat === 'spd') && this.item === 'Eviolite';
+    const evioliteDefense = (stat === 'def' || stat === 'spd') && _evioliteActive(this, field);
     if (evioliteDefense) val = Math.floor(val);
     // Paralysis halves speed (Gen 9 — no action skip, speed only)
     if (stat === 'spe' && this.status === 'paralysis') val *= 0.5;
@@ -12601,7 +12614,7 @@ class Pokemon {
         attackStatSource.statBoosts[aStatKey] = aOverride;
         target.statBoosts[dStatKey] = dOverride;
       }
-      atk = attackStatSource.getStat(aStatKey, field);
+      atk = attackStatSource.getStat(aStatKey, field, move === 'Body Press');
       if (move === 'Foul Play' && aStatKey === 'atk' &&
           (attackStatSource.ability === 'Huge Power' || attackStatSource.ability === 'Pure Power')) {
         atk = Math.floor(atk / 2);
