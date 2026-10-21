@@ -24,6 +24,7 @@ function modified(changes,fn){
 const rows=()=>readBoundedRegister(root).filter(row=>current.some(entry=>entry.assertion_id===row.assertion_id));
 const historicalRows=()=>readBoundedRegister(root).filter(row=>!row.assertion_id.includes('.current-runtime.')||/\.v[12]$/.test(row.assertion_id));
 function capturedRuntime(fn){return modified(new Map([
+ ['data.js',fs.readFileSync(path.join(root,'reports/fly-assessment-2026-10-20/data.original.js.txt'))],
  ['tools/regulation-watch-core.mjs',fs.readFileSync(path.join(root,'reports/official-watch-2026-10-20/source-v1/regulation-watch-core.mjs.txt'))],
  ['engine.js',fs.readFileSync(path.join(root,'reports/fly-assessment-2026-10-20/engine.original.js.txt'))],
  ['tools/bounded-runtime-capture.mjs',fs.readFileSync(path.join(root,'reports/fly-repair-v2-2026-10-20/source-v2/tools__bounded-runtime-capture.mjs.txt'))]

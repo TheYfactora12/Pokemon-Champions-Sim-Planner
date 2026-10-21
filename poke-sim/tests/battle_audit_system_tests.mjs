@@ -44,12 +44,12 @@ assert.match(manifest.families.find(row => row.id === 'battle-determinism').know
 assert.equal(summary.total_inventories, 5);
 assert.equal(summary.inventory_counts.partial, 3);
 assert.equal(summary.inventory_counts.gap, 2);
-assert.equal(summary.total_edge_cases, 74);
+assert.equal(summary.total_edge_cases, 75);
 assert.equal(manifest.families.find(row=>row.id==='field-effects').status,'partial');
 assert.equal(edgeMatrix.cases.find(row=>row.id==='FIELD-SNOW-DEF-001').status,'partial');
 assert.equal(edgeMatrix.cases.find(row=>row.id==='MOVE-CHARGE-SPA-TIMING-001').status,'partial');
 assert.equal(edgeMatrix.cases.find(row=>row.id==='FIELD-WEATHER-GAS-001').status,'partial');
-assert.deepEqual(summary.edge_case_counts, { covered: 17, partial: 52, open: 5 });
+assert.deepEqual(summary.edge_case_counts, { covered: 17, partial: 53, open: 5 });
 assert.ok(summary.unproved_edge_case_ids.includes('MOVE-FLY-CONTAINED-001'));
 assert.equal(edgeMatrix.cases.find(row=>row.id==='MOVE-FLY-CONTAINED-001').status,'partial');
 assert.ok(summary.unproved_edge_case_ids.includes('MOVE-AMNESIA-SELF-STAGE'));
