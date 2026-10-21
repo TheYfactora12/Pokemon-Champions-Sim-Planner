@@ -1,0 +1,98 @@
+{
+  "after-tests.log": {
+    "sha256": "e3755284f050be59ffbf50d067727374f1ca149876b44a2db1020753b06d720c",
+    "bytes": 15491
+  },
+  "after.json": {
+    "sha256": "a162761813bd64a64ee49ce64049c2f5b97f486d1ff3cc8fdfff74fc53791c18",
+    "bytes": 1425064
+  },
+  "artifact-identity.json": {
+    "sha256": "71bc8584ba77265b1c61efea7b4621a3a09b56ce28e0206f98de9cfa3e022d38",
+    "bytes": 2575
+  },
+  "base-reproduction.json": {
+    "sha256": "9d68e4ddf874600dbc0bcf3d9242a3043b0cfde7cab0f75fdd38a1fe60c9f855",
+    "bytes": 24032
+  },
+  "battle-audit-final.log": {
+    "sha256": "7407d9eaeaaf91c7db1d65b4a181144b4a3e7e7cc39fdb8c62ebdcf077f66477",
+    "bytes": 236768
+  },
+  "battle-audit.log": {
+    "sha256": "f1397bf38d6ad555754bd81ba73df26cc92e23cb62c49b70a5d3e357e3a5d339",
+    "bytes": 231270
+  },
+  "before.json": {
+    "sha256": "73d136a9d371e2b2170b5b9a5ba46271691dabcd7e0e50bba7e6706cf0e18e88",
+    "bytes": 1289796
+  },
+  "fail-before.log": {
+    "sha256": "c4b2dab6178947b3c4dbb579dfcbb9f4956c12c512ad087a0f02a869062e24c9",
+    "bytes": 89553
+  },
+  "fast.log": {
+    "sha256": "4d2fa2d1d26116ca656cb1f6da917f5434b6e427a42ed56fa94aa5e47d948431",
+    "bytes": 374155
+  },
+  "focused-final.log": {
+    "sha256": "848b5683cd0ab346a435ca16216baf3c04f62ef66aa27c1dc833f3af96a11636",
+    "bytes": 14340
+  },
+  "full-final.log": {
+    "sha256": "82c19d9af3d6efe3b4f62dc21a5e06cdafd55f3f198e129fe452c07c91c88653",
+    "bytes": 380481
+  },
+  "full.log": {
+    "sha256": "d5714c1819a7e0029185df2b35e46ffa4a3b0aa216e20d73cad7adb4e66d964a",
+    "bytes": 384561
+  },
+  "historical-note.md": {
+    "sha256": "b7cacc8bec364bc3a4eadd858c8d275c8e72c71338266dc82111ea658ed09b63",
+    "bytes": 2062
+  },
+  "historical-reproductions.json": {
+    "sha256": "2f73a237dfc0c3b1f22e27b78129bacebe15c27a8afbbb2fc7ce5b2a110f1a68",
+    "bytes": 38181
+  },
+  "independent-review.json": {
+    "sha256": "1d8615de2a7fd738cafc8d35e155952f3d1fb7f71d15909e2c97bf5aff6af0d0",
+    "bytes": 2078
+  },
+  "mutations-final.log": {
+    "sha256": "1955d5eb2d2fb84f1e9f91ecac8049d47083ce1de0a45b867036dfaca8eae770",
+    "bytes": 573
+  },
+  "register-final.log": {
+    "sha256": "d657d22e46cc9e9e0c60c7845a281fd09c23752dd792b7daf44f9846d821437b",
+    "bytes": 1279
+  },
+  "register-generation.log": {
+    "sha256": "9d43e2136bed459b250c1a60b0fe5e3e9a18afd1bc8879808cb85bf0dc684b87",
+    "bytes": 404
+  },
+  "seeded-matrix.json": {
+    "sha256": "a7b23fecece3e85ca59b3dd20522022fd2a318cf5879ba2469082636f6934bd1",
+    "bytes": 467757
+  },
+  "shared-final.log": {
+    "sha256": "c66ced2b3c316b5a9e46fa1ecd3e90d8e9bd4fb60d7dfb1354ef905dd3a639eb",
+    "bytes": 14377
+  },
+  "source-truth-final.log": {
+    "sha256": "c0b8fa692eb90e22a24209cdc5a8965e64de309910ff96466368236bb0d3ebd1",
+    "bytes": 16456
+  },
+  "source-truth.log": {
+    "sha256": "5f0d14164f7f6206eefa442a82708060717492623ed4640dbc9e5ed3ae03cc9a",
+    "bytes": 20139
+  },
+  "upstream-pin-final.log": {
+    "sha256": "823e8d42d7f6de7c2adc9424469335daae98c8c6d72e643cdd596d337f6210cb",
+    "bytes": 641
+  },
+  "validation-summary.json": {
+    "sha256": "51a439f457256de8a87e31a81782095d882b11dba0f3c18571d9d4445352a831",
+    "bytes": 1346
+  }
+}

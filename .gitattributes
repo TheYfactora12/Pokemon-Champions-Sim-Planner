@@ -31,3 +31,7 @@ poke-sim/reports/current-bounded-input-repair-2026-10-20/** -text
 poke-sim/source/validation-lifecycle/** -text
 poke-sim/reports/source-gates-2026-10-20/** -text
 poke-sim/reports/charge-spa-2026-10-21/** -text
+
+# Preserve raw Eviolite regression captures byte-for-byte.
+poke-sim/reports/eviolite-order-2026-10-21/** -text
+poke-sim/reports/eviolite-order-2026-10-21/*.log binary

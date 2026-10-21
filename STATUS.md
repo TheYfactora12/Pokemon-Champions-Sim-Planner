@@ -5,6 +5,15 @@ Reviewed: 2026-10-21. This file owns current development checkpoint facts.
 Competitive release remains **NO-GO**. No merge, deployment, live database or
 repository security change is authorized.
 
+## Isolated Eviolite candidate (2026-10-21)
+
+Bounded defensive stage/weather truncation repair is prepared on exact base
+`5c93802893a15bb9716f9143fe20f2cfc5a7c345`; see
+[scope, evidence and exclusions](docs/release/EVIOLITE_ORDER_2026-10-21.md).
+Local integration candidate only. Eviolite is Past in the pinned Champions
+reference; ranked eligibility, fresh client proof and offensive Body Press are
+not certified. No publication or release-readiness claim.
+
 ## Current development candidate
 
 Last completed published draft checkpoint is `0e23c061cc7ebb453a644b1dd220c549d35c563a`; all six jobs in [39551882693](https://github.com/TheYfactora12/Pokemon-Champions-Sim-Planner/actions/runs/39551882693) passed at 2026-10-21T06:20:26Z. Its tested source is `a2c26bb1452bec0e4e16b1ea24b88ebec303db8c`. It is not deployed.
