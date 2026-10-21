@@ -375,7 +375,10 @@ T('D5. bpMult is restored after Expanding Force resolves', () => {
 
 T('D6. Psychic-Terrain helper citations present', () => {
   const src = fs.readFileSync(path.join(ROOT, 'engine.js'), 'utf8');
-  truthy(/Expanding_Force_\(move\)/.test(src),
+  truthy(/Expanding Force[^\n]*\n\s*\/\/ Historical detail: docs\/ENGINE_HISTORICAL_NOTES\.md/.test(src),
+    'Expanding Force implementation must link its relocated source notes');
+  const notes = fs.readFileSync(path.join(ROOT, '..', 'docs', 'ENGINE_HISTORICAL_NOTES.md'), 'utf8');
+  truthy(/https:\/\/bulbapedia\.bulbagarden\.net\/wiki\/Expanding_Force_\(move\)/.test(notes),
     'Bulbapedia Expanding Force citation must be present');
 });
 

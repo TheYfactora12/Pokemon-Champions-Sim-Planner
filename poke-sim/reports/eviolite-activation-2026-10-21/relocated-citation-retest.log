@@ -1,0 +1,65 @@
+
+=== SECTION A: Parental Bond ===
+  PASS A1. _skipSecond Set excludes Fake Out, Dragon Darts, Bone Rush, U-turn, Flip Turn
+  PASS A2. Parental Bond bpMult on second strike is 0.25 (not 0.5)
+  PASS A3. field._ctx.bpMult resets to 1 after second strike fires
+  PASS A4. Parental Bond eligibility requires single-target damaging move
+  PASS A5. Champions nerf citation present in engine.js Parental Bond block
+
+=== SECTION B: Fake Out hard-gate ===
+  PASS B1. New Pokemon initializes _fakeDone = false
+  PASS B2. selectMove gate present for Fake Out (skips selection past turn 1)
+  PASS B3. Injected late Fake Out fails on both sides without invented Struggle
+  PASS B4. Late Fake Out failure has no damage or recoil events
+  PASS B5. Protect-blocked first Fake Out still consumes its timing window
+  PASS B6. _fakeDone resets on switch-in via replaceOnField
+  PASS B7. _fakeDone NOT reset per turn (only switch-in)
+  PASS B8. Fake Out user picks a non-Fake-Out move on its second turn out
+  PASS B9. Fake Out cannot be saved for a later turn in the same field stay
+
+=== SECTION C: Piercing Drill 25% miss ===
+  PASS C1. data.js Piercing Drill effect tag is miss-25pct
+  PASS C2. data.js no longer carries the contact-bypass-protect tag
+  PASS C3. ABILITIES Piercing Drill entry has no onProtectResolve hook
+  PASS C4. executeMove gates a 25% miss when attacker.ability === Piercing Drill
+  PASS C5. Piercing Drill miss happens AFTER the standard ACC_MAP check
+  PASS C6. Mega Excadrill with Piercing Drill misses some battles in 50-run seed sweep
+
+=== SECTION D: Expanding Force x Psychic Terrain ===
+  PASS D1. data.js MOVE_TARGETS Expanding Force = normal (default single-target)
+  PASS D2. engine.js executeMove flips targetCat to all-adjacent-foes under Psychic Terrain
+  PASS D3. Expanding Force BP boost is 1.5x via field._ctx.bpMult
+  PASS D4. Ungrounded (Flying or Levitate) attacker keeps default single-target
+  PASS D5. bpMult is restored after Expanding Force resolves
+  PASS D6. Psychic-Terrain helper citations present
+  PASS D7. Pokemon constructor sets flying=true for Flying-types
+
+=== SECTION E: Terrain Seeds ===
+  PASS E1. TERRAIN_SEEDS map covers all 4 seeds with correct stat targets
+  PASS E2. Grassy Seed +1 Def under Grassy Terrain (grounded user)
+  PASS E3. Electric Seed +1 Def under Electric Terrain
+  PASS E4. Psychic Seed +1 SpD under Psychic Terrain
+  PASS E5. Misty Seed +1 SpD under Misty Terrain
+  PASS E6. Seed does NOT trigger when terrain mismatches
+  PASS E7. Ungrounded user (Flying-type) receives seed boost
+  PASS E7b. All four seeds activate for Levitate holders
+  PASS E8. Seed consume flag prevents double-trigger
+
+=== SECTION F: Status weakening audit ===
+  PASS F1. Burn weakens physical damage without mutating raw attack stat
+  PASS F2. Burn chip damage is 1/16 maxHp end of turn (verified in source)
+  PASS F3. Paralysis halves speed via getStat
+  PASS F4. Paralysis 12.5% full-skip is wired in turn order
+  PASS F5. Toxic ramp cap is N=15
+  PASS F6. Toxic counter resets on switch-in
+  PASS F7. Frozen thaw is 25% per move attempt with 3-turn cap
+  PASS F8. canInflictStatus blocks burn on Fire-types and frozen on Ice-types
+
+=== SECTION G: Frostbite ===
+  PASS G1. Frostbite weakens special damage without mutating raw special attack stat
+  PASS G2. Frostbite chip damage line present in end-of-turn loop
+  PASS G3. canInflictStatus blocks frostbite on Ice-types and Magma Armor
+  PASS G4. canInflictStatus blocks frostbite under sun
+
+============================================================
+T9j.17 Results: 48 pass, 0 fail
