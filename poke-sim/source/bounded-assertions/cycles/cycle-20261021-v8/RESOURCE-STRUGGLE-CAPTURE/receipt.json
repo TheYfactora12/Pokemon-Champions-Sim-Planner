@@ -1,0 +1,40 @@
+{
+  "schema_version": "champions-bounded-assertion-v1",
+  "assertion_id": "RESOURCE-STRUGGLE-CAPTURE.current-runtime.v8",
+  "case_id": "RESOURCE-STRUGGLE-CAPTURE",
+  "scope": {
+    "oracle_kind": "shared_reference",
+    "format": "gen9championsdoublescustomgame",
+    "regulation_id": null,
+    "client_version": null,
+    "boundaries": [
+      "player slot0, no PP, target isolated to opposing slot0",
+      "ordinary physical damage and rounded maxHP recoil; no random-target claim"
+    ]
+  },
+  "executed_at": "2026-10-21T01:10:39.023Z",
+  "dependencies": {
+    "engine": "2960a66152d35e0b07d62b83e184f9c1c1fd5b79099e10c19d4824647c1cfd69",
+    "data": "dd258aec23104c305658a95eeb20c8af71204ef43311d7033d00f33a64943409",
+    "runner": "7324e992dc86371999bd2686edb4e2c649ea1d9b2e655ad3850ac5121608df08",
+    "test": "3d7cfd2e383fa6e32f8dc626c9a9bef27ac9b25d298e90646014bf95b1e524e1",
+    "checker": "d18159d8291af83e8fbd6bebac7fade9aa89c9400bb0641538b8bccd88de25a1",
+    "reference": "de66162a28b270bdf17ea17a804a7ec65c6d2f286815ae17eaa3336273405f61"
+  },
+  "contract": {
+    "path": "source/bounded-assertions/cycles/cycle-20261021-v8/RESOURCE-STRUGGLE-CAPTURE/contract.json",
+    "sha256": "c98a857f82e6521c272f3e8785aae74fa052581e4c1659147ef238d0857f9f84"
+  },
+  "inputs": {
+    "path": "source/bounded-assertions/cycles/cycle-20261021-v8/RESOURCE-STRUGGLE-CAPTURE/inputs.json",
+    "sha256": "a7d04d1c5fafb17e6b5e4f428c8af5dd895f64af0361e445afc1378cb62f5b77"
+  },
+  "local_result": {
+    "path": "source/bounded-assertions/cycles/cycle-20261021-v8/RESOURCE-STRUGGLE-CAPTURE/local_result.json",
+    "sha256": "3d601c077712d603d5b0a55439fa8ac09254fe8bd02619dba8766990be0cbdac"
+  },
+  "reference_result": {
+    "path": "source/bounded-assertions/cycles/cycle-20261021-v8/RESOURCE-STRUGGLE-CAPTURE/reference_result.json",
+    "sha256": "aef20b60abba385fd27e1d54cd7f0547dc61de19c076fd3c305a935a94823898"
+  }
+}

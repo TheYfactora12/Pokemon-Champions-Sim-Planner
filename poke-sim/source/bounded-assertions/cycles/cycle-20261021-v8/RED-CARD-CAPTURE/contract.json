@@ -1,0 +1,41 @@
+{
+  "schema_version": "bounded-contract-v1",
+  "assertion_id": "RED-CARD-CAPTURE.current-runtime.v8",
+  "case_id": "RED-CARD-CAPTURE",
+  "scope": {
+    "oracle_kind": "shared_reference",
+    "format": "gen9championsdoublescustomgame",
+    "regulation_id": null,
+    "client_version": null,
+    "boundaries": [
+      "single fixed damage hit, surviving holder, exactly one legal reserve",
+      "consumption and forced replacement; no random-reserve claim"
+    ]
+  },
+  "fields": [
+    {
+      "field": "target_hp_loss",
+      "type": "number",
+      "unit": "HP",
+      "expected": 50
+    },
+    {
+      "field": "item_consumed",
+      "type": "boolean",
+      "unit": "value",
+      "expected": true
+    },
+    {
+      "field": "attacker_active",
+      "type": "boolean",
+      "unit": "value",
+      "expected": false
+    },
+    {
+      "field": "replacement",
+      "type": "string",
+      "unit": "value",
+      "expected": "Garchomp"
+    }
+  ]
+}
