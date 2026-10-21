@@ -1,0 +1,44 @@
+{
+  "schema_version": "bounded-result-v1",
+  "assertion_id": "REST-ELECTRIC-CAPTURE.current-runtime.v11",
+  "case_id": "REST-ELECTRIC-CAPTURE",
+  "scope": {
+    "oracle_kind": "shared_reference",
+    "format": "gen9championsdoublescustomgame",
+    "regulation_id": null,
+    "client_version": null,
+    "boundaries": [
+      "grounded player slot0, missing20HP, ElectricTerrain admission rejection"
+    ]
+  },
+  "role": "reference_result",
+  "status": "complete",
+  "inputs_sha256": "7a31a5d2c6de1849349568f111340b4da19cf2fb92a66ccb48474f42e0ec22fd",
+  "contract_sha256": "c5fd0e5bf22948600679e8e70e62e91f1194a03c0345f920d215e2030d13d013",
+  "dependencies": {
+    "engine": "dd0663f7223f9cad9d1bc5aac25c820ef96bda1b87e28a886ec117035b61d7d4",
+    "data": "3403d208ab8ead0f1bb8678b6776baf4ce3f758043525ec92ee4715ae05e3641",
+    "runner": "7324e992dc86371999bd2686edb4e2c649ea1d9b2e655ad3850ac5121608df08",
+    "test": "3d7cfd2e383fa6e32f8dc626c9a9bef27ac9b25d298e90646014bf95b1e524e1",
+    "checker": "d18159d8291af83e8fbd6bebac7fade9aa89c9400bb0641538b8bccd88de25a1",
+    "reference": "de66162a28b270bdf17ea17a804a7ec65c6d2f286815ae17eaa3336273405f61"
+  },
+  "executed_at": "2026-10-21T06:33:27.512Z",
+  "observations": {
+    "hp_restored": {
+      "pointer": "/observations/hp_restored/value",
+      "unit": "HP",
+      "value": 0
+    },
+    "asleep": {
+      "pointer": "/observations/asleep/value",
+      "unit": "value",
+      "value": false
+    },
+    "rest_pp_spent": {
+      "pointer": "/observations/rest_pp_spent/value",
+      "unit": "PP",
+      "value": 1
+    }
+  }
+}

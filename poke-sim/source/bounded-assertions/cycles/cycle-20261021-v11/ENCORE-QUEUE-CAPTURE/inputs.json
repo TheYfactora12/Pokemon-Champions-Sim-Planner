@@ -1,0 +1,174 @@
+{
+  "schema_version": "bounded-inputs-v1",
+  "assertion_id": "ENCORE-QUEUE-CAPTURE.current-runtime.v11",
+  "case_id": "ENCORE-QUEUE-CAPTURE",
+  "scope": {
+    "oracle_kind": "shared_reference",
+    "format": "gen9championsdoublescustomgame",
+    "regulation_id": null,
+    "client_version": null,
+    "boundaries": [
+      "two turns, Prankster Encore before queued Flamethrower",
+      "replacement executes Will-O-Wisp and spends replacement PP"
+    ]
+  },
+  "contract_sha256": "653a77652889a27e595eaf3a0f5933580371a02a69aed97cb9e0fa551f31446c",
+  "kind": "encore",
+  "teams": [
+    {
+      "format": "champions",
+      "members": [
+        {
+          "name": "Whimsicott",
+          "ability": "Prankster",
+          "moves": [
+            "Protect",
+            "Encore"
+          ],
+          "item": "",
+          "nature": "Hardy",
+          "level": 50,
+          "evs": {
+            "hp": 0,
+            "atk": 0,
+            "def": 0,
+            "spa": 0,
+            "spd": 0,
+            "spe": 0
+          }
+        },
+        {
+          "name": "Blastoise",
+          "ability": "Torrent",
+          "moves": [
+            "Iron Defense"
+          ],
+          "item": "",
+          "nature": "Hardy",
+          "level": 50,
+          "evs": {
+            "hp": 0,
+            "atk": 0,
+            "def": 0,
+            "spa": 0,
+            "spd": 0,
+            "spe": 0
+          }
+        }
+      ]
+    },
+    {
+      "format": "champions",
+      "members": [
+        {
+          "name": "Arcanine",
+          "ability": "Flash Fire",
+          "moves": [
+            "Will-O-Wisp",
+            "Flamethrower"
+          ],
+          "item": "",
+          "nature": "Hardy",
+          "level": 50,
+          "evs": {
+            "hp": 0,
+            "atk": 0,
+            "def": 0,
+            "spa": 0,
+            "spd": 0,
+            "spe": 0
+          }
+        },
+        {
+          "name": "Venusaur",
+          "ability": "Overgrow",
+          "moves": [
+            "Amnesia"
+          ],
+          "item": "",
+          "nature": "Hardy",
+          "level": 50,
+          "evs": {
+            "hp": 0,
+            "atk": 0,
+            "def": 0,
+            "spa": 0,
+            "spd": 0,
+            "spe": 0
+          }
+        }
+      ]
+    }
+  ],
+  "actions": [
+    {
+      "turn": 1,
+      "side": "player",
+      "slot": 0,
+      "move": "Protect",
+      "targetSlot": 0
+    },
+    {
+      "turn": 1,
+      "side": "player",
+      "slot": 1,
+      "move": "Iron Defense",
+      "targetSlot": 0
+    },
+    {
+      "turn": 1,
+      "side": "opponent",
+      "slot": 0,
+      "move": "Will-O-Wisp",
+      "targetSlot": 1
+    },
+    {
+      "turn": 1,
+      "side": "opponent",
+      "slot": 1,
+      "move": "Amnesia",
+      "targetSlot": 0
+    },
+    {
+      "turn": 2,
+      "side": "player",
+      "slot": 0,
+      "move": "Encore",
+      "targetSlot": 0
+    },
+    {
+      "turn": 2,
+      "side": "player",
+      "slot": 1,
+      "move": "Iron Defense",
+      "targetSlot": 0
+    },
+    {
+      "turn": 2,
+      "side": "opponent",
+      "slot": 0,
+      "move": "Flamethrower",
+      "targetSlot": 0
+    },
+    {
+      "turn": 2,
+      "side": "opponent",
+      "slot": 1,
+      "move": "Amnesia",
+      "targetSlot": 0
+    }
+  ],
+  "seed": [
+    3,
+    7,
+    11,
+    13
+  ],
+  "initial_state": {},
+  "rng_controls": {
+    "damage": "maximum",
+    "critical_hits": false,
+    "accuracy": "forced_hit",
+    "same_seed_alignment": false
+  }
+}

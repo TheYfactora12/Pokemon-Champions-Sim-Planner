@@ -1,0 +1,50 @@
+{
+  "schema_version": "bounded-result-v1",
+  "assertion_id": "RED-CARD-CAPTURE.current-runtime.v11",
+  "case_id": "RED-CARD-CAPTURE",
+  "scope": {
+    "oracle_kind": "shared_reference",
+    "format": "gen9championsdoublescustomgame",
+    "regulation_id": null,
+    "client_version": null,
+    "boundaries": [
+      "single fixed damage hit, surviving holder, exactly one legal reserve",
+      "consumption and forced replacement; no random-reserve claim"
+    ]
+  },
+  "role": "local_result",
+  "status": "complete",
+  "inputs_sha256": "eb7f6120d95c0bd84e18a1ff14b954067f6217c3a2cbc0ddaad0d7dcc0c48360",
+  "contract_sha256": "b1ad50dffcf97334662f123b068d3b7704ca882f53d961dd017e330835f35723",
+  "dependencies": {
+    "engine": "dd0663f7223f9cad9d1bc5aac25c820ef96bda1b87e28a886ec117035b61d7d4",
+    "data": "3403d208ab8ead0f1bb8678b6776baf4ce3f758043525ec92ee4715ae05e3641",
+    "runner": "7324e992dc86371999bd2686edb4e2c649ea1d9b2e655ad3850ac5121608df08",
+    "test": "3d7cfd2e383fa6e32f8dc626c9a9bef27ac9b25d298e90646014bf95b1e524e1",
+    "checker": "d18159d8291af83e8fbd6bebac7fade9aa89c9400bb0641538b8bccd88de25a1",
+    "reference": "de66162a28b270bdf17ea17a804a7ec65c6d2f286815ae17eaa3336273405f61"
+  },
+  "executed_at": "2026-10-21T06:33:27.512Z",
+  "observations": {
+    "target_hp_loss": {
+      "pointer": "/observations/target_hp_loss/value",
+      "unit": "HP",
+      "value": 50
+    },
+    "item_consumed": {
+      "pointer": "/observations/item_consumed/value",
+      "unit": "value",
+      "value": true
+    },
+    "attacker_active": {
+      "pointer": "/observations/attacker_active/value",
+      "unit": "value",
+      "value": false
+    },
+    "replacement": {
+      "pointer": "/observations/replacement/value",
+      "unit": "value",
+      "value": "Garchomp"
+    }
+  }
+}
