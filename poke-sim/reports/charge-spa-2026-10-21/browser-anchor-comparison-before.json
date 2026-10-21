@@ -1,0 +1,92 @@
+{
+  "schema_version": "champions-visual-comparison-v1",
+  "seed": [
+    913175160,
+    3278654055,
+    3375076026,
+    699950050
+  ],
+  "build_id": "v2.2.243-charge-spa",
+  "team_ids": [
+    "mega_dragonite",
+    "mega_altaria"
+  ],
+  "status": "mismatch",
+  "checks": 580,
+  "turns": 7,
+  "issues": [
+    {
+      "code": "incomplete_action_anchors",
+      "location": "T6",
+      "expected": "all actions anchored",
+      "actual": [
+        {
+          "type": "log",
+          "text": "Archaludon used Electro Shot!"
+        },
+        {
+          "type": "log",
+          "text": "Dragonite-Mega used Hurricane!",
+          "actor": "Dragonite-Mega",
+          "actor_key": "player:slot:0:Dragonite-Mega",
+          "side": "player",
+          "move": "Hurricane",
+          "target": "Rotom-Wash",
+          "target_key": "opponent:slot:3:Rotom-Wash",
+          "target_side": "opponent",
+          "log_index": 3,
+          "called_by": null
+        },
+        {
+          "type": "log",
+          "text": "Rotom-Wash used Hydro Pump!",
+          "actor": "Rotom-Wash",
+          "actor_key": "opponent:slot:3:Rotom-Wash",
+          "side": "opponent",
+          "move": "Hydro Pump",
+          "target": "Dragonite-Mega",
+          "target_key": "player:slot:0:Dragonite-Mega",
+          "target_side": "player",
+          "log_index": 5,
+          "called_by": null
+        },
+        {
+          "type": "log",
+          "text": "Sinistcha used Matcha Gotcha!",
+          "actor": "Sinistcha",
+          "actor_key": "opponent:slot:5:Sinistcha",
+          "side": "opponent",
+          "move": "Matcha Gotcha",
+          "target": "Dragonite-Mega",
+          "target_key": "player:slot:0:Dragonite-Mega",
+          "target_side": "player",
+          "log_index": 7,
+          "called_by": null
+        }
+      ]
+    },
+    {
+      "code": "resolved_move_order_or_omission",
+      "location": "T6",
+      "expected": [
+        "Archaludon used Electro Shot!",
+        "Dragonite-Mega used Hurricane!",
+        "Rotom-Wash used Hydro Pump!",
+        "Sinistcha used Matcha Gotcha!"
+      ],
+      "actual": [
+        "Dragonite-Mega used Hurricane!",
+        "Rotom-Wash used Hydro Pump!",
+        "Sinistcha used Matcha Gotcha!"
+      ]
+    }
+  ],
+  "not_checked": [
+    "Independent real-game mechanics parity",
+    "Hidden stable IDs and exact stats not printed in replay cards",
+    "Hidden actor IDs/targets, effect tooltips and coach claims",
+    "Cross-action attribution of legacy damage without action IDs",
+    "Pixel layout outside inspected screenshots; lazy sprites outside viewport",
+    "Production DB persistence"
+  ]
+}

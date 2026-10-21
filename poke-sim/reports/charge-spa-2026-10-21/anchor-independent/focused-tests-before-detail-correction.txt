@@ -1,0 +1,3174 @@
+Γ£ö CHARGE-SPA-normal-Meteor Beam-player-0-t1 (695.5802ms)
+Γ£û CHARGE-SPA-normal-Meteor Beam-player-0-t2 (145.0661ms)
+Γ£û CHARGE-SPA-normal-Meteor Beam-player-0-t3 (166.0989ms)
+Γ£û CHARGE-SPA-normal-Meteor Beam-player-0-t4 (123.1448ms)
+Γ£û CHARGE-SPA-herb-Meteor Beam-player-0 (142.5789ms)
+Γ£û CHARGE-SPA-herb-consumed-Meteor Beam-player-0 (136.3234ms)
+Γ£û CHARGE-SPA-klutz-Meteor Beam-player-0 (135.558ms)
+Γ£û CHARGE-SPA-klutz-gas-Meteor Beam-player-0 (135.8359ms)
+Γ£û CHARGE-SPA-simple-Meteor Beam-player-0 (134.1403ms)
+Γ£û CHARGE-SPA-contrary-Meteor Beam-player-0 (131.2571ms)
+Γ£û CHARGE-SPA-simple-gas-Meteor Beam-player-0 (130.9143ms)
+Γ£û CHARGE-SPA-contrary-gas-Meteor Beam-player-0 (130.9657ms)
+Γ£û CHARGE-SPA-shield-Meteor Beam-player-0 (131.244ms)
+Γ£û CHARGE-SPA-cap-Meteor Beam-player-0 (129.9605ms)
+Γ£û CHARGE-SPA-lower-cap-Meteor Beam-player-0 (128.4952ms)
+Γ£ö CHARGE-SPA-protected-Meteor Beam-player-0 (154.3311ms)
+Γ£ö CHARGE-SPA-sleep-Meteor Beam-player-0 (176.8825ms)
+Γ£ö CHARGE-SPA-frozen-Meteor Beam-player-0 (218.8443ms)
+Γ£ö CHARGE-SPA-flinch-Meteor Beam-player-0 (151.1188ms)
+Γ£ö CHARGE-SPA-paralysis-Meteor Beam-player-0 (164.1309ms)
+Γ£ö CHARGE-SPA-confusion-Meteor Beam-player-0 (160.846ms)
+Γ£ö CHARGE-SPA-normal-Meteor Beam-player-1-t1 (181.3296ms)
+Γ£û CHARGE-SPA-normal-Meteor Beam-player-1-t2 (192.435ms)
+Γ£û CHARGE-SPA-normal-Meteor Beam-player-1-t3 (168.6249ms)
+Γ£û CHARGE-SPA-normal-Meteor Beam-player-1-t4 (197.6363ms)
+Γ£û CHARGE-SPA-herb-Meteor Beam-player-1 (190.7609ms)
+Γ£û CHARGE-SPA-herb-consumed-Meteor Beam-player-1 (195.2564ms)
+Γ£û CHARGE-SPA-klutz-Meteor Beam-player-1 (166.6639ms)
+Γ£û CHARGE-SPA-klutz-gas-Meteor Beam-player-1 (190.5443ms)
+Γ£û CHARGE-SPA-simple-Meteor Beam-player-1 (155.5542ms)
+Γ£û CHARGE-SPA-contrary-Meteor Beam-player-1 (195.8559ms)
+Γ£û CHARGE-SPA-simple-gas-Meteor Beam-player-1 (156.5755ms)
+Γ£û CHARGE-SPA-contrary-gas-Meteor Beam-player-1 (224.6564ms)
+Γ£û CHARGE-SPA-shield-Meteor Beam-player-1 (161.6348ms)
+Γ£û CHARGE-SPA-cap-Meteor Beam-player-1 (187.4783ms)
+Γ£û CHARGE-SPA-lower-cap-Meteor Beam-player-1 (169.7435ms)
+Γ£ö CHARGE-SPA-protected-Meteor Beam-player-1 (156.7323ms)
+Γ£ö CHARGE-SPA-sleep-Meteor Beam-player-1 (164.9758ms)
+Γ£ö CHARGE-SPA-frozen-Meteor Beam-player-1 (155.335ms)
+Γ£ö CHARGE-SPA-flinch-Meteor Beam-player-1 (189.5534ms)
+Γ£ö CHARGE-SPA-paralysis-Meteor Beam-player-1 (172.636ms)
+Γ£ö CHARGE-SPA-confusion-Meteor Beam-player-1 (173.1129ms)
+Γ£ö CHARGE-SPA-normal-Meteor Beam-opponent-0-t1 (155.9448ms)
+Γ£û CHARGE-SPA-normal-Meteor Beam-opponent-0-t2 (171.2397ms)
+Γ£û CHARGE-SPA-normal-Meteor Beam-opponent-0-t3 (168.6254ms)
+Γ£û CHARGE-SPA-normal-Meteor Beam-opponent-0-t4 (177.5416ms)
+Γ£û CHARGE-SPA-herb-Meteor Beam-opponent-0 (179.1739ms)
+Γ£û CHARGE-SPA-herb-consumed-Meteor Beam-opponent-0 (220.4001ms)
+Γ£û CHARGE-SPA-klutz-Meteor Beam-opponent-0 (163.4075ms)
+Γ£û CHARGE-SPA-klutz-gas-Meteor Beam-opponent-0 (149.3537ms)
+Γ£û CHARGE-SPA-simple-Meteor Beam-opponent-0 (173.4992ms)
+Γ£û CHARGE-SPA-contrary-Meteor Beam-opponent-0 (162.9206ms)
+Γ£û CHARGE-SPA-simple-gas-Meteor Beam-opponent-0 (152.1602ms)
+Γ£û CHARGE-SPA-contrary-gas-Meteor Beam-opponent-0 (128.0833ms)
+Γ£û CHARGE-SPA-shield-Meteor Beam-opponent-0 (129.9356ms)
+Γ£û CHARGE-SPA-cap-Meteor Beam-opponent-0 (127.8133ms)
+Γ£û CHARGE-SPA-lower-cap-Meteor Beam-opponent-0 (154.8413ms)
+Γ£ö CHARGE-SPA-protected-Meteor Beam-opponent-0 (148.2419ms)
+Γ£ö CHARGE-SPA-sleep-Meteor Beam-opponent-0 (128.8581ms)
+Γ£ö CHARGE-SPA-frozen-Meteor Beam-opponent-0 (131.4945ms)
+Γ£ö CHARGE-SPA-flinch-Meteor Beam-opponent-0 (131.0932ms)
+Γ£ö CHARGE-SPA-paralysis-Meteor Beam-opponent-0 (178.9395ms)
+Γ£ö CHARGE-SPA-confusion-Meteor Beam-opponent-0 (123.8413ms)
+Γ£ö CHARGE-SPA-normal-Meteor Beam-opponent-1-t1 (133.6531ms)
+Γ£û CHARGE-SPA-normal-Meteor Beam-opponent-1-t2 (133.3999ms)
+Γ£û CHARGE-SPA-normal-Meteor Beam-opponent-1-t3 (141.6403ms)
+Γ£û CHARGE-SPA-normal-Meteor Beam-opponent-1-t4 (136.0541ms)
+Γ£û CHARGE-SPA-herb-Meteor Beam-opponent-1 (135.4739ms)
+Γ£û CHARGE-SPA-herb-consumed-Meteor Beam-opponent-1 (144.2579ms)
+Γ£û CHARGE-SPA-klutz-Meteor Beam-opponent-1 (136.9905ms)
+Γ£û CHARGE-SPA-klutz-gas-Meteor Beam-opponent-1 (130.4255ms)
+Γ£û CHARGE-SPA-simple-Meteor Beam-opponent-1 (127.6834ms)
+Γ£û CHARGE-SPA-contrary-Meteor Beam-opponent-1 (127.6191ms)
+Γ£û CHARGE-SPA-simple-gas-Meteor Beam-opponent-1 (136.0732ms)
+Γ£û CHARGE-SPA-contrary-gas-Meteor Beam-opponent-1 (131.4148ms)
+Γ£û CHARGE-SPA-shield-Meteor Beam-opponent-1 (176.0741ms)
+Γ£û CHARGE-SPA-cap-Meteor Beam-opponent-1 (118.257ms)
+Γ£û CHARGE-SPA-lower-cap-Meteor Beam-opponent-1 (133.659ms)
+Γ£ö CHARGE-SPA-protected-Meteor Beam-opponent-1 (138.66ms)
+Γ£ö CHARGE-SPA-sleep-Meteor Beam-opponent-1 (161.7611ms)
+Γ£ö CHARGE-SPA-frozen-Meteor Beam-opponent-1 (182.7718ms)
+Γ£ö CHARGE-SPA-flinch-Meteor Beam-opponent-1 (167.0846ms)
+Γ£ö CHARGE-SPA-paralysis-Meteor Beam-opponent-1 (181.8701ms)
+Γ£ö CHARGE-SPA-confusion-Meteor Beam-opponent-1 (172.9387ms)
+Γ£ö CHARGE-SPA-normal-Electro Shot-player-0-t1 (171.3445ms)
+Γ£û CHARGE-SPA-normal-Electro Shot-player-0-t2 (153.7229ms)
+Γ£û CHARGE-SPA-normal-Electro Shot-player-0-t3 (173.4265ms)
+Γ£û CHARGE-SPA-normal-Electro Shot-player-0-t4 (186.2074ms)
+Γ£û CHARGE-SPA-herb-Electro Shot-player-0 (219.2586ms)
+Γ£û CHARGE-SPA-herb-consumed-Electro Shot-player-0 (166.7485ms)
+Γ£û CHARGE-SPA-klutz-Electro Shot-player-0 (179.9299ms)
+Γ£û CHARGE-SPA-klutz-gas-Electro Shot-player-0 (164.5918ms)
+Γ£û CHARGE-SPA-simple-Electro Shot-player-0 (157.2018ms)
+Γ£û CHARGE-SPA-contrary-Electro Shot-player-0 (154.3923ms)
+Γ£û CHARGE-SPA-simple-gas-Electro Shot-player-0 (169.0455ms)
+Γ£û CHARGE-SPA-contrary-gas-Electro Shot-player-0 (177.3735ms)
+Γ£û CHARGE-SPA-shield-Electro Shot-player-0 (175.8548ms)
+Γ£û CHARGE-SPA-cap-Electro Shot-player-0 (176.4085ms)
+Γ£û CHARGE-SPA-lower-cap-Electro Shot-player-0 (157.4981ms)
+Γ£ö CHARGE-SPA-protected-Electro Shot-player-0 (159.4535ms)
+Γ£ö CHARGE-SPA-sleep-Electro Shot-player-0 (157.4702ms)
+Γ£ö CHARGE-SPA-frozen-Electro Shot-player-0 (220.7587ms)
+Γ£ö CHARGE-SPA-flinch-Electro Shot-player-0 (161.3535ms)
+Γ£ö CHARGE-SPA-paralysis-Electro Shot-player-0 (167.9303ms)
+Γ£ö CHARGE-SPA-confusion-Electro Shot-player-0 (131.5143ms)
+Γ£ö CHARGE-SPA-normal-Electro Shot-player-1-t1 (128.7021ms)
+Γ£û CHARGE-SPA-normal-Electro Shot-player-1-t2 (131.7825ms)
+Γ£û CHARGE-SPA-normal-Electro Shot-player-1-t3 (140.6037ms)
+Γ£û CHARGE-SPA-normal-Electro Shot-player-1-t4 (136.7475ms)
+Γ£û CHARGE-SPA-herb-Electro Shot-player-1 (132.6597ms)
+Γ£û CHARGE-SPA-herb-consumed-Electro Shot-player-1 (135.8643ms)
+Γ£û CHARGE-SPA-klutz-Electro Shot-player-1 (137.39ms)
+Γ£û CHARGE-SPA-klutz-gas-Electro Shot-player-1 (132.9351ms)
+Γ£û CHARGE-SPA-simple-Electro Shot-player-1 (129.3734ms)
+Γ£û CHARGE-SPA-contrary-Electro Shot-player-1 (181.6723ms)
+Γ£û CHARGE-SPA-simple-gas-Electro Shot-player-1 (116.2345ms)
+Γ£û CHARGE-SPA-contrary-gas-Electro Shot-player-1 (135.3761ms)
+Γ£û CHARGE-SPA-shield-Electro Shot-player-1 (133.3336ms)
+Γ£û CHARGE-SPA-cap-Electro Shot-player-1 (132.8261ms)
+Γ£û CHARGE-SPA-lower-cap-Electro Shot-player-1 (131.127ms)
+Γ£ö CHARGE-SPA-protected-Electro Shot-player-1 (138.9771ms)
+Γ£ö CHARGE-SPA-sleep-Electro Shot-player-1 (140.3242ms)
+Γ£ö CHARGE-SPA-frozen-Electro Shot-player-1 (137.7875ms)
+Γ£ö CHARGE-SPA-flinch-Electro Shot-player-1 (133.451ms)
+Γ£ö CHARGE-SPA-paralysis-Electro Shot-player-1 (132.7064ms)
+Γ£ö CHARGE-SPA-confusion-Electro Shot-player-1 (131.5237ms)
+Γ£ö CHARGE-SPA-normal-Electro Shot-opponent-0-t1 (126.629ms)
+Γ£û CHARGE-SPA-normal-Electro Shot-opponent-0-t2 (208.9244ms)
+Γ£û CHARGE-SPA-normal-Electro Shot-opponent-0-t3 (153.1487ms)
+Γ£û CHARGE-SPA-normal-Electro Shot-opponent-0-t4 (152.332ms)
+Γ£û CHARGE-SPA-herb-Electro Shot-opponent-0 (153.4196ms)
+Γ£û CHARGE-SPA-herb-consumed-Electro Shot-opponent-0 (166.0941ms)
+Γ£û CHARGE-SPA-klutz-Electro Shot-opponent-0 (152.344ms)
+Γ£û CHARGE-SPA-klutz-gas-Electro Shot-opponent-0 (160.6261ms)
+Γ£û CHARGE-SPA-simple-Electro Shot-opponent-0 (147.1658ms)
+Γ£û CHARGE-SPA-contrary-Electro Shot-opponent-0 (150.1474ms)
+Γ£û CHARGE-SPA-simple-gas-Electro Shot-opponent-0 (156.9165ms)
+Γ£û CHARGE-SPA-contrary-gas-Electro Shot-opponent-0 (149.3032ms)
+Γ£û CHARGE-SPA-shield-Electro Shot-opponent-0 (163.4277ms)
+Γ£û CHARGE-SPA-cap-Electro Shot-opponent-0 (170.4741ms)
+Γ£û CHARGE-SPA-lower-cap-Electro Shot-opponent-0 (150.5869ms)
+Γ£ö CHARGE-SPA-protected-Electro Shot-opponent-0 (165.4945ms)
+Γ£ö CHARGE-SPA-sleep-Electro Shot-opponent-0 (207.2278ms)
+Γ£ö CHARGE-SPA-frozen-Electro Shot-opponent-0 (146.7817ms)
+Γ£ö CHARGE-SPA-flinch-Electro Shot-opponent-0 (169.2828ms)
+Γ£ö CHARGE-SPA-paralysis-Electro Shot-opponent-0 (159.1406ms)
+Γ£ö CHARGE-SPA-confusion-Electro Shot-opponent-0 (161.18ms)
+Γ£ö CHARGE-SPA-normal-Electro Shot-opponent-1-t1 (157.8546ms)
+Γ£û CHARGE-SPA-normal-Electro Shot-opponent-1-t2 (170.0147ms)
+Γ£û CHARGE-SPA-normal-Electro Shot-opponent-1-t3 (153.9129ms)
+Γ£û CHARGE-SPA-normal-Electro Shot-opponent-1-t4 (167.504ms)
+Γ£û CHARGE-SPA-herb-Electro Shot-opponent-1 (154.3857ms)
+Γ£û CHARGE-SPA-herb-consumed-Electro Shot-opponent-1 (166.4177ms)
+Γ£û CHARGE-SPA-klutz-Electro Shot-opponent-1 (154.2484ms)
+Γ£û CHARGE-SPA-klutz-gas-Electro Shot-opponent-1 (164.2188ms)
+Γ£û CHARGE-SPA-simple-Electro Shot-opponent-1 (209.1575ms)
+Γ£û CHARGE-SPA-contrary-Electro Shot-opponent-1 (153.813ms)
+Γ£û CHARGE-SPA-simple-gas-Electro Shot-opponent-1 (169.2405ms)
+Γ£û CHARGE-SPA-contrary-gas-Electro Shot-opponent-1 (156.1897ms)
+Γ£û CHARGE-SPA-shield-Electro Shot-opponent-1 (156.8684ms)
+Γ£û CHARGE-SPA-cap-Electro Shot-opponent-1 (169.1387ms)
+Γ£û CHARGE-SPA-lower-cap-Electro Shot-opponent-1 (167.2411ms)
+Γ£ö CHARGE-SPA-protected-Electro Shot-opponent-1 (164.6491ms)
+Γ£ö CHARGE-SPA-sleep-Electro Shot-opponent-1 (152.0125ms)
+Γ£ö CHARGE-SPA-frozen-Electro Shot-opponent-1 (162.4774ms)
+Γ£ö CHARGE-SPA-flinch-Electro Shot-opponent-1 (163.4962ms)
+Γ£ö CHARGE-SPA-paralysis-Electro Shot-opponent-1 (154.1069ms)
+Γ£ö CHARGE-SPA-confusion-Electro Shot-opponent-1 (167.165ms)
+Γ£û CHARGE-SPA-rain-player-0 (206.7502ms)
+Γ£û CHARGE-SPA-cloud-nine-player-0 (150.2015ms)
+Γ£û CHARGE-SPA-miss-player-0 (160.7417ms)
+Γ£û CHARGE-SPA-rain-player-1 (159.5226ms)
+Γ£û CHARGE-SPA-cloud-nine-player-1 (169.3261ms)
+Γ£û CHARGE-SPA-miss-player-1 (159.5309ms)
+Γ£û CHARGE-SPA-rain-opponent-0 (165.0371ms)
+Γ£û CHARGE-SPA-cloud-nine-opponent-0 (166.0916ms)
+Γ£û CHARGE-SPA-miss-opponent-0 (176.9687ms)
+Γ£û CHARGE-SPA-rain-opponent-1 (166.0133ms)
+Γ£û CHARGE-SPA-cloud-nine-opponent-1 (154.1758ms)
+Γ£û CHARGE-SPA-miss-opponent-1 (169.1912ms)
+Γ£ö CHARGE-SPA-reversal-missing-Meteor Beam (180.3307ms)
+Γ£ö CHARGE-SPA-reversal-double-Meteor Beam (234.3562ms)
+Γ£ö CHARGE-SPA-reversal-delayed-Meteor Beam (160.7352ms)
+Γ£ö CHARGE-SPA-reversal-missing-Electro Shot (174.15ms)
+Γ£ö CHARGE-SPA-reversal-double-Electro Shot (165.285ms)
+Γ£ö CHARGE-SPA-reversal-delayed-Electro Shot (175.8852ms)
+Γ£ö CHARGE-SPA-anchor-reversal-Meteor Beam (186.7883ms)
+Γ£ö CHARGE-SPA-anchor-reversal-Electro Shot (156.9908ms)
+Γä╣ tests 188
+Γä╣ suites 0
+Γä╣ pass 64
+Γä╣ fail 124
+Γä╣ cancelled 0
+Γä╣ skipped 0
+Γä╣ todo 0
+Γä╣ duration_ms 30846.6121
+
+Γ£û failing tests:
+
+test at poke-sim\tests\charge_spa_timing_tests.mjs:21:31
+Γ£û CHARGE-SPA-normal-Meteor Beam-player-0-t2 (145.0661ms)
+  AssertionError [ERR_ASSERTION]: charge action anchor
+  + actual - expected
+  
+  + undefined
+  - 'Meteor Beam'
+  
+      at check (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-14/task-2/champions-moves-repair/poke-sim/tests/charge_spa_timing_tests.mjs:12:11)
+      at TestContext.<anonymous> (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-14/task-2/champions-moves-repair/poke-sim/tests/charge_spa_timing_tests.mjs:21:100)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1201:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:831:18)
+      at Test.postRun (node:internal/test_runner/test:1330:19)
+      at Test.run (node:internal/test_runner/test:1258:12)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:385:3) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: undefined,
+    expected: 'Meteor Beam',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at poke-sim\tests\charge_spa_timing_tests.mjs:21:31
+Γ£û CHARGE-SPA-normal-Meteor Beam-player-0-t3 (166.0989ms)
+  AssertionError [ERR_ASSERTION]: charge action anchor
+  + actual - expected
+  
+  + undefined
+  - 'Meteor Beam'
+  
+      at check (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-14/task-2/champions-moves-repair/poke-sim/tests/charge_spa_timing_tests.mjs:12:11)
+      at TestContext.<anonymous> (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-14/task-2/champions-moves-repair/poke-sim/tests/charge_spa_timing_tests.mjs:21:100)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1201:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:831:18)
+      at Test.postRun (node:internal/test_runner/test:1330:19)
+      at Test.run (node:internal/test_runner/test:1258:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:831:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: undefined,
+    expected: 'Meteor Beam',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at poke-sim\tests\charge_spa_timing_tests.mjs:21:31
+Γ£û CHARGE-SPA-normal-Meteor Beam-player-0-t4 (123.1448ms)
+  AssertionError [ERR_ASSERTION]: charge action anchor
+  + actual - expected
+  
+  + undefined
+  - 'Meteor Beam'
+  
+      at check (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-14/task-2/champions-moves-repair/poke-sim/tests/charge_spa_timing_tests.mjs:12:11)
+      at TestContext.<anonymous> (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-14/task-2/champions-moves-repair/poke-sim/tests/charge_spa_timing_tests.mjs:21:100)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1201:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:831:18)
+      at Test.postRun (node:internal/test_runner/test:1330:19)
+      at Test.run (node:internal/test_runner/test:1258:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:831:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: undefined,
+    expected: 'Meteor Beam',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at poke-sim\tests\charge_spa_timing_tests.mjs:40:4
+Γ£û CHARGE-SPA-herb-Meteor Beam-player-0 (142.5789ms)
+  AssertionError [ERR_ASSERTION]: charge action anchor
+  + actual - expected
+  
+  + undefined
+  - 'Meteor Beam'
+  
+      at check (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-14/task-2/champions-moves-repair/poke-sim/tests/charge_spa_timing_tests.mjs:12:11)
+      at TestContext.<anonymous> (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-14/task-2/champions-moves-repair/poke-sim/tests/charge_spa_timing_tests.mjs:41:13)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1201:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:831:18)
+      at Test.postRun (node:internal/test_runner/test:1330:19)
+      at Test.run (node:internal/test_runner/test:1258:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:831:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: undefined,
+    expected: 'Meteor Beam',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at poke-sim\tests\charge_spa_timing_tests.mjs:40:4
+Γ£û CHARGE-SPA-herb-consumed-Meteor Beam-player-0 (136.3234ms)
+  AssertionError [ERR_ASSERTION]: charge action anchor
+  + actual - expected
+  
+  + undefined
+  - 'Meteor Beam'
+  
+      at check (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-14/task-2/champions-moves-repair/poke-sim/tests/charge_spa_timing_tests.mjs:12:11)
+      at TestContext.<anonymous> (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-14/task-2/champions-moves-repair/poke-sim/tests/charge_spa_timing_tests.mjs:41:13)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1201:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:831:18)
+      at Test.postRun (node:internal/test_runner/test:1330:19)
+      at Test.run (node:internal/test_runner/test:1258:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:831:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: undefined,
+    expected: 'Meteor Beam',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at poke-sim\tests\charge_spa_timing_tests.mjs:40:4
+Γ£û CHARGE-SPA-klutz-Meteor Beam-player-0 (135.558ms)
+  AssertionError [ERR_ASSERTION]: charge action anchor
+  + actual - expected
+  
+  + undefined
+  - 'Meteor Beam'
+  
+      at check (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-14/task-2/champions-moves-repair/poke-sim/tests/charge_spa_timing_tests.mjs:12:11)
+      at TestContext.<anonymous> (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-14/task-2/champions-moves-repair/poke-sim/tests/charge_spa_timing_tests.mjs:41:13)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1201:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:831:18)
+      at Test.postRun (node:internal/test_runner/test:1330:19)
+      at Test.run (node:internal/test_runner/test:1258:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:831:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: undefined,
+    expected: 'Meteor Beam',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at poke-sim\tests\charge_spa_timing_tests.mjs:40:4
+Γ£û CHARGE-SPA-klutz-gas-Meteor Beam-player-0 (135.8359ms)
+  AssertionError [ERR_ASSERTION]: charge action anchor
+  + actual - expected
+  
+  + undefined
+  - 'Meteor Beam'
+  
+      at check (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-14/task-2/champions-moves-repair/poke-sim/tests/charge_spa_timing_tests.mjs:12:11)
+      at TestContext.<anonymous> (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-14/task-2/champions-moves-repair/poke-sim/tests/charge_spa_timing_tests.mjs:41:13)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1201:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:831:18)
+      at Test.postRun (node:internal/test_runner/test:1330:19)
+      at Test.run (node:internal/test_runner/test:1258:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:831:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: undefined,
+    expected: 'Meteor Beam',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at poke-sim\tests\charge_spa_timing_tests.mjs:40:4
+Γ£û CHARGE-SPA-simple-Meteor Beam-player-0 (134.1403ms)
+  AssertionError [ERR_ASSERTION]: charge action anchor
+  + actual - expected
+  
+  + undefined
+  - 'Meteor Beam'
+  
+      at check (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-14/task-2/champions-moves-repair/poke-sim/tests/charge_spa_timing_tests.mjs:12:11)
+      at TestContext.<anonymous> (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-14/task-2/champions-moves-repair/poke-sim/tests/charge_spa_timing_tests.mjs:41:13)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1201:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:831:18)
+      at Test.postRun (node:internal/test_runner/test:1330:19)
+      at Test.run (node:internal/test_runner/test:1258:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:831:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: undefined,
+    expected: 'Meteor Beam',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at poke-sim\tests\charge_spa_timing_tests.mjs:40:4
+Γ£û CHARGE-SPA-contrary-Meteor Beam-player-0 (131.2571ms)
+  AssertionError [ERR_ASSERTION]: charge action anchor
+  + actual - expected
+  
+  + undefined
+  - 'Meteor Beam'
+  
+      at check (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-14/task-2/champions-moves-repair/poke-sim/tests/charge_spa_timing_tests.mjs:12:11)
+      at TestContext.<anonymous> (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-14/task-2/champions-moves-repair/poke-sim/tests/charge_spa_timing_tests.mjs:41:13)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1201:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:831:18)
+      at Test.postRun (node:internal/test_runner/test:1330:19)
+      at Test.run (node:internal/test_runner/test:1258:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:831:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: undefined,
+    expected: 'Meteor Beam',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at poke-sim\tests\charge_spa_timing_tests.mjs:40:4
+Γ£û CHARGE-SPA-simple-gas-Meteor Beam-player-0 (130.9143ms)
+  AssertionError [ERR_ASSERTION]: charge action anchor
+  + actual - expected
+  
+  + undefined
+  - 'Meteor Beam'
+  
+      at check (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-14/task-2/champions-moves-repair/poke-sim/tests/charge_spa_timing_tests.mjs:12:11)
+      at TestContext.<anonymous> (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-14/task-2/champions-moves-repair/poke-sim/tests/charge_spa_timing_tests.mjs:41:13)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1201:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:831:18)
+      at Test.postRun (node:internal/test_runner/test:1330:19)
+      at Test.run (node:internal/test_runner/test:1258:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:831:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: undefined,
+    expected: 'Meteor Beam',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at poke-sim\tests\charge_spa_timing_tests.mjs:40:4
+Γ£û CHARGE-SPA-contrary-gas-Meteor Beam-player-0 (130.9657ms)
+  AssertionError [ERR_ASSERTION]: charge action anchor
+  + actual - expected
+  
+  + undefined
+  - 'Meteor Beam'
+  
+      at check (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-14/task-2/champions-moves-repair/poke-sim/tests/charge_spa_timing_tests.mjs:12:11)
+      at TestContext.<anonymous> (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-14/task-2/champions-moves-repair/poke-sim/tests/charge_spa_timing_tests.mjs:41:13)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1201:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:831:18)
+      at Test.postRun (node:internal/test_runner/test:1330:19)
+      at Test.run (node:internal/test_runner/test:1258:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:831:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: undefined,
+    expected: 'Meteor Beam',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at poke-sim\tests\charge_spa_timing_tests.mjs:40:4
+Γ£û CHARGE-SPA-shield-Meteor Beam-player-0 (131.244ms)
+  AssertionError [ERR_ASSERTION]: charge action anchor
+  + actual - expected
+  
+  + undefined
+  - 'Meteor Beam'
+  
+      at check (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-14/task-2/champions-moves-repair/poke-sim/tests/charge_spa_timing_tests.mjs:12:11)
+      at TestContext.<anonymous> (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-14/task-2/champions-moves-repair/poke-sim/tests/charge_spa_timing_tests.mjs:41:13)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1201:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:831:18)
+      at Test.postRun (node:internal/test_runner/test:1330:19)
+      at Test.run (node:internal/test_runner/test:1258:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:831:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: undefined,
+    expected: 'Meteor Beam',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at poke-sim\tests\charge_spa_timing_tests.mjs:40:4
+Γ£û CHARGE-SPA-cap-Meteor Beam-player-0 (129.9605ms)
+  AssertionError [ERR_ASSERTION]: charge action anchor
+  + actual - expected
+  
+  + undefined
+  - 'Meteor Beam'
+  
+      at check (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-14/task-2/champions-moves-repair/poke-sim/tests/charge_spa_timing_tests.mjs:12:11)
+      at TestContext.<anonymous> (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-14/task-2/champions-moves-repair/poke-sim/tests/charge_spa_timing_tests.mjs:41:13)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1201:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:831:18)
+      at Test.postRun (node:internal/test_runner/test:1330:19)
+      at Test.run (node:internal/test_runner/test:1258:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:831:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: undefined,
+    expected: 'Meteor Beam',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at poke-sim\tests\charge_spa_timing_tests.mjs:40:4
+Γ£û CHARGE-SPA-lower-cap-Meteor Beam-player-0 (128.4952ms)
+  AssertionError [ERR_ASSERTION]: charge action anchor
+  + actual - expected
+  
+  + undefined
+  - 'Meteor Beam'
+  
+      at check (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-14/task-2/champions-moves-repair/poke-sim/tests/charge_spa_timing_tests.mjs:12:11)
+      at TestContext.<anonymous> (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-14/task-2/champions-moves-repair/poke-sim/tests/charge_spa_timing_tests.mjs:41:13)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1201:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:831:18)
+      at Test.postRun (node:internal/test_runner/test:1330:19)
+      at Test.run (node:internal/test_runner/test:1258:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:831:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: undefined,
+    expected: 'Meteor Beam',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at poke-sim\tests\charge_spa_timing_tests.mjs:21:31
+Γ£û CHARGE-SPA-normal-Meteor Beam-player-1-t2 (192.435ms)
+  AssertionError [ERR_ASSERTION]: charge action anchor
+  + actual - expected
+  
+  + undefined
+  - 'Meteor Beam'
+  
+      at check (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-14/task-2/champions-moves-repair/poke-sim/tests/charge_spa_timing_tests.mjs:12:11)
+      at TestContext.<anonymous> (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-14/task-2/champions-moves-repair/poke-sim/tests/charge_spa_timing_tests.mjs:21:100)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1201:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:831:18)
+      at Test.postRun (node:internal/test_runner/test:1330:19)
+      at Test.run (node:internal/test_runner/test:1258:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:831:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: undefined,
+    expected: 'Meteor Beam',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at poke-sim\tests\charge_spa_timing_tests.mjs:21:31
+Γ£û CHARGE-SPA-normal-Meteor Beam-player-1-t3 (168.6249ms)
+  AssertionError [ERR_ASSERTION]: charge action anchor
+  + actual - expected
+  
+  + undefined
+  - 'Meteor Beam'
+  
+      at check (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-14/task-2/champions-moves-repair/poke-sim/tests/charge_spa_timing_tests.mjs:12:11)
+      at TestContext.<anonymous> (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-14/task-2/champions-moves-repair/poke-sim/tests/charge_spa_timing_tests.mjs:21:100)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1201:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:831:18)
+      at Test.postRun (node:internal/test_runner/test:1330:19)
+      at Test.run (node:internal/test_runner/test:1258:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:831:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: undefined,
+    expected: 'Meteor Beam',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at poke-sim\tests\charge_spa_timing_tests.mjs:21:31
+Γ£û CHARGE-SPA-normal-Meteor Beam-player-1-t4 (197.6363ms)
+  AssertionError [ERR_ASSERTION]: charge action anchor
+  + actual - expected
+  
+  + undefined
+  - 'Meteor Beam'
+  
+      at check (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-14/task-2/champions-moves-repair/poke-sim/tests/charge_spa_timing_tests.mjs:12:11)
+      at TestContext.<anonymous> (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-14/task-2/champions-moves-repair/poke-sim/tests/charge_spa_timing_tests.mjs:21:100)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1201:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:831:18)
+      at Test.postRun (node:internal/test_runner/test:1330:19)
+      at Test.run (node:internal/test_runner/test:1258:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:831:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: undefined,
+    expected: 'Meteor Beam',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at poke-sim\tests\charge_spa_timing_tests.mjs:40:4
+Γ£û CHARGE-SPA-herb-Meteor Beam-player-1 (190.7609ms)
+  AssertionError [ERR_ASSERTION]: charge action anchor
+  + actual - expected
+  
+  + undefined
+  - 'Meteor Beam'
+  
+      at check (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-14/task-2/champions-moves-repair/poke-sim/tests/charge_spa_timing_tests.mjs:12:11)
+      at TestContext.<anonymous> (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-14/task-2/champions-moves-repair/poke-sim/tests/charge_spa_timing_tests.mjs:41:13)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1201:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:831:18)
+      at Test.postRun (node:internal/test_runner/test:1330:19)
+      at Test.run (node:internal/test_runner/test:1258:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:831:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: undefined,
+    expected: 'Meteor Beam',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at poke-sim\tests\charge_spa_timing_tests.mjs:40:4
+Γ£û CHARGE-SPA-herb-consumed-Meteor Beam-player-1 (195.2564ms)
+  AssertionError [ERR_ASSERTION]: charge action anchor
+  + actual - expected
+  
+  + undefined
+  - 'Meteor Beam'
+  
+      at check (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-14/task-2/champions-moves-repair/poke-sim/tests/charge_spa_timing_tests.mjs:12:11)
+      at TestContext.<anonymous> (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-14/task-2/champions-moves-repair/poke-sim/tests/charge_spa_timing_tests.mjs:41:13)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1201:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:831:18)
+      at Test.postRun (node:internal/test_runner/test:1330:19)
+      at Test.run (node:internal/test_runner/test:1258:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:831:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: undefined,
+    expected: 'Meteor Beam',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at poke-sim\tests\charge_spa_timing_tests.mjs:40:4
+Γ£û CHARGE-SPA-klutz-Meteor Beam-player-1 (166.6639ms)
+  AssertionError [ERR_ASSERTION]: charge action anchor
+  + actual - expected
+  
+  + undefined
+  - 'Meteor Beam'
+  
+      at check (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-14/task-2/champions-moves-repair/poke-sim/tests/charge_spa_timing_tests.mjs:12:11)
+      at TestContext.<anonymous> (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-14/task-2/champions-moves-repair/poke-sim/tests/charge_spa_timing_tests.mjs:41:13)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1201:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:831:18)
+      at Test.postRun (node:internal/test_runner/test:1330:19)
+      at Test.run (node:internal/test_runner/test:1258:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:831:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: undefined,
+    expected: 'Meteor Beam',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at poke-sim\tests\charge_spa_timing_tests.mjs:40:4
+Γ£û CHARGE-SPA-klutz-gas-Meteor Beam-player-1 (190.5443ms)
+  AssertionError [ERR_ASSERTION]: charge action anchor
+  + actual - expected
+  
+  + undefined
+  - 'Meteor Beam'
+  
+      at check (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-14/task-2/champions-moves-repair/poke-sim/tests/charge_spa_timing_tests.mjs:12:11)
+      at TestContext.<anonymous> (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-14/task-2/champions-moves-repair/poke-sim/tests/charge_spa_timing_tests.mjs:41:13)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1201:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:831:18)
+      at Test.postRun (node:internal/test_runner/test:1330:19)
+      at Test.run (node:internal/test_runner/test:1258:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:831:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: undefined,
+    expected: 'Meteor Beam',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at poke-sim\tests\charge_spa_timing_tests.mjs:40:4
+Γ£û CHARGE-SPA-simple-Meteor Beam-player-1 (155.5542ms)
+  AssertionError [ERR_ASSERTION]: charge action anchor
+  + actual - expected
+  
+  + undefined
+  - 'Meteor Beam'
+  
+      at check (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-14/task-2/champions-moves-repair/poke-sim/tests/charge_spa_timing_tests.mjs:12:11)
+      at TestContext.<anonymous> (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-14/task-2/champions-moves-repair/poke-sim/tests/charge_spa_timing_tests.mjs:41:13)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1201:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:831:18)
+      at Test.postRun (node:internal/test_runner/test:1330:19)
+      at Test.run (node:internal/test_runner/test:1258:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:831:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: undefined,
+    expected: 'Meteor Beam',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at poke-sim\tests\charge_spa_timing_tests.mjs:40:4
+Γ£û CHARGE-SPA-contrary-Meteor Beam-player-1 (195.8559ms)
+  AssertionError [ERR_ASSERTION]: charge action anchor
+  + actual - expected
+  
+  + undefined
+  - 'Meteor Beam'
+  
+      at check (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-14/task-2/champions-moves-repair/poke-sim/tests/charge_spa_timing_tests.mjs:12:11)
+      at TestContext.<anonymous> (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-14/task-2/champions-moves-repair/poke-sim/tests/charge_spa_timing_tests.mjs:41:13)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1201:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:831:18)
+      at Test.postRun (node:internal/test_runner/test:1330:19)
+      at Test.run (node:internal/test_runner/test:1258:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:831:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: undefined,
+    expected: 'Meteor Beam',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at poke-sim\tests\charge_spa_timing_tests.mjs:40:4
+Γ£û CHARGE-SPA-simple-gas-Meteor Beam-player-1 (156.5755ms)
+  AssertionError [ERR_ASSERTION]: charge action anchor
+  + actual - expected
+  
+  + undefined
+  - 'Meteor Beam'
+  
+      at check (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-14/task-2/champions-moves-repair/poke-sim/tests/charge_spa_timing_tests.mjs:12:11)
+      at TestContext.<anonymous> (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-14/task-2/champions-moves-repair/poke-sim/tests/charge_spa_timing_tests.mjs:41:13)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1201:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:831:18)
+      at Test.postRun (node:internal/test_runner/test:1330:19)
+      at Test.run (node:internal/test_runner/test:1258:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:831:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: undefined,
+    expected: 'Meteor Beam',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at poke-sim\tests\charge_spa_timing_tests.mjs:40:4
+Γ£û CHARGE-SPA-contrary-gas-Meteor Beam-player-1 (224.6564ms)
+  AssertionError [ERR_ASSERTION]: charge action anchor
+  + actual - expected
+  
+  + undefined
+  - 'Meteor Beam'
+  
+      at check (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-14/task-2/champions-moves-repair/poke-sim/tests/charge_spa_timing_tests.mjs:12:11)
+      at TestContext.<anonymous> (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-14/task-2/champions-moves-repair/poke-sim/tests/charge_spa_timing_tests.mjs:41:13)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1201:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:831:18)
+      at Test.postRun (node:internal/test_runner/test:1330:19)
+      at Test.run (node:internal/test_runner/test:1258:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:831:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: undefined,
+    expected: 'Meteor Beam',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at poke-sim\tests\charge_spa_timing_tests.mjs:40:4
+Γ£û CHARGE-SPA-shield-Meteor Beam-player-1 (161.6348ms)
+  AssertionError [ERR_ASSERTION]: charge action anchor
+  + actual - expected
+  
+  + undefined
+  - 'Meteor Beam'
+  
+      at check (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-14/task-2/champions-moves-repair/poke-sim/tests/charge_spa_timing_tests.mjs:12:11)
+      at TestContext.<anonymous> (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-14/task-2/champions-moves-repair/poke-sim/tests/charge_spa_timing_tests.mjs:41:13)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1201:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:831:18)
+      at Test.postRun (node:internal/test_runner/test:1330:19)
+      at Test.run (node:internal/test_runner/test:1258:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:831:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: undefined,
+    expected: 'Meteor Beam',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at poke-sim\tests\charge_spa_timing_tests.mjs:40:4
+Γ£û CHARGE-SPA-cap-Meteor Beam-player-1 (187.4783ms)
+  AssertionError [ERR_ASSERTION]: charge action anchor
+  + actual - expected
+  
+  + undefined
+  - 'Meteor Beam'
+  
+      at check (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-14/task-2/champions-moves-repair/poke-sim/tests/charge_spa_timing_tests.mjs:12:11)
+      at TestContext.<anonymous> (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-14/task-2/champions-moves-repair/poke-sim/tests/charge_spa_timing_tests.mjs:41:13)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1201:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:831:18)
+      at Test.postRun (node:internal/test_runner/test:1330:19)
+      at Test.run (node:internal/test_runner/test:1258:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:831:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: undefined,
+    expected: 'Meteor Beam',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at poke-sim\tests\charge_spa_timing_tests.mjs:40:4
+Γ£û CHARGE-SPA-lower-cap-Meteor Beam-player-1 (169.7435ms)
+  AssertionError [ERR_ASSERTION]: charge action anchor
+  + actual - expected
+  
+  + undefined
+  - 'Meteor Beam'
+  
+      at check (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-14/task-2/champions-moves-repair/poke-sim/tests/charge_spa_timing_tests.mjs:12:11)
+      at TestContext.<anonymous> (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-14/task-2/champions-moves-repair/poke-sim/tests/charge_spa_timing_tests.mjs:41:13)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1201:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:831:18)
+      at Test.postRun (node:internal/test_runner/test:1330:19)
+      at Test.run (node:internal/test_runner/test:1258:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:831:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: undefined,
+    expected: 'Meteor Beam',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at poke-sim\tests\charge_spa_timing_tests.mjs:21:31
+Γ£û CHARGE-SPA-normal-Meteor Beam-opponent-0-t2 (171.2397ms)
+  AssertionError [ERR_ASSERTION]: charge action anchor
+  + actual - expected
+  
+  + undefined
+  - 'Meteor Beam'
+  
+      at check (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-14/task-2/champions-moves-repair/poke-sim/tests/charge_spa_timing_tests.mjs:12:11)
+      at TestContext.<anonymous> (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-14/task-2/champions-moves-repair/poke-sim/tests/charge_spa_timing_tests.mjs:21:100)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1201:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:831:18)
+      at Test.postRun (node:internal/test_runner/test:1330:19)
+      at Test.run (node:internal/test_runner/test:1258:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:831:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: undefined,
+    expected: 'Meteor Beam',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at poke-sim\tests\charge_spa_timing_tests.mjs:21:31
+Γ£û CHARGE-SPA-normal-Meteor Beam-opponent-0-t3 (168.6254ms)
+  AssertionError [ERR_ASSERTION]: charge action anchor
+  + actual - expected
+  
+  + undefined
+  - 'Meteor Beam'
+  
+      at check (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-14/task-2/champions-moves-repair/poke-sim/tests/charge_spa_timing_tests.mjs:12:11)
+      at TestContext.<anonymous> (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-14/task-2/champions-moves-repair/poke-sim/tests/charge_spa_timing_tests.mjs:21:100)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1201:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:831:18)
+      at Test.postRun (node:internal/test_runner/test:1330:19)
+      at Test.run (node:internal/test_runner/test:1258:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:831:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: undefined,
+    expected: 'Meteor Beam',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at poke-sim\tests\charge_spa_timing_tests.mjs:21:31
+Γ£û CHARGE-SPA-normal-Meteor Beam-opponent-0-t4 (177.5416ms)
+  AssertionError [ERR_ASSERTION]: charge action anchor
+  + actual - expected
+  
+  + undefined
+  - 'Meteor Beam'
+  
+      at check (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-14/task-2/champions-moves-repair/poke-sim/tests/charge_spa_timing_tests.mjs:12:11)
+      at TestContext.<anonymous> (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-14/task-2/champions-moves-repair/poke-sim/tests/charge_spa_timing_tests.mjs:21:100)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1201:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:831:18)
+      at Test.postRun (node:internal/test_runner/test:1330:19)
+      at Test.run (node:internal/test_runner/test:1258:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:831:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: undefined,
+    expected: 'Meteor Beam',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at poke-sim\tests\charge_spa_timing_tests.mjs:40:4
+Γ£û CHARGE-SPA-herb-Meteor Beam-opponent-0 (179.1739ms)
+  AssertionError [ERR_ASSERTION]: charge action anchor
+  + actual - expected
+  
+  + undefined
+  - 'Meteor Beam'
+  
+      at check (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-14/task-2/champions-moves-repair/poke-sim/tests/charge_spa_timing_tests.mjs:12:11)
+      at TestContext.<anonymous> (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-14/task-2/champions-moves-repair/poke-sim/tests/charge_spa_timing_tests.mjs:41:13)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1201:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:831:18)
+      at Test.postRun (node:internal/test_runner/test:1330:19)
+      at Test.run (node:internal/test_runner/test:1258:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:831:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: undefined,
+    expected: 'Meteor Beam',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at poke-sim\tests\charge_spa_timing_tests.mjs:40:4
+Γ£û CHARGE-SPA-herb-consumed-Meteor Beam-opponent-0 (220.4001ms)
+  AssertionError [ERR_ASSERTION]: charge action anchor
+  + actual - expected
+  
+  + undefined
+  - 'Meteor Beam'
+  
+      at check (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-14/task-2/champions-moves-repair/poke-sim/tests/charge_spa_timing_tests.mjs:12:11)
+      at TestContext.<anonymous> (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-14/task-2/champions-moves-repair/poke-sim/tests/charge_spa_timing_tests.mjs:41:13)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1201:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:831:18)
+      at Test.postRun (node:internal/test_runner/test:1330:19)
+      at Test.run (node:internal/test_runner/test:1258:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:831:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: undefined,
+    expected: 'Meteor Beam',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at poke-sim\tests\charge_spa_timing_tests.mjs:40:4
+Γ£û CHARGE-SPA-klutz-Meteor Beam-opponent-0 (163.4075ms)
+  AssertionError [ERR_ASSERTION]: charge action anchor
+  + actual - expected
+  
+  + undefined
+  - 'Meteor Beam'
+  
+      at check (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-14/task-2/champions-moves-repair/poke-sim/tests/charge_spa_timing_tests.mjs:12:11)
+      at TestContext.<anonymous> (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-14/task-2/champions-moves-repair/poke-sim/tests/charge_spa_timing_tests.mjs:41:13)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1201:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:831:18)
+      at Test.postRun (node:internal/test_runner/test:1330:19)
+      at Test.run (node:internal/test_runner/test:1258:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:831:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: undefined,
+    expected: 'Meteor Beam',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at poke-sim\tests\charge_spa_timing_tests.mjs:40:4
+Γ£û CHARGE-SPA-klutz-gas-Meteor Beam-opponent-0 (149.3537ms)
+  AssertionError [ERR_ASSERTION]: charge action anchor
+  + actual - expected
+  
+  + undefined
+  - 'Meteor Beam'
+  
+      at check (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-14/task-2/champions-moves-repair/poke-sim/tests/charge_spa_timing_tests.mjs:12:11)
+      at TestContext.<anonymous> (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-14/task-2/champions-moves-repair/poke-sim/tests/charge_spa_timing_tests.mjs:41:13)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1201:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:831:18)
+      at Test.postRun (node:internal/test_runner/test:1330:19)
+      at Test.run (node:internal/test_runner/test:1258:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:831:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: undefined,
+    expected: 'Meteor Beam',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at poke-sim\tests\charge_spa_timing_tests.mjs:40:4
+Γ£û CHARGE-SPA-simple-Meteor Beam-opponent-0 (173.4992ms)
+  AssertionError [ERR_ASSERTION]: charge action anchor
+  + actual - expected
+  
+  + undefined
+  - 'Meteor Beam'
+  
+      at check (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-14/task-2/champions-moves-repair/poke-sim/tests/charge_spa_timing_tests.mjs:12:11)
+      at TestContext.<anonymous> (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-14/task-2/champions-moves-repair/poke-sim/tests/charge_spa_timing_tests.mjs:41:13)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1201:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:831:18)
+      at Test.postRun (node:internal/test_runner/test:1330:19)
+      at Test.run (node:internal/test_runner/test:1258:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:831:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: undefined,
+    expected: 'Meteor Beam',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at poke-sim\tests\charge_spa_timing_tests.mjs:40:4
+Γ£û CHARGE-SPA-contrary-Meteor Beam-opponent-0 (162.9206ms)
+  AssertionError [ERR_ASSERTION]: charge action anchor
+  + actual - expected
+  
+  + undefined
+  - 'Meteor Beam'
+  
+      at check (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-14/task-2/champions-moves-repair/poke-sim/tests/charge_spa_timing_tests.mjs:12:11)
+      at TestContext.<anonymous> (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-14/task-2/champions-moves-repair/poke-sim/tests/charge_spa_timing_tests.mjs:41:13)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1201:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:831:18)
+      at Test.postRun (node:internal/test_runner/test:1330:19)
+      at Test.run (node:internal/test_runner/test:1258:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:831:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: undefined,
+    expected: 'Meteor Beam',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at poke-sim\tests\charge_spa_timing_tests.mjs:40:4
+Γ£û CHARGE-SPA-simple-gas-Meteor Beam-opponent-0 (152.1602ms)
+  AssertionError [ERR_ASSERTION]: charge action anchor
+  + actual - expected
+  
+  + undefined
+  - 'Meteor Beam'
+  
+      at check (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-14/task-2/champions-moves-repair/poke-sim/tests/charge_spa_timing_tests.mjs:12:11)
+      at TestContext.<anonymous> (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-14/task-2/champions-moves-repair/poke-sim/tests/charge_spa_timing_tests.mjs:41:13)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1201:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:831:18)
+      at Test.postRun (node:internal/test_runner/test:1330:19)
+      at Test.run (node:internal/test_runner/test:1258:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:831:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: undefined,
+    expected: 'Meteor Beam',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at poke-sim\tests\charge_spa_timing_tests.mjs:40:4
+Γ£û CHARGE-SPA-contrary-gas-Meteor Beam-opponent-0 (128.0833ms)
+  AssertionError [ERR_ASSERTION]: charge action anchor
+  + actual - expected
+  
+  + undefined
+  - 'Meteor Beam'
+  
+      at check (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-14/task-2/champions-moves-repair/poke-sim/tests/charge_spa_timing_tests.mjs:12:11)
+      at TestContext.<anonymous> (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-14/task-2/champions-moves-repair/poke-sim/tests/charge_spa_timing_tests.mjs:41:13)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1201:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:831:18)
+      at Test.postRun (node:internal/test_runner/test:1330:19)
+      at Test.run (node:internal/test_runner/test:1258:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:831:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: undefined,
+    expected: 'Meteor Beam',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at poke-sim\tests\charge_spa_timing_tests.mjs:40:4
+Γ£û CHARGE-SPA-shield-Meteor Beam-opponent-0 (129.9356ms)
+  AssertionError [ERR_ASSERTION]: charge action anchor
+  + actual - expected
+  
+  + undefined
+  - 'Meteor Beam'
+  
+      at check (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-14/task-2/champions-moves-repair/poke-sim/tests/charge_spa_timing_tests.mjs:12:11)
+      at TestContext.<anonymous> (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-14/task-2/champions-moves-repair/poke-sim/tests/charge_spa_timing_tests.mjs:41:13)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1201:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:831:18)
+      at Test.postRun (node:internal/test_runner/test:1330:19)
+      at Test.run (node:internal/test_runner/test:1258:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:831:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: undefined,
+    expected: 'Meteor Beam',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at poke-sim\tests\charge_spa_timing_tests.mjs:40:4
+Γ£û CHARGE-SPA-cap-Meteor Beam-opponent-0 (127.8133ms)
+  AssertionError [ERR_ASSERTION]: charge action anchor
+  + actual - expected
+  
+  + undefined
+  - 'Meteor Beam'
+  
+      at check (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-14/task-2/champions-moves-repair/poke-sim/tests/charge_spa_timing_tests.mjs:12:11)
+      at TestContext.<anonymous> (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-14/task-2/champions-moves-repair/poke-sim/tests/charge_spa_timing_tests.mjs:41:13)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1201:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:831:18)
+      at Test.postRun (node:internal/test_runner/test:1330:19)
+      at Test.run (node:internal/test_runner/test:1258:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:831:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: undefined,
+    expected: 'Meteor Beam',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at poke-sim\tests\charge_spa_timing_tests.mjs:40:4
+Γ£û CHARGE-SPA-lower-cap-Meteor Beam-opponent-0 (154.8413ms)
+  AssertionError [ERR_ASSERTION]: charge action anchor
+  + actual - expected
+  
+  + undefined
+  - 'Meteor Beam'
+  
+      at check (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-14/task-2/champions-moves-repair/poke-sim/tests/charge_spa_timing_tests.mjs:12:11)
+      at TestContext.<anonymous> (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-14/task-2/champions-moves-repair/poke-sim/tests/charge_spa_timing_tests.mjs:41:13)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1201:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:831:18)
+      at Test.postRun (node:internal/test_runner/test:1330:19)
+      at Test.run (node:internal/test_runner/test:1258:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:831:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: undefined,
+    expected: 'Meteor Beam',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at poke-sim\tests\charge_spa_timing_tests.mjs:21:31
+Γ£û CHARGE-SPA-normal-Meteor Beam-opponent-1-t2 (133.3999ms)
+  AssertionError [ERR_ASSERTION]: charge action anchor
+  + actual - expected
+  
+  + undefined
+  - 'Meteor Beam'
+  
+      at check (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-14/task-2/champions-moves-repair/poke-sim/tests/charge_spa_timing_tests.mjs:12:11)
+      at TestContext.<anonymous> (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-14/task-2/champions-moves-repair/poke-sim/tests/charge_spa_timing_tests.mjs:21:100)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1201:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:831:18)
+      at Test.postRun (node:internal/test_runner/test:1330:19)
+      at Test.run (node:internal/test_runner/test:1258:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:831:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: undefined,
+    expected: 'Meteor Beam',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at poke-sim\tests\charge_spa_timing_tests.mjs:21:31
+Γ£û CHARGE-SPA-normal-Meteor Beam-opponent-1-t3 (141.6403ms)
+  AssertionError [ERR_ASSERTION]: charge action anchor
+  + actual - expected
+  
+  + undefined
+  - 'Meteor Beam'
+  
+      at check (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-14/task-2/champions-moves-repair/poke-sim/tests/charge_spa_timing_tests.mjs:12:11)
+      at TestContext.<anonymous> (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-14/task-2/champions-moves-repair/poke-sim/tests/charge_spa_timing_tests.mjs:21:100)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1201:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:831:18)
+      at Test.postRun (node:internal/test_runner/test:1330:19)
+      at Test.run (node:internal/test_runner/test:1258:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:831:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: undefined,
+    expected: 'Meteor Beam',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at poke-sim\tests\charge_spa_timing_tests.mjs:21:31
+Γ£û CHARGE-SPA-normal-Meteor Beam-opponent-1-t4 (136.0541ms)
+  AssertionError [ERR_ASSERTION]: charge action anchor
+  + actual - expected
+  
+  + undefined
+  - 'Meteor Beam'
+  
+      at check (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-14/task-2/champions-moves-repair/poke-sim/tests/charge_spa_timing_tests.mjs:12:11)
+      at TestContext.<anonymous> (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-14/task-2/champions-moves-repair/poke-sim/tests/charge_spa_timing_tests.mjs:21:100)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1201:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:831:18)
+      at Test.postRun (node:internal/test_runner/test:1330:19)
+      at Test.run (node:internal/test_runner/test:1258:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:831:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: undefined,
+    expected: 'Meteor Beam',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at poke-sim\tests\charge_spa_timing_tests.mjs:40:4
+Γ£û CHARGE-SPA-herb-Meteor Beam-opponent-1 (135.4739ms)
+  AssertionError [ERR_ASSERTION]: charge action anchor
+  + actual - expected
+  
+  + undefined
+  - 'Meteor Beam'
+  
+      at check (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-14/task-2/champions-moves-repair/poke-sim/tests/charge_spa_timing_tests.mjs:12:11)
+      at TestContext.<anonymous> (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-14/task-2/champions-moves-repair/poke-sim/tests/charge_spa_timing_tests.mjs:41:13)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1201:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:831:18)
+      at Test.postRun (node:internal/test_runner/test:1330:19)
+      at Test.run (node:internal/test_runner/test:1258:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:831:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: undefined,
+    expected: 'Meteor Beam',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at poke-sim\tests\charge_spa_timing_tests.mjs:40:4
+Γ£û CHARGE-SPA-herb-consumed-Meteor Beam-opponent-1 (144.2579ms)
+  AssertionError [ERR_ASSERTION]: charge action anchor
+  + actual - expected
+  
+  + undefined
+  - 'Meteor Beam'
+  
+      at check (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-14/task-2/champions-moves-repair/poke-sim/tests/charge_spa_timing_tests.mjs:12:11)
+      at TestContext.<anonymous> (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-14/task-2/champions-moves-repair/poke-sim/tests/charge_spa_timing_tests.mjs:41:13)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1201:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:831:18)
+      at Test.postRun (node:internal/test_runner/test:1330:19)
+      at Test.run (node:internal/test_runner/test:1258:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:831:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: undefined,
+    expected: 'Meteor Beam',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at poke-sim\tests\charge_spa_timing_tests.mjs:40:4
+Γ£û CHARGE-SPA-klutz-Meteor Beam-opponent-1 (136.9905ms)
+  AssertionError [ERR_ASSERTION]: charge action anchor
+  + actual - expected
+  
+  + undefined
+  - 'Meteor Beam'
+  
+      at check (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-14/task-2/champions-moves-repair/poke-sim/tests/charge_spa_timing_tests.mjs:12:11)
+      at TestContext.<anonymous> (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-14/task-2/champions-moves-repair/poke-sim/tests/charge_spa_timing_tests.mjs:41:13)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1201:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:831:18)
+      at Test.postRun (node:internal/test_runner/test:1330:19)
+      at Test.run (node:internal/test_runner/test:1258:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:831:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: undefined,
+    expected: 'Meteor Beam',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at poke-sim\tests\charge_spa_timing_tests.mjs:40:4
+Γ£û CHARGE-SPA-klutz-gas-Meteor Beam-opponent-1 (130.4255ms)
+  AssertionError [ERR_ASSERTION]: charge action anchor
+  + actual - expected
+  
+  + undefined
+  - 'Meteor Beam'
+  
+      at check (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-14/task-2/champions-moves-repair/poke-sim/tests/charge_spa_timing_tests.mjs:12:11)
+      at TestContext.<anonymous> (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-14/task-2/champions-moves-repair/poke-sim/tests/charge_spa_timing_tests.mjs:41:13)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1201:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:831:18)
+      at Test.postRun (node:internal/test_runner/test:1330:19)
+      at Test.run (node:internal/test_runner/test:1258:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:831:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: undefined,
+    expected: 'Meteor Beam',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at poke-sim\tests\charge_spa_timing_tests.mjs:40:4
+Γ£û CHARGE-SPA-simple-Meteor Beam-opponent-1 (127.6834ms)
+  AssertionError [ERR_ASSERTION]: charge action anchor
+  + actual - expected
+  
+  + undefined
+  - 'Meteor Beam'
+  
+      at check (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-14/task-2/champions-moves-repair/poke-sim/tests/charge_spa_timing_tests.mjs:12:11)
+      at TestContext.<anonymous> (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-14/task-2/champions-moves-repair/poke-sim/tests/charge_spa_timing_tests.mjs:41:13)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1201:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:831:18)
+      at Test.postRun (node:internal/test_runner/test:1330:19)
+      at Test.run (node:internal/test_runner/test:1258:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:831:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: undefined,
+    expected: 'Meteor Beam',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at poke-sim\tests\charge_spa_timing_tests.mjs:40:4
+Γ£û CHARGE-SPA-contrary-Meteor Beam-opponent-1 (127.6191ms)
+  AssertionError [ERR_ASSERTION]: charge action anchor
+  + actual - expected
+  
+  + undefined
+  - 'Meteor Beam'
+  
+      at check (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-14/task-2/champions-moves-repair/poke-sim/tests/charge_spa_timing_tests.mjs:12:11)
+      at TestContext.<anonymous> (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-14/task-2/champions-moves-repair/poke-sim/tests/charge_spa_timing_tests.mjs:41:13)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1201:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:831:18)
+      at Test.postRun (node:internal/test_runner/test:1330:19)
+      at Test.run (node:internal/test_runner/test:1258:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:831:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: undefined,
+    expected: 'Meteor Beam',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at poke-sim\tests\charge_spa_timing_tests.mjs:40:4
+Γ£û CHARGE-SPA-simple-gas-Meteor Beam-opponent-1 (136.0732ms)
+  AssertionError [ERR_ASSERTION]: charge action anchor
+  + actual - expected
+  
+  + undefined
+  - 'Meteor Beam'
+  
+      at check (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-14/task-2/champions-moves-repair/poke-sim/tests/charge_spa_timing_tests.mjs:12:11)
+      at TestContext.<anonymous> (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-14/task-2/champions-moves-repair/poke-sim/tests/charge_spa_timing_tests.mjs:41:13)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1201:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:831:18)
+      at Test.postRun (node:internal/test_runner/test:1330:19)
+      at Test.run (node:internal/test_runner/test:1258:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:831:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: undefined,
+    expected: 'Meteor Beam',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at poke-sim\tests\charge_spa_timing_tests.mjs:40:4
+Γ£û CHARGE-SPA-contrary-gas-Meteor Beam-opponent-1 (131.4148ms)
+  AssertionError [ERR_ASSERTION]: charge action anchor
+  + actual - expected
+  
+  + undefined
+  - 'Meteor Beam'
+  
+      at check (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-14/task-2/champions-moves-repair/poke-sim/tests/charge_spa_timing_tests.mjs:12:11)
+      at TestContext.<anonymous> (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-14/task-2/champions-moves-repair/poke-sim/tests/charge_spa_timing_tests.mjs:41:13)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1201:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:831:18)
+      at Test.postRun (node:internal/test_runner/test:1330:19)
+      at Test.run (node:internal/test_runner/test:1258:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:831:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: undefined,
+    expected: 'Meteor Beam',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at poke-sim\tests\charge_spa_timing_tests.mjs:40:4
+Γ£û CHARGE-SPA-shield-Meteor Beam-opponent-1 (176.0741ms)
+  AssertionError [ERR_ASSERTION]: charge action anchor
+  + actual - expected
+  
+  + undefined
+  - 'Meteor Beam'
+  
+      at check (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-14/task-2/champions-moves-repair/poke-sim/tests/charge_spa_timing_tests.mjs:12:11)
+      at TestContext.<anonymous> (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-14/task-2/champions-moves-repair/poke-sim/tests/charge_spa_timing_tests.mjs:41:13)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1201:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:831:18)
+      at Test.postRun (node:internal/test_runner/test:1330:19)
+      at Test.run (node:internal/test_runner/test:1258:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:831:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: undefined,
+    expected: 'Meteor Beam',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at poke-sim\tests\charge_spa_timing_tests.mjs:40:4
+Γ£û CHARGE-SPA-cap-Meteor Beam-opponent-1 (118.257ms)
+  AssertionError [ERR_ASSERTION]: charge action anchor
+  + actual - expected
+  
+  + undefined
+  - 'Meteor Beam'
+  
+      at check (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-14/task-2/champions-moves-repair/poke-sim/tests/charge_spa_timing_tests.mjs:12:11)
+      at TestContext.<anonymous> (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-14/task-2/champions-moves-repair/poke-sim/tests/charge_spa_timing_tests.mjs:41:13)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1201:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:831:18)
+      at Test.postRun (node:internal/test_runner/test:1330:19)
+      at Test.run (node:internal/test_runner/test:1258:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:831:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: undefined,
+    expected: 'Meteor Beam',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at poke-sim\tests\charge_spa_timing_tests.mjs:40:4
+Γ£û CHARGE-SPA-lower-cap-Meteor Beam-opponent-1 (133.659ms)
+  AssertionError [ERR_ASSERTION]: charge action anchor
+  + actual - expected
+  
+  + undefined
+  - 'Meteor Beam'
+  
+      at check (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-14/task-2/champions-moves-repair/poke-sim/tests/charge_spa_timing_tests.mjs:12:11)
+      at TestContext.<anonymous> (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-14/task-2/champions-moves-repair/poke-sim/tests/charge_spa_timing_tests.mjs:41:13)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1201:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:831:18)
+      at Test.postRun (node:internal/test_runner/test:1330:19)
+      at Test.run (node:internal/test_runner/test:1258:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:831:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: undefined,
+    expected: 'Meteor Beam',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at poke-sim\tests\charge_spa_timing_tests.mjs:21:31
+Γ£û CHARGE-SPA-normal-Electro Shot-player-0-t2 (153.7229ms)
+  AssertionError [ERR_ASSERTION]: charge action anchor
+  + actual - expected
+  
+  + undefined
+  - 'Electro Shot'
+  
+      at check (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-14/task-2/champions-moves-repair/poke-sim/tests/charge_spa_timing_tests.mjs:12:11)
+      at TestContext.<anonymous> (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-14/task-2/champions-moves-repair/poke-sim/tests/charge_spa_timing_tests.mjs:21:100)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1201:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:831:18)
+      at Test.postRun (node:internal/test_runner/test:1330:19)
+      at Test.run (node:internal/test_runner/test:1258:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:831:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: undefined,
+    expected: 'Electro Shot',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at poke-sim\tests\charge_spa_timing_tests.mjs:21:31
+Γ£û CHARGE-SPA-normal-Electro Shot-player-0-t3 (173.4265ms)
+  AssertionError [ERR_ASSERTION]: charge action anchor
+  + actual - expected
+  
+  + undefined
+  - 'Electro Shot'
+  
+      at check (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-14/task-2/champions-moves-repair/poke-sim/tests/charge_spa_timing_tests.mjs:12:11)
+      at TestContext.<anonymous> (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-14/task-2/champions-moves-repair/poke-sim/tests/charge_spa_timing_tests.mjs:21:100)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1201:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:831:18)
+      at Test.postRun (node:internal/test_runner/test:1330:19)
+      at Test.run (node:internal/test_runner/test:1258:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:831:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: undefined,
+    expected: 'Electro Shot',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at poke-sim\tests\charge_spa_timing_tests.mjs:21:31
+Γ£û CHARGE-SPA-normal-Electro Shot-player-0-t4 (186.2074ms)
+  AssertionError [ERR_ASSERTION]: charge action anchor
+  + actual - expected
+  
+  + undefined
+  - 'Electro Shot'
+  
+      at check (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-14/task-2/champions-moves-repair/poke-sim/tests/charge_spa_timing_tests.mjs:12:11)
+      at TestContext.<anonymous> (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-14/task-2/champions-moves-repair/poke-sim/tests/charge_spa_timing_tests.mjs:21:100)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1201:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:831:18)
+      at Test.postRun (node:internal/test_runner/test:1330:19)
+      at Test.run (node:internal/test_runner/test:1258:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:831:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: undefined,
+    expected: 'Electro Shot',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at poke-sim\tests\charge_spa_timing_tests.mjs:40:4
+Γ£û CHARGE-SPA-herb-Electro Shot-player-0 (219.2586ms)
+  AssertionError [ERR_ASSERTION]: charge action anchor
+  + actual - expected
+  
+  + undefined
+  - 'Electro Shot'
+  
+      at check (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-14/task-2/champions-moves-repair/poke-sim/tests/charge_spa_timing_tests.mjs:12:11)
+      at TestContext.<anonymous> (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-14/task-2/champions-moves-repair/poke-sim/tests/charge_spa_timing_tests.mjs:41:13)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1201:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:831:18)
+      at Test.postRun (node:internal/test_runner/test:1330:19)
+      at Test.run (node:internal/test_runner/test:1258:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:831:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: undefined,
+    expected: 'Electro Shot',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at poke-sim\tests\charge_spa_timing_tests.mjs:40:4
+Γ£û CHARGE-SPA-herb-consumed-Electro Shot-player-0 (166.7485ms)
+  AssertionError [ERR_ASSERTION]: charge action anchor
+  + actual - expected
+  
+  + undefined
+  - 'Electro Shot'
+  
+      at check (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-14/task-2/champions-moves-repair/poke-sim/tests/charge_spa_timing_tests.mjs:12:11)
+      at TestContext.<anonymous> (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-14/task-2/champions-moves-repair/poke-sim/tests/charge_spa_timing_tests.mjs:41:13)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1201:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:831:18)
+      at Test.postRun (node:internal/test_runner/test:1330:19)
+      at Test.run (node:internal/test_runner/test:1258:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:831:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: undefined,
+    expected: 'Electro Shot',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at poke-sim\tests\charge_spa_timing_tests.mjs:40:4
+Γ£û CHARGE-SPA-klutz-Electro Shot-player-0 (179.9299ms)
+  AssertionError [ERR_ASSERTION]: charge action anchor
+  + actual - expected
+  
+  + undefined
+  - 'Electro Shot'
+  
+      at check (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-14/task-2/champions-moves-repair/poke-sim/tests/charge_spa_timing_tests.mjs:12:11)
+      at TestContext.<anonymous> (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-14/task-2/champions-moves-repair/poke-sim/tests/charge_spa_timing_tests.mjs:41:13)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1201:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:831:18)
+      at Test.postRun (node:internal/test_runner/test:1330:19)
+      at Test.run (node:internal/test_runner/test:1258:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:831:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: undefined,
+    expected: 'Electro Shot',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at poke-sim\tests\charge_spa_timing_tests.mjs:40:4
+Γ£û CHARGE-SPA-klutz-gas-Electro Shot-player-0 (164.5918ms)
+  AssertionError [ERR_ASSERTION]: charge action anchor
+  + actual - expected
+  
+  + undefined
+  - 'Electro Shot'
+  
+      at check (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-14/task-2/champions-moves-repair/poke-sim/tests/charge_spa_timing_tests.mjs:12:11)
+      at TestContext.<anonymous> (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-14/task-2/champions-moves-repair/poke-sim/tests/charge_spa_timing_tests.mjs:41:13)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1201:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:831:18)
+      at Test.postRun (node:internal/test_runner/test:1330:19)
+      at Test.run (node:internal/test_runner/test:1258:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:831:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: undefined,
+    expected: 'Electro Shot',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at poke-sim\tests\charge_spa_timing_tests.mjs:40:4
+Γ£û CHARGE-SPA-simple-Electro Shot-player-0 (157.2018ms)
+  AssertionError [ERR_ASSERTION]: charge action anchor
+  + actual - expected
+  
+  + undefined
+  - 'Electro Shot'
+  
+      at check (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-14/task-2/champions-moves-repair/poke-sim/tests/charge_spa_timing_tests.mjs:12:11)
+      at TestContext.<anonymous> (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-14/task-2/champions-moves-repair/poke-sim/tests/charge_spa_timing_tests.mjs:41:13)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1201:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:831:18)
+      at Test.postRun (node:internal/test_runner/test:1330:19)
+      at Test.run (node:internal/test_runner/test:1258:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:831:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: undefined,
+    expected: 'Electro Shot',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at poke-sim\tests\charge_spa_timing_tests.mjs:40:4
+Γ£û CHARGE-SPA-contrary-Electro Shot-player-0 (154.3923ms)
+  AssertionError [ERR_ASSERTION]: charge action anchor
+  + actual - expected
+  
+  + undefined
+  - 'Electro Shot'
+  
+      at check (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-14/task-2/champions-moves-repair/poke-sim/tests/charge_spa_timing_tests.mjs:12:11)
+      at TestContext.<anonymous> (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-14/task-2/champions-moves-repair/poke-sim/tests/charge_spa_timing_tests.mjs:41:13)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1201:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:831:18)
+      at Test.postRun (node:internal/test_runner/test:1330:19)
+      at Test.run (node:internal/test_runner/test:1258:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:831:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: undefined,
+    expected: 'Electro Shot',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at poke-sim\tests\charge_spa_timing_tests.mjs:40:4
+Γ£û CHARGE-SPA-simple-gas-Electro Shot-player-0 (169.0455ms)
+  AssertionError [ERR_ASSERTION]: charge action anchor
+  + actual - expected
+  
+  + undefined
+  - 'Electro Shot'
+  
+      at check (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-14/task-2/champions-moves-repair/poke-sim/tests/charge_spa_timing_tests.mjs:12:11)
+      at TestContext.<anonymous> (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-14/task-2/champions-moves-repair/poke-sim/tests/charge_spa_timing_tests.mjs:41:13)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1201:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:831:18)
+      at Test.postRun (node:internal/test_runner/test:1330:19)
+      at Test.run (node:internal/test_runner/test:1258:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:831:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: undefined,
+    expected: 'Electro Shot',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at poke-sim\tests\charge_spa_timing_tests.mjs:40:4
+Γ£û CHARGE-SPA-contrary-gas-Electro Shot-player-0 (177.3735ms)
+  AssertionError [ERR_ASSERTION]: charge action anchor
+  + actual - expected
+  
+  + undefined
+  - 'Electro Shot'
+  
+      at check (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-14/task-2/champions-moves-repair/poke-sim/tests/charge_spa_timing_tests.mjs:12:11)
+      at TestContext.<anonymous> (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-14/task-2/champions-moves-repair/poke-sim/tests/charge_spa_timing_tests.mjs:41:13)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1201:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:831:18)
+      at Test.postRun (node:internal/test_runner/test:1330:19)
+      at Test.run (node:internal/test_runner/test:1258:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:831:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: undefined,
+    expected: 'Electro Shot',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at poke-sim\tests\charge_spa_timing_tests.mjs:40:4
+Γ£û CHARGE-SPA-shield-Electro Shot-player-0 (175.8548ms)
+  AssertionError [ERR_ASSERTION]: charge action anchor
+  + actual - expected
+  
+  + undefined
+  - 'Electro Shot'
+  
+      at check (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-14/task-2/champions-moves-repair/poke-sim/tests/charge_spa_timing_tests.mjs:12:11)
+      at TestContext.<anonymous> (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-14/task-2/champions-moves-repair/poke-sim/tests/charge_spa_timing_tests.mjs:41:13)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1201:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:831:18)
+      at Test.postRun (node:internal/test_runner/test:1330:19)
+      at Test.run (node:internal/test_runner/test:1258:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:831:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: undefined,
+    expected: 'Electro Shot',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at poke-sim\tests\charge_spa_timing_tests.mjs:40:4
+Γ£û CHARGE-SPA-cap-Electro Shot-player-0 (176.4085ms)
+  AssertionError [ERR_ASSERTION]: charge action anchor
+  + actual - expected
+  
+  + undefined
+  - 'Electro Shot'
+  
+      at check (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-14/task-2/champions-moves-repair/poke-sim/tests/charge_spa_timing_tests.mjs:12:11)
+      at TestContext.<anonymous> (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-14/task-2/champions-moves-repair/poke-sim/tests/charge_spa_timing_tests.mjs:41:13)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1201:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:831:18)
+      at Test.postRun (node:internal/test_runner/test:1330:19)
+      at Test.run (node:internal/test_runner/test:1258:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:831:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: undefined,
+    expected: 'Electro Shot',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at poke-sim\tests\charge_spa_timing_tests.mjs:40:4
+Γ£û CHARGE-SPA-lower-cap-Electro Shot-player-0 (157.4981ms)
+  AssertionError [ERR_ASSERTION]: charge action anchor
+  + actual - expected
+  
+  + undefined
+  - 'Electro Shot'
+  
+      at check (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-14/task-2/champions-moves-repair/poke-sim/tests/charge_spa_timing_tests.mjs:12:11)
+      at TestContext.<anonymous> (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-14/task-2/champions-moves-repair/poke-sim/tests/charge_spa_timing_tests.mjs:41:13)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1201:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:831:18)
+      at Test.postRun (node:internal/test_runner/test:1330:19)
+      at Test.run (node:internal/test_runner/test:1258:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:831:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: undefined,
+    expected: 'Electro Shot',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at poke-sim\tests\charge_spa_timing_tests.mjs:21:31
+Γ£û CHARGE-SPA-normal-Electro Shot-player-1-t2 (131.7825ms)
+  AssertionError [ERR_ASSERTION]: charge action anchor
+  + actual - expected
+  
+  + undefined
+  - 'Electro Shot'
+  
+      at check (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-14/task-2/champions-moves-repair/poke-sim/tests/charge_spa_timing_tests.mjs:12:11)
+      at TestContext.<anonymous> (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-14/task-2/champions-moves-repair/poke-sim/tests/charge_spa_timing_tests.mjs:21:100)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1201:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:831:18)
+      at Test.postRun (node:internal/test_runner/test:1330:19)
+      at Test.run (node:internal/test_runner/test:1258:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:831:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: undefined,
+    expected: 'Electro Shot',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at poke-sim\tests\charge_spa_timing_tests.mjs:21:31
+Γ£û CHARGE-SPA-normal-Electro Shot-player-1-t3 (140.6037ms)
+  AssertionError [ERR_ASSERTION]: charge action anchor
+  + actual - expected
+  
+  + undefined
+  - 'Electro Shot'
+  
+      at check (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-14/task-2/champions-moves-repair/poke-sim/tests/charge_spa_timing_tests.mjs:12:11)
+      at TestContext.<anonymous> (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-14/task-2/champions-moves-repair/poke-sim/tests/charge_spa_timing_tests.mjs:21:100)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1201:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:831:18)
+      at Test.postRun (node:internal/test_runner/test:1330:19)
+      at Test.run (node:internal/test_runner/test:1258:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:831:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: undefined,
+    expected: 'Electro Shot',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at poke-sim\tests\charge_spa_timing_tests.mjs:21:31
+Γ£û CHARGE-SPA-normal-Electro Shot-player-1-t4 (136.7475ms)
+  AssertionError [ERR_ASSERTION]: charge action anchor
+  + actual - expected
+  
+  + undefined
+  - 'Electro Shot'
+  
+      at check (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-14/task-2/champions-moves-repair/poke-sim/tests/charge_spa_timing_tests.mjs:12:11)
+      at TestContext.<anonymous> (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-14/task-2/champions-moves-repair/poke-sim/tests/charge_spa_timing_tests.mjs:21:100)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1201:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:831:18)
+      at Test.postRun (node:internal/test_runner/test:1330:19)
+      at Test.run (node:internal/test_runner/test:1258:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:831:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: undefined,
+    expected: 'Electro Shot',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at poke-sim\tests\charge_spa_timing_tests.mjs:40:4
+Γ£û CHARGE-SPA-herb-Electro Shot-player-1 (132.6597ms)
+  AssertionError [ERR_ASSERTION]: charge action anchor
+  + actual - expected
+  
+  + undefined
+  - 'Electro Shot'
+  
+      at check (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-14/task-2/champions-moves-repair/poke-sim/tests/charge_spa_timing_tests.mjs:12:11)
+      at TestContext.<anonymous> (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-14/task-2/champions-moves-repair/poke-sim/tests/charge_spa_timing_tests.mjs:41:13)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1201:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:831:18)
+      at Test.postRun (node:internal/test_runner/test:1330:19)
+      at Test.run (node:internal/test_runner/test:1258:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:831:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: undefined,
+    expected: 'Electro Shot',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at poke-sim\tests\charge_spa_timing_tests.mjs:40:4
+Γ£û CHARGE-SPA-herb-consumed-Electro Shot-player-1 (135.8643ms)
+  AssertionError [ERR_ASSERTION]: charge action anchor
+  + actual - expected
+  
+  + undefined
+  - 'Electro Shot'
+  
+      at check (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-14/task-2/champions-moves-repair/poke-sim/tests/charge_spa_timing_tests.mjs:12:11)
+      at TestContext.<anonymous> (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-14/task-2/champions-moves-repair/poke-sim/tests/charge_spa_timing_tests.mjs:41:13)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1201:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:831:18)
+      at Test.postRun (node:internal/test_runner/test:1330:19)
+      at Test.run (node:internal/test_runner/test:1258:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:831:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: undefined,
+    expected: 'Electro Shot',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at poke-sim\tests\charge_spa_timing_tests.mjs:40:4
+Γ£û CHARGE-SPA-klutz-Electro Shot-player-1 (137.39ms)
+  AssertionError [ERR_ASSERTION]: charge action anchor
+  + actual - expected
+  
+  + undefined
+  - 'Electro Shot'
+  
+      at check (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-14/task-2/champions-moves-repair/poke-sim/tests/charge_spa_timing_tests.mjs:12:11)
+      at TestContext.<anonymous> (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-14/task-2/champions-moves-repair/poke-sim/tests/charge_spa_timing_tests.mjs:41:13)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1201:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:831:18)
+      at Test.postRun (node:internal/test_runner/test:1330:19)
+      at Test.run (node:internal/test_runner/test:1258:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:831:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: undefined,
+    expected: 'Electro Shot',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at poke-sim\tests\charge_spa_timing_tests.mjs:40:4
+Γ£û CHARGE-SPA-klutz-gas-Electro Shot-player-1 (132.9351ms)
+  AssertionError [ERR_ASSERTION]: charge action anchor
+  + actual - expected
+  
+  + undefined
+  - 'Electro Shot'
+  
+      at check (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-14/task-2/champions-moves-repair/poke-sim/tests/charge_spa_timing_tests.mjs:12:11)
+      at TestContext.<anonymous> (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-14/task-2/champions-moves-repair/poke-sim/tests/charge_spa_timing_tests.mjs:41:13)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1201:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:831:18)
+      at Test.postRun (node:internal/test_runner/test:1330:19)
+      at Test.run (node:internal/test_runner/test:1258:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:831:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: undefined,
+    expected: 'Electro Shot',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at poke-sim\tests\charge_spa_timing_tests.mjs:40:4
+Γ£û CHARGE-SPA-simple-Electro Shot-player-1 (129.3734ms)
+  AssertionError [ERR_ASSERTION]: charge action anchor
+  + actual - expected
+  
+  + undefined
+  - 'Electro Shot'
+  
+      at check (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-14/task-2/champions-moves-repair/poke-sim/tests/charge_spa_timing_tests.mjs:12:11)
+      at TestContext.<anonymous> (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-14/task-2/champions-moves-repair/poke-sim/tests/charge_spa_timing_tests.mjs:41:13)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1201:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:831:18)
+      at Test.postRun (node:internal/test_runner/test:1330:19)
+      at Test.run (node:internal/test_runner/test:1258:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:831:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: undefined,
+    expected: 'Electro Shot',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at poke-sim\tests\charge_spa_timing_tests.mjs:40:4
+Γ£û CHARGE-SPA-contrary-Electro Shot-player-1 (181.6723ms)
+  AssertionError [ERR_ASSERTION]: charge action anchor
+  + actual - expected
+  
+  + undefined
+  - 'Electro Shot'
+  
+      at check (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-14/task-2/champions-moves-repair/poke-sim/tests/charge_spa_timing_tests.mjs:12:11)
+      at TestContext.<anonymous> (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-14/task-2/champions-moves-repair/poke-sim/tests/charge_spa_timing_tests.mjs:41:13)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1201:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:831:18)
+      at Test.postRun (node:internal/test_runner/test:1330:19)
+      at Test.run (node:internal/test_runner/test:1258:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:831:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: undefined,
+    expected: 'Electro Shot',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at poke-sim\tests\charge_spa_timing_tests.mjs:40:4
+Γ£û CHARGE-SPA-simple-gas-Electro Shot-player-1 (116.2345ms)
+  AssertionError [ERR_ASSERTION]: charge action anchor
+  + actual - expected
+  
+  + undefined
+  - 'Electro Shot'
+  
+      at check (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-14/task-2/champions-moves-repair/poke-sim/tests/charge_spa_timing_tests.mjs:12:11)
+      at TestContext.<anonymous> (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-14/task-2/champions-moves-repair/poke-sim/tests/charge_spa_timing_tests.mjs:41:13)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1201:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:831:18)
+      at Test.postRun (node:internal/test_runner/test:1330:19)
+      at Test.run (node:internal/test_runner/test:1258:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:831:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: undefined,
+    expected: 'Electro Shot',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at poke-sim\tests\charge_spa_timing_tests.mjs:40:4
+Γ£û CHARGE-SPA-contrary-gas-Electro Shot-player-1 (135.3761ms)
+  AssertionError [ERR_ASSERTION]: charge action anchor
+  + actual - expected
+  
+  + undefined
+  - 'Electro Shot'
+  
+      at check (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-14/task-2/champions-moves-repair/poke-sim/tests/charge_spa_timing_tests.mjs:12:11)
+      at TestContext.<anonymous> (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-14/task-2/champions-moves-repair/poke-sim/tests/charge_spa_timing_tests.mjs:41:13)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1201:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:831:18)
+      at Test.postRun (node:internal/test_runner/test:1330:19)
+      at Test.run (node:internal/test_runner/test:1258:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:831:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: undefined,
+    expected: 'Electro Shot',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at poke-sim\tests\charge_spa_timing_tests.mjs:40:4
+Γ£û CHARGE-SPA-shield-Electro Shot-player-1 (133.3336ms)
+  AssertionError [ERR_ASSERTION]: charge action anchor
+  + actual - expected
+  
+  + undefined
+  - 'Electro Shot'
+  
+      at check (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-14/task-2/champions-moves-repair/poke-sim/tests/charge_spa_timing_tests.mjs:12:11)
+      at TestContext.<anonymous> (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-14/task-2/champions-moves-repair/poke-sim/tests/charge_spa_timing_tests.mjs:41:13)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1201:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:831:18)
+      at Test.postRun (node:internal/test_runner/test:1330:19)
+      at Test.run (node:internal/test_runner/test:1258:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:831:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: undefined,
+    expected: 'Electro Shot',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at poke-sim\tests\charge_spa_timing_tests.mjs:40:4
+Γ£û CHARGE-SPA-cap-Electro Shot-player-1 (132.8261ms)
+  AssertionError [ERR_ASSERTION]: charge action anchor
+  + actual - expected
+  
+  + undefined
+  - 'Electro Shot'
+  
+      at check (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-14/task-2/champions-moves-repair/poke-sim/tests/charge_spa_timing_tests.mjs:12:11)
+      at TestContext.<anonymous> (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-14/task-2/champions-moves-repair/poke-sim/tests/charge_spa_timing_tests.mjs:41:13)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1201:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:831:18)
+      at Test.postRun (node:internal/test_runner/test:1330:19)
+      at Test.run (node:internal/test_runner/test:1258:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:831:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: undefined,
+    expected: 'Electro Shot',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at poke-sim\tests\charge_spa_timing_tests.mjs:40:4
+Γ£û CHARGE-SPA-lower-cap-Electro Shot-player-1 (131.127ms)
+  AssertionError [ERR_ASSERTION]: charge action anchor
+  + actual - expected
+  
+  + undefined
+  - 'Electro Shot'
+  
+      at check (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-14/task-2/champions-moves-repair/poke-sim/tests/charge_spa_timing_tests.mjs:12:11)
+      at TestContext.<anonymous> (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-14/task-2/champions-moves-repair/poke-sim/tests/charge_spa_timing_tests.mjs:41:13)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1201:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:831:18)
+      at Test.postRun (node:internal/test_runner/test:1330:19)
+      at Test.run (node:internal/test_runner/test:1258:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:831:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: undefined,
+    expected: 'Electro Shot',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at poke-sim\tests\charge_spa_timing_tests.mjs:21:31
+Γ£û CHARGE-SPA-normal-Electro Shot-opponent-0-t2 (208.9244ms)
+  AssertionError [ERR_ASSERTION]: charge action anchor
+  + actual - expected
+  
+  + undefined
+  - 'Electro Shot'
+  
+      at check (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-14/task-2/champions-moves-repair/poke-sim/tests/charge_spa_timing_tests.mjs:12:11)
+      at TestContext.<anonymous> (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-14/task-2/champions-moves-repair/poke-sim/tests/charge_spa_timing_tests.mjs:21:100)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1201:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:831:18)
+      at Test.postRun (node:internal/test_runner/test:1330:19)
+      at Test.run (node:internal/test_runner/test:1258:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:831:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: undefined,
+    expected: 'Electro Shot',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at poke-sim\tests\charge_spa_timing_tests.mjs:21:31
+Γ£û CHARGE-SPA-normal-Electro Shot-opponent-0-t3 (153.1487ms)
+  AssertionError [ERR_ASSERTION]: charge action anchor
+  + actual - expected
+  
+  + undefined
+  - 'Electro Shot'
+  
+      at check (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-14/task-2/champions-moves-repair/poke-sim/tests/charge_spa_timing_tests.mjs:12:11)
+      at TestContext.<anonymous> (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-14/task-2/champions-moves-repair/poke-sim/tests/charge_spa_timing_tests.mjs:21:100)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1201:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:831:18)
+      at Test.postRun (node:internal/test_runner/test:1330:19)
+      at Test.run (node:internal/test_runner/test:1258:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:831:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: undefined,
+    expected: 'Electro Shot',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at poke-sim\tests\charge_spa_timing_tests.mjs:21:31
+Γ£û CHARGE-SPA-normal-Electro Shot-opponent-0-t4 (152.332ms)
+  AssertionError [ERR_ASSERTION]: charge action anchor
+  + actual - expected
+  
+  + undefined
+  - 'Electro Shot'
+  
+      at check (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-14/task-2/champions-moves-repair/poke-sim/tests/charge_spa_timing_tests.mjs:12:11)
+      at TestContext.<anonymous> (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-14/task-2/champions-moves-repair/poke-sim/tests/charge_spa_timing_tests.mjs:21:100)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1201:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:831:18)
+      at Test.postRun (node:internal/test_runner/test:1330:19)
+      at Test.run (node:internal/test_runner/test:1258:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:831:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: undefined,
+    expected: 'Electro Shot',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at poke-sim\tests\charge_spa_timing_tests.mjs:40:4
+Γ£û CHARGE-SPA-herb-Electro Shot-opponent-0 (153.4196ms)
+  AssertionError [ERR_ASSERTION]: charge action anchor
+  + actual - expected
+  
+  + undefined
+  - 'Electro Shot'
+  
+      at check (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-14/task-2/champions-moves-repair/poke-sim/tests/charge_spa_timing_tests.mjs:12:11)
+      at TestContext.<anonymous> (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-14/task-2/champions-moves-repair/poke-sim/tests/charge_spa_timing_tests.mjs:41:13)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1201:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:831:18)
+      at Test.postRun (node:internal/test_runner/test:1330:19)
+      at Test.run (node:internal/test_runner/test:1258:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:831:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: undefined,
+    expected: 'Electro Shot',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at poke-sim\tests\charge_spa_timing_tests.mjs:40:4
+Γ£û CHARGE-SPA-herb-consumed-Electro Shot-opponent-0 (166.0941ms)
+  AssertionError [ERR_ASSERTION]: charge action anchor
+  + actual - expected
+  
+  + undefined
+  - 'Electro Shot'
+  
+      at check (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-14/task-2/champions-moves-repair/poke-sim/tests/charge_spa_timing_tests.mjs:12:11)
+      at TestContext.<anonymous> (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-14/task-2/champions-moves-repair/poke-sim/tests/charge_spa_timing_tests.mjs:41:13)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1201:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:831:18)
+      at Test.postRun (node:internal/test_runner/test:1330:19)
+      at Test.run (node:internal/test_runner/test:1258:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:831:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: undefined,
+    expected: 'Electro Shot',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at poke-sim\tests\charge_spa_timing_tests.mjs:40:4
+Γ£û CHARGE-SPA-klutz-Electro Shot-opponent-0 (152.344ms)
+  AssertionError [ERR_ASSERTION]: charge action anchor
+  + actual - expected
+  
+  + undefined
+  - 'Electro Shot'
+  
+      at check (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-14/task-2/champions-moves-repair/poke-sim/tests/charge_spa_timing_tests.mjs:12:11)
+      at TestContext.<anonymous> (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-14/task-2/champions-moves-repair/poke-sim/tests/charge_spa_timing_tests.mjs:41:13)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1201:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:831:18)
+      at Test.postRun (node:internal/test_runner/test:1330:19)
+      at Test.run (node:internal/test_runner/test:1258:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:831:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: undefined,
+    expected: 'Electro Shot',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at poke-sim\tests\charge_spa_timing_tests.mjs:40:4
+Γ£û CHARGE-SPA-klutz-gas-Electro Shot-opponent-0 (160.6261ms)
+  AssertionError [ERR_ASSERTION]: charge action anchor
+  + actual - expected
+  
+  + undefined
+  - 'Electro Shot'
+  
+      at check (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-14/task-2/champions-moves-repair/poke-sim/tests/charge_spa_timing_tests.mjs:12:11)
+      at TestContext.<anonymous> (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-14/task-2/champions-moves-repair/poke-sim/tests/charge_spa_timing_tests.mjs:41:13)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1201:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:831:18)
+      at Test.postRun (node:internal/test_runner/test:1330:19)
+      at Test.run (node:internal/test_runner/test:1258:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:831:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: undefined,
+    expected: 'Electro Shot',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at poke-sim\tests\charge_spa_timing_tests.mjs:40:4
+Γ£û CHARGE-SPA-simple-Electro Shot-opponent-0 (147.1658ms)
+  AssertionError [ERR_ASSERTION]: charge action anchor
+  + actual - expected
+  
+  + undefined
+  - 'Electro Shot'
+  
+      at check (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-14/task-2/champions-moves-repair/poke-sim/tests/charge_spa_timing_tests.mjs:12:11)
+      at TestContext.<anonymous> (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-14/task-2/champions-moves-repair/poke-sim/tests/charge_spa_timing_tests.mjs:41:13)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1201:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:831:18)
+      at Test.postRun (node:internal/test_runner/test:1330:19)
+      at Test.run (node:internal/test_runner/test:1258:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:831:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: undefined,
+    expected: 'Electro Shot',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at poke-sim\tests\charge_spa_timing_tests.mjs:40:4
+Γ£û CHARGE-SPA-contrary-Electro Shot-opponent-0 (150.1474ms)
+  AssertionError [ERR_ASSERTION]: charge action anchor
+  + actual - expected
+  
+  + undefined
+  - 'Electro Shot'
+  
+      at check (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-14/task-2/champions-moves-repair/poke-sim/tests/charge_spa_timing_tests.mjs:12:11)
+      at TestContext.<anonymous> (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-14/task-2/champions-moves-repair/poke-sim/tests/charge_spa_timing_tests.mjs:41:13)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1201:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:831:18)
+      at Test.postRun (node:internal/test_runner/test:1330:19)
+      at Test.run (node:internal/test_runner/test:1258:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:831:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: undefined,
+    expected: 'Electro Shot',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at poke-sim\tests\charge_spa_timing_tests.mjs:40:4
+Γ£û CHARGE-SPA-simple-gas-Electro Shot-opponent-0 (156.9165ms)
+  AssertionError [ERR_ASSERTION]: charge action anchor
+  + actual - expected
+  
+  + undefined
+  - 'Electro Shot'
+  
+      at check (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-14/task-2/champions-moves-repair/poke-sim/tests/charge_spa_timing_tests.mjs:12:11)
+      at TestContext.<anonymous> (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-14/task-2/champions-moves-repair/poke-sim/tests/charge_spa_timing_tests.mjs:41:13)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1201:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:831:18)
+      at Test.postRun (node:internal/test_runner/test:1330:19)
+      at Test.run (node:internal/test_runner/test:1258:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:831:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: undefined,
+    expected: 'Electro Shot',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at poke-sim\tests\charge_spa_timing_tests.mjs:40:4
+Γ£û CHARGE-SPA-contrary-gas-Electro Shot-opponent-0 (149.3032ms)
+  AssertionError [ERR_ASSERTION]: charge action anchor
+  + actual - expected
+  
+  + undefined
+  - 'Electro Shot'
+  
+      at check (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-14/task-2/champions-moves-repair/poke-sim/tests/charge_spa_timing_tests.mjs:12:11)
+      at TestContext.<anonymous> (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-14/task-2/champions-moves-repair/poke-sim/tests/charge_spa_timing_tests.mjs:41:13)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1201:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:831:18)
+      at Test.postRun (node:internal/test_runner/test:1330:19)
+      at Test.run (node:internal/test_runner/test:1258:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:831:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: undefined,
+    expected: 'Electro Shot',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at poke-sim\tests\charge_spa_timing_tests.mjs:40:4
+Γ£û CHARGE-SPA-shield-Electro Shot-opponent-0 (163.4277ms)
+  AssertionError [ERR_ASSERTION]: charge action anchor
+  + actual - expected
+  
+  + undefined
+  - 'Electro Shot'
+  
+      at check (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-14/task-2/champions-moves-repair/poke-sim/tests/charge_spa_timing_tests.mjs:12:11)
+      at TestContext.<anonymous> (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-14/task-2/champions-moves-repair/poke-sim/tests/charge_spa_timing_tests.mjs:41:13)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1201:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:831:18)
+      at Test.postRun (node:internal/test_runner/test:1330:19)
+      at Test.run (node:internal/test_runner/test:1258:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:831:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: undefined,
+    expected: 'Electro Shot',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at poke-sim\tests\charge_spa_timing_tests.mjs:40:4
+Γ£û CHARGE-SPA-cap-Electro Shot-opponent-0 (170.4741ms)
+  AssertionError [ERR_ASSERTION]: charge action anchor
+  + actual - expected
+  
+  + undefined
+  - 'Electro Shot'
+  
+      at check (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-14/task-2/champions-moves-repair/poke-sim/tests/charge_spa_timing_tests.mjs:12:11)
+      at TestContext.<anonymous> (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-14/task-2/champions-moves-repair/poke-sim/tests/charge_spa_timing_tests.mjs:41:13)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1201:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:831:18)
+      at Test.postRun (node:internal/test_runner/test:1330:19)
+      at Test.run (node:internal/test_runner/test:1258:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:831:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: undefined,
+    expected: 'Electro Shot',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at poke-sim\tests\charge_spa_timing_tests.mjs:40:4
+Γ£û CHARGE-SPA-lower-cap-Electro Shot-opponent-0 (150.5869ms)
+  AssertionError [ERR_ASSERTION]: charge action anchor
+  + actual - expected
+  
+  + undefined
+  - 'Electro Shot'
+  
+      at check (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-14/task-2/champions-moves-repair/poke-sim/tests/charge_spa_timing_tests.mjs:12:11)
+      at TestContext.<anonymous> (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-14/task-2/champions-moves-repair/poke-sim/tests/charge_spa_timing_tests.mjs:41:13)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1201:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:831:18)
+      at Test.postRun (node:internal/test_runner/test:1330:19)
+      at Test.run (node:internal/test_runner/test:1258:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:831:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: undefined,
+    expected: 'Electro Shot',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at poke-sim\tests\charge_spa_timing_tests.mjs:21:31
+Γ£û CHARGE-SPA-normal-Electro Shot-opponent-1-t2 (170.0147ms)
+  AssertionError [ERR_ASSERTION]: charge action anchor
+  + actual - expected
+  
+  + undefined
+  - 'Electro Shot'
+  
+      at check (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-14/task-2/champions-moves-repair/poke-sim/tests/charge_spa_timing_tests.mjs:12:11)
+      at TestContext.<anonymous> (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-14/task-2/champions-moves-repair/poke-sim/tests/charge_spa_timing_tests.mjs:21:100)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1201:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:831:18)
+      at Test.postRun (node:internal/test_runner/test:1330:19)
+      at Test.run (node:internal/test_runner/test:1258:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:831:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: undefined,
+    expected: 'Electro Shot',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at poke-sim\tests\charge_spa_timing_tests.mjs:21:31
+Γ£û CHARGE-SPA-normal-Electro Shot-opponent-1-t3 (153.9129ms)
+  AssertionError [ERR_ASSERTION]: charge action anchor
+  + actual - expected
+  
+  + undefined
+  - 'Electro Shot'
+  
+      at check (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-14/task-2/champions-moves-repair/poke-sim/tests/charge_spa_timing_tests.mjs:12:11)
+      at TestContext.<anonymous> (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-14/task-2/champions-moves-repair/poke-sim/tests/charge_spa_timing_tests.mjs:21:100)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1201:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:831:18)
+      at Test.postRun (node:internal/test_runner/test:1330:19)
+      at Test.run (node:internal/test_runner/test:1258:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:831:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: undefined,
+    expected: 'Electro Shot',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at poke-sim\tests\charge_spa_timing_tests.mjs:21:31
+Γ£û CHARGE-SPA-normal-Electro Shot-opponent-1-t4 (167.504ms)
+  AssertionError [ERR_ASSERTION]: charge action anchor
+  + actual - expected
+  
+  + undefined
+  - 'Electro Shot'
+  
+      at check (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-14/task-2/champions-moves-repair/poke-sim/tests/charge_spa_timing_tests.mjs:12:11)
+      at TestContext.<anonymous> (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-14/task-2/champions-moves-repair/poke-sim/tests/charge_spa_timing_tests.mjs:21:100)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1201:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:831:18)
+      at Test.postRun (node:internal/test_runner/test:1330:19)
+      at Test.run (node:internal/test_runner/test:1258:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:831:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: undefined,
+    expected: 'Electro Shot',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at poke-sim\tests\charge_spa_timing_tests.mjs:40:4
+Γ£û CHARGE-SPA-herb-Electro Shot-opponent-1 (154.3857ms)
+  AssertionError [ERR_ASSERTION]: charge action anchor
+  + actual - expected
+  
+  + undefined
+  - 'Electro Shot'
+  
+      at check (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-14/task-2/champions-moves-repair/poke-sim/tests/charge_spa_timing_tests.mjs:12:11)
+      at TestContext.<anonymous> (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-14/task-2/champions-moves-repair/poke-sim/tests/charge_spa_timing_tests.mjs:41:13)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1201:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:831:18)
+      at Test.postRun (node:internal/test_runner/test:1330:19)
+      at Test.run (node:internal/test_runner/test:1258:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:831:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: undefined,
+    expected: 'Electro Shot',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at poke-sim\tests\charge_spa_timing_tests.mjs:40:4
+Γ£û CHARGE-SPA-herb-consumed-Electro Shot-opponent-1 (166.4177ms)
+  AssertionError [ERR_ASSERTION]: charge action anchor
+  + actual - expected
+  
+  + undefined
+  - 'Electro Shot'
+  
+      at check (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-14/task-2/champions-moves-repair/poke-sim/tests/charge_spa_timing_tests.mjs:12:11)
+      at TestContext.<anonymous> (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-14/task-2/champions-moves-repair/poke-sim/tests/charge_spa_timing_tests.mjs:41:13)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1201:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:831:18)
+      at Test.postRun (node:internal/test_runner/test:1330:19)
+      at Test.run (node:internal/test_runner/test:1258:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:831:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: undefined,
+    expected: 'Electro Shot',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at poke-sim\tests\charge_spa_timing_tests.mjs:40:4
+Γ£û CHARGE-SPA-klutz-Electro Shot-opponent-1 (154.2484ms)
+  AssertionError [ERR_ASSERTION]: charge action anchor
+  + actual - expected
+  
+  + undefined
+  - 'Electro Shot'
+  
+      at check (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-14/task-2/champions-moves-repair/poke-sim/tests/charge_spa_timing_tests.mjs:12:11)
+      at TestContext.<anonymous> (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-14/task-2/champions-moves-repair/poke-sim/tests/charge_spa_timing_tests.mjs:41:13)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1201:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:831:18)
+      at Test.postRun (node:internal/test_runner/test:1330:19)
+      at Test.run (node:internal/test_runner/test:1258:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:831:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: undefined,
+    expected: 'Electro Shot',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at poke-sim\tests\charge_spa_timing_tests.mjs:40:4
+Γ£û CHARGE-SPA-klutz-gas-Electro Shot-opponent-1 (164.2188ms)
+  AssertionError [ERR_ASSERTION]: charge action anchor
+  + actual - expected
+  
+  + undefined
+  - 'Electro Shot'
+  
+      at check (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-14/task-2/champions-moves-repair/poke-sim/tests/charge_spa_timing_tests.mjs:12:11)
+      at TestContext.<anonymous> (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-14/task-2/champions-moves-repair/poke-sim/tests/charge_spa_timing_tests.mjs:41:13)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1201:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:831:18)
+      at Test.postRun (node:internal/test_runner/test:1330:19)
+      at Test.run (node:internal/test_runner/test:1258:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:831:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: undefined,
+    expected: 'Electro Shot',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at poke-sim\tests\charge_spa_timing_tests.mjs:40:4
+Γ£û CHARGE-SPA-simple-Electro Shot-opponent-1 (209.1575ms)
+  AssertionError [ERR_ASSERTION]: charge action anchor
+  + actual - expected
+  
+  + undefined
+  - 'Electro Shot'
+  
+      at check (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-14/task-2/champions-moves-repair/poke-sim/tests/charge_spa_timing_tests.mjs:12:11)
+      at TestContext.<anonymous> (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-14/task-2/champions-moves-repair/poke-sim/tests/charge_spa_timing_tests.mjs:41:13)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1201:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:831:18)
+      at Test.postRun (node:internal/test_runner/test:1330:19)
+      at Test.run (node:internal/test_runner/test:1258:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:831:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: undefined,
+    expected: 'Electro Shot',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at poke-sim\tests\charge_spa_timing_tests.mjs:40:4
+Γ£û CHARGE-SPA-contrary-Electro Shot-opponent-1 (153.813ms)
+  AssertionError [ERR_ASSERTION]: charge action anchor
+  + actual - expected
+  
+  + undefined
+  - 'Electro Shot'
+  
+      at check (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-14/task-2/champions-moves-repair/poke-sim/tests/charge_spa_timing_tests.mjs:12:11)
+      at TestContext.<anonymous> (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-14/task-2/champions-moves-repair/poke-sim/tests/charge_spa_timing_tests.mjs:41:13)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1201:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:831:18)
+      at Test.postRun (node:internal/test_runner/test:1330:19)
+      at Test.run (node:internal/test_runner/test:1258:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:831:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: undefined,
+    expected: 'Electro Shot',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at poke-sim\tests\charge_spa_timing_tests.mjs:40:4
+Γ£û CHARGE-SPA-simple-gas-Electro Shot-opponent-1 (169.2405ms)
+  AssertionError [ERR_ASSERTION]: charge action anchor
+  + actual - expected
+  
+  + undefined
+  - 'Electro Shot'
+  
+      at check (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-14/task-2/champions-moves-repair/poke-sim/tests/charge_spa_timing_tests.mjs:12:11)
+      at TestContext.<anonymous> (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-14/task-2/champions-moves-repair/poke-sim/tests/charge_spa_timing_tests.mjs:41:13)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1201:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:831:18)
+      at Test.postRun (node:internal/test_runner/test:1330:19)
+      at Test.run (node:internal/test_runner/test:1258:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:831:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: undefined,
+    expected: 'Electro Shot',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at poke-sim\tests\charge_spa_timing_tests.mjs:40:4
+Γ£û CHARGE-SPA-contrary-gas-Electro Shot-opponent-1 (156.1897ms)
+  AssertionError [ERR_ASSERTION]: charge action anchor
+  + actual - expected
+  
+  + undefined
+  - 'Electro Shot'
+  
+      at check (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-14/task-2/champions-moves-repair/poke-sim/tests/charge_spa_timing_tests.mjs:12:11)
+      at TestContext.<anonymous> (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-14/task-2/champions-moves-repair/poke-sim/tests/charge_spa_timing_tests.mjs:41:13)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1201:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:831:18)
+      at Test.postRun (node:internal/test_runner/test:1330:19)
+      at Test.run (node:internal/test_runner/test:1258:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:831:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: undefined,
+    expected: 'Electro Shot',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at poke-sim\tests\charge_spa_timing_tests.mjs:40:4
+Γ£û CHARGE-SPA-shield-Electro Shot-opponent-1 (156.8684ms)
+  AssertionError [ERR_ASSERTION]: charge action anchor
+  + actual - expected
+  
+  + undefined
+  - 'Electro Shot'
+  
+      at check (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-14/task-2/champions-moves-repair/poke-sim/tests/charge_spa_timing_tests.mjs:12:11)
+      at TestContext.<anonymous> (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-14/task-2/champions-moves-repair/poke-sim/tests/charge_spa_timing_tests.mjs:41:13)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1201:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:831:18)
+      at Test.postRun (node:internal/test_runner/test:1330:19)
+      at Test.run (node:internal/test_runner/test:1258:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:831:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: undefined,
+    expected: 'Electro Shot',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at poke-sim\tests\charge_spa_timing_tests.mjs:40:4
+Γ£û CHARGE-SPA-cap-Electro Shot-opponent-1 (169.1387ms)
+  AssertionError [ERR_ASSERTION]: charge action anchor
+  + actual - expected
+  
+  + undefined
+  - 'Electro Shot'
+  
+      at check (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-14/task-2/champions-moves-repair/poke-sim/tests/charge_spa_timing_tests.mjs:12:11)
+      at TestContext.<anonymous> (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-14/task-2/champions-moves-repair/poke-sim/tests/charge_spa_timing_tests.mjs:41:13)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1201:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:831:18)
+      at Test.postRun (node:internal/test_runner/test:1330:19)
+      at Test.run (node:internal/test_runner/test:1258:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:831:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: undefined,
+    expected: 'Electro Shot',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at poke-sim\tests\charge_spa_timing_tests.mjs:40:4
+Γ£û CHARGE-SPA-lower-cap-Electro Shot-opponent-1 (167.2411ms)
+  AssertionError [ERR_ASSERTION]: charge action anchor
+  + actual - expected
+  
+  + undefined
+  - 'Electro Shot'
+  
+      at check (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-14/task-2/champions-moves-repair/poke-sim/tests/charge_spa_timing_tests.mjs:12:11)
+      at TestContext.<anonymous> (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-14/task-2/champions-moves-repair/poke-sim/tests/charge_spa_timing_tests.mjs:41:13)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1201:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:831:18)
+      at Test.postRun (node:internal/test_runner/test:1330:19)
+      at Test.run (node:internal/test_runner/test:1258:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:831:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: undefined,
+    expected: 'Electro Shot',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at poke-sim\tests\charge_spa_timing_tests.mjs:53:2
+Γ£û CHARGE-SPA-rain-player-0 (206.7502ms)
+  AssertionError [ERR_ASSERTION]: charge action anchor
+  + actual - expected
+  
+  + undefined
+  - 'Electro Shot'
+  
+      at check (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-14/task-2/champions-moves-repair/poke-sim/tests/charge_spa_timing_tests.mjs:12:11)
+      at TestContext.<anonymous> (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-14/task-2/champions-moves-repair/poke-sim/tests/charge_spa_timing_tests.mjs:53:45)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1201:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:831:18)
+      at Test.postRun (node:internal/test_runner/test:1330:19)
+      at Test.run (node:internal/test_runner/test:1258:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:831:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: undefined,
+    expected: 'Electro Shot',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at poke-sim\tests\charge_spa_timing_tests.mjs:54:2
+Γ£û CHARGE-SPA-cloud-nine-player-0 (150.2015ms)
+  AssertionError [ERR_ASSERTION]: charge action anchor
+  + actual - expected
+  
+  + undefined
+  - 'Electro Shot'
+  
+      at check (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-14/task-2/champions-moves-repair/poke-sim/tests/charge_spa_timing_tests.mjs:12:11)
+      at TestContext.<anonymous> (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-14/task-2/champions-moves-repair/poke-sim/tests/charge_spa_timing_tests.mjs:54:51)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1201:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:831:18)
+      at Test.postRun (node:internal/test_runner/test:1330:19)
+      at Test.run (node:internal/test_runner/test:1258:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:831:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: undefined,
+    expected: 'Electro Shot',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at poke-sim\tests\charge_spa_timing_tests.mjs:55:2
+Γ£û CHARGE-SPA-miss-player-0 (160.7417ms)
+  AssertionError [ERR_ASSERTION]: charge action anchor
+  + actual - expected
+  
+  + undefined
+  - 'Meteor Beam'
+  
+      at check (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-14/task-2/champions-moves-repair/poke-sim/tests/charge_spa_timing_tests.mjs:12:11)
+      at TestContext.<anonymous> (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-14/task-2/champions-moves-repair/poke-sim/tests/charge_spa_timing_tests.mjs:55:56)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1201:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:831:18)
+      at Test.postRun (node:internal/test_runner/test:1330:19)
+      at Test.run (node:internal/test_runner/test:1258:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:831:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: undefined,
+    expected: 'Meteor Beam',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at poke-sim\tests\charge_spa_timing_tests.mjs:53:2
+Γ£û CHARGE-SPA-rain-player-1 (159.5226ms)
+  AssertionError [ERR_ASSERTION]: charge action anchor
+  + actual - expected
+  
+  + undefined
+  - 'Electro Shot'
+  
+      at check (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-14/task-2/champions-moves-repair/poke-sim/tests/charge_spa_timing_tests.mjs:12:11)
+      at TestContext.<anonymous> (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-14/task-2/champions-moves-repair/poke-sim/tests/charge_spa_timing_tests.mjs:53:45)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1201:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:831:18)
+      at Test.postRun (node:internal/test_runner/test:1330:19)
+      at Test.run (node:internal/test_runner/test:1258:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:831:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: undefined,
+    expected: 'Electro Shot',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at poke-sim\tests\charge_spa_timing_tests.mjs:54:2
+Γ£û CHARGE-SPA-cloud-nine-player-1 (169.3261ms)
+  AssertionError [ERR_ASSERTION]: charge action anchor
+  + actual - expected
+  
+  + undefined
+  - 'Electro Shot'
+  
+      at check (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-14/task-2/champions-moves-repair/poke-sim/tests/charge_spa_timing_tests.mjs:12:11)
+      at TestContext.<anonymous> (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-14/task-2/champions-moves-repair/poke-sim/tests/charge_spa_timing_tests.mjs:54:51)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1201:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:831:18)
+      at Test.postRun (node:internal/test_runner/test:1330:19)
+      at Test.run (node:internal/test_runner/test:1258:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:831:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: undefined,
+    expected: 'Electro Shot',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at poke-sim\tests\charge_spa_timing_tests.mjs:55:2
+Γ£û CHARGE-SPA-miss-player-1 (159.5309ms)
+  AssertionError [ERR_ASSERTION]: charge action anchor
+  + actual - expected
+  
+  + undefined
+  - 'Meteor Beam'
+  
+      at check (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-14/task-2/champions-moves-repair/poke-sim/tests/charge_spa_timing_tests.mjs:12:11)
+      at TestContext.<anonymous> (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-14/task-2/champions-moves-repair/poke-sim/tests/charge_spa_timing_tests.mjs:55:56)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1201:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:831:18)
+      at Test.postRun (node:internal/test_runner/test:1330:19)
+      at Test.run (node:internal/test_runner/test:1258:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:831:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: undefined,
+    expected: 'Meteor Beam',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at poke-sim\tests\charge_spa_timing_tests.mjs:53:2
+Γ£û CHARGE-SPA-rain-opponent-0 (165.0371ms)
+  AssertionError [ERR_ASSERTION]: charge action anchor
+  + actual - expected
+  
+  + undefined
+  - 'Electro Shot'
+  
+      at check (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-14/task-2/champions-moves-repair/poke-sim/tests/charge_spa_timing_tests.mjs:12:11)
+      at TestContext.<anonymous> (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-14/task-2/champions-moves-repair/poke-sim/tests/charge_spa_timing_tests.mjs:53:45)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1201:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:831:18)
+      at Test.postRun (node:internal/test_runner/test:1330:19)
+      at Test.run (node:internal/test_runner/test:1258:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:831:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: undefined,
+    expected: 'Electro Shot',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at poke-sim\tests\charge_spa_timing_tests.mjs:54:2
+Γ£û CHARGE-SPA-cloud-nine-opponent-0 (166.0916ms)
+  AssertionError [ERR_ASSERTION]: charge action anchor
+  + actual - expected
+  
+  + undefined
+  - 'Electro Shot'
+  
+      at check (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-14/task-2/champions-moves-repair/poke-sim/tests/charge_spa_timing_tests.mjs:12:11)
+      at TestContext.<anonymous> (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-14/task-2/champions-moves-repair/poke-sim/tests/charge_spa_timing_tests.mjs:54:51)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1201:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:831:18)
+      at Test.postRun (node:internal/test_runner/test:1330:19)
+      at Test.run (node:internal/test_runner/test:1258:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:831:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: undefined,
+    expected: 'Electro Shot',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at poke-sim\tests\charge_spa_timing_tests.mjs:55:2
+Γ£û CHARGE-SPA-miss-opponent-0 (176.9687ms)
+  AssertionError [ERR_ASSERTION]: charge action anchor
+  + actual - expected
+  
+  + undefined
+  - 'Meteor Beam'
+  
+      at check (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-14/task-2/champions-moves-repair/poke-sim/tests/charge_spa_timing_tests.mjs:12:11)
+      at TestContext.<anonymous> (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-14/task-2/champions-moves-repair/poke-sim/tests/charge_spa_timing_tests.mjs:55:56)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1201:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:831:18)
+      at Test.postRun (node:internal/test_runner/test:1330:19)
+      at Test.run (node:internal/test_runner/test:1258:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:831:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: undefined,
+    expected: 'Meteor Beam',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at poke-sim\tests\charge_spa_timing_tests.mjs:53:2
+Γ£û CHARGE-SPA-rain-opponent-1 (166.0133ms)
+  AssertionError [ERR_ASSERTION]: charge action anchor
+  + actual - expected
+  
+  + undefined
+  - 'Electro Shot'
+  
+      at check (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-14/task-2/champions-moves-repair/poke-sim/tests/charge_spa_timing_tests.mjs:12:11)
+      at TestContext.<anonymous> (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-14/task-2/champions-moves-repair/poke-sim/tests/charge_spa_timing_tests.mjs:53:45)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1201:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:831:18)
+      at Test.postRun (node:internal/test_runner/test:1330:19)
+      at Test.run (node:internal/test_runner/test:1258:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:831:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: undefined,
+    expected: 'Electro Shot',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at poke-sim\tests\charge_spa_timing_tests.mjs:54:2
+Γ£û CHARGE-SPA-cloud-nine-opponent-1 (154.1758ms)
+  AssertionError [ERR_ASSERTION]: charge action anchor
+  + actual - expected
+  
+  + undefined
+  - 'Electro Shot'
+  
+      at check (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-14/task-2/champions-moves-repair/poke-sim/tests/charge_spa_timing_tests.mjs:12:11)
+      at TestContext.<anonymous> (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-14/task-2/champions-moves-repair/poke-sim/tests/charge_spa_timing_tests.mjs:54:51)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1201:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:831:18)
+      at Test.postRun (node:internal/test_runner/test:1330:19)
+      at Test.run (node:internal/test_runner/test:1258:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:831:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: undefined,
+    expected: 'Electro Shot',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at poke-sim\tests\charge_spa_timing_tests.mjs:55:2
+Γ£û CHARGE-SPA-miss-opponent-1 (169.1912ms)
+  AssertionError [ERR_ASSERTION]: charge action anchor
+  + actual - expected
+  
+  + undefined
+  - 'Meteor Beam'
+  
+      at check (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-14/task-2/champions-moves-repair/poke-sim/tests/charge_spa_timing_tests.mjs:12:11)
+      at TestContext.<anonymous> (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-14/task-2/champions-moves-repair/poke-sim/tests/charge_spa_timing_tests.mjs:55:56)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1201:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:831:18)
+      at Test.postRun (node:internal/test_runner/test:1330:19)
+      at Test.run (node:internal/test_runner/test:1258:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:831:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: undefined,
+    expected: 'Meteor Beam',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }

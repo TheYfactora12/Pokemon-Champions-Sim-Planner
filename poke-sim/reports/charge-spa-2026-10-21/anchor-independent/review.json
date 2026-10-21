@@ -1,0 +1,70 @@
+{
+  "schema_version": "independent-charge-anchor-review-v1",
+  "reviewed_at": "2026-10-21T01:09:29.424Z",
+  "checkout_head": "eec67661dcfc0192e57cbda9a3577b933bda6eee",
+  "source_state": "Uncommitted producer anchor correction; exact current file hashes",
+  "source_hashes": {
+    "engine.js": "05ddc56fbd7fa58c315297ac05318fd7aec6f46bf85993f6a59b3caed3449c3e",
+    "tests/charge_spa_timing_tests.mjs": "4546b90f0ee38fc1dfeeff6345729b4aa099ffc754c7c93e049d9b2d94e134f0",
+    "tools/fly-lifecycle-probes.mjs": "fb26a6ef0edf316777cf161a84ea9d2f0cc234bd150ee2bee364a33b985df8b1",
+    "tools/probe-fly-repair.mjs": "ebcf607cde1f91cf35e062c07e68acd1ed30234e7f641f4163716797d3b40900"
+  },
+  "status": "passed_declared_scope",
+  "results": {
+    "focused_exact_reference": {
+      "passed": 188,
+      "failed": 0,
+      "reference_pin": "9b136a8c8cdb860a8ab96fa063f906604e352547"
+    },
+    "same_name_mirror_cases": 4,
+    "nested_local_event_ownership_cases": 2
+  },
+  "preserved_failures": [
+    {
+      "case": "normal Meteor Beam player slot0 turn1",
+      "reason": "Initial test incorrectly demanded an anchor on both used and began-charging detail lines",
+      "result": "Assertion failed; corrected to one action anchor"
+    },
+    {
+      "path": "focused-tests-before-detail-correction.txt",
+      "passed": 64,
+      "failed": 124,
+      "reason": "Intermediate test incorrectly required subsequent same-action used damage-detail lines to carry anchors",
+      "resolution": "Final focused test requires only first actual used line, exactly one anchor, no prelude/detail anchors;188/188 pass"
+    }
+  ],
+  "evidence": [
+    {
+      "path": "mirror-probes.mjs",
+      "sha256": "a2eacfcb406c3d1b32a0bef1a1a578df44efa80f83ae965150a4cb08cf2193dd"
+    },
+    {
+      "path": "mirror-results.json",
+      "sha256": "8e96f98977e6b4bc031bc0bb2fa4cc1b6fae710583c37ea22e9ae10e87bd0e43"
+    },
+    {
+      "path": "child-probes.mjs",
+      "sha256": "ea9f493c92d9a1d79ae0158d9065526fac6153f08ca3d90ced8e1bf17d3cbd20"
+    },
+    {
+      "path": "child-results.json",
+      "sha256": "a319411d0d5a55573f3a76b252f623c8b74b822fef25b7d4898e5b15f4d2f6c7"
+    },
+    {
+      "path": "focused-tests-before-detail-correction.txt",
+      "sha256": "3dfb29b1ed5534ca60db6dae715ca663f6328ed0538e85a5956e7d736bc65be3"
+    },
+    {
+      "path": "focused-tests.txt",
+      "sha256": "0ec066a5c5c8a6ee8717fc7b0d6222ca9298d2cf9ce30ae415ede5bd5d251a3a"
+    }
+  ],
+  "assessment": "Invocation-local producer correction preserves stable actor keys and child called_by; same-name actors and repeat/Herb paths retain one action anchor each. Comparator remains strict.",
+  "limits": [
+    "Nested Sleep Talk probes validate local instrumentation only; not reference eligibility parity",
+    "No client/whole-move/legality certification",
+    "Gas/Drizzle weather suppression remains a separate known gap",
+    "Browser evidence belongs to parent; not independently claimed here",
+    "No primary edits, publication or settings changes"
+  ]
+}

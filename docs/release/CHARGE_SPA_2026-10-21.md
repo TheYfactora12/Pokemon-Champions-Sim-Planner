@@ -15,7 +15,7 @@ The legacy registry's sleep-pause expectation was explicitly corrected to cancel
 and restart preparation on waking, using the pinned causal probes; historical
 whole-battle golden expectations were not regenerated or approved.
 
-`tests/charge_spa_timing_tests.mjs` has186 checks, including six missing/delayed/double
+`tests/charge_spa_timing_tests.mjs` has194 checks, including six missing/delayed/double
 boost reversal controls, exact stage/HP/PP/item/charge comparisons, first/release/
 repeat use, suppression/caps, rain/Cloud Nine, Protect/miss and causal sleep/freeze/
 paralysis/flinch/confusion assertions. `tests/charge_herb_suppression_tests.mjs`
@@ -34,3 +34,14 @@ Engine1.1.43 / shellv2.2.243-charge-spa. Bundle generation retains the unchanged
 11MiB limit. Runtime changes invalidate prior bounded claims; a newly dated capture
 and independent review are required before the canonical tracker can check them off.
 Exact aggregate and hosted outcomes belong to the lifecycle export, not this note.
+
+Browser replay initially failed because the preparation boost prelude consumed the
+move action anchor. The producer now binds each of these two moves to its own
+invocation's first use line. The comparator is unchanged. Two reversal controls,
+four same-name mirror cases and two local nested-action ownership cases protect
+this repair; nested instrumentation does not certify Sleep Talk move eligibility.
+
+Independent audit found a preexisting weather admission gap: Neutralizing Gas does
+not suppress opposing Drizzle at entry, so Electro Shot can incorrectly skip charge.
+That source-backed counterexample remains OPEN and is outside this stage/cleanup
+checkpoint. No broad Electro Shot or weather correctness claim is made.

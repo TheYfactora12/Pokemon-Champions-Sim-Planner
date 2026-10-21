@@ -1,6 +1,4 @@
 // BATTLE ENGINE — VGC Doubles Simulator
-// Simulates VGC-style 4v4 doubles with priority, speed tiers,
-// weather, Trick Room, Intimidate, and damage variance
 
 // Historical mechanics claims are not current-client certification.
 // for supported scope, known gaps and release blockers.
@@ -4571,6 +4569,7 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
   }
 
   function executeAction(attacker, move, target, allies, enemies, field, log, rng, opts) {
+    const chargeAnchorStart = log.length, chargeActionStart = (field._ctx.turnActionEvents || []).length;
     const itemSpeedEventStart = (field._ctx.turnEffectEvents || []).length;
     const itemSpeedBefore = [...playerActive,...oppActive].map(mon=>({mon,active:!!mon._unburdenActive,item:mon.item,consumed:!!mon.itemConsumed}));
     const previousRedCardMove = attacker._redCardMove;
@@ -4583,6 +4582,11 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
     try {
       return executeActionImpl(attacker, move, target, allies, enemies, field, log, rng, opts);
     } finally {
+      if (move === 'Meteor Beam' || move === 'Electro Shot') {
+        const event = field._ctx.turnActionEvents[chargeActionStart];
+        const index = log.findIndex((line,i) => i >= chargeAnchorStart && line.startsWith(`${attacker.name} used ${move}!`));
+        if (event && event.move === move && index >= 0) event.log_index = index - field._ctx.turnLogStart;
+      }
       prepareRedCard(attacker, move);
       if (attacker.referenceMode === 'champions_mc_reference') {
         mcEmergencySwitches(attacker._mcEmergencyBefore,attacker,move);attacker._mcEmergencyBefore=null;
@@ -4609,7 +4613,6 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
       }
       moveSwitchQueue = previousSwitchQueue;
       attacker._redCardMove = previousRedCardMove;
-      // One charge applies to the whole action, including spread and child hits.
       _consumeElectricCharge(attacker, move, field, log);
       if (move === 'Beak Blast') attacker._beakBlastPreparing=false;
     }
