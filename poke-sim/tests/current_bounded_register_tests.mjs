@@ -21,8 +21,15 @@ function modified(changes,fn){
  };
  try{return fn();}finally{fs.readFileSync=original;}
 }
-const rows=()=>readBoundedRegister(root).filter(row=>current.some(entry=>entry.assertion_id===row.assertion_id));
-const historicalRows=()=>readBoundedRegister(root).filter(row=>!row.assertion_id.includes('.current-runtime.')||/\.v[12]$/.test(row.assertion_id));
+// This suite owns the original v1/v2 receipt controls. Select those inputs before
+// parsing, rather than revalidating every later cycle for each historical mutant.
+// validation_cycle_tests validates the complete current index/export separately.
+function historicalRows(){
+ const selected=JSON.parse(fs.readFileSync(path.join(root,INDEX)));
+ selected.assertions=selected.assertions.filter(row=>!row.assertion_id.includes('.current-runtime.')||/\.v[12]$/.test(row.assertion_id));
+ return modified(new Map([[INDEX,bytes(selected)]]),()=>readBoundedRegister(root));
+}
+const rows=()=>historicalRows().filter(row=>current.some(entry=>entry.assertion_id===row.assertion_id));
 function capturedRuntime(fn){return modified(new Map([
  ['data.js',fs.readFileSync(path.join(root,'reports/fly-assessment-2026-10-20/data.original.js.txt'))],
  ['tools/regulation-watch-core.mjs',fs.readFileSync(path.join(root,'reports/official-watch-2026-10-20/source-v1/regulation-watch-core.mjs.txt'))],
