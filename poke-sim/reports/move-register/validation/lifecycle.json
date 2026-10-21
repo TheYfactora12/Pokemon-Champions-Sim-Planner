@@ -1,54 +1,54 @@
 {
   "schema_version": "validation-lifecycle-view-v1",
-  "candidate_commit": "a2c26bb1452bec0e4e16b1ea24b88ebec303db8c",
-  "observed_at": "2026-10-21T05:49:02.799Z",
+  "candidate_commit": "5c93802893a15bb9716f9143fe20f2cfc5a7c345",
+  "observed_at": "2026-10-21T07:26:41.067Z",
   "scope": "Bounded reference validation and draft CI; excludes official/client certification and deployment",
   "implementation": {
     "status": "implemented",
-    "source_digest": "b5d37d41030c9012062297e7de5aa37d3fb55a5a8b99b75144ebf03f1b2d05e7"
+    "source_digest": "03a4398de09f09ef698fc16ab56ee74200ee77ef46a90c8eeef0f59d457b1396"
   },
   "local_test": {
     "status": "passed",
-    "fast_files": 280,
+    "fast_files": 281,
     "offline_db_files": 12,
     "failures": 0,
-    "executed_at": "2026-10-21T05:24:50.315Z",
-    "started_at": "2026-10-21T05:14:50.182Z",
-    "completed_at": "2026-10-21T05:24:50.315Z",
+    "executed_at": "2026-10-21T06:56:06.558Z",
+    "started_at": "2026-10-21T06:44:28.484Z",
+    "completed_at": "2026-10-21T06:56:06.558Z",
     "date_limitation": null,
     "evidence": {
-      "path": "source/validation-lifecycle/05e32eae5f175ee50fdfd247ed52022fb82efcd15e867f8e12a99ea67eb87faf/local.json",
-      "sha256": "bcafb963da88d284e4a7d648823a915273efa6ac79b92504d6971a4836f13140"
+      "path": "source/validation-lifecycle/a3c82ac2ea586a4fa54adc017c1769e5ff365f3d738ee09116f14546fa88fac6/local.json",
+      "sha256": "ef55c0952cac0d0dcc6ca9d9ebf08af839d2c6758a4c9812f45d165f2c2009f6"
     },
     "candidate_source_bound": true
   },
   "independent_verification": {
     "status": "passed_bounded_scope",
-    "reviewed_at": "2026-10-21T04:21:15.634Z",
-    "runtime_source_commit": "99507bdb78f577b0b966cbaff8e10935e33ea698",
+    "reviewed_at": "2026-10-21T06:34:05.938Z",
+    "runtime_source_commit": "55a1136bd1a0ed539dc5dba74259a8c4366faed6",
     "cases": 6,
     "evidence": {
-      "path": "source/validation-lifecycle/05e32eae5f175ee50fdfd247ed52022fb82efcd15e867f8e12a99ea67eb87faf/review.json",
-      "sha256": "3e7d538f24a1e8048fe875d620cb7a47f308a09d0f84aaf5b2c6dda1298dbf08"
+      "path": "source/validation-lifecycle/a3c82ac2ea586a4fa54adc017c1769e5ff365f3d738ee09116f14546fa88fac6/review.json",
+      "sha256": "1b3bd270e170c3cbdc0713c2133a4834044fe16f175e0058579512daacd8e87b"
     },
     "candidate_source_bound": true
   },
   "remote_publication": {
-    "commit": "a2c26bb1452bec0e4e16b1ea24b88ebec303db8c",
+    "commit": "5c93802893a15bb9716f9143fe20f2cfc5a7c345",
     "url": "https://github.com/TheYfactora12/Pokemon-Champions-Sim-Planner/pull/279",
-    "observed_at": "2026-10-21T05:49:02.800Z",
+    "observed_at": "2026-10-21T07:26:41.068Z",
     "evidence": {
-      "path": "source/validation-lifecycle/05e32eae5f175ee50fdfd247ed52022fb82efcd15e867f8e12a99ea67eb87faf/remote.json",
-      "sha256": "66c48765448d4106dca75301e0a34744684d8b0146120ef713534d6d0e9baba8"
+      "path": "source/validation-lifecycle/a3c82ac2ea586a4fa54adc017c1769e5ff365f3d738ee09116f14546fa88fac6/remote.json",
+      "sha256": "56896699d1b4ef347186acd3a9f070b5c9eb24ce896e12e63e61c1c731ca12ab"
     },
     "status": "pushed"
   },
   "hosted_checks": {
     "status": "passed",
-    "run_url": "https://github.com/TheYfactora12/Pokemon-Champions-Sim-Planner/actions/runs/39549443407",
-    "commit": "a2c26bb1452bec0e4e16b1ea24b88ebec303db8c",
-    "started_at": "2026-10-21T05:25:10Z",
-    "updated_at": "2026-10-21T05:48:13Z"
+    "run_url": "https://github.com/TheYfactora12/Pokemon-Champions-Sim-Planner/actions/runs/39558932907",
+    "commit": "5c93802893a15bb9716f9143fe20f2cfc5a7c345",
+    "started_at": "2026-10-21T06:59:45Z",
+    "updated_at": "2026-10-21T07:25:43Z"
   },
   "merge": {
     "status": "not_performed",
@@ -58,9 +58,9 @@
     "status": "not_performed",
     "authorization": "not_authorized"
   },
-  "current_source_matches": false,
-  "current_workflow_state": "changed_since_checkpoint",
-  "completed": false,
+  "current_source_matches": true,
+  "current_workflow_state": "validated_draft_checkpoint",
+  "completed": true,
   "competitive_release_ready": false,
   "completion_scope": "draft_checkpoint_only",
   "actual_hosted_preview": {
@@ -75,5 +75,5 @@
     "status": "not_run",
     "blocker": "Requires reviewed rollback target and authorized hosted verification"
   },
-  "next_blocker": "Rerun/review, refresh tracker, push changed source and verify exact-head CI"
+  "next_blocker": "Open mechanics/client/regulation release gates remain"
 }
