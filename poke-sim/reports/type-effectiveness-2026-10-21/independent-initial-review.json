@@ -1,0 +1,33 @@
+{
+  "schema_version": "type-chart-independent-review-v1",
+  "reviewed_at": "2026-10-21T06:31:00.8130296Z",
+  "reference_pin": "9b136a8c8cdb860a8ab96fa063f906604e352547",
+  "source_hashes": {
+    "engine.js": "8a77d3ee1cadfdbd3ec31a6db945d8b01df6db2fa4fbf05fae7f4b60fff9887b",
+    "tools/generate-type-multiplier-audit.mjs": "961a537a8ca00f44921a04bd12178195f25e0ce8eb0eddb2703ad9d105f69968",
+    "tests/damage_pipeline_tests.js": "533566caf649250359dcf90fe923a0a1ec6fa0e3a859d62289d30d7fb9fd5c63",
+    "tests/type_effectiveness_reference_tests.mjs": "b233b0208813abd7327a2ee0344a0a454da08ced2c9261d30383ecd57a87abf3",
+    "tools/type-effectiveness-probes.mjs": "58e9a97b322157926aedb1f2fa17b10bafd6e14d9abda103ca6f82853018e3b6",
+    "data.js": "e4f03e2abb3ad0f3c3c4f48fc083842db6b32a154c8bf20106c623cdd7888654"
+  },
+  "tests": {
+    "log": "type-repair-focused.txt",
+    "passed": 10,
+    "includes": "5832 factors and synthetic damage cases, two U-turn16roll regressions, seven mutants",
+    "failed": 0
+  },
+  "independent_matrix": {
+    "evidence": "type-chart-repaired-independent.json",
+    "mismatches": 0,
+    "cases": 5832
+  },
+  "additional_mutant": "Normal Ghost immunity bypass caught; type-immunity-mutant.json",
+  "status": "passed_declared_scope",
+  "assessment": "External Dex independently supplies immunity/effectiveness; expected synthetic19base damage formula independent of chart; shared generator is not itself an independent oracle",
+  "recommendation": "Add explicit immunity-removal mutant to permanent suite",
+  "limits": [
+    "Baseline chart only; synthetic metadata override excludes move and ability exceptions",
+    "Matrix synthetic max-roll damage is not full stochastic damage pipeline parity",
+    "Eviolite and tera remain outside scope"
+  ]
+}

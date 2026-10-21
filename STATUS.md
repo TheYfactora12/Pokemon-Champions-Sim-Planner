@@ -7,13 +7,13 @@ repository security change is authorized.
 
 ## Current development candidate
 
-Last completed published draft checkpoint is466c8bd78f6b65a09d1c6c4198bf78b0924397fb; hosted run [39540217296](https://github.com/TheYfactora12/Pokemon-Champions-Sim-Planner/actions/runs/39540217296) succeeded at2026-10-21T04:09:05Z. It is not deployed.
+Last completed published draft checkpoint is `0e23c061cc7ebb453a644b1dd220c549d35c563a`; all six jobs in [39551882693](https://github.com/TheYfactora12/Pokemon-Champions-Sim-Planner/actions/runs/39551882693) passed at 2026-10-21T06:20:26Z. Its tested source is `a2c26bb1452bec0e4e16b1ea24b88ebec303db8c`. It is not deployed.
 
-Current local runtime99507bdb78f577b0b966cbaff8e10935e33ea698 is v2.2.245-snow-defense / engine1.1.45. The [snow repair](docs/release/SNOW_DEFENSE_2026-10-21.md) applies Ice defensive Defense under effective snow and fixes Gas suppression of Cloud Nine/Air Lock. The exact original eight full-turn probes now pass. Fresh v10 bounded tracker cases have independent review; aggregate, clean-checkout and hosted checks remain pending until recorded in lifecycle facts.
+Current type-chart repair is v2.2.246-type-chart / engine 1.1.46. See [bounded matrix evidence](docs/release/TYPE_EFFECTIVENESS_2026-10-21.md). The baseline matrix and original U-turn probes pass locally; aggregate, fresh dated enrollment, clean checkout and exact-head hosted checks are pending. Prior runtime checks correctly become stale after this mechanics change.
 
-Production remains v2.2.216-beta-feedback /1620ed14188ec87bc082d49b093d72bf793aee81, last HTTP identity read2026-10-21T03:45:33Z. CI browser evidence is loopback. No private preview has been created or published; approval remains pending. Actual hosted preview, production smoke and rollback gates are separate.
+Production observed at 2026-10-21T06:20:50.695Z remains v2.2.216-beta-feedback, now scheduled-news commit `ed8e11ca263bf4d06d95a8811aed3b83c9b9edfe`, bundle SHA256 `c6f77f54100b857521014dc3c2b5848ad58c6ff1234267653f3e556799b50808`. Existing deployment [39545921411](https://github.com/TheYfactora12/Pokemon-Champions-Sim-Planner/actions/runs/39545921411) passed. This is identity verification, not remote E2E. CI browser evidence uses localhost. Private preview approval remains pending; no preview, credentials or deployment were created by this task.
 
-Open: Eviolite/negative-stage rounding, Bug-versus-Poison resistance, Fly/Eject Button, broader paired format coverage, official eligibility and current-client proof. Workflow349252390 remains disabled; last seed health parsed9/15 without full discovery. M-C candidate inventory392forms537moves166items23756pairs is reference coverage only. No percentage of universal accuracy is established.
+Open: Eviolite/negative-stage rounding, Fly/Eject Button, broader paired-format coverage, official eligibility and current-client proof. Workflow 349252390 remains disabled; last seed health parsed 9/15 without full discovery. M-C candidate inventory 392 forms, 537 moves, 166 items and 23,756 pairs is reference coverage only. No universal accuracy percentage is established.
 
 ## Historical development checkpoints
 

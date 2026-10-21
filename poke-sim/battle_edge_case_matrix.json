@@ -1447,7 +1447,7 @@
     {
       "id": "DAMAGE-ROLL-DISCRETE-016",
       "family": "damage-formula",
-      "behavior": "Champions profile samples sixteen uniform integer percentages85–100 and applies the pinned independent Tackle damage vector.",
+      "behavior": "Champions profile samples sixteen uniform integer percentages85\u2013100 and applies the pinned independent Tackle damage vector.",
       "status": "partial",
       "move_ids": [
         "tackle"
@@ -1456,7 +1456,7 @@
         "tests/discrete_damage_reference_tests.mjs",
         "tests/test_method_mutation_tests.mjs"
       ],
-      "oracle": "Executable current Champions custom/M-C upstream9b136a8c8cdb860a8ab96fa063f906604e352547 sim/battle.ts2407–2409 and Champions inherited randomizer. Historical npm generic scope separate.",
+      "oracle": "Executable current Champions custom/M-C upstream9b136a8c8cdb860a8ab96fa063f906604e352547 sim/battle.ts2407\u20132409 and Champions inherited randomizer. Historical npm generic scope separate.",
       "boundary_vectors": [
         "all-sixteen-bucket-centers-and-boundaries",
         "zero-and-just-below-one",
@@ -1569,6 +1569,23 @@
         "reversal"
       ],
       "known_gap": "Eviolite with negative stages, mixed suppression/restoration, full singles/doubles interaction coverage and client proof remain open."
+    },
+    {
+      "id": "TYPE-MATRIX-001",
+      "family": "damage-formula",
+      "behavior": "Baseline eighteen-type chart and ordered dual-type multiplication, including immunities, in direct doubles damage.",
+      "status": "partial",
+      "tests": [
+        "tests/type_effectiveness_reference_tests.mjs"
+      ],
+      "oracle": "Pinned Showdown Champions 9b136a8c8cdb860a8ab96fa063f906604e352547; reference only, no client proof.",
+      "boundary_vectors": [
+        "324-single-type",
+        "5508-ordered-dual-type",
+        "both-side-Uturn-Venusaur-16rolls",
+        "eight-reversal-controls"
+      ],
+      "known_gap": "Special move, ability/item, grounding and Tera exceptions are outside this baseline matrix. Full singles/doubles turn coverage remains incomplete."
     }
   ]
 }
