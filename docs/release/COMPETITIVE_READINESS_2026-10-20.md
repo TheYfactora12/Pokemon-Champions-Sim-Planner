@@ -215,3 +215,7 @@ See [bounded discrete damage receipt](DISCRETE_DAMAGE_2026-10-20.md). The sample
 ## Reference/evidence follow-up
 
 [The v238 receipt](REFERENCE_EVIDENCE_2026-10-20.md) records the independent ee93569 survivors, their regressions and local validation. Sirfetchd/Meteor Assault reference admission is corrected with a bounded source delta; the broader reference candidate retains636/205learnset differences for review. Official completeness and current-client proof remain unresolved.
+
+## 2026-10-21 Eviolite integration scope
+
+Type-chart source5c93802 and publication3e441cf completed their six hosted jobs. The next candidate integrates defensive Eviolite stage/weather/item rounding only; see EVIOLITE_ORDER_2026-10-21.md. Reference-backed ordering is independently reviewed, while full integration gates and fresh runtime receipts remain pending. Eviolite eligibility, consumed-item/Klutz activation and offensive Body Press are confirmed separate open defects with an isolated repair owner. Fly/Eject Button, paired-format accuracy, official/client evidence and actual hosted-preview/postdeploy/rollback gates remain blocked; private preview approval is unanswered. Prior checkpoint statements above are historical, not current runtime certification.

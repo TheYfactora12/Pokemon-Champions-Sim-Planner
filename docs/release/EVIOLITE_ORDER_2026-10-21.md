@@ -146,3 +146,11 @@ battle audit and source-truth commands passed. The remaining validation-cycle ga
 is failed, not denied, pending approval or uncertain execution. No permission denial
 remains. Parent integration owns fresh bounded receipts and coordinated release
 identity; eligibility/suppression, Body Press and client semantics stay separate.
+
+## Coordinated integration checkpoint
+
+The four verified bundle commits were integrated onto publication3e441cf without conflicts. Runtime17fd127127fd990be9dea2046d3804e15a358cd5 carries engine1.1.47 and v2.2.247-eviolite-order. The regenerated bundle is11,532,080bytes, SHA2564606f58fa8da5a32d50752a982eb6f11c1791e5df2a3781f011dfead87097079, below the unchanged11MiB limit. Historical and pinned upstream focused suites each passed226/226; the first archive-based upstream attempt stopped because the strict guard requires a Git checkout, then the exact isolated checkout passed without changing the guard. Initial release test retained an old build-ID expectation and hit sandbox temporary-Git permissions; corrected identity and authorized host execution passed12/12. QA snapshot checks passed7/7.
+
+Independent integration review passed226/226 and confirmed all221 frozen vectors retain the original expected arrays. Parent independent retest of isolatedc9d071d additionally passed48 ordering/weather-suppression cases. Its exact report is EVIOLITE_RETEST_C9D071D.md; these results do not close the separately reproduced activation or Body Press defects. Ineligible, Klutz or consumed-item target examples take42-50 instead of62-74 reference; Eviolite Body Press example deals68-80 instead of44-54. Those repairs have a separate isolated owner and are excluded here.
+
+Fresh cycle-v12 execution and independent review passed at2026-10-21T08:09:00.856Z: six cases and36 unsupported-input rejection controls, runtime17fd127. Six dated assertions were enrolled; tracker has73 history rows (six current,61 stale and six blocked). The current export identity is7112816ca05e235b44339b7398dbe7c327ebf3495f3bc51cc994003892071c84. Final aggregate, clean checkout, browser and exact-head hosted results remain separate pending gates. Historical failures and receipt versions are retained. No merge, preview publication, production deployment, credentials or settings changes.

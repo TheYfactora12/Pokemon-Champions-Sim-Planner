@@ -1,0 +1,33 @@
+{
+  "schema_version": "eviolite-integration-independent-review-v1",
+  "reviewed_at": "2026-10-21T08:07:43.4780492Z",
+  "reviewed_commit": "c9d071da34821ca559daf8dfb5d1800026589acc",
+  "base": "5c93802893a15bb9716f9143fe20f2cfc5a7c345",
+  "source_hashes": {
+    "docs/release/EVIOLITE_ORDER_2026-10-21.md": "a7b08921886f936cf7036bb32fb59a14c84195dad31210a29835a7560dacb031",
+    "poke-sim/tests/fixtures/eviolite_order_v1.json": "6c8102687948141cc3ba5d934ee3d5924375f6db7d58d17fef4262761a665863",
+    "poke-sim/engine.js": "4b1e9561fdeb6c6953a859a342f25b35a1d1e626565c64af14e44ebb435ae1e0",
+    "poke-sim/tools/eviolite-reference-pin.mjs": "1f90fa83363713011f2bc001e7e68cfea2618e63fa94e51fb6667b5c016cdb1c",
+    "poke-sim/tests/eviolite_order_tests.mjs": "a13f149af5a2ba437cf5188ef89c14ac56360008835ea7038bff3f7971240b26",
+    "poke-sim/tools/eviolite-order-probes.mjs": "25aac02f11f681cbb34fc56cb564d411564feb16b30ca7cc2489d9d79a3083e3",
+    "poke-sim/tests/fixtures/eviolite_reference_v1.json": "34d8d44f3879c168a810af92910aed1356136efa2c5e4e9d85b1de41325307bf"
+  },
+  "reference_pin": "9b136a8c8cdb860a8ab96fa063f906604e352547",
+  "reference_compiled_sha256": "58da20a619f4eae3c0b5766867ef3d4ee6ec0efae52f0366e4ff47ce20829827",
+  "test_result": {
+    "failed": 0,
+    "includes": "221 frozen damage vectors, four mutation controls, invalid oracle controls",
+    "log": "eviolite-integration-authorized.txt",
+    "passed": 226
+  },
+  "frozen_vectors": "All221 expected arrays independently matched before.json reference arrays",
+  "initial_attempt": "eviolite-integration-focused.txt stopped at sandbox Git access before mechanics tests; preserved",
+  "status": "no_new_demonstrated_blocker_in_declared_scope",
+  "limits": [
+    "Body Press offensive getter interaction affected and unresolved",
+    "Eligibility consumed state and item/ability suppression unresolved",
+    "No full aggregate or hosted CI run by this reviewer",
+    "Fresh release identity and bounded capture reenrollment still required",
+    "No client/competitive certification"
+  ]
+}
