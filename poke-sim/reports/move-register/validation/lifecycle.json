@@ -58,9 +58,9 @@
     "status": "not_performed",
     "authorization": "not_authorized"
   },
-  "current_source_matches": true,
-  "current_workflow_state": "validated_draft_checkpoint",
-  "completed": true,
+  "current_source_matches": false,
+  "current_workflow_state": "changed_since_checkpoint",
+  "completed": false,
   "competitive_release_ready": false,
-  "next_blocker": "Open mechanics/client/regulation release gates remain"
+  "next_blocker": "Rerun/review, refresh tracker, push changed source and verify exact-head CI"
 }

@@ -5,6 +5,17 @@ release only after all required gates. **NO-GO. No scope waiver or percentage.**
 Owner: Kevin for release decisions; implementer for repairs; independent reviewers
 for retest; a current-client capture owner remains unassigned.
 
+October21 charge checkpoint: engine1.1.43 / v2.2.243-charge-spa corrects the bounded
+Meteor Beam/Electro Shot preparation/repeat timing and interrupted-charge cleanup.
+[Repair scope](CHARGE_SPA_2026-10-21.md);48 raw reference cases,186 focused checks
+and independent preview/interruption review are retained. The v7 tracker restores
+six independently replayed bounded cases while retaining31 stale versions and six
+blocked attempts. Exact local/hosted stage completion is in the generated lifecycle
+export. Eject Button/Fly admission, broader paired-format coverage, official
+eligibility, client proof and current-golden approval remain separate open gates.
+The following entries retain earlier checkpoint evidence and do not override this
+bounded scope or the lifecycle's exact candidate identity.
+
 Follow-up candidate: **v2.2.239-struggle-evidence / engine1.1.40**.
 [Bounded Struggle and evidence repairs](STRUGGLE_BOUNDARIES_2026-10-20.md) retain
 independent source-based cases, five reversal controls and the corrected Fake Out

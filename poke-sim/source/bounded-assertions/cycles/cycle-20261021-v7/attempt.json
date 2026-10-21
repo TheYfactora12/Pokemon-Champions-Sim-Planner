@@ -1,0 +1,97 @@
+{
+  "schema_version": "validation-attempt-v1",
+  "cycle": "cycle-20261021-v7",
+  "simulator_commit": "a1f641e8096f43b9adddb312615d57ed49f0a34d",
+  "started_at": "2026-10-21T00:56:41.351Z",
+  "cases": [
+    {
+      "case_id": "RESOURCE-STRUGGLE-CAPTURE",
+      "assertion_id": "RESOURCE-STRUGGLE-CAPTURE.current-runtime.v7",
+      "scope": {
+        "oracle_kind": "shared_reference",
+        "format": "gen9championsdoublescustomgame",
+        "regulation_id": null,
+        "client_version": null,
+        "boundaries": [
+          "player slot0, no PP, target isolated to opposing slot0",
+          "ordinary physical damage and rounded maxHP recoil; no random-target claim"
+        ]
+      }
+    },
+    {
+      "case_id": "REST-ELECTRIC-CAPTURE",
+      "assertion_id": "REST-ELECTRIC-CAPTURE.current-runtime.v7",
+      "scope": {
+        "oracle_kind": "shared_reference",
+        "format": "gen9championsdoublescustomgame",
+        "regulation_id": null,
+        "client_version": null,
+        "boundaries": [
+          "grounded player slot0, missing20HP, ElectricTerrain admission rejection"
+        ]
+      }
+    },
+    {
+      "case_id": "ENCORE-QUEUE-CAPTURE",
+      "assertion_id": "ENCORE-QUEUE-CAPTURE.current-runtime.v7",
+      "scope": {
+        "oracle_kind": "shared_reference",
+        "format": "gen9championsdoublescustomgame",
+        "regulation_id": null,
+        "client_version": null,
+        "boundaries": [
+          "two turns, Prankster Encore before queued Flamethrower",
+          "replacement executes Will-O-Wisp and spends replacement PP"
+        ]
+      }
+    },
+    {
+      "case_id": "RED-CARD-CAPTURE",
+      "assertion_id": "RED-CARD-CAPTURE.current-runtime.v7",
+      "scope": {
+        "oracle_kind": "shared_reference",
+        "format": "gen9championsdoublescustomgame",
+        "regulation_id": null,
+        "client_version": null,
+        "boundaries": [
+          "single fixed damage hit, surviving holder, exactly one legal reserve",
+          "consumption and forced replacement; no random-reserve claim"
+        ]
+      }
+    },
+    {
+      "case_id": "WHITE-HERB-CAPTURE",
+      "assertion_id": "WHITE-HERB-CAPTURE.current-runtime.v7",
+      "scope": {
+        "oracle_kind": "shared_reference",
+        "format": "gen9championsdoublescustomgame",
+        "regulation_id": null,
+        "client_version": null,
+        "boundaries": [
+          "synthetic initial atk-2 def-1 spa+3 stages",
+          "negative stages reset and positive stage retained"
+        ]
+      }
+    },
+    {
+      "case_id": "DAMAGE-ROLL-CAPTURE",
+      "assertion_id": "DAMAGE-ROLL-CAPTURE.current-runtime.v7",
+      "scope": {
+        "oracle_kind": "shared_reference",
+        "format": "gen9championsdoublescustomgame",
+        "regulation_id": null,
+        "client_version": null,
+        "boundaries": [
+          "level50 Hardy zeroEV Snorlax Tackle into Venusaur",
+          "16 explicitly controlled damage draws, no critical hits; calculation API in doubles field"
+        ]
+      }
+    }
+  ],
+  "finished_at": "2026-10-21T00:56:44.141Z",
+  "status": "awaiting_independent_review",
+  "capture_index": {
+    "path": "source/bounded-assertions/cycles/cycle-20261021-v7/capture-index.json",
+    "sha256": "3feb8b2c254f6d1649bc33bc4a85adbf4833a0476c07bb8f0946f4b1fede4576"
+  }
+}

@@ -20,6 +20,10 @@
     {
       "path": "source/bounded-assertions/reviews/86154cc62fc0ae738d2a8ccaa2a5403104ee326b26474058cf4d90f598f77aba/review.json",
       "sha256": "2f11e2435ad4b49bb9003452cfdc77e09bccc79b08ec9fa1de28e3bfaf06b9b1"
+    },
+    {
+      "path": "source/bounded-assertions/reviews/938539fcf8da3bae0958107c66e376b643ae55181e482cfcd15703a414eb94ff/review.json",
+      "sha256": "fcc16c84af98eaaebe00f1917845d41010c815f295e4ab95dca8f975494d1d0c"
     }
   ]
 }
