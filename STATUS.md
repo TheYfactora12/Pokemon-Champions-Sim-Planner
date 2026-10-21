@@ -5,24 +5,17 @@ Reviewed: 2026-10-21. This file owns current development checkpoint facts.
 Competitive release remains **NO-GO**. No merge, deployment, live database or
 repository security change is authorized.
 
-## Isolated Eviolite candidate (2026-10-21)
-
-Bounded defensive stage/weather truncation repair is prepared on exact base
-`5c93802893a15bb9716f9143fe20f2cfc5a7c345`; see
-[scope, evidence and exclusions](docs/release/EVIOLITE_ORDER_2026-10-21.md).
-Local integration candidate only. Eviolite is Past in the pinned Champions
-reference; ranked eligibility, fresh client proof and offensive Body Press are
-not certified. No publication or release-readiness claim.
-
 ## Current development candidate
 
-Last completed draft checkpoint is `3e441cf3773b3120acf89351e2674523c9739bd5`; all six jobs in [39562265788](https://github.com/TheYfactora12/Pokemon-Champions-Sim-Planner/actions/runs/39562265788) passed at 2026-10-21T07:58:18Z. Its tested type-chart source is `5c93802893a15bb9716f9143fe20f2cfc5a7c345`. It is not deployed.
+Ordering source `380e8a3d1682897359b2b2e4d2fdc6a6946f6e4d` passed all six hosted jobs in [39570651808](https://github.com/TheYfactora12/Pokemon-Champions-Sim-Planner/actions/runs/39570651808), completed 2026-10-21T09:03:12Z. Its lifecycle publication `53516bdf6573a0009b32b51298c4ce84119cd983` is separately checking in [39574827433](https://github.com/TheYfactora12/Pokemon-Champions-Sim-Planner/actions/runs/39574827433). Neither is deployed.
 
-Current integration is v2.2.247-eviolite-order / engine 1.1.47. The bounded defensive Eviolite rounding patch is integrated from the isolated reviewed candidate; see [scope and evidence](docs/release/EVIOLITE_ORDER_2026-10-21.md). Fresh runtime captures, integration review, aggregate/clean-checkout tests and exact-head hosted checks are pending. Previous runtime receipts become stale until freshly executed and reviewed.
+Local activation runtime `2f3411e4b9f86cc22d44ea1abfd9004b029ca7ec` is engine 1.1.48 / v2.2.248-eviolite-activation. It integrates exact-species eligibility, effective item activation and offensive Body Press Defense separation. The pinned reference focused checks pass 201 activation plus 226 ordering assertions. Independent integration review confirms executable mechanics match the isolated reviewed candidate; six fresh v13 bounded captures and 36 unsupported-input controls passed. Aggregate, clean-checkout and exact-head hosted activation checks remain pending. See [scope and evidence](docs/release/EVIOLITE_ACTIVATION_2026-10-21.md).
 
-Production observed on 2026-10-21 remains v2.2.216-beta-feedback at scheduled-news commit `ed8e11ca263bf4d06d95a8811aed3b83c9b9edfe`, bundle SHA256 `c6f77f54100b857521014dc3c2b5848ad58c6ff1234267653f3e556799b50808`. Existing deployment [39545921411](https://github.com/TheYfactora12/Pokemon-Champions-Sim-Planner/actions/runs/39545921411) passed. This is identity verification, not remote E2E. CI browser evidence uses localhost. Private preview approval remains pending.
+Bundle is 11,533,142 bytes, SHA256 `bcb7a36d7317af58ef9517f54f9f6398eb702b1acca8690841ea6e9531d311e1`, 1,194 bytes below the unchanged cap. Historical comments were relocated verbatim to documentation; no executable statement changed in that size correction.
 
-Open: Eviolite eligibility/consumption/suppression and Body Press interactions, Fly/Eject Button, broader paired-format coverage, official eligibility and current-client proof. Workflow 349252390 remains disabled; last seed health parsed 9/15 without full discovery. M-C candidate inventory 392 forms, 537 moves, 166 items and 23,756 pairs is reference coverage only. No universal accuracy percentage is established. No merge, preview publication, production deployment, credentials or settings change is included.
+Production last observed remains v2.2.216-beta-feedback at scheduled-news commit `ed8e11ca263bf4d06d95a8811aed3b83c9b9edfe`, bundle SHA256 `c6f77f54100b857521014dc3c2b5848ad58c6ff1234267653f3e556799b50808`. Existing deployment [39545921411](https://github.com/TheYfactora12/Pokemon-Champions-Sim-Planner/actions/runs/39545921411) passed. This is identity verification, not remote E2E. CI browser evidence uses localhost. Private preview approval remains pending.
+
+Open: Eviolite Magic Room, Embargo, transformation/species lifecycle, consumption-event timing, singles and current-client parity; Fly/Eject Button; broader paired-format coverage; official eligibility. Workflow 349252390 remains disabled; last seed health parsed 9/15 without full discovery. M-C candidate inventory 392 forms, 537 moves, 166 items and 23,756 pairs is reference coverage only. No universal accuracy percentage is established. No merge, preview publication, production deployment, credentials or settings change is included.
 
 ## Historical development checkpoints
 
