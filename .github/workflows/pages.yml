@@ -43,7 +43,7 @@ jobs:
         working-directory: poke-sim
         run: |
           npm run test:accuracy:standard
-          npm run release:competitive:check
+          npm run release:competitive:check -- --predeployment
 
       - uses: actions/configure-pages@v6
         with:

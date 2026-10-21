@@ -1,5 +1,12 @@
 # Improvement Log
 
+## IMP-0128: Bound Weather Restoration and Hosted Release Proof
+
+- Respect effective weather abilities under Neutralizing Gas, ordered restoration, last-Gas transitions and residual duration. Preserve bounded reference receipts and remaining gaps.
+- Restrict service-worker cleanup to app-owned cache prefixes.
+- Separate actual preview evidence and final production smoke/rollback from loopback CI and predeployment eligibility. No deployment performed.
+- [Weather scope](release/WEATHER_GAS_2026-10-21.md) and [hosted plan](release/HOSTED_VALIDATION_2026-10-21.md).
+
 ## IMP-0127: Correct Bounded Charge Special Attack Timing
 
 - Move Meteor Beam/Electro Shot boosts to preparation, without duplicate release boosts.

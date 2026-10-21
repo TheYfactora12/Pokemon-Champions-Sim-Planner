@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import {test} from 'node:test';
 import {generateKeyPairSync,sign} from 'node:crypto';
-import {FIELDS,ORACLES} from '../tools/competitive-evidence-schema.mjs';
+import {FIELDS,ORACLES,HOSTED_KINDS} from '../tools/competitive-evidence-schema.mjs';
 import {assess,REQUIRED,sha256} from '../tools/check-competitive-readiness.mjs';
 
 // Ephemeral synthetic keys/bytes exercise the validator, never production approval.
@@ -12,6 +12,7 @@ function fixture() {
   const identity={build_id:'test-build',engine_sha256:'e'.repeat(64),bundle_sha256:'b'.repeat(64),
     reference_sha256:'a'.repeat(64),benchmark_sha256:'c'.repeat(64),benchmark_cases:['case-a'],benchmark_requirements:{'case-a':{asserted_fields:['exact_hp'],evidence_kinds:['client-mechanics'],field_contracts:{exact_hp:{type:'number',unit:'hp',min:0}}}},unproved_cases:[]};
   Object.assign(identity,{external_assets:{'mc_review.js':'d'.repeat(64)},installed_reference:{'dist/sim/battle.js':'f'.repeat(64)},checker_schema:{checker:'1'.repeat(64)}});
+  Object.assign(identity,{checked_commit:'a'.repeat(40),hosted_origins:{preview:'https://preview.example',production:'https://production.example'},rollback_target:{commit:'c'.repeat(40),bundle_sha256:'b'.repeat(64),external_assets:identity.external_assets}});
   const pkg={schema_version:1,target,identity,benchmark_cases:['case-a'],unsupported:[],evidence:REQUIRED.map((kind,i)=>{
     const bytes=Buffer.from(`synthetic observation ${kind}`), name=`evidence/${i}.json`;files.set(name,bytes);
     return {id:kind,kind,path:name,sha256:sha256(bytes),status:'passed',mismatches:0,oracle:'champions-client',
@@ -23,13 +24,18 @@ function fixture() {
   }
   for(const e of pkg.evidence){
     e.oracle=ORACLES[e.kind];e.capture_id=`capture-${e.id}`;e.source_url ||= `https://evidence.example/synthetic/${e.id}`;
+    let hosted_capture;
+    if(HOSTED_KINDS.includes(e.kind)){
+      e.source_url=(e.kind==='hosted-preview-e2e'?identity.hosted_origins.preview:identity.hosted_origins.production)+'/candidate.html';
+      hosted_capture={environment:e.kind,url:e.source_url,source_commit:e.kind==='rollback-verification'?identity.rollback_target.commit:identity.checked_commit,bundle_sha256:identity.bundle_sha256,deployment_run_url:'https://github.com/synthetic/actions/runs/1',publication_approval_id:'synthetic-human-approval'};
+    }
 
-    const values={registration_accepted:e.kind==='accepted-complete-team',rejection_code:'item-clause',terminal:true,winner:'player',acceptance_met:true,allow:true,deny:false,replay_match:true,loaded_assets_match:true,exact_hp:42,...target};
+    const values={registration_accepted:e.kind==='accepted-complete-team',rejection_code:'item-clause',terminal:true,winner:'player',acceptance_met:true,allow:true,deny:false,replay_match:true,loaded_assets_match:true,fresh_profile:true,cache_upgrade:true,offline_reload:true,exact_hp:42,...target};
     const fields=e.kind==='client-mechanics'?['exact_hp']:FIELDS[e.kind];
-    const input=Buffer.from(JSON.stringify({schema_version:'competitive-observations-v1',kind:e.kind,target,identity,capture_id:e.capture_id,captured_at_utc:e.captured_at_utc,source_url:e.source_url,client_version:e.client_version,regulation_id:e.regulation_id,format:e.format,server_context:e.server_context,case_id:'case-a',field_contracts:Object.fromEntries(fields.map(field=>[field,field==='exact_hp'?{type:'number',unit:'hp',min:0}:{type:typeof values[field],unit:typeof values[field]==='boolean'?'boolean':'text'}])),protocol_id:'synthetic-held-out-v1',held_out:true,environment:'synthetic-service',loaded_assets:identity.external_assets,status:'complete',expected:values,observed:values}));files.set(`input/${e.id}`,input);
+    const input=Buffer.from(JSON.stringify({schema_version:'competitive-observations-v1',kind:e.kind,target,identity,capture_id:e.capture_id,captured_at_utc:e.captured_at_utc,source_url:e.source_url,client_version:e.client_version,regulation_id:e.regulation_id,format:e.format,server_context:e.server_context,case_id:'case-a',field_contracts:Object.fromEntries(fields.map(field=>[field,field==='exact_hp'?{type:'number',unit:'hp',min:0}:{type:typeof values[field],unit:typeof values[field]==='boolean'?'boolean':'text'}])),hosted_capture,protocol_id:'synthetic-held-out-v1',held_out:true,environment:'synthetic-service',loaded_assets:identity.external_assets,status:'complete',expected:values,observed:values}));files.set(`input/${e.id}`,input);
     const body={schema_version:'competitive-comparison-v1',kind:e.kind,oracle:e.oracle,target,identity,status:'passed',mismatches:0,
       observations:fields.map((field,i)=>({id:`${e.id}-${i}`,case_id:'case-a',field,comparator:'exact',unit:field==='exact_hp'?'hp':typeof values[field]==='boolean'?'boolean':'text',expected:values[field],observed:values[field],expected_source:{input_id:'observations',pointer:`/expected/${field}`},observed_source:{input_id:'observations',pointer:`/observed/${field}`} })),
-      inputs:[{id:'observations',path:`input/${e.id}`,sha256:sha256(input)}],protocol_id:'synthetic-held-out-v1',held_out:true,environment:'synthetic-service',loaded_assets:identity.external_assets};
+      inputs:[{id:'observations',path:`input/${e.id}`,sha256:sha256(input)}],hosted_capture,protocol_id:'synthetic-held-out-v1',held_out:true,environment:'synthetic-service',loaded_assets:identity.external_assets};
     if(e.oracle==='official-publication'){
       let text='';body.source_spans={};for(const field of fields){const value=String(target[field]);body.source_spans[field]={start:text.length,end:text.length+value.length};text+=value+'\n';}
       const raw=Buffer.from(text),name=`source/${e.id}`;files.set(name,raw);e.source_capture={path:name,sha256:sha256(raw)};
@@ -122,6 +128,26 @@ for(const [name,mutate] of Object.entries(bodyMutations))test(`parsed body rejec
 test('official source bytes must reproduce extracted values even after resigning',()=>{
   const f=fixture(),e=f.pkg.evidence[0],raw=Buffer.from('unrelated official publication');f.files.set(e.source_capture.path,raw);e.source_capture.sha256=sha256(raw);f.seal();assert.notEqual(assess(f.manifest,f.options).status,'READY');
 });
+
+for(const kind of HOSTED_KINDS)test(`remote gate cannot be omitted: ${kind}`,()=>{const f=fixture();f.pkg.evidence=f.pkg.evidence.filter(e=>e.kind!==kind);f.seal();assert.notEqual(assess(f.manifest,f.options).status,'READY');});
+for(const [id,mutate] of [
+ ['localhost',c=>{c.url='http://127.0.0.1:8000/candidate.html';}],
+ ['https-loopback',c=>{c.url='https://localhost/candidate.html';}],
+ ['wrong-commit',c=>{c.source_commit='0'.repeat(40);}],
+ ['wrong-bundle',c=>{c.bundle_sha256='0'.repeat(64);}],
+ ['missing-approval',c=>{delete c.publication_approval_id;}],
+ ['missing-deployment',c=>{delete c.deployment_run_url;}],
+ ['wrong-stage',c=>{c.environment='production-smoke';}],
+])test(`hosted capture rejects ${id} even after input rehash and signature`,()=>{
+ const f=fixture();rewriteEvidence(f,'hosted-preview-e2e',(b,e)=>{
+  mutate(b.hosted_capture);e.source_url=b.hosted_capture.url;
+  const ref=b.inputs[0],input=JSON.parse(f.files.get(ref.path));input.hosted_capture=b.hosted_capture;input.source_url=e.source_url;
+  const bytes=Buffer.from(JSON.stringify(input));f.files.set(ref.path,bytes);ref.sha256=sha256(bytes);
+ });assert.notEqual(assess(f.manifest,f.options).status,'READY');
+});
+test('same-origin preview configuration cannot pass',()=>{const f=fixture();f.options.identity.hosted_origins.preview=f.options.identity.hosted_origins.production;f.seal();assert.notEqual(assess(f.manifest,f.options).status,'READY');});
+test('absent approved preview origin cannot pass',()=>{const f=fixture();f.options.identity.hosted_origins.preview=null;f.seal();assert.notEqual(assess(f.manifest,f.options).status,'READY');});
+test('rollback requires a separately bound previous artifact',()=>{const f=fixture();delete f.options.identity.rollback_target;f.seal();assert.notEqual(assess(f.manifest,f.options).status,'READY');});
 function rewriteEvidence(f,kind,mutate){const e=f.pkg.evidence.find(e=>e.kind===kind),b=JSON.parse(f.files.get(e.path));mutate(b,e);const bytes=Buffer.from(JSON.stringify(b));f.files.set(e.path,bytes);e.sha256=sha256(bytes);f.seal();}
 for(const value of ['banana',{},-1])test(`typed HP rejects ${JSON.stringify(value)}`,()=>{const f=fixture();rewriteEvidence(f,'client-mechanics',b=>{b.observations[0].expected=value;b.observations[0].observed=value;});assert.notEqual(assess(f.manifest,f.options).status,'READY');});
 test('unrelated kind cannot supply missing case assertion',()=>{const f=fixture();rewriteEvidence(f,'client-mechanics',b=>{b.observations[0].case_id='unrelated-case';});rewriteEvidence(f,'official-client-version',b=>{b.observations.push({id:'borrowed-hp',case_id:'case-a',field:'exact_hp',comparator:'exact',unit:'hp',expected:42,observed:42,expected_source:{input_id:'observations',pointer:'/expected/exact_hp'},observed_source:{input_id:'observations',pointer:'/observed/exact_hp'}});});f.pkg.case_results[0].evidence_ids=['client-mechanics','official-client-version'];f.seal();assert.notEqual(assess(f.manifest,f.options).status,'READY');});
@@ -150,3 +176,13 @@ for(const constraint of [{max:10},{unknown_constraint:true},{min:'0'},{min:100,m
  for(const e of f.pkg.evidence)rewriteInput(f,e.id,i=>{i.identity=f.options.identity;if(e.kind==='client-mechanics')Object.assign(i.field_contracts.exact_hp,constraint);},b=>{b.identity=f.options.identity;});
  f.seal();assert.notEqual(assess(f.manifest,f.options).status,'READY');
 });
+
+
+test('predeployment eligibility does not claim postdeployment completion',()=>{
+ const f=fixture();f.pkg.evidence=f.pkg.evidence.filter(e=>!['production-smoke','rollback-verification'].includes(e.kind));f.seal();
+ assert.equal(assess(f.manifest,{...f.options,phase:'predeployment'}).status,'PREDEPLOY_ELIGIBLE');
+ assert.equal(assess(f.manifest,f.options).status,'NO-GO');
+ f.pkg.evidence=f.pkg.evidence.filter(e=>e.kind!=='hosted-preview-e2e');f.seal();
+ assert.equal(assess(f.manifest,{...f.options,phase:'predeployment'}).status,'NO-GO');
+});
+test('unknown readiness phases cannot waive gates',()=>{const f=fixture();assert.throws(()=>assess(f.manifest,{...f.options,phase:'skip'}),/Unknown readiness phase/);});

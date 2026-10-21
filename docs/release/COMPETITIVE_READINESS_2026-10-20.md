@@ -1,5 +1,12 @@
 # Competitive release decision register
 
+October 21 weather/hosting follow-up is a local candidate, not launch completion.
+[Bounded weather repair](WEATHER_GAS_2026-10-21.md) has focused reference review;
+[actual hosted gates](HOSTED_VALIDATION_2026-10-21.md) require isolated preview,
+post-approved-deployment smoke and rollback evidence. No preview is published.
+Ice/snow physical damage remains an explicit separate counterexample.
+The charge checkpoint below is historical; its weather finding motivated this repair.
+
 Target: Wednesday October21 night America/New_York decision; Thursday October22
 release only after all required gates. **NO-GO. No scope waiver or percentage.**
 Owner: Kevin for release decisions; implementer for repairs; independent reviewers

@@ -5,19 +5,21 @@ import {createHash, verify} from 'node:crypto';
 import {execFileSync} from 'node:child_process';
 import {isDeepStrictEqual as equal} from 'node:util';
 import {createRequire} from 'node:module';
-import {parseEvidence,installedInventory} from './competitive-evidence-schema.mjs';
+import {parseEvidence,installedInventory,HOSTED_KINDS} from './competitive-evidence-schema.mjs';
 
 export const REQUIRED = Object.freeze([
   'official-client-version', 'regulation-rules', 'accepted-complete-team',
   'rejected-complete-team', 'client-mechanics', 'complete-client-battles',
-  'competitive-policy-quality', 'live-service', 'paired-browser-replays'
+  'competitive-policy-quality', 'live-service', 'paired-browser-replays', ...HOSTED_KINDS
 ]);
 export const sha256 = bytes => createHash('sha256').update(bytes).digest('hex');
 const root = fileURLToPath(new URL('../', import.meta.url));
 
 // JSON declarations are never approval. Verify exact package bytes and a signature
 // from a separately reviewed human key. No production keys are enrolled yet.
-export function assess(manifest, {read, now, identity, keys = []}) {
+export function assess(manifest, {read, now, identity, keys = [], phase = 'final'}) {
+  if (!['final','predeployment'].includes(phase)) throw Error('Unknown readiness phase');
+  const required = phase === 'final' ? REQUIRED : REQUIRED.filter(kind=>kind !== 'production-smoke' && kind !== 'rollback-verification');
   const blockers = [], errors = [];
   const block = message => blockers.push(message);
   const fault = message => errors.push(message);
@@ -89,7 +91,7 @@ export function assess(manifest, {read, now, identity, keys = []}) {
         required.evidence_kinds.every(kind=>required.asserted_fields.every(field=>entries.some(e=>row.evidence_ids.includes(e.id) && e.kind===kind && e.status==='passed' && parsed.get(e.id)?.cases.get(id)?.has(field)))));
     })) block('Per-case assertions and evidence bindings incomplete');
     if(Array.isArray(caseResults) && new Set(caseResults.map(r=>r.id)).size!==caseResults.length) fault('Duplicate benchmark results');
-    for (const kind of REQUIRED) if (!entries.some(e => e.kind === kind)) block(`Missing mandatory evidence: ${kind}`);
+    for (const kind of required) if (!entries.some(e => e.kind === kind)) block(`Missing mandatory evidence: ${kind}`);
     if (!Array.isArray(pkg.unsupported) || pkg.unsupported.length) block('Included unsupported mechanics unresolved');
     if (!Array.isArray(pkg.benchmark_cases) || new Set(pkg.benchmark_cases).size!==pkg.benchmark_cases.length || pkg.benchmark_cases.length!==identity.benchmark_cases?.length || !identity.benchmark_cases?.length ||
         identity.benchmark_cases.some(id => !pkg.benchmark_cases.includes(id))) block('Mandatory benchmark case evidence missing');
@@ -102,11 +104,11 @@ export function assess(manifest, {read, now, identity, keys = []}) {
       } catch { fault('Invalid approval signature/key'); }
     }
   } else block('Complete reviewed package unavailable');
-  return {schema_version:1, status: errors.length ? 'INVALID' : blockers.length ? 'NO-GO' : 'READY',
+  return {schema_version:1, phase, status: errors.length ? 'INVALID' : blockers.length ? 'NO-GO' : phase === 'final' ? 'READY' : 'PREDEPLOY_ELIGIBLE',
     target, identity, errors, blockers, claim:'Readiness for the declared competitive scope only; check totals are not accuracy percentages.'};
 }
 
-export function localAssessment(base = root) {
+export function localAssessment(base = root, phase = 'final') {
   const read = name => {
     const resolved = fs.realpathSync(path.resolve(base, name));
     if (!resolved.startsWith(fs.realpathSync(base) + path.sep)) throw Error('Evidence outside repository root');
@@ -119,6 +121,7 @@ export function localAssessment(base = root) {
   const referenceRoot=path.dirname(require.resolve('pokemon-showdown/package.json'));
   const external_assets=Object.fromEntries(Object.entries(artifact.external_assets).map(([name,row])=>{const actual=sha256(read(name));if(actual!==row.sha256)throw Error(`External asset differs: ${name}`);return [name,actual];}));
   const identity = {
+    ...json('source/hosted-validation-targets.json'),
     external_assets,installed_reference:installedInventory(referenceRoot),
     checker_schema:Object.fromEntries(['tools/check-competitive-readiness.mjs','tools/competitive-evidence-schema.mjs'].map(name=>[name,sha256(read(name))])),
     build_id:artifact.build_id, engine_sha256:sha256(read('engine.js')),
@@ -132,7 +135,7 @@ export function localAssessment(base = root) {
     run_id:process.env.GITHUB_RUN_ID || null, run_attempt:process.env.GITHUB_RUN_ATTEMPT || null
   };
   const result = assess(json('source/competitive-release-evidence.json'), {
-    read, now:Date.now(), identity, keys:json('source/competitive-review-keys.json').keys
+    read, now:Date.now(), identity, phase, keys:json('source/competitive-review-keys.json').keys
   });
   if (artifact.bundle_sha256 !== identity.bundle_sha256) result.errors.push('Release artifact differs from actual bundle');
   if (identity.github_sha && identity.github_sha !== identity.checked_commit) result.errors.push('Checked commit differs from CI commit');
@@ -149,9 +152,10 @@ export function localAssessment(base = root) {
 }
 
 if (process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {
-  const result = localAssessment();
+  const phase = process.argv.includes('--predeployment') ? 'predeployment' : 'final';
+  const result = localAssessment(root, phase);
   const output = process.argv.indexOf('--report');
   if (output >= 0) fs.writeFileSync(process.argv[output+1], JSON.stringify(result,null,2)+'\n');
   console.log(JSON.stringify(result,null,2));
-  if (result.status === 'INVALID' || (process.argv.includes('--strict') && result.status !== 'READY')) process.exitCode=1;
+  if (result.status === 'INVALID' || (process.argv.includes('--strict') && result.status !== (phase === 'final' ? 'READY' : 'PREDEPLOY_ELIGIBLE'))) process.exitCode=1;
 }

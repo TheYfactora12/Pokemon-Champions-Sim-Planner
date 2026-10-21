@@ -2,8 +2,9 @@ import fs from 'node:fs';
 import path from 'node:path';
 import {createHash} from 'node:crypto';
 import {isDeepStrictEqual as equal} from 'node:util';
-export const ORACLES = Object.freeze({'official-client-version':'official-publication','regulation-rules':'official-publication','accepted-complete-team':'champions-client','rejected-complete-team':'champions-client','client-mechanics':'champions-client','complete-client-battles':'champions-client','competitive-policy-quality':'held-out-player-evaluation','live-service':'service-probe','paired-browser-replays':'candidate-bound-browser'});
-export const FIELDS = Object.freeze({'official-client-version':['client_version'],'regulation-rules':['regulation_id','format','effective_from_utc','effective_to_utc'],'accepted-complete-team':['registration_accepted'],'rejected-complete-team':['registration_accepted','rejection_code'],'client-mechanics':[],'complete-client-battles':['terminal','winner'],'competitive-policy-quality':['acceptance_met'],'live-service':['allow','deny'],'paired-browser-replays':['replay_match','loaded_assets_match']});
+export const HOSTED_KINDS=['hosted-preview-e2e','production-smoke','rollback-verification'];
+export const ORACLES = Object.freeze({'official-client-version':'official-publication','regulation-rules':'official-publication','accepted-complete-team':'champions-client','rejected-complete-team':'champions-client','client-mechanics':'champions-client','complete-client-battles':'champions-client','competitive-policy-quality':'held-out-player-evaluation','live-service':'service-probe','paired-browser-replays':'candidate-bound-browser',...Object.fromEntries(HOSTED_KINDS.map(k=>[k,'remote-hosted-browser']))});
+export const FIELDS = Object.freeze({'official-client-version':['client_version'],'regulation-rules':['regulation_id','format','effective_from_utc','effective_to_utc'],'accepted-complete-team':['registration_accepted'],'rejected-complete-team':['registration_accepted','rejection_code'],'client-mechanics':[],'complete-client-battles':['terminal','winner'],'competitive-policy-quality':['acceptance_met'],'live-service':['allow','deny'],'paired-browser-replays':['replay_match','loaded_assets_match'],...Object.fromEntries(HOSTED_KINDS.map(k=>[k,['replay_match','loaded_assets_match','fresh_profile','cache_upgrade','offline_reload']]))});
 const nonempty=x=>typeof x==='string'&&x.trim().length>0;
 const proofIdentity=value=>Object.fromEntries(Object.entries(value||{}).filter(([key])=>!['checked_commit','github_sha','run_id','run_attempt'].includes(key)));
 const hash=x=>createHash('sha256').update(x).digest('hex');
@@ -34,7 +35,7 @@ export function parseEvidence(bytes,entry,{target,identity,load}) {
     const raw=load(ref,`${entry.id} input`);if(!raw?.length)fail('Empty/unavailable input');
     let input;try{input=JSON.parse(raw);}catch{fail('Unsupported input encoding');}
     if(input?.schema_version!=='competitive-observations-v1'||input.kind!==entry.kind||!equal(input.target,target)||!equal(proofIdentity(input.identity),proofIdentity(identity))||!nonempty(input.case_id)||input.status!=='complete'||!input.expected||!input.observed)fail('Unsupported/incomplete input schema');
-    for(const field of entry.kind==='competitive-policy-quality'?['protocol_id','held_out']:entry.kind==='live-service'?['environment']:entry.kind==='paired-browser-replays'?['loaded_assets']:[]){
+    for(const field of HOSTED_KINDS.includes(entry.kind)?['hosted_capture','loaded_assets']:entry.kind==='competitive-policy-quality'?['protocol_id','held_out']:entry.kind==='live-service'?['environment']:entry.kind==='paired-browser-replays'?['loaded_assets']:[]){
       if(!Object.hasOwn(input,field)||!equal(input[field],body[field]))fail('Input semantic metadata differs from receipt');
     }
     if(!nonempty(entry.capture_id)||!nonempty(entry.source_url))fail('Missing capture provenance');
@@ -51,7 +52,7 @@ export function parseEvidence(bytes,entry,{target,identity,load}) {
     if(!Object.hasOwn(input[role],row.field))fail('Unresolved source field');
     return input[role][row.field];
   };
-  const booleans=new Set(['registration_accepted','terminal','acceptance_met','allow','deny','replay_match','loaded_assets_match']);
+  const booleans=new Set(['registration_accepted','terminal','acceptance_met','allow','deny','replay_match','loaded_assets_match','fresh_profile','cache_upgrade','offline_reload']);
   const ids=new Set(),fields=new Set(),cases=new Map();let mismatches=0;
   for(const row of body.observations){
     if(!row||!nonempty(row.id)||ids.has(row.id)||!nonempty(row.case_id)||!nonempty(row.field)||row.comparator!=='exact'||!Object.hasOwn(row,'expected')||!Object.hasOwn(row,'observed')||row.expected===null||row.observed===null)fail('Invalid/duplicate comparison');
@@ -78,6 +79,16 @@ export function parseEvidence(bytes,entry,{target,identity,load}) {
   if(entry.kind==='competitive-policy-quality'&&(observed('acceptance_met')!==true||!nonempty(body.protocol_id)||body.held_out!==true))fail('Missing held-out evaluation protocol');
   if(entry.kind==='live-service'&&(observed('allow')!==true||observed('deny')!==false||!nonempty(body.environment)))fail('Missing allow/deny proof');
   if(entry.kind==='paired-browser-replays'&&(observed('replay_match')!==true||observed('loaded_assets_match')!==true||!equal(body.loaded_assets,identity.external_assets)))fail('Missing loaded candidate proof');
+  if(HOSTED_KINDS.includes(entry.kind)){
+    const capture=body.hosted_capture,origins=identity.hosted_origins;
+    let url;try{url=new URL(entry.source_url);}catch{fail('Invalid hosted URL');}
+    if(url.protocol!=='https:'||url.username||url.password||url.hostname==='localhost'||!url.hostname.includes('.')||/^[\d.]+$/.test(url.hostname)||url.hostname.includes(':')||/\.(localhost|local)$/.test(url.hostname))fail('Hosted proof requires a remote HTTPS origin');
+    if(!origins?.preview||!origins.production||origins.preview===origins.production)fail('Missing distinct approved preview origin');
+    const rollback=entry.kind==='rollback-verification',expected=rollback?identity.rollback_target:{commit:identity.checked_commit,bundle_sha256:identity.bundle_sha256,external_assets:identity.external_assets};
+    if(!expected||!/^([a-f0-9]{40})$/.test(expected.commit||'')||!/^[a-f0-9]{64}$/.test(expected.bundle_sha256||'')||!expected.external_assets)fail('Missing exact hosted target');
+    if(url.origin!==(entry.kind==='hosted-preview-e2e'?origins.preview:origins.production)||capture?.url!==entry.source_url||capture?.environment!==entry.kind||capture?.source_commit!==expected.commit||capture?.bundle_sha256!==expected.bundle_sha256||!equal(body.loaded_assets,expected.external_assets)||!nonempty(capture?.deployment_run_url)||!nonempty(capture?.publication_approval_id))fail('Hosted deployment/identity context mismatch');
+    if(FIELDS[entry.kind].some(field=>observed(field)!==true))fail('Hosted journey did not pass');
+  }
   }
   if(body.oracle==='official-publication'){
     const raw=load(entry.source_capture,`${entry.id} official capture`);if(!raw?.length)fail('Empty official source');

@@ -134,7 +134,7 @@
 // v181-qa-artifact-evidence-intake [2026-06-29] - Convert QA artifacts into Team Lab sim evidence and collapse Overview proof archive.
 try { importScripts('./release_manifest.js'); } catch (e) { /* fallback below */ }
 const RELEASE_MANIFEST = (typeof self !== 'undefined' && self.CHAMPIONS_RELEASE_MANIFEST) ? self.CHAMPIONS_RELEASE_MANIFEST : {};
-const CACHE_NAME = RELEASE_MANIFEST.service_worker_cache || 'champions-sim-v2-2-243-charge-spa';
+const CACHE_NAME = RELEASE_MANIFEST.service_worker_cache || 'champions-sim-v2-2-244-weather-gas';
 const SPRITE_CACHE = 'champions-sprites-v1';
 
 const APP_ASSETS = [
@@ -204,13 +204,13 @@ self.addEventListener('install', event => {
   );
 });
 
-// Activate — remove old caches
+// CacheStorage is origin-wide. Remove only this app's obsolete cache namespaces.
 self.addEventListener('activate', event => {
   event.waitUntil(
     caches.keys().then(keys =>
       Promise.all(
         keys
-          .filter(k => k !== CACHE_NAME && k !== SPRITE_CACHE)
+          .filter(k => /^(champions-sim-|champions-sprites-)/.test(k) && k !== CACHE_NAME && k !== SPRITE_CACHE)
           .map(k => caches.delete(k))
       )
     ).then(() => self.clients.claim())

@@ -58,9 +58,22 @@
     "status": "not_performed",
     "authorization": "not_authorized"
   },
-  "current_source_matches": true,
-  "current_workflow_state": "validated_draft_checkpoint",
-  "completed": true,
+  "current_source_matches": false,
+  "current_workflow_state": "changed_since_checkpoint",
+  "completed": false,
   "competitive_release_ready": false,
-  "next_blocker": "Open mechanics/client/regulation release gates remain"
+  "completion_scope": "draft_checkpoint_only",
+  "actual_hosted_preview": {
+    "status": "not_run",
+    "blocker": "Distinct preview hostname and publication approval required; CI browser uses loopback"
+  },
+  "production_smoke": {
+    "status": "not_run",
+    "blocker": "Requires separately approved merge/deployment and exact deployed bytes"
+  },
+  "rollback_verification": {
+    "status": "not_run",
+    "blocker": "Requires reviewed rollback target and authorized hosted verification"
+  },
+  "next_blocker": "Rerun/review, refresh tracker, push changed source and verify exact-head CI"
 }

@@ -1,11 +1,11 @@
 {
   "schema_version": "champions-release-artifact-v1",
-  "build_id": "v2.2.243-charge-spa",
+  "build_id": "v2.2.244-weather-gas",
   "release_manifest": "release_manifest.js",
   "bundle_name": "pokemon-champion-2026.html",
   "pages_path": "poke-sim/pokemon-champion-2026.html",
-  "bundle_sha256": "525bd719c745f25ea18acea4657f285699d6a7d8c53ab5effb47edc5c2ebd35a",
-  "bundle_bytes": 11534306,
+  "bundle_sha256": "93f6dd3e5b57adc214f13537c1dbcc4e23753775e5be22110b18b9df28f3ab75",
+  "bundle_bytes": 11534153,
   "hash_scope": "sha256 of committed poke-sim/pokemon-champion-2026.html bytes",
   "external_assets": {
     "generated/source_sync_status.js": {

@@ -16,6 +16,6 @@
     "No reviewed immutable package or authenticated approval key enrolled",
     "Public/automatic switching and named mechanics boundaries remain incomplete",
     "Live-service proof unavailable",
-    "Hosted paired-browser runtime not installed; installation approval required"
+    "Actual remote preview E2E, post-approved-deployment production smoke and rollback proof absent; CI browser is loopback only"
   ]
 }

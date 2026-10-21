@@ -226,7 +226,8 @@
       "tests": [
         "tests/engine_terrain_tests.js",
         "tests/screens_terrain_item_tests.js",
-        "tests/turn_order_priority_tests.js"
+        "tests/turn_order_priority_tests.js",
+        "tests/weather_gas_tests.mjs"
       ],
       "known_gaps": []
     },

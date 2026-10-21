@@ -1887,31 +1887,14 @@ function applyActiveTerrainSeeds(field, log) {
 
 function applyWeatherAbility(mon, field, log) {
   if (!mon || !mon.alive || !field) return false;
-  if (mon.ability === 'Drought') {
-    field.weather = 'sun';
-    field.weatherTurns = 5;
-    if (log) log.push(`${mon.name}'s Drought summoned harsh sunlight!`);
-    return true;
-  }
-  if (mon.ability === 'Drizzle') {
-    field.weather = 'rain';
-    field.weatherTurns = 5;
-    if (log) log.push(`${mon.name}'s Drizzle summoned rain!`);
-    return true;
-  }
-  if (mon.ability === 'Sand Stream') {
-    field.weather = 'sand';
-    field.weatherTurns = 5;
-    if (log) log.push(`${mon.name}'s Sand Stream summoned a sandstorm!`);
-    return true;
-  }
-  if (mon.ability === 'Snow Warning') {
-    field.weather = 'snow';
-    field.weatherTurns = 5;
-    if (log) log.push(`${mon.name}'s Snow Warning summoned snow!`);
-    return true;
-  }
-  return false;
+  const ability = _contactEffects(field).ability(mon);
+  const weather = {Drought:['sun','harsh sunlight'],Drizzle:['rain','rain'],
+    'Sand Stream':['sand','a sandstorm'],'Snow Warning':['snow','snow']}[ability];
+  if (!weather || field.weather === weather[0]) return false;
+  field.weather = weather[0]; field.weatherTurns = 5;
+  field._weatherStartedInResidual = !!field._residualPhase;
+  if (log) log.push(`${mon.name}'s ${ability} summoned ${weather[1]}!`);
+  return true;
 }
 
 function applyTerrainAbility(mon, field, log) {
@@ -1962,7 +1945,7 @@ function applySeedSowerOnHit(target, field, log) {
 // no matching hook. Invoked from engine trigger points.
 function _contactEffects(field) {
   const gas = [..._sideActiveMons(field && field.playerSide), ..._sideActiveMons(field && field.oppSide)]
-    .some(mon => mon.ability === 'Neutralizing Gas');
+    .some(mon => mon.ability === 'Neutralizing Gas' && !mon._weatherGasEnded);
   const ability = mon => (!gas || (mon.item === 'Ability Shield' && !mon.itemConsumed)) ? mon.ability : '';
   return {ability, item:mon => !mon.itemConsumed && ability(mon) !== 'Klutz' ? mon.item : ''};
 }
@@ -1990,8 +1973,6 @@ function callAbilityHook(mon, hookName, ctx) {
   }
 }
 
-// T9j.7 — Mega trigger policy enum. `var` for TDZ-safety (referenced from
-// Pokemon constructor before top-of-file const binding would be reached).
 var MEGA_TRIGGER_POLICY = {
   FIRST_ELIGIBLE: 'first_eligible',   // default — AI Megas on first legal turn
   AT_TURN:        'at_turn',           // sweep mode — triggers on mon.megaTriggerTurn
@@ -2308,10 +2289,6 @@ class Pokemon {
     this.baseSpe = this._statRaw(b.spe, e.spe||0, 'spe');
   }
 
-  // T9j.7 — Perform Mega Evolution at start of turn.
-  // Swaps stats, types, ability. Preserves HP%, stat boosts, status, item,
-  // side-state, turn counters, PP. Idempotent — returns false if already
-  // evolved or not Mega-capable.
   megaEvolve(log, field, onAbilityChange) {
     if (!this.megaForm || this.hasMegaEvolved) return false;
     const m = this.megaForm;
@@ -3278,7 +3255,7 @@ class Field {
     if (this.gravityTurns > 0 && --this.gravityTurns === 0) logs.push('Gravity ended!');
     // Weather countdown
     if (this.weather !== 'none' && this.weatherTurns > 0) {
-      this.weatherTurns--;
+      if (!this._weatherStartedInResidual) this.weatherTurns--;
       if (this.weatherTurns === 0) { logs.push(`The ${this.weather} subsided.`); this.weather = 'none'; }
     }
     // Trick Room countdown — T9j.3 (#37): increment cumulative BEFORE decrement
@@ -3287,6 +3264,7 @@ class Field {
       this.trickRoomTurns--;
       if (this.trickRoomTurns <= 0) { this.trickRoom = false; logs.push('Trick Room returned to NORMAL!'); }
     }
+    this._weatherStartedInResidual = false;
     // Terrain countdown
     if (this.terrain !== 'none' && this.terrainTurns > 0) {
       this.terrainTurns--;
@@ -4075,10 +4053,6 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
   const _playerOpening = _chooseOpeningSlots(_orderedPlayer, opts.playerLeads, opts.playerBring, _roleAwareOpeners);
   const _oppOpening    = _chooseOpeningSlots(_orderedOpp,    opts.opponentLeads, opts.opponentBring, _roleAwareOpeners);
 
-  // T9j.7 — apply Mega trigger policy override from sweep driver.
-  // When runMegaTriggerSweep() calls simulateBattle with _megaPolicyOverride,
-  // we stamp every Mega-capable mon on the target side with the requested
-  // policy and trigger turn. Only affects mons with megaForm set.
   if (opts._megaPolicyOverride) {
     const ov = opts._megaPolicyOverride;
     const targets = (ov.side === 'opp') ? oppPokemon : playerPokemon;
@@ -4097,8 +4071,6 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
   const _initialPlayerActive = playerActive.slice();
   const _initialOppActive = oppActive.slice();
 
-  // T9j.1 (Issue #25) — wire every Pokemon to its side object so that
-  // screens, Tailwind speed, and Last Respects fainted count all work.
   for (const m of playerPokemon) m.side = field.playerSide;
   for (const m of oppPokemon)    m.side = field.oppSide;
   // Expose fainted count on side objects so calcDamage's Last Respects
@@ -4111,6 +4083,22 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
   // Track fainted counts per side for Last Respects
   const sideFainted = { player: 0, opp: 0 };
 
+  // Weather starts in speed order; do not reorder unrelated entry hooks.
+  let openingWeather = true;
+  const pendingWeatherGas = new Set();
+  function orderedWeather(mons) {
+    const entries = mons.filter(m=>['Drizzle','Drought','Sand Stream','Snow Warning'].includes(m.ability)).map(mon=>({mon,speed:mon.getEffSpeed(field)}));
+    _speedSort(entries,(a,b)=>b.speed-a.speed,rng);
+    for (const {mon} of entries) applyWeatherAbility(mon,field,log);
+  }
+  function endWeatherGas(mon) {
+    if (!mon || mon.ability !== 'Neutralizing Gas' || mon._weatherGasEnded || mon.transformed) return;
+    mon._weatherGasEnded = true;
+    const active = [...playerActive,...oppActive].filter(m=>m!==mon && m.alive);
+    if (active.some(m=>m.ability==='Neutralizing Gas' && !m._weatherGasEnded)) return;
+    // 9b136a8 abilities.neutralizinggas.onEnd: before incoming entry; Shield never restarts.
+    orderedWeather(active.filter(m=>!(m.item==='Ability Shield' && !m.itemConsumed)));
+  }
   // Apply on-entry abilities
   function applyEntryAbility(mon, side, field, log) {
     mon._mcEntryApplied = true;
@@ -4140,7 +4128,7 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
         }
       }
     }
-    applyWeatherAbility(mon, field, log);
+    if (!openingWeather) applyWeatherAbility(mon, field, log);
     applyTerrainAbility(mon, field, log);
     if (mon.ability === 'Hospitality') {
       const allies = side === 'player' ? playerActive : oppActive;
@@ -4212,6 +4200,7 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
 
   function _resetSwitchInState(replacement) {
     if (!replacement) return;
+    replacement._weatherGasEnded = false;
     if (replacement.referenceMode === 'champions_mc_reference') {
       if (replacement._mcTraceOriginal) replacement.ability = replacement._mcTraceOriginal;
       replacement._mcTraceOriginal = null; replacement._mcTraceBlocked = false; replacement._mcEntryApplied = false;
@@ -4309,6 +4298,7 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
         });
       }
     }
+    endWeatherGas(mon);
     bench.splice(bench.indexOf(replacement), 1);
     _clearMcVolatilesForMon(mon, field);
     _resetSoakTypes(mon);
@@ -4342,6 +4332,8 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
 
   for (const m of playerActive) applyEntryAbility(m, 'player', field, log);
   for (const m of oppActive)    applyEntryAbility(m, 'opp', field, log);
+  openingWeather = false;
+  orderedWeather([...playerActive,...oppActive]);
   activateWhiteHerbs();
 
   // CONSERVATIVE OWN-STATE MOVE SELECTION
@@ -4595,6 +4587,10 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
       activateWhiteHerbs();
       const switches = moveSwitchQueue;
       moveSwitchQueue = null;
+      const endedGas = [...pendingWeatherGas].filter(mon=>mon.ability==='Neutralizing Gas' && !mon._weatherGasEnded);
+      for (const mon of endedGas.slice(0,-1)) mon._weatherGasEnded = true;
+      endWeatherGas(endedGas.at(-1));
+      pendingWeatherGas.clear();
       finishRedCard(attacker);
       for (const entry of switches) {
         if (entry.opts && entry.opts.incomingState && entry.opts.incomingState.statBoosts)
@@ -6781,18 +6777,7 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
 
   // MAIN BATTLE LOOP
   let turn = 0;
-  // Phase 4a (Refs #52) — structured KO event log for dynamic coaching.
-  // Populated at every faint site below. UI reads this instead of parsing
-  // log strings (fragile). Shape:
-  //   { turn, victim, side: 'player'|'opp', byMove, byAttacker, reason }
-  // reason: 'attack' | 'recoil' | 'sandstorm' | 'burn' | 'frostbite'
-  //       | 'poison' | 'toxic'
   const koEvents = [];
-  // Phase 4b (Refs #52) — per-mon move-call histogram + max-consecutive-Protect
-  // streak. Used by UI to detect dead moves and Protect misuse.
-  //   movesUsed[mon.name][side] = { moveName: callCount, ... }
-  //   protectStreakMax[mon.name+side] = peak consecutive turns this mon chose
-  //     a Protect family move. Reset on any non-Protect action.
   const movesUsed = { player: {}, opp: {} };
   const _protectFamily = new Set(['Protect','Detect','Wide Guard','Quick Guard']);
   const _protectStreak = {};     // running count keyed by side:name
@@ -6817,6 +6802,8 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
     } catch (_e) { /* never kill sim for telemetry */ }
   };
   const _recordKO = function(mon, cause) {
+    if (moveSwitchQueue) pendingWeatherGas.add(mon);
+    else endWeatherGas(mon);
     if (cause && cause.reason === 'attack' && cause.attacker && cause.attacker.referenceMode === 'champions_mc_reference' && cause.attacker.ability === 'Eelevate')
       cause.attacker._mcMoveKOs = (cause.attacker._mcMoveKOs || 0) + 1;
     _clearMcVolatilesForMon(mon, field);
@@ -7287,6 +7274,7 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
     for (const mon of [...playerActive,...oppActive]) mon._beakBlastPreparing=false;
 
     const _mcResidualHP = [...playerActive,...oppActive].filter(mon=>mon.referenceMode==='champions_mc_reference').map(mon=>({mon,hp:mon.hp}));
+    field._residualPhase = true;
     // Sand damage
     if (_effectiveFieldWeather(field) === 'sand') {
       for (const mon of [...playerActive, ...oppActive].filter(m => m.alive)) {
@@ -7570,6 +7558,7 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
     activateWhiteHerbs();
     // Field upkeep
     field.tick(log);
+    field._residualPhase = false;
     for (const mon of [...playerActive, ...oppActive].filter(m => m.alive && m.roosting)) {
       mon.roosting = false;
       mon.flying = mon.types.includes('Flying') || mon.ability === 'Levitate';
@@ -7955,7 +7944,7 @@ async function runAllMatchups(numBattles, onProgress, onMatchupDone, options) {
 //   top_loss_paths  — placeholder (requires loss-path tracking)
 //   critical_damage_calcs — placeholder for future calc layer
 //   traceable_log_refs    — first N seed refs for replayability
-const ENGINE_VERSION = '1.1.43'; // Increment on any mechanics change
+const ENGINE_VERSION = '1.1.44'; // Increment on any mechanics change
 
 function wilsonCI(wins, n, z = 1.96) {
   if (n === 0) return [0, 0];
