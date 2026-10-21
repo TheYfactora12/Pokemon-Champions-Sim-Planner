@@ -5,7 +5,7 @@
     "compiled_sha256": "58da20a619f4eae3c0b5766867ef3d4ee6ec0efae52f0366e4ff47ce20829827"
   },
   "format": "gen9championsdoublescustomgame",
-  "predicate": "pokemon.baseSpecies.nfe: exact registered species, not baseSpecies name or tier",
+  "predicate": "species.nfe: exact registered species, not baseSpecies name or tier",
   "ids": [
     "ababo",
     "abra",
