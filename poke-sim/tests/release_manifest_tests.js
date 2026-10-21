@@ -40,6 +40,8 @@ T('2. visible header and app shell fallback mirror manifest build id', () => {
   truthy(html.includes(manifest.build_id), 'index missing manifest build id');
   truthy(appShell.includes(manifest.build_id), 'app shell missing manifest build id fallback');
   truthy(appShell.includes('CHAMPIONS_RELEASE_MANIFEST'), 'app shell should read release manifest');
+  const ui = fs.readFileSync(path.join(ROOT, 'ui.js'), 'utf8');
+  truthy(ui.includes("function() { return '" + manifest.build_id + "'; };"), 'isolated UI fallback must match manifest');
 });
 
 T('3. service worker derives cache from manifest and precaches manifest', () => {
