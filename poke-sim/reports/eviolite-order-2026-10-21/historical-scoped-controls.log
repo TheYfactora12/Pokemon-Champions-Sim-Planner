@@ -1,0 +1,45 @@
+Γ£ö six captured assertions remain historical passes without client promotion (1503.01ms)
+Γ£ö Fly implementation invalidates all six earlier current assertions (1511.6757ms)
+Γ£ö real engine change invalidates: engine.js (1633.5394ms)
+Γ£ö real engine change invalidates: outcome_policy.js (1650.3437ms)
+Γ£ö real engine change invalidates: rulesets.js (1743.7143ms)
+Γ£ö real engine change invalidates: move_legality.js (1724.7849ms)
+Γ£ö real engine change invalidates: mc_review.js (1719.0584ms)
+Γ£ö real engine change invalidates: legality.js (1659.5026ms)
+Γ£ö real data change invalidates: data.js (1650.8584ms)
+Γ£ö real data change invalidates: runtime_data.js (1613.11ms)
+Γ£ö real data change invalidates: generated/pokemon_showdown_legal_data.js (1462.6507ms)
+Γ£ö real data change invalidates: generated/pokemon_showdown_species_weights.js (1631.1864ms)
+Γ£ö real data change invalidates: generated/champions_move_overrides.js (1616.3675ms)
+Γ£ö real data change invalidates: generated/champions_move_pools.js (1600.7177ms)
+Γ£ö real data change invalidates: generated/mc_review_reference.js (1658.6608ms)
+Γ£ö real data change invalidates: package-lock.json (1661.9944ms)
+Γ£ö real data change invalidates: source/bounded-assertions/reference-target.json (1656.4247ms)
+Γ£ö real runner change invalidates: tools/bounded-runtime-capture.mjs (1598.5501ms)
+Γ£ö real runner change invalidates: tools/showdown-reference.mjs (1643.2734ms)
+Γ£ö real runner change invalidates: tools/prepare-mc-reference-candidate.mjs (1633.31ms)
+Γ£ö real test change invalidates: tests/fixtures/bounded_runtime_cases.mjs (1607.6996ms)
+Γ£ö real checker change invalidates: tools/bounded-assertions.mjs (1632.2018ms)
+Γ£ö real checker change invalidates: tools/bounded-register.mjs (1630.7886ms)
+Γ£ö real checker change invalidates: tools/current-bounded-core.mjs (1667.5241ms)
+Γ£ö real checker change invalidates: tools/regulation-watch-core.mjs (1627.7202ms)
+Γ£ö documentation-only Git commit changes HEAD but not dependency identity (1228.319ms)
+Γ£ö wrong item label (470.9386ms)
+Γ£ö wrong move label (458.307ms)
+Γ£ö missing review (504.7076ms)
+Γ£ö future capture time (455.2531ms)
+Γ£ö missing dependency (446.7401ms)
+Γ£ö scope promotion (454.0395ms)
+Γ£ö changing a pinned review without changing its anchor rejects (485.25ms)
+Γ£ö missing per-case review (482.0607ms)
+Γ£ö duplicate review case (505.8387ms)
+Γ£ö wrong independently observed value (491.6063ms)
+Γ£ö opaque execution attachments (464.6362ms)
+Γä╣ tests 37
+Γä╣ suites 0
+Γä╣ pass 37
+Γä╣ fail 0
+Γä╣ cancelled 0
+Γä╣ skipped 0
+Γä╣ todo 0
+Γä╣ duration_ms 47208.7302
