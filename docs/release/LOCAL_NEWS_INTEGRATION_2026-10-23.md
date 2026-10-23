@@ -1,5 +1,13 @@
 # Local news integration candidate
 
+## Subsequent authorized environment resolution
+
+The original failed attempts below are retained. A targeted normal-filesystem test request succeeded: unchanged release_manifest_tests.js passed 12/12, including its original temporary Git checkout fixture. A separately approved bounded public Git fetch obtained main b0092cf. Local ancestry integration then reproduced exactly one conflict, generated/release_artifact.json; rerunning the normal bundle generator resolved it with identical candidate bytes. Main news and frozen mechanics are preserved. Additional offline checks pass: news pipeline 39, source-trust 8, CSS preservation 11, CI syntax 14 files. Previously passed: resilience 4, load order 4, Overview 11, news service worker 8, news review policy 14. Full aggregate and independent final ancestry review are still pending. No remote write or deployment has occurred.
+
+The content-only candidate 96924e913e1b8b47108a981159f17dff728fb3c8 passed independent read-only review: exact news blob, only news block changed in HTML, reproducible generator stdout, all seven external assets match. That review did not waive aggregate or ancestry gates.
+
+## Original content-only checkpoint (historical)
+
 Release-only content reconciliation of frozen `ceec7941023514d36c1dc0b06bd96cdce99d9665` with main `b0092cf0fcb08c12d3de79b35c45ef6c77c9b4a3`. Main's seven newer commits change only news_feed.js and its generated bundle/manifest. The imported news blob is exactly `fcd017def2a09f2051654a3eabac4153e42febb2`. The bundle and artifact manifest were regenerated together with tools/build-bundle.py; neither conflicting manifest was selected as the result.
 
 The existing v2.2.248-eviolite-activation runtime identity is retained for this news-only refresh, consistent with the existing news-sync process. Bundle: 11,532,727 bytes; SHA256 `3f9afa6c038962851ab4c430bfc9509746b5a647788ef7a27b17fb0e12ffa682`. No simulator mechanics or release gate changed. Frozen checkout remains unchanged.
