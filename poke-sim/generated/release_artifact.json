@@ -4,8 +4,8 @@
   "release_manifest": "release_manifest.js",
   "bundle_name": "pokemon-champion-2026.html",
   "pages_path": "poke-sim/pokemon-champion-2026.html",
-  "bundle_sha256": "ce21aeb4b6bf9fa5c84beafb9aee2a49c046abeb20c4624fdd1eacc3b605ed4f",
-  "bundle_bytes": 11530211,
+  "bundle_sha256": "a0f318ff06cd8ef7a1c82058ceb6ce9f570a48278999eac3c6da4855e7143af7",
+  "bundle_bytes": 11530104,
   "hash_scope": "sha256 of committed poke-sim/pokemon-champion-2026.html bytes",
   "external_assets": {
     "generated/champions_move_pools.js": {
