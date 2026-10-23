@@ -8,6 +8,8 @@ The content-only candidate 96924e913e1b8b47108a981159f17dff728fb3c8 passed indep
 
 ## Original content-only checkpoint (historical)
 
+Final ancestry candidate 9ead43093854bcb2c7b73c7f3cd034e1b7c8fc23 passed independent read-only review. Full offline aggregate then ran 283 fast files (one failure) and 12 offline DB files (zero failures). The sole failed file was validation_cycle_tests.mjs, 18/19: the lifecycle export retained the old checkpoint's green status. Normal validation-lifecycle.mjs regeneration marks changed_since_checkpoint/completed:false; old receipts remain historical and no assertions are weakened. Original full output is retained externally as integration-9ead430-project-gate.log. Final rerun remains pending.
+
 Release-only content reconciliation of frozen `ceec7941023514d36c1dc0b06bd96cdce99d9665` with main `b0092cf0fcb08c12d3de79b35c45ef6c77c9b4a3`. Main's seven newer commits change only news_feed.js and its generated bundle/manifest. The imported news blob is exactly `fcd017def2a09f2051654a3eabac4153e42febb2`. The bundle and artifact manifest were regenerated together with tools/build-bundle.py; neither conflicting manifest was selected as the result.
 
 The existing v2.2.248-eviolite-activation runtime identity is retained for this news-only refresh, consistent with the existing news-sync process. Bundle: 11,532,727 bytes; SHA256 `3f9afa6c038962851ab4c430bfc9509746b5a647788ef7a27b17fb0e12ffa682`. No simulator mechanics or release gate changed. Frozen checkout remains unchanged.
