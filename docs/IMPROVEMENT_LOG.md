@@ -1807,6 +1807,10 @@ stat boundary too. Independent battle_auditor review found no further demonstrat
 defect. Local source proof only; eligibility/suppression and offensive Body Press
 remain unresolved. See [dated evidence](release/EVIOLITE_ORDER_2026-10-21.md).
 
+## RELEASE-NEWS-RECONCILIATION-20261023 - preserve news and regenerate identity
+
+Main and the frozen accuracy candidate changed the same generated bundle identity fields. Preserve the exact current-main news blob and regenerate bundle/manifest together; do not choose a stale artifact side. Local news checks pass, but the checkout-filter test is blocked by sandbox Git-config write denial and Git transport is unavailable. This remains an unpublished content candidate, not merged ancestry or hosted proof. See [local evidence and remaining gates](release/LOCAL_NEWS_INTEGRATION_2026-10-23.md).
+
 ## EVIO-ACT-2026-10-21 - activation and offensive Defense
 
 Exact-species eligibility and effective-item state prevent Eviolite activating on fully evolved, consumed or Klutz holders. Body Press retains staged Defense without defensive modifiers. Preserve 192 pinned vectors and seven wrong-implementation mutations. Direct oracle damage probes must initialize active-move context; an exploratory Unaware concern was retracted after fixing that context, not patched into the engine. See [evidence and limitations](release/EVIOLITE_ACTIVATION_2026-10-21.md).
