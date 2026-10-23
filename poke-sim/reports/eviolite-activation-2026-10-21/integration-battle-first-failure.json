@@ -1,0 +1,3008 @@
+{
+  "schema_version": 1,
+  "audit_version": "2026-09-02.1",
+  "scope": "Curated Champion doubles teams, imported-team shared paths, and explicitly supported simulator mechanics",
+  "universal_accuracy_proven": false,
+  "family_counts": {
+    "regression_covered": 2,
+    "partial": 11,
+    "gap": 2
+  },
+  "total_families": 15,
+  "inventory_counts": {
+    "regression_covered": 0,
+    "partial": 3,
+    "gap": 2
+  },
+  "total_inventories": 5,
+  "unproved_inventory_ids": [
+    "shipped-moves",
+    "curated-abilities",
+    "supported-species-forms",
+    "held-items",
+    "import-enabled-surface"
+  ],
+  "unproved_family_ids": [
+    "turn-order",
+    "stats-forms",
+    "damage-formula",
+    "moves-effects",
+    "abilities",
+    "items",
+    "status",
+    "field-effects",
+    "targeting-spread",
+    "transformations",
+    "battle-determinism",
+    "champion-regulation-deltas",
+    "combinatorial-interactions"
+  ],
+  "edge_case_counts": {
+    "covered": 17,
+    "partial": 56,
+    "open": 5
+  },
+  "total_edge_cases": 78,
+  "unproved_edge_case_ids": [
+    "ITEM-EVIOLITE-DEFENSIVE-ROUNDING",
+    "ITEM-RED-CARD-WHITE-HERB",
+    "ITEM-ROCKY-HELMET-CONTACT",
+    "DEFAULT-POLICY-BOUNDARY",
+    "OWN-STATE-DIAGNOSTIC",
+    "DAMAGE-PIVOT-TRAP-CAUSE",
+    "POLICY-UTILITY-MOVE-INVENTORY",
+    "PRIORITY-BLOCKER-SUPPRESSION",
+    "MC-MEGA-EXACT-FORM-LIFECYCLE",
+    "POLICY-IMPRISON-REDUNDANT",
+    "ITEM-KLUTZ-DIRECT-PATHS",
+    "MOVE-FAKE-OUT-FLINCH",
+    "STATS-ROSTER-CONSUMER-PARITY",
+    "LIFE-RECOIL-DOUBLE-KO",
+    "LIFE-RESIDUAL-SIMULTANEOUS-KO",
+    "LIFE-MULTI-REPLACEMENT-SAME-SIDE",
+    "LIFE-BOTH-SIDES-REPLACEMENT",
+    "LIFE-ENTRY-ABILITY-ORDER",
+    "SWITCH-REGENERATOR-DAMAGING-PIVOT",
+    "SWITCH-STATE-RESET",
+    "ORDER-MIRROR-SIDE-SYMMETRY",
+    "RNG-SINGLE-DAMAGE-ACCURACY",
+    "RNG-TARGETED-STATUS-ACCURACY",
+    "TARGET-IMMUNITY-BEFORE-ACCURACY",
+    "TARGET-NO-GUARD-PER-TARGET",
+    "TARGET-ALLY-SWITCH-CROSS",
+    "TARGET-WIDE-GUARD-MIXED",
+    "RESIDUAL-GLOBAL-ORDER",
+    "RESIDUAL-SPEED-TIE-ORDER",
+    "RESIDUAL-LEECH-SEED-SOURCE",
+    "RESIDUAL-PERISH-SIMULTANEOUS",
+    "RESOURCE-PP-DRAIN-SUBSTITUTE",
+    "RESOURCE-STRUGGLE-RESOLUTION",
+    "FORM-MC-ADMISSION",
+    "FORM-SWITCH-PERSISTENCE",
+    "IMPORT-UNIVERSAL-BEHAVIOR",
+    "MOVE-THOUSAND-ARROWS-FLYING",
+    "PRIORITY-MULTIHIT-SIDE-BLOCKERS",
+    "ORDER-TAILWIND-SAME-TURN",
+    "DAMAGE-SEISMIC-TOSS-LEVEL",
+    "MOVE-GROWL-LEER-STAGES",
+    "ITEM-TERRAIN-SEED-ACTIVATION",
+    "MOVE-SOAK-TYPE-LIFECYCLE",
+    "ABILITY-ELECTROMORPHOSIS-CHARGE",
+    "ITEM-SHUCA-HIT-LIFECYCLE",
+    "CHAMPION-REG-MB-DELTAS",
+    "MC-REFERENCE-MOVE-AUDIT",
+    "SWITCH-SCRIPTED-DIAGNOSTIC",
+    "ABILITY-SWITCH-OUT-HOOKS",
+    "MOVE-AMNESIA-SELF-STAGE",
+    "MOVE-REST-SLEEP-TIMING",
+    "MOVE-STRUGGLE-NO-PP",
+    "MOVE-ENCORE-QUEUE",
+    "DAMAGE-ROLL-DISCRETE-016",
+    "MOVE-FLY-CONTAINED-001",
+    "MOVE-CHARGE-SPA-TIMING-001",
+    "FIELD-WEATHER-GAS-001",
+    "FIELD-SNOW-DEF-001",
+    "TYPE-MATRIX-001",
+    "ITEM-EVIOLITE-ACTIVATION-001",
+    "DAMAGE-BODY-PRESS-DEFENSE-001"
+  ],
+  "provenance": {
+    "git_sha": "f8845db816bdabdceb991514c07527ddb6a8b661",
+    "node_version": "v24.15.0",
+    "manifest_sha256": "e29a45aad4e5d1c8910c6d9993f2cc0a9852b5eadf61332387b26246a2e9ba3f"
+  },
+  "generated_at": "2026-10-21T09:22:02.635Z",
+  "deterministic_test_files": 105,
+  "golden_trace": "passed",
+  "golden_trace_scope": "historical-three-module-profile-only",
+  "current_profile_integrity": "passed",
+  "current_golden_expectations": "not_approved",
+  "current_profile_comparison": {
+    "schema_version": "golden-profile-comparison-v1",
+    "fixture_sha256": "c40419b6fc3fa2101920ddbbfef69b2fb1996c1e24626b04977afdd8b7b50c8b",
+    "historical_profile": {
+      "schema_version": "golden-runtime-profile-v1",
+      "profile": "historical",
+      "files": [
+        {
+          "file": "data.js",
+          "sha256": "e4f03e2abb3ad0f3c3c4f48fc083842db6b32a154c8bf20106c623cdd7888654"
+        },
+        {
+          "file": "engine.js",
+          "sha256": "4132759d0777203ac876e4b4538e97301a59c5579ebf0d6e4a17eadeb4fcba86"
+        },
+        {
+          "file": "generated/pokemon_showdown_legal_data.js",
+          "sha256": "1f13d6fa5b6340e9db041668bde45d7fc70d137ab15ccbc6f42468471ca26bd0"
+        }
+      ]
+    },
+    "current_profile": {
+      "schema_version": "golden-runtime-profile-v1",
+      "profile": "current",
+      "files": [
+        {
+          "file": "data.js",
+          "sha256": "e4f03e2abb3ad0f3c3c4f48fc083842db6b32a154c8bf20106c623cdd7888654"
+        },
+        {
+          "file": "own_state_policy.js",
+          "sha256": "6089589d22bd58ba9e9a88123d47cbb08fe775f69703c2fff950a0851cf4667a"
+        },
+        {
+          "file": "generated/pokemon_showdown_legal_data.js",
+          "sha256": "1f13d6fa5b6340e9db041668bde45d7fc70d137ab15ccbc6f42468471ca26bd0"
+        },
+        {
+          "file": "generated/pokemon_showdown_species_weights.js",
+          "sha256": "707978246aa6daa97f73495d233d81f2ba0a17c1f9c5119b6a7ddb5585a5914f"
+        },
+        {
+          "file": "generated/champions_move_overrides.js",
+          "sha256": "e06e7e59dccc7fd7e1565cc5bc3896e36cc0b5a2cdb03312555458afae677783"
+        },
+        {
+          "file": "runtime_data.js",
+          "sha256": "c9ad5dc5c847b5e1be5685a4ee575c6838e2ae958b8063f30adc296eec2dc2eb"
+        },
+        {
+          "file": "outcome_policy.js",
+          "sha256": "9b356f341f0600b28a157ee7d0f9da33149a63538e824701272fc93b1c3f4832"
+        },
+        {
+          "file": "engine.js",
+          "sha256": "4132759d0777203ac876e4b4538e97301a59c5579ebf0d6e4a17eadeb4fcba86"
+        },
+        {
+          "file": "rulesets.js",
+          "sha256": "72d23fc4490d7291052e18320461e5c309bb70c697ca4f9f5052bb80c139cab7"
+        }
+      ]
+    },
+    "current_integrity": "passed",
+    "current_determinism": "passed",
+    "current_golden_status": "not_approved",
+    "comparison_status": "review_required",
+    "scope": "Three preserved historical trace expectations versus current custom-practice profile; not current-client parity or reviewed current goldens",
+    "cases": [
+      {
+        "id": "gb_001",
+        "options": {
+          "format": "doubles",
+          "seed": [
+            1337,
+            42,
+            7919,
+            104729
+          ],
+          "rulesetId": "champions_custom_practice"
+        },
+        "historical_expected_hash": "674804fc9f09582fa9ae0b787fd1687a02c893323e9e753c92576124be4a4504",
+        "historical_expected_winner": "win",
+        "historical_actual_hash": "674804fc9f09582fa9ae0b787fd1687a02c893323e9e753c92576124be4a4504",
+        "current_hash": "e5c22bb8e71a99a24bdd91dfb4105d1601df53778d01366f1e822fe634afe6d7",
+        "current_winner": "win",
+        "turns": 5,
+        "current_matches_historical_expectation": false,
+        "first_profile_difference": {
+          "index": 26,
+          "historical": "Incineroar used Flare Blitz! → Cofagrigus [59 dmg, 0/165 HP; calc 69]",
+          "current": "Incineroar used Flare Blitz! → Cofagrigus [59 dmg, 0/165 HP; calc 67]"
+        },
+        "historical_log": [
+          "Incineroar's Intimidate activated!",
+          "Cofagrigus's Attack fell!",
+          "Incineroar's Intimidate lowered Cofagrigus's Attack!",
+          "Sinistcha's Attack fell!",
+          "Incineroar's Intimidate lowered Sinistcha's Attack!",
+          "Arcanine's Intimidate activated!",
+          "Cofagrigus's Attack fell!",
+          "Arcanine's Intimidate lowered Cofagrigus's Attack!",
+          "Sinistcha's Attack fell!",
+          "Arcanine's Intimidate lowered Sinistcha's Attack!",
+          "--- Turn 1 ---",
+          "Incineroar used Fake Out!",
+          "Fake Out had no effect on Cofagrigus!",
+          "Arcanine used Will-O-Wisp!",
+          "Cofagrigus was burned by Arcanine's Will-O-Wisp!",
+          "Sinistcha used Trick Room!",
+          "Trick Room was set! Slower Pokémon go first!",
+          "Cofagrigus used Trick Room!",
+          "Trick Room returned to NORMAL!",
+          "Cofagrigus is hurt by its burn! [10 dmg]",
+          "--- Turn 2 ---",
+          "Arcanine used Flare Blitz!",
+          "Arcanine used Flare Blitz! → Cofagrigus [96 dmg, 59/165 HP]",
+          "Arcanine's Ability became Mummy!",
+          "Arcanine was hurt by recoil! [32 dmg]",
+          "Incineroar used Flare Blitz!",
+          "Incineroar used Flare Blitz! → Cofagrigus [59 dmg, 0/165 HP; calc 69]",
+          "Incineroar's Ability became Mummy!",
+          "Incineroar was hurt by recoil! [19 dmg]",
+          "Cofagrigus fainted!",
+          "Sinistcha used Matcha Gotcha!",
+          "Sinistcha used Matcha Gotcha! → Arcanine [37 dmg, 98/167 HP]",
+          "Sinistcha used Matcha Gotcha! → Incineroar [26 dmg, 157/202 HP]",
+          "Farigiraf was sent out!",
+          "--- Turn 3 ---",
+          "Arcanine used Flare Blitz!",
+          "Arcanine used Flare Blitz! → Farigiraf [139 dmg, 88/227 HP]",
+          "Arcanine was hurt by recoil! [46 dmg]",
+          "Incineroar used Flare Blitz!",
+          "Incineroar used Flare Blitz! → Farigiraf [88 dmg, 0/227 HP; calc 94]",
+          "Incineroar was hurt by recoil! [29 dmg]",
+          "Farigiraf fainted!",
+          "Sinistcha used Matcha Gotcha!",
+          "Sinistcha used Matcha Gotcha! → Arcanine [36 dmg, 16/167 HP]",
+          "Sinistcha used Matcha Gotcha! → Incineroar [28 dmg, 100/202 HP]",
+          "Incineroar's Sitrus Berry restored HP!",
+          "Hatterene was sent out!",
+          "--- Turn 4 ---",
+          "Arcanine used Flare Blitz!",
+          "Arcanine used Flare Blitz! → Hatterene [127 dmg, 37/164 HP]",
+          "Arcanine was hurt by recoil! [16 dmg, calc 42]",
+          "Arcanine fainted!",
+          "Incineroar used Flare Blitz!",
+          "Incineroar used Flare Blitz! → Hatterene [37 dmg, 0/164 HP; calc 109]",
+          "Incineroar was hurt by recoil! [12 dmg]",
+          "Hatterene fainted!",
+          "Sinistcha used Matcha Gotcha!",
+          "Sinistcha used Matcha Gotcha! → Incineroar [38 dmg, 100/202 HP]",
+          "Whimsicott was sent out!",
+          "--- Turn 5 ---",
+          "Whimsicott used Tailwind!",
+          "Whimsicott's Tailwind is blowing!",
+          "Incineroar used Flare Blitz!",
+          "Incineroar used Flare Blitz! → Sinistcha [178 dmg, 0/178 HP; calc 180]",
+          "Incineroar was hurt by recoil! [59 dmg]",
+          "Sinistcha fainted!",
+          "--- Turn 6 ---"
+        ],
+        "current_log": [
+          "Incineroar's Intimidate activated!",
+          "Cofagrigus's Attack fell!",
+          "Incineroar's Intimidate lowered Cofagrigus's Attack!",
+          "Sinistcha's Attack fell!",
+          "Incineroar's Intimidate lowered Sinistcha's Attack!",
+          "Arcanine's Intimidate activated!",
+          "Cofagrigus's Attack fell!",
+          "Arcanine's Intimidate lowered Cofagrigus's Attack!",
+          "Sinistcha's Attack fell!",
+          "Arcanine's Intimidate lowered Sinistcha's Attack!",
+          "--- Turn 1 ---",
+          "Incineroar used Fake Out!",
+          "Fake Out had no effect on Cofagrigus!",
+          "Arcanine used Will-O-Wisp!",
+          "Cofagrigus was burned by Arcanine's Will-O-Wisp!",
+          "Sinistcha used Trick Room!",
+          "Trick Room was set! Slower Pokémon go first!",
+          "Cofagrigus used Trick Room!",
+          "Trick Room returned to NORMAL!",
+          "Cofagrigus is hurt by its burn! [10 dmg]",
+          "--- Turn 2 ---",
+          "Arcanine used Flare Blitz!",
+          "Arcanine used Flare Blitz! → Cofagrigus [96 dmg, 59/165 HP]",
+          "Arcanine's Ability became Mummy!",
+          "Arcanine was hurt by recoil! [32 dmg]",
+          "Incineroar used Flare Blitz!",
+          "Incineroar used Flare Blitz! → Cofagrigus [59 dmg, 0/165 HP; calc 67]",
+          "Incineroar's Ability became Mummy!",
+          "Incineroar was hurt by recoil! [19 dmg]",
+          "Cofagrigus fainted!",
+          "Sinistcha used Matcha Gotcha!",
+          "Sinistcha used Matcha Gotcha! → Arcanine [37 dmg, 98/167 HP]",
+          "Sinistcha used Matcha Gotcha! → Incineroar [26 dmg, 157/202 HP]",
+          "Farigiraf was sent out!",
+          "--- Turn 3 ---",
+          "Arcanine used Flare Blitz!",
+          "Arcanine used Flare Blitz! → Farigiraf [141 dmg, 86/227 HP]",
+          "Arcanine was hurt by recoil! [47 dmg]",
+          "Incineroar used Flare Blitz!",
+          "Incineroar used Flare Blitz! → Farigiraf [86 dmg, 0/227 HP; calc 94]",
+          "Incineroar was hurt by recoil! [28 dmg]",
+          "Farigiraf fainted!",
+          "Sinistcha used Matcha Gotcha!",
+          "Sinistcha used Matcha Gotcha! → Arcanine [36 dmg, 15/167 HP]",
+          "Sinistcha used Matcha Gotcha! → Incineroar [29 dmg, 100/202 HP]",
+          "Incineroar's Sitrus Berry restored HP!",
+          "Hatterene was sent out!",
+          "--- Turn 4 ---",
+          "Arcanine used Flare Blitz!",
+          "Arcanine used Flare Blitz! → Hatterene [127 dmg, 37/164 HP]",
+          "Arcanine was hurt by recoil! [15 dmg, calc 42]",
+          "Arcanine fainted!",
+          "Incineroar used Flare Blitz!",
+          "Incineroar used Flare Blitz! → Hatterene [37 dmg, 0/164 HP; calc 111]",
+          "Incineroar was hurt by recoil! [12 dmg]",
+          "Hatterene fainted!",
+          "Sinistcha used Matcha Gotcha!",
+          "Sinistcha used Matcha Gotcha! → Incineroar [38 dmg, 100/202 HP]",
+          "Whimsicott was sent out!",
+          "--- Turn 5 ---",
+          "Whimsicott used Tailwind!",
+          "Whimsicott's Tailwind is blowing!",
+          "Incineroar used Flare Blitz!",
+          "Incineroar used Flare Blitz! → Sinistcha [178 dmg, 0/178 HP; calc 180]",
+          "Incineroar was hurt by recoil! [59 dmg]",
+          "Sinistcha fainted!",
+          "--- Turn 6 ---"
+        ]
+      },
+      {
+        "id": "gb_002",
+        "options": {
+          "format": "doubles",
+          "seed": [
+            2024,
+            8675,
+            309,
+            5551
+          ],
+          "rulesetId": "champions_custom_practice"
+        },
+        "historical_expected_hash": "12e43dda3e5dbb3eb95aa856a0a081f49c4e5b95495fa87872e84a6b7ce29be0",
+        "historical_expected_winner": "loss",
+        "historical_actual_hash": "12e43dda3e5dbb3eb95aa856a0a081f49c4e5b95495fa87872e84a6b7ce29be0",
+        "current_hash": "4eeeae796c2ee6eea7ba04edf05bc2f9beec5309952950ad06f3ec66c9147751",
+        "current_winner": "loss",
+        "turns": 5,
+        "current_matches_historical_expectation": false,
+        "first_profile_difference": {
+          "index": 19,
+          "historical": "Excadrill used Earthquake! → Tyranitar [56 dmg, 138/207 HP]",
+          "current": "Excadrill used Earthquake! → Tyranitar [54 dmg, 140/207 HP]"
+        },
+        "historical_log": [
+          "Incineroar's Intimidate activated!",
+          "Tyranitar's Attack fell!",
+          "Incineroar's Intimidate lowered Tyranitar's Attack!",
+          "Excadrill's Attack fell!",
+          "Incineroar's Intimidate lowered Excadrill's Attack!",
+          "Arcanine's Intimidate activated!",
+          "Tyranitar's Attack fell!",
+          "Arcanine's Intimidate lowered Tyranitar's Attack!",
+          "Excadrill's Attack fell!",
+          "Arcanine's Intimidate lowered Excadrill's Attack!",
+          "Tyranitar's Sand Stream summoned a sandstorm!",
+          "--- Turn 1 ---",
+          "Incineroar used Fake Out!",
+          "A critical hit!",
+          "Incineroar used Fake Out! → Tyranitar [13 dmg, 194/207 HP]",
+          "Tyranitar flinched!",
+          "Excadrill used Earthquake!",
+          "Excadrill used Earthquake! → Arcanine [84 dmg, 83/167 HP]",
+          "Excadrill used Earthquake! → Incineroar [80 dmg, 122/202 HP]",
+          "Excadrill used Earthquake! → Tyranitar [56 dmg, 138/207 HP]",
+          "Arcanine used Will-O-Wisp!",
+          "Tyranitar was burned by Arcanine's Will-O-Wisp!",
+          "Tyranitar flinched and couldn't move!",
+          "Incineroar is buffeted by the sandstorm! [12 dmg]",
+          "Arcanine is buffeted by the sandstorm! [10 dmg]",
+          "Tyranitar is hurt by its burn! [12 dmg]",
+          "--- Turn 2 ---",
+          "Excadrill used Earthquake!",
+          "Excadrill used Earthquake! → Arcanine [73 dmg, 0/167 HP; calc 84]",
+          "Arcanine fainted!",
+          "Excadrill used Earthquake! → Incineroar [78 dmg, 32/202 HP]",
+          "Incineroar's Sitrus Berry restored HP!",
+          "Excadrill used Earthquake! → Tyranitar [62 dmg, 64/207 HP]",
+          "Incineroar used Flare Blitz!",
+          "Incineroar used Flare Blitz! → Tyranitar [42 dmg, 22/207 HP]",
+          "Incineroar was hurt by recoil! [14 dmg]",
+          "Tyranitar used Rock Slide!",
+          "Tyranitar used Rock Slide! → Incineroar [40 dmg, 28/202 HP]",
+          "Incineroar is buffeted by the sandstorm! [12 dmg]",
+          "Tyranitar is hurt by its burn! [12 dmg]",
+          "Whimsicott was sent out!",
+          "--- Turn 3 ---",
+          "Tyranitar used Protect!",
+          "Whimsicott used Tailwind!",
+          "Whimsicott's Tailwind is blowing!",
+          "Excadrill used Earthquake!",
+          "Excadrill used Earthquake! → Whimsicott [21 dmg, 116/137 HP]",
+          "Excadrill used Earthquake! → Incineroar [16 dmg, 0/202 HP; calc 78]",
+          "Incineroar fainted!",
+          "Tyranitar protected itself!",
+          "Whimsicott is buffeted by the sandstorm! [8 dmg]",
+          "Tyranitar is hurt by its burn! [12 dmg]",
+          "Tyranitar fainted!",
+          "Garchomp was sent out!",
+          "Rotom-Wash was sent out!",
+          "--- Turn 4 ---",
+          "Whimsicott used Moonblast!",
+          "Whimsicott used Moonblast! → Rotom-Wash [64 dmg, 92/156 HP]",
+          "Garchomp used Earthquake!",
+          "Garchomp used Earthquake! → Whimsicott [48 dmg, 60/137 HP]",
+          "Garchomp used Earthquake! → Excadrill [184 dmg, 1/185 HP; calc 240]",
+          "Excadrill hung on with its Focus Sash!",
+          "Rotom-Wash is immune to Earthquake because of Levitate!",
+          "Excadrill used Earthquake!",
+          "A critical hit!",
+          "Excadrill used Earthquake! → Whimsicott [60 dmg, 0/137 HP]",
+          "Whimsicott fainted!",
+          "Excadrill used Earthquake! → Garchomp [36 dmg, 149/185 HP]",
+          "Rotom-Wash is immune to Earthquake because of Levitate!",
+          "Rotom-Wash used Hydro Pump!",
+          "Rotom-Wash used Hydro Pump! → Garchomp [94 dmg, 55/185 HP]",
+          "Rotom-Wash is buffeted by the sandstorm! [9 dmg]",
+          "Rotom-Wash restored HP with Leftovers! [+9]",
+          "--- Turn 5 ---",
+          "Garchomp used Earthquake!",
+          "Garchomp used Earthquake! → Excadrill [1 dmg, 0/185 HP; calc 236]",
+          "Excadrill fainted!",
+          "Rotom-Wash is immune to Earthquake because of Levitate!",
+          "Rotom-Wash used Hydro Pump!",
+          "Rotom-Wash used Hydro Pump! → Garchomp [55 dmg, 0/185 HP; calc 105]",
+          "Garchomp fainted!",
+          "Rotom-Wash is buffeted by the sandstorm! [9 dmg]",
+          "Rotom-Wash restored HP with Leftovers! [+9]",
+          "The sand subsided.",
+          "Milotic was sent out!",
+          "--- Turn 6 ---"
+        ],
+        "current_log": [
+          "Incineroar's Intimidate activated!",
+          "Tyranitar's Attack fell!",
+          "Incineroar's Intimidate lowered Tyranitar's Attack!",
+          "Excadrill's Attack fell!",
+          "Incineroar's Intimidate lowered Excadrill's Attack!",
+          "Arcanine's Intimidate activated!",
+          "Tyranitar's Attack fell!",
+          "Arcanine's Intimidate lowered Tyranitar's Attack!",
+          "Excadrill's Attack fell!",
+          "Arcanine's Intimidate lowered Excadrill's Attack!",
+          "Tyranitar's Sand Stream summoned a sandstorm!",
+          "--- Turn 1 ---",
+          "Incineroar used Fake Out!",
+          "A critical hit!",
+          "Incineroar used Fake Out! → Tyranitar [13 dmg, 194/207 HP]",
+          "Tyranitar flinched!",
+          "Excadrill used Earthquake!",
+          "Excadrill used Earthquake! → Arcanine [84 dmg, 83/167 HP]",
+          "Excadrill used Earthquake! → Incineroar [80 dmg, 122/202 HP]",
+          "Excadrill used Earthquake! → Tyranitar [54 dmg, 140/207 HP]",
+          "Arcanine used Will-O-Wisp!",
+          "Tyranitar was burned by Arcanine's Will-O-Wisp!",
+          "Tyranitar flinched and couldn't move!",
+          "Incineroar is buffeted by the sandstorm! [12 dmg]",
+          "Arcanine is buffeted by the sandstorm! [10 dmg]",
+          "Tyranitar is hurt by its burn! [12 dmg]",
+          "--- Turn 2 ---",
+          "Excadrill used Earthquake!",
+          "Excadrill used Earthquake! → Arcanine [73 dmg, 0/167 HP; calc 86]",
+          "Arcanine fainted!",
+          "Excadrill used Earthquake! → Incineroar [78 dmg, 32/202 HP]",
+          "Incineroar's Sitrus Berry restored HP!",
+          "Excadrill used Earthquake! → Tyranitar [62 dmg, 66/207 HP]",
+          "Incineroar used Flare Blitz!",
+          "Incineroar used Flare Blitz! → Tyranitar [42 dmg, 24/207 HP]",
+          "Incineroar was hurt by recoil! [14 dmg]",
+          "Tyranitar used Rock Slide!",
+          "Tyranitar used Rock Slide! → Incineroar [40 dmg, 28/202 HP]",
+          "Incineroar is buffeted by the sandstorm! [12 dmg]",
+          "Tyranitar is hurt by its burn! [12 dmg]",
+          "Whimsicott was sent out!",
+          "--- Turn 3 ---",
+          "Tyranitar used Protect!",
+          "Whimsicott used Tailwind!",
+          "Whimsicott's Tailwind is blowing!",
+          "Excadrill used Earthquake!",
+          "Excadrill used Earthquake! → Whimsicott [21 dmg, 116/137 HP]",
+          "Excadrill used Earthquake! → Incineroar [16 dmg, 0/202 HP; calc 78]",
+          "Incineroar fainted!",
+          "Tyranitar protected itself!",
+          "Whimsicott is buffeted by the sandstorm! [8 dmg]",
+          "Tyranitar is hurt by its burn! [12 dmg]",
+          "Tyranitar fainted!",
+          "Garchomp was sent out!",
+          "Rotom-Wash was sent out!",
+          "--- Turn 4 ---",
+          "Whimsicott used Moonblast!",
+          "Whimsicott used Moonblast! → Rotom-Wash [66 dmg, 90/156 HP]",
+          "Garchomp used Earthquake!",
+          "Garchomp used Earthquake! → Whimsicott [48 dmg, 60/137 HP]",
+          "Garchomp used Earthquake! → Excadrill [184 dmg, 1/185 HP; calc 242]",
+          "Excadrill hung on with its Focus Sash!",
+          "Rotom-Wash is immune to Earthquake because of Levitate!",
+          "Excadrill used Earthquake!",
+          "A critical hit!",
+          "Excadrill used Earthquake! → Whimsicott [60 dmg, 0/137 HP]",
+          "Whimsicott fainted!",
+          "Excadrill used Earthquake! → Garchomp [36 dmg, 149/185 HP]",
+          "Rotom-Wash is immune to Earthquake because of Levitate!",
+          "Rotom-Wash used Hydro Pump!",
+          "Rotom-Wash used Hydro Pump! → Garchomp [94 dmg, 55/185 HP]",
+          "Rotom-Wash is buffeted by the sandstorm! [9 dmg]",
+          "Rotom-Wash restored HP with Leftovers! [+9]",
+          "--- Turn 5 ---",
+          "Garchomp used Earthquake!",
+          "Garchomp used Earthquake! → Excadrill [1 dmg, 0/185 HP; calc 236]",
+          "Excadrill fainted!",
+          "Rotom-Wash is immune to Earthquake because of Levitate!",
+          "Rotom-Wash used Hydro Pump!",
+          "Rotom-Wash used Hydro Pump! → Garchomp [55 dmg, 0/185 HP; calc 106]",
+          "Garchomp fainted!",
+          "Rotom-Wash is buffeted by the sandstorm! [9 dmg]",
+          "Rotom-Wash restored HP with Leftovers! [+9]",
+          "The sand subsided.",
+          "Milotic was sent out!",
+          "--- Turn 6 ---"
+        ]
+      },
+      {
+        "id": "gb_003",
+        "options": {
+          "format": "doubles",
+          "seed": [
+            9999,
+            1111,
+            3333,
+            7777
+          ],
+          "rulesetId": "champions_custom_practice"
+        },
+        "historical_expected_hash": "676c5da8f2e424cc2b35f64076f5837f5fbd78348d08937c56b751fd47f897f1",
+        "historical_expected_winner": "win",
+        "historical_actual_hash": "676c5da8f2e424cc2b35f64076f5837f5fbd78348d08937c56b751fd47f897f1",
+        "current_hash": "0dbc994c6f03d0a939ee01f63dd242bb37460c626e0fab875b9df33a43ae4b0e",
+        "current_winner": "win",
+        "turns": 6,
+        "current_matches_historical_expectation": false,
+        "first_profile_difference": {
+          "index": 5,
+          "historical": "Excadrill used Earthquake! → Sinistcha [35 dmg, 143/178 HP]",
+          "current": "Excadrill used Earthquake! → Sinistcha [36 dmg, 142/178 HP]"
+        },
+        "historical_log": [
+          "Tyranitar's Sand Stream summoned a sandstorm!",
+          "--- Turn 1 ---",
+          "Excadrill used Earthquake!",
+          "A critical hit!",
+          "Excadrill used Earthquake! → Tyranitar [168 dmg, 39/207 HP]",
+          "Excadrill used Earthquake! → Sinistcha [35 dmg, 143/178 HP]",
+          "Excadrill used Earthquake! → Cofagrigus [51 dmg, 114/165 HP]",
+          "Tyranitar used Rock Slide!",
+          "Tyranitar used Rock Slide! → Sinistcha [52 dmg, 91/178 HP]",
+          "Tyranitar used Rock Slide! → Cofagrigus [40 dmg, 74/165 HP]",
+          "Cofagrigus flinched!",
+          "Sinistcha used Trick Room!",
+          "Trick Room was set! Slower Pokémon go first!",
+          "Cofagrigus flinched and couldn't move!",
+          "Cofagrigus is buffeted by the sandstorm! [10 dmg]",
+          "Sinistcha is buffeted by the sandstorm! [11 dmg]",
+          "--- Turn 2 ---",
+          "Tyranitar used Protect!",
+          "Cofagrigus used Shadow Ball!",
+          "Tyranitar protected itself!",
+          "Sinistcha used Matcha Gotcha!",
+          "Tyranitar protected itself!",
+          "Sinistcha's Matcha Gotcha missed Excadrill!",
+          "Excadrill used Earthquake!",
+          "Excadrill used Earthquake! → Cofagrigus [51 dmg, 13/165 HP]",
+          "Excadrill used Earthquake! → Sinistcha [31 dmg, 49/178 HP]",
+          "Sinistcha's Sitrus Berry restored HP!",
+          "Tyranitar protected itself!",
+          "Cofagrigus is buffeted by the sandstorm! [10 dmg]",
+          "Sinistcha is buffeted by the sandstorm! [11 dmg]",
+          "--- Turn 3 ---",
+          "Tyranitar used Protect! But it failed!",
+          "Cofagrigus used Ally Switch!",
+          "Cofagrigus switched places with its ally using Ally Switch!",
+          "Sinistcha used Matcha Gotcha!",
+          "Sinistcha used Matcha Gotcha! → Tyranitar [39 dmg, 0/207 HP; calc 80]",
+          "Sinistcha restored HP with Matcha Gotcha! [20 HP]",
+          "Tyranitar fainted!",
+          "A critical hit!",
+          "Sinistcha used Matcha Gotcha! → Excadrill [120 dmg, 65/185 HP]",
+          "Sinistcha restored HP with Matcha Gotcha! [60 HP]",
+          "Excadrill used Earthquake!",
+          "A critical hit!",
+          "Excadrill used Earthquake! → Cofagrigus [3 dmg, 0/165 HP; calc 79]",
+          "Cofagrigus fainted!",
+          "Excadrill used Earthquake! → Sinistcha [32 dmg, 130/178 HP]",
+          "Sinistcha is buffeted by the sandstorm! [11 dmg]",
+          "Farigiraf was sent out!",
+          "Rotom-Wash was sent out!",
+          "--- Turn 4 ---",
+          "Farigiraf used Hyper Voice!",
+          "A critical hit!",
+          "Farigiraf used Hyper Voice! → Rotom-Wash [70 dmg, 86/156 HP]",
+          "Farigiraf used Hyper Voice! → Excadrill [32 dmg, 33/185 HP]",
+          "Sinistcha used Matcha Gotcha!",
+          "Sinistcha used Matcha Gotcha! → Rotom-Wash [86 dmg, 0/156 HP; calc 102]",
+          "Sinistcha restored HP with Matcha Gotcha! [43 HP]",
+          "Rotom-Wash fainted!",
+          "Sinistcha used Matcha Gotcha! → Excadrill [33 dmg, 0/185 HP; calc 85]",
+          "Sinistcha restored HP with Matcha Gotcha! [16 HP]",
+          "Excadrill fainted!",
+          "Sinistcha is buffeted by the sandstorm! [11 dmg]",
+          "Farigiraf is buffeted by the sandstorm! [14 dmg]",
+          "Milotic was sent out!",
+          "--- Turn 5 ---",
+          "Farigiraf used Hyper Voice!",
+          "Farigiraf used Hyper Voice! → Milotic [48 dmg, 153/201 HP]",
+          "Sinistcha used Matcha Gotcha!",
+          "Sinistcha used Matcha Gotcha! → Milotic [122 dmg, 31/201 HP]",
+          "Sinistcha restored HP with Matcha Gotcha! [11 HP]",
+          "Milotic was burned by Sinistcha's Matcha Gotcha!",
+          "Milotic used Muddy Water!",
+          "A critical hit!",
+          "Milotic used Muddy Water! → Farigiraf [84 dmg, 129/227 HP]",
+          "Milotic used Muddy Water! → Sinistcha [30 dmg, 148/178 HP]",
+          "Sinistcha's accuracy fell!",
+          "Sinistcha is buffeted by the sandstorm! [11 dmg]",
+          "Farigiraf is buffeted by the sandstorm! [14 dmg]",
+          "Milotic is buffeted by the sandstorm! [12 dmg]",
+          "Milotic is hurt by its burn! [12 dmg]",
+          "The sand subsided.",
+          "Trick Room returned to NORMAL!",
+          "--- Turn 6 ---",
+          "Milotic used Muddy Water!",
+          "Milotic's Muddy Water missed Sinistcha!",
+          "Milotic's Muddy Water missed Farigiraf!",
+          "Sinistcha used Matcha Gotcha!",
+          "Sinistcha's Matcha Gotcha missed Milotic!",
+          "Farigiraf used Hyper Voice!",
+          "Farigiraf used Hyper Voice! → Milotic [7 dmg, 0/201 HP; calc 51]",
+          "Milotic fainted!",
+          "--- Turn 7 ---"
+        ],
+        "current_log": [
+          "Tyranitar's Sand Stream summoned a sandstorm!",
+          "--- Turn 1 ---",
+          "Excadrill used Earthquake!",
+          "A critical hit!",
+          "Excadrill used Earthquake! → Tyranitar [168 dmg, 39/207 HP]",
+          "Excadrill used Earthquake! → Sinistcha [36 dmg, 142/178 HP]",
+          "Excadrill used Earthquake! → Cofagrigus [51 dmg, 114/165 HP]",
+          "Tyranitar used Rock Slide!",
+          "Tyranitar used Rock Slide! → Sinistcha [52 dmg, 90/178 HP]",
+          "Tyranitar used Rock Slide! → Cofagrigus [40 dmg, 74/165 HP]",
+          "Cofagrigus flinched!",
+          "Sinistcha used Trick Room!",
+          "Trick Room was set! Slower Pokémon go first!",
+          "Cofagrigus flinched and couldn't move!",
+          "Cofagrigus is buffeted by the sandstorm! [10 dmg]",
+          "Sinistcha is buffeted by the sandstorm! [11 dmg]",
+          "--- Turn 2 ---",
+          "Tyranitar used Protect!",
+          "Cofagrigus used Shadow Ball!",
+          "Tyranitar protected itself!",
+          "Sinistcha used Matcha Gotcha!",
+          "Tyranitar protected itself!",
+          "Sinistcha's Matcha Gotcha missed Excadrill!",
+          "Excadrill used Earthquake!",
+          "Excadrill used Earthquake! → Cofagrigus [49 dmg, 15/165 HP]",
+          "Excadrill used Earthquake! → Sinistcha [30 dmg, 49/178 HP]",
+          "Sinistcha's Sitrus Berry restored HP!",
+          "Tyranitar protected itself!",
+          "Cofagrigus is buffeted by the sandstorm! [10 dmg]",
+          "Sinistcha is buffeted by the sandstorm! [11 dmg]",
+          "--- Turn 3 ---",
+          "Tyranitar used Protect! But it failed!",
+          "Cofagrigus used Ally Switch!",
+          "Cofagrigus switched places with its ally using Ally Switch!",
+          "Sinistcha used Matcha Gotcha!",
+          "Sinistcha used Matcha Gotcha! → Tyranitar [39 dmg, 0/207 HP; calc 80]",
+          "Sinistcha restored HP with Matcha Gotcha! [20 HP]",
+          "Tyranitar fainted!",
+          "A critical hit!",
+          "Sinistcha used Matcha Gotcha! → Excadrill [120 dmg, 65/185 HP]",
+          "Sinistcha restored HP with Matcha Gotcha! [60 HP]",
+          "Excadrill used Earthquake!",
+          "A critical hit!",
+          "Excadrill used Earthquake! → Cofagrigus [5 dmg, 0/165 HP; calc 81]",
+          "Cofagrigus fainted!",
+          "Excadrill used Earthquake! → Sinistcha [32 dmg, 130/178 HP]",
+          "Sinistcha is buffeted by the sandstorm! [11 dmg]",
+          "Farigiraf was sent out!",
+          "Rotom-Wash was sent out!",
+          "--- Turn 4 ---",
+          "Farigiraf used Hyper Voice!",
+          "A critical hit!",
+          "Farigiraf used Hyper Voice! → Rotom-Wash [70 dmg, 86/156 HP]",
+          "Farigiraf used Hyper Voice! → Excadrill [32 dmg, 33/185 HP]",
+          "Sinistcha used Matcha Gotcha!",
+          "Sinistcha used Matcha Gotcha! → Rotom-Wash [86 dmg, 0/156 HP; calc 102]",
+          "Sinistcha restored HP with Matcha Gotcha! [43 HP]",
+          "Rotom-Wash fainted!",
+          "Sinistcha used Matcha Gotcha! → Excadrill [33 dmg, 0/185 HP; calc 85]",
+          "Sinistcha restored HP with Matcha Gotcha! [16 HP]",
+          "Excadrill fainted!",
+          "Sinistcha is buffeted by the sandstorm! [11 dmg]",
+          "Farigiraf is buffeted by the sandstorm! [14 dmg]",
+          "Milotic was sent out!",
+          "--- Turn 5 ---",
+          "Farigiraf used Hyper Voice!",
+          "Farigiraf used Hyper Voice! → Milotic [46 dmg, 155/201 HP]",
+          "Sinistcha used Matcha Gotcha!",
+          "Sinistcha used Matcha Gotcha! → Milotic [126 dmg, 29/201 HP]",
+          "Sinistcha restored HP with Matcha Gotcha! [11 HP]",
+          "Milotic was burned by Sinistcha's Matcha Gotcha!",
+          "Milotic used Muddy Water!",
+          "A critical hit!",
+          "Milotic used Muddy Water! → Farigiraf [84 dmg, 129/227 HP]",
+          "Milotic used Muddy Water! → Sinistcha [30 dmg, 148/178 HP]",
+          "Sinistcha's accuracy fell!",
+          "Sinistcha is buffeted by the sandstorm! [11 dmg]",
+          "Farigiraf is buffeted by the sandstorm! [14 dmg]",
+          "Milotic is buffeted by the sandstorm! [12 dmg]",
+          "Milotic is hurt by its burn! [12 dmg]",
+          "The sand subsided.",
+          "Trick Room returned to NORMAL!",
+          "--- Turn 6 ---",
+          "Milotic used Muddy Water!",
+          "Milotic's Muddy Water missed Sinistcha!",
+          "Milotic's Muddy Water missed Farigiraf!",
+          "Sinistcha used Matcha Gotcha!",
+          "Sinistcha's Matcha Gotcha missed Milotic!",
+          "Farigiraf used Hyper Voice!",
+          "Farigiraf used Hyper Voice! → Milotic [5 dmg, 0/201 HP; calc 52]",
+          "Milotic fainted!",
+          "--- Turn 7 ---"
+        ]
+      }
+    ]
+  },
+  "seeded_stress": "passed",
+  "family_results": [
+    {
+      "id": "identity-lifecycle",
+      "declared_status": "regression_covered",
+      "tests": [
+        {
+          "path": "tests/phase5_turn_log_tests.js",
+          "result": "passed"
+        },
+        {
+          "path": "tests/turn_log_export_validator_tests.js",
+          "result": "passed"
+        },
+        {
+          "path": "tests/recoil_faint_turn_log_tests.js",
+          "result": "passed"
+        },
+        {
+          "path": "tests/battle_system_mechanics_tests.js",
+          "result": "passed"
+        },
+        {
+          "path": "tests/scripted_switch_reference_tests.mjs",
+          "result": "passed"
+        },
+        {
+          "path": "tests/switch_out_hooks_reference_tests.mjs",
+          "result": "passed"
+        }
+      ]
+    },
+    {
+      "id": "turn-order",
+      "declared_status": "partial",
+      "tests": [
+        {
+          "path": "tests/turn_order_priority_tests.js",
+          "result": "passed"
+        },
+        {
+          "path": "tests/ability_priority_targeting_tests.js",
+          "result": "passed"
+        },
+        {
+          "path": "tests/t155_speed_control_secondary_tests.js",
+          "result": "passed"
+        },
+        {
+          "path": "tests/tailwind_dynamic_order_tests.mjs",
+          "result": "passed"
+        },
+        {
+          "path": "tests/showdown_complete_game_tests.mjs",
+          "result": "passed"
+        },
+        {
+          "path": "tests/item_speed_evidence_tests.mjs",
+          "result": "passed"
+        },
+        {
+          "path": "tests/item_speed_causality_tests.mjs",
+          "result": "passed"
+        }
+      ]
+    },
+    {
+      "id": "stats-forms",
+      "declared_status": "partial",
+      "tests": [
+        {
+          "path": "tests/regional_variant_stats_tests.js",
+          "result": "passed"
+        },
+        {
+          "path": "tests/t9j13_tests.js",
+          "result": "passed"
+        },
+        {
+          "path": "tests/mega_runtime_form_guard_tests.js",
+          "result": "passed"
+        },
+        {
+          "path": "tests/roster_runtime_consumer_tests.mjs",
+          "result": "passed"
+        },
+        {
+          "path": "tests/reg_mb_roster_baseline_tests.mjs",
+          "result": "passed"
+        }
+      ]
+    },
+    {
+      "id": "damage-formula",
+      "declared_status": "partial",
+      "tests": [
+        {
+          "path": "tests/damage_pipeline_tests.js",
+          "result": "passed"
+        },
+        {
+          "path": "tests/showdown_damage_oracle_tests.js",
+          "result": "passed"
+        },
+        {
+          "path": "tests/type_multiplier_audit_tests.js",
+          "result": "passed"
+        },
+        {
+          "path": "tests/seismic_toss_tests.mjs",
+          "result": "passed"
+        },
+        {
+          "path": "tests/discrete_damage_reference_tests.mjs",
+          "result": "passed"
+        },
+        {
+          "path": "tests/type_effectiveness_reference_tests.mjs",
+          "result": "passed"
+        },
+        {
+          "path": "tests/eviolite_order_tests.mjs",
+          "result": "passed"
+        },
+        {
+          "path": "tests/eviolite_activation_tests.mjs",
+          "result": "passed"
+        }
+      ]
+    },
+    {
+      "id": "moves-effects",
+      "declared_status": "partial",
+      "tests": [
+        {
+          "path": "tests/struggle_reference_tests.mjs",
+          "result": "passed"
+        },
+        {
+          "path": "tests/struggle_boundary_reference_tests.mjs",
+          "result": "passed"
+        },
+        {
+          "path": "tests/move_support_audit_tests.js",
+          "result": "passed"
+        },
+        {
+          "path": "tests/move_verification_registry_tests.js",
+          "result": "passed"
+        },
+        {
+          "path": "tests/move_secondary_effect_audit_tests.js",
+          "result": "passed"
+        },
+        {
+          "path": "tests/move_contact_flag_audit_tests.js",
+          "result": "passed"
+        },
+        {
+          "path": "tests/growl_leer_stage_tests.mjs",
+          "result": "passed"
+        },
+        {
+          "path": "tests/amnesia_reference_tests.mjs",
+          "result": "passed"
+        },
+        {
+          "path": "tests/pp_pressure_tests.mjs",
+          "result": "passed"
+        },
+        {
+          "path": "tests/pp_drain_move_tests.mjs",
+          "result": "passed"
+        },
+        {
+          "path": "tests/pp_substitute_reference_tests.mjs",
+          "result": "passed"
+        },
+        {
+          "path": "tests/showdown_complete_game_tests.mjs",
+          "result": "passed"
+        },
+        {
+          "path": "tests/soak_lifecycle_tests.js",
+          "result": "passed"
+        },
+        {
+          "path": "tests/fake_out_flinch_tests.js",
+          "result": "passed"
+        },
+        {
+          "path": "tests/fake_out_reference_tests.mjs",
+          "result": "passed"
+        },
+        {
+          "path": "tests/encore_reference_tests.mjs",
+          "result": "passed"
+        },
+        {
+          "path": "tests/fly_repair_tests.mjs",
+          "result": "passed"
+        },
+        {
+          "path": "tests/fly_lifecycle_tests.mjs",
+          "result": "passed"
+        },
+        {
+          "path": "tests/fly_mutation_tests.mjs",
+          "result": "passed"
+        },
+        {
+          "path": "tests/charge_spa_timing_tests.mjs",
+          "result": "passed"
+        }
+      ]
+    },
+    {
+      "id": "abilities",
+      "declared_status": "partial",
+      "tests": [
+        {
+          "path": "tests/ability_coverage_audit_tests.js",
+          "result": "passed"
+        },
+        {
+          "path": "tests/ability_damage_parity_tests.js",
+          "result": "passed"
+        },
+        {
+          "path": "tests/ability_priority_targeting_tests.js",
+          "result": "passed"
+        },
+        {
+          "path": "tests/electromorphosis_lifecycle_tests.js",
+          "result": "passed"
+        },
+        {
+          "path": "tests/priority_suppression_reference_tests.mjs",
+          "result": "passed"
+        },
+        {
+          "path": "tests/priority_selection_policy_tests.js",
+          "result": "passed"
+        },
+        {
+          "path": "tests/rough_skin_reference_tests.mjs",
+          "result": "passed"
+        }
+      ]
+    },
+    {
+      "id": "items",
+      "declared_status": "partial",
+      "tests": [
+        {
+          "path": "tests/items_tests.js",
+          "result": "passed"
+        },
+        {
+          "path": "tests/screens_terrain_item_tests.js",
+          "result": "passed"
+        },
+        {
+          "path": "tests/turn_log_export_validator_tests.js",
+          "result": "passed"
+        },
+        {
+          "path": "tests/shuca_lifecycle_tests.js",
+          "result": "passed"
+        },
+        {
+          "path": "tests/klutz_item_paths_tests.js",
+          "result": "passed"
+        },
+        {
+          "path": "tests/klutz_item_reference_tests.mjs",
+          "result": "passed"
+        },
+        {
+          "path": "tests/white_herb_reference_tests.mjs",
+          "result": "passed"
+        },
+        {
+          "path": "tests/red_card_reference_tests.mjs",
+          "result": "passed"
+        },
+        {
+          "path": "tests/item_lifecycle_reference_tests.mjs",
+          "result": "passed"
+        },
+        {
+          "path": "tests/charge_herb_suppression_tests.mjs",
+          "result": "passed"
+        },
+        {
+          "path": "tests/eviolite_order_tests.mjs",
+          "result": "passed"
+        },
+        {
+          "path": "tests/eviolite_activation_tests.mjs",
+          "result": "passed"
+        }
+      ]
+    },
+    {
+      "id": "status",
+      "declared_status": "partial",
+      "tests": [
+        {
+          "path": "tests/rest_reference_tests.mjs",
+          "result": "passed"
+        },
+        {
+          "path": "tests/status_tests.js",
+          "result": "passed"
+        },
+        {
+          "path": "tests/battle_system_mechanics_tests.js",
+          "result": "passed"
+        },
+        {
+          "path": "tests/company_audit_regressions.mjs",
+          "result": "passed"
+        },
+        {
+          "path": "tests/perish_song_reference_tests.mjs",
+          "result": "passed"
+        }
+      ]
+    },
+    {
+      "id": "field-effects",
+      "declared_status": "partial",
+      "tests": [
+        {
+          "path": "tests/engine_terrain_tests.js",
+          "result": "passed"
+        },
+        {
+          "path": "tests/screens_terrain_item_tests.js",
+          "result": "passed"
+        },
+        {
+          "path": "tests/turn_order_priority_tests.js",
+          "result": "passed"
+        },
+        {
+          "path": "tests/weather_gas_tests.mjs",
+          "result": "passed"
+        },
+        {
+          "path": "tests/snow_defense_tests.mjs",
+          "result": "passed"
+        }
+      ]
+    },
+    {
+      "id": "targeting-spread",
+      "declared_status": "partial",
+      "tests": [
+        {
+          "path": "tests/ability_priority_targeting_tests.js",
+          "result": "passed"
+        },
+        {
+          "path": "tests/battle_system_mechanics_tests.js",
+          "result": "passed"
+        },
+        {
+          "path": "tests/turn_log_export_validator_tests.js",
+          "result": "passed"
+        }
+      ]
+    },
+    {
+      "id": "transformations",
+      "declared_status": "partial",
+      "tests": [
+        {
+          "path": "tests/mega_tests.js",
+          "result": "passed"
+        },
+        {
+          "path": "tests/mega_runtime_battle_effect_tests.js",
+          "result": "passed"
+        },
+        {
+          "path": "tests/mega_runtime_form_guard_tests.js",
+          "result": "passed"
+        },
+        {
+          "path": "tests/t152_tera_activation_tests.js",
+          "result": "passed"
+        },
+        {
+          "path": "tests/mc_reference_execution_tests.js",
+          "result": "passed"
+        },
+        {
+          "path": "tests/mc_expanded_mega_tests.js",
+          "result": "passed"
+        },
+        {
+          "path": "tests/mc_mega_ability_tests.js",
+          "result": "passed"
+        }
+      ]
+    },
+    {
+      "id": "legality-imports",
+      "declared_status": "regression_covered",
+      "tests": [
+        {
+          "path": "tests/champion_pack_legality_tests.js",
+          "result": "passed"
+        },
+        {
+          "path": "tests/move_legality_tests.js",
+          "result": "passed"
+        },
+        {
+          "path": "tests/species_ability_legality_tests.js",
+          "result": "passed"
+        },
+        {
+          "path": "tests/preloaded_team_legality_tests.js",
+          "result": "passed"
+        },
+        {
+          "path": "tests/replay_import_service_tests.js",
+          "result": "passed"
+        }
+      ]
+    },
+    {
+      "id": "battle-determinism",
+      "declared_status": "partial",
+      "tests": [
+        {
+          "path": "tests/db_m7_golden_battles_tests.js",
+          "result": "passed"
+        },
+        {
+          "path": "tests/t139_audit_mirror_hard_fail_tests.js",
+          "result": "passed"
+        },
+        {
+          "path": "tests/golden_runtime_profile_tests.mjs",
+          "result": "passed"
+        }
+      ]
+    },
+    {
+      "id": "champion-regulation-deltas",
+      "declared_status": "gap",
+      "tests": [
+        {
+          "path": "tests/t192_regmb_source_audit_tests.js",
+          "result": "passed"
+        }
+      ]
+    },
+    {
+      "id": "combinatorial-interactions",
+      "declared_status": "gap",
+      "tests": []
+    }
+  ],
+  "inventory_results": [
+    {
+      "id": "shipped-moves",
+      "declared_status": "partial",
+      "classification_test": "tests/move_support_audit_tests.js",
+      "result": "passed"
+    },
+    {
+      "id": "curated-abilities",
+      "declared_status": "partial",
+      "classification_test": "tests/ability_coverage_audit_tests.js",
+      "result": "passed"
+    },
+    {
+      "id": "supported-species-forms",
+      "declared_status": "partial",
+      "classification_test": "tests/pokemon_data_audit_tests.js",
+      "result": "passed"
+    },
+    {
+      "id": "held-items",
+      "declared_status": "gap",
+      "classification_test": "tests/items_tests.js",
+      "result": "passed"
+    },
+    {
+      "id": "import-enabled-surface",
+      "declared_status": "gap",
+      "classification_test": "tests/t9j11_tests.js",
+      "result": "passed"
+    }
+  ],
+  "edge_case_results": [
+    {
+      "id": "ITEM-EVIOLITE-DEFENSIVE-ROUNDING",
+      "declared_status": "partial",
+      "boundaries": [
+        "both-orientations",
+        "stats31-95-97-255",
+        "stages-minus6-minus1-0-1-6",
+        "physical-Def-special-SpD-special-Def",
+        "snow-clear-sand-rain-sun",
+        "no-item-critical-controls",
+        "sand-SpD65-to145",
+        "four-mutation-controls"
+      ],
+      "tests": [
+        {
+          "path": "tests/eviolite_order_tests.mjs",
+          "result": "passed"
+        }
+      ],
+      "known_gap": "Activation and Body Press follow-up cases retain this ordering contract. Singles, arbitrary combined modifiers and fresh client proof remain unverified."
+    },
+    {
+      "id": "ITEM-RED-CARD-WHITE-HERB",
+      "declared_status": "partial",
+      "boundaries": [
+        "full-six-M-C-bilateral",
+        "both-sides-slots",
+        "Protect-immunity-Substitute-KO",
+        "no-live-bench",
+        "multi-hit-spread",
+        "Klutz-Gas",
+        "Suction-Cups-Guard-Dog-Shadow-Tag",
+        "Knock-Off-pivot",
+        "multiple-stat-drops-positive-cap-Contrary-Defiant",
+        "Herb-before-drag",
+        "Parting-Shot-before-replacement-Intimidate",
+        "pre-action-event-speed",
+        "random-eligible-reserves"
+      ],
+      "tests": [
+        {
+          "path": "tests/red_card_reference_tests.mjs",
+          "result": "passed"
+        },
+        {
+          "path": "tests/white_herb_reference_tests.mjs",
+          "result": "passed"
+        },
+        {
+          "path": "tests/item_lifecycle_reference_tests.mjs",
+          "result": "passed"
+        }
+      ],
+      "known_gap": "No fresh client proof. Magic Room, Embargo, Ingrain, complete forced-switch interactions, suppression chains, Mega/re-entry and residual cross-products remain unproved. Synthetic diagnostic abilities/items are not M-C legality proof. Recoil Emergency Exit activation log parity is not claimed."
+    },
+    {
+      "id": "ITEM-ROCKY-HELMET-CONTACT",
+      "declared_status": "partial",
+      "boundaries": [
+        "both-sides",
+        "Protect-Substitute",
+        "consumed-Klutz-Pads",
+        "LongReach-MagicGuard-Gas-Shield",
+        "two-hit-SkillLink",
+        "attacker-holder-KO",
+        "RoughSkin-order",
+        "pivot-stop"
+      ],
+      "tests": [
+        {
+          "path": "tests/rocky_helmet_reference_tests.mjs",
+          "result": "passed"
+        },
+        {
+          "path": "tests/rough_skin_reference_tests.mjs",
+          "result": "passed"
+        }
+      ],
+      "known_gap": "Synthetic mechanics, not legal-team/client certification. General contact effect ordering and Rough Skin suppression remain unproved."
+    },
+    {
+      "id": "DEFAULT-POLICY-BOUNDARY",
+      "declared_status": "partial",
+      "boundaries": [
+        "both-sides",
+        "40-hidden-state-mutations",
+        "no-damage-preview-RNG",
+        "own-PP-lock-healing",
+        "aggregate-provenance",
+        "Mega-slot-choice"
+      ],
+      "tests": [
+        {
+          "path": "tests/default_policy_boundary_tests.js",
+          "result": "passed"
+        },
+        {
+          "path": "tests/utility_information_policy_tests.js",
+          "result": "passed"
+        },
+        {
+          "path": "tests/priority_selection_policy_tests.js",
+          "result": "passed"
+        }
+      ],
+      "known_gap": "No opponent reveal ledger or verified Champions visibility. Conservative static scoring can choose ineffective moves. Simultaneous Mega/switch execution order remains unproved."
+    },
+    {
+      "id": "OWN-STATE-DIAGNOSTIC",
+      "declared_status": "partial",
+      "boundaries": [
+        "both-sides",
+        "immutable-DTO",
+        "snapshot-before-choice",
+        "no-RNG",
+        "hidden-state-mutations",
+        "forced-action-provenance"
+      ],
+      "tests": [
+        {
+          "path": "tests/own_state_policy_tests.js",
+          "result": "passed"
+        }
+      ],
+      "known_gap": "Direct simulateBattle only. Limited own legality checks; execution may reject. No opponent estimates, reveal ledger, human visibility or competitive strength claim. Default greedy v3 remains full-state."
+    },
+    {
+      "id": "DAMAGE-PIVOT-TRAP-CAUSE",
+      "declared_status": "partial",
+      "boundaries": [
+        "both-sides",
+        "both-slots",
+        "Shadow-Tag",
+        "Mean-Look",
+        "Protect",
+        "Substitute",
+        "forced-miss",
+        "Rough-Skin-user-KO",
+        "no-bench",
+        "HP-item-status-PP",
+        "entry-once",
+        "target-slot",
+        "no-extra-action",
+        "Water-Absorb",
+        "Heal-Block",
+        "Neutralizing-Gas",
+        "Ability-Shield",
+        "consumed-Shield",
+        "Mold-Breaker-family",
+        "Emergency-Exit-control"
+      ],
+      "tests": [
+        {
+          "path": "tests/damage_pivot_trapping_tests.mjs",
+          "result": "passed"
+        },
+        {
+          "path": "tests/mc_mega_ability_tests.js",
+          "result": "passed"
+        }
+      ],
+      "known_gap": "Rocky Helmet contact damage is missing. Voluntary switches, other pivot moves, broader ability suppression, simultaneous switching/Mega ordering and current-client proof remain open."
+    },
+    {
+      "id": "POLICY-UTILITY-MOVE-INVENTORY",
+      "declared_status": "partial",
+      "boundaries": [
+        "both-sides",
+        "seven-utility-moves",
+        "hidden-inventory-mutations",
+        "forbidden-read",
+        "PP",
+        "Taunt",
+        "Encore",
+        "Choice-lock",
+        "strong-damage-control",
+        "existing-seal"
+      ],
+      "tests": [
+        {
+          "path": "tests/utility_information_policy_tests.js",
+          "result": "passed"
+        },
+        {
+          "path": "tests/imprison_policy_tests.js",
+          "result": "passed"
+        }
+      ],
+      "known_gap": "Damage and priority scoring still use full opponent state. Fixed utility priors can choose unnecessary guards or Taunt; repeated-turn policy quality and a complete observation boundary remain unproved."
+    },
+    {
+      "id": "PRIORITY-BLOCKER-SUPPRESSION",
+      "declared_status": "partial",
+      "boundaries": [
+        "both-sides",
+        "direct-target",
+        "protected-ally",
+        "Armor-Tail",
+        "Dazzling",
+        "Queenly-Majesty",
+        "Mold-Breaker",
+        "Turboblaze",
+        "Teravolt",
+        "Neutralizing-Gas",
+        "blocker-Shield",
+        "target-only-Shield",
+        "inactive-Gas",
+        "removed-Gas",
+        "consumed-Shield",
+        "fainted-blocker",
+        "Quick-Guard-isolation",
+        "Psychic-Terrain-isolation"
+      ],
+      "tests": [
+        {
+          "path": "tests/priority_suppression_reference_tests.mjs",
+          "result": "passed"
+        },
+        {
+          "path": "tests/priority_selection_policy_tests.js",
+          "result": "passed"
+        }
+      ],
+      "known_gap": "General Neutralizing Gas suppression outside priority blockers, Gastro Acid, transformed Gas, Magic Room/Embargo and full switch lifecycle parity remain unproved."
+    },
+    {
+      "id": "MC-MEGA-EXACT-FORM-LIFECYCLE",
+      "declared_status": "partial",
+      "boundaries": [
+        "both-sides",
+        "immediate-delayed-Mega",
+        "base-active-form-registration",
+        "female-male-Meowstic",
+        "Eternal-Floette-aliases",
+        "wrong-stone",
+        "prior-regulation-isolation",
+        "contact-fixed-point-damage",
+        "global-Fairy-Aura",
+        "Trace-Mega-switch-reentry",
+        "Lightning-Rod-redirect",
+        "Speed-Boost",
+        "Thermal-Exchange",
+        "Eelevate-highest-stat",
+        "Emergency-Exit-threshold-berry-KO"
+      ],
+      "tests": [
+        {
+          "path": "tests/mc_expanded_mega_tests.js",
+          "result": "passed"
+        },
+        {
+          "path": "tests/mc_mega_ability_tests.js",
+          "result": "passed"
+        },
+        {
+          "path": "tests/mc_draft_import_tests.js",
+          "result": "passed"
+        }
+      ],
+      "known_gap": "Exhaustive ability suppression/copying, simultaneous switches, multi-hit/recoil/residual combinations and current-client M-C evidence remain unproved. Official M-C stays gated."
+    },
+    {
+      "id": "POLICY-IMPRISON-REDUNDANT",
+      "declared_status": "partial",
+      "boundaries": [
+        "side-swap",
+        "active-seal",
+        "cleared-seal",
+        "other-owner",
+        "changed-moves",
+        "sole-usable-choice",
+        "Encore",
+        "Choice-lock",
+        "no-new-hidden-move-read",
+        "deterministic-repeat",
+        "input-preservation"
+      ],
+      "tests": [
+        {
+          "path": "tests/imprison_policy_tests.js",
+          "result": "passed"
+        }
+      ],
+      "known_gap": "Full Imprison mechanics/lifecycle parity, opponent knowledge model, Armor Tail selection and calibrated policy/selection provenance remain unproved."
+    },
+    {
+      "id": "ITEM-KLUTZ-DIRECT-PATHS",
+      "declared_status": "partial",
+      "boundaries": [
+        "active-control",
+        "Klutz-control",
+        "speed",
+        "move-lock",
+        "charge-preview",
+        "charge-execution",
+        "charge-turn-two",
+        "sunlight",
+        "consumption",
+        "lethal-hit",
+        "five-charge-moves-active-Gas-both-sides-slots",
+        "consumed-Herb-and-Gas-faint-restoration",
+        "five-raw-Klutz-reversal-controls"
+      ],
+      "tests": [
+        {
+          "path": "tests/klutz_item_paths_tests.js",
+          "result": "passed"
+        },
+        {
+          "path": "tests/klutz_item_reference_tests.mjs",
+          "result": "passed"
+        },
+        {
+          "path": "tests/charge_herb_suppression_tests.mjs",
+          "result": "passed"
+        }
+      ],
+      "known_gap": "Ability changes, Magic Room/Embargo and broader item inventory remain unproved. Meteor Beam/Electro Shot timing is tracked separately by MOVE-CHARGE-SPA-TIMING-001; historical discrepancies are retained."
+    },
+    {
+      "id": "MOVE-FAKE-OUT-FLINCH",
+      "declared_status": "partial",
+      "boundaries": [
+        "side-swap",
+        "Inner-Focus",
+        "Shield-Dust",
+        "Covert-Cloak",
+        "Klutz",
+        "Mold-Breaker",
+        "Ability-Shield",
+        "Sheer-Force",
+        "Substitute",
+        "Infiltrator",
+        "Protect",
+        "Ghost",
+        "next-turn-reset"
+      ],
+      "tests": [
+        {
+          "path": "tests/fake_out_flinch_tests.js",
+          "result": "passed"
+        },
+        {
+          "path": "tests/fake_out_reference_tests.mjs",
+          "result": "passed"
+        }
+      ],
+      "known_gap": "Champions disables late Fake Out selection; forced/Encore timing, broader flinch chance modifiers, multi-hit timing and in-game confirmation remain open."
+    },
+    {
+      "id": "STATS-ROSTER-CONSUMER-PARITY",
+      "declared_status": "partial",
+      "boundaries": [
+        "235-mapped-keys",
+        "champions-SP-vs-SV-EV",
+        "non-Speed-natures",
+        "unknown-format",
+        "alias-with-and-without-bridge",
+        "species-only-radar-unknown"
+      ],
+      "tests": [
+        {
+          "path": "tests/roster_runtime_consumer_tests.mjs",
+          "result": "passed"
+        },
+        {
+          "path": "tests/reg_mb_roster_baseline_tests.mjs",
+          "result": "passed"
+        }
+      ],
+      "known_gap": "All item/ability/field combinations, Mega alias transitions and in-game Champions confirmation remain unproved."
+    },
+    {
+      "id": "LIFE-IDENTITY-REPLACEMENT",
+      "declared_status": "covered",
+      "boundaries": [
+        "active-to-bench",
+        "bench-to-active",
+        "fainted-row-not-reused"
+      ],
+      "tests": [
+        {
+          "path": "tests/phase5_turn_log_tests.js",
+          "result": "passed"
+        },
+        {
+          "path": "tests/turn_log_export_validator_tests.js",
+          "result": "passed"
+        }
+      ],
+      "known_gap": null
+    },
+    {
+      "id": "LIFE-ITEM-OWNERSHIP",
+      "declared_status": "covered",
+      "boundaries": [
+        "ordinary-switch",
+        "faint-replacement",
+        "consumed-item-state"
+      ],
+      "tests": [
+        {
+          "path": "tests/turn_log_export_validator_tests.js",
+          "result": "passed"
+        },
+        {
+          "path": "tests/items_tests.js",
+          "result": "passed"
+        }
+      ],
+      "known_gap": null
+    },
+    {
+      "id": "LIFE-RECOIL-DOUBLE-KO",
+      "declared_status": "partial",
+      "boundaries": [
+        "attacker-recoil-KO",
+        "target-overkill",
+        "replacement-after-faint"
+      ],
+      "tests": [
+        {
+          "path": "tests/recoil_faint_turn_log_tests.js",
+          "result": "passed"
+        }
+      ],
+      "known_gap": "The existing fixture proves recoil cleanup but does not yet assert both sides replacing from the same attack."
+    },
+    {
+      "id": "LIFE-RESIDUAL-SIMULTANEOUS-KO",
+      "declared_status": "partial",
+      "boundaries": [
+        "burn-plus-poison",
+        "weather-plus-status",
+        "both-sides-faint"
+      ],
+      "tests": [
+        {
+          "path": "tests/battle_edge_case_behavior_tests.js",
+          "result": "passed"
+        }
+      ],
+      "known_gap": "Both-side poison KOs now have a 100-seed replacement fixture; mixed residual sources and full attribution remain unproved."
+    },
+    {
+      "id": "LIFE-MULTI-REPLACEMENT-SAME-SIDE",
+      "declared_status": "open",
+      "boundaries": [
+        "two-fainted-slots",
+        "one-bench-remaining",
+        "two-bench-remaining"
+      ],
+      "tests": [],
+      "known_gap": "Replacement selection is engine-policy driven and has no two-slot lifecycle fixture."
+    },
+    {
+      "id": "LIFE-BOTH-SIDES-REPLACEMENT",
+      "declared_status": "partial",
+      "boundaries": [
+        "one-slot-each-side",
+        "entry-abilities-on-both-sides"
+      ],
+      "tests": [
+        {
+          "path": "tests/battle_edge_case_behavior_tests.js",
+          "result": "passed"
+        }
+      ],
+      "known_gap": "Both fields now populate before entry abilities; mutual Intimidate passes 100 seeds. Wider entry-effect and multi-slot ordering still needs differential proof."
+    },
+    {
+      "id": "LIFE-ENTRY-ABILITY-ORDER",
+      "declared_status": "partial",
+      "boundaries": [
+        "Intimidate-vs-Defiant",
+        "weather-vs-weather",
+        "same-speed-entries"
+      ],
+      "tests": [
+        {
+          "path": "tests/ability_priority_targeting_tests.js",
+          "result": "passed"
+        },
+        {
+          "path": "tests/battle_edge_case_behavior_tests.js",
+          "result": "passed"
+        }
+      ],
+      "known_gap": "Mutual Intimidate and side-swapped weather clashes with/without Trick Room are tested. Equal-Speed entry ordering and reactive abilities still need committed differential fixtures."
+    },
+    {
+      "id": "SWITCH-REGENERATOR-SUCCESS",
+      "declared_status": "covered",
+      "boundaries": [
+        "damaged-user",
+        "one-third-round-down",
+        "successful-Teleport-switch"
+      ],
+      "tests": [
+        {
+          "path": "tests/battle_edge_case_behavior_tests.js",
+          "result": "passed"
+        }
+      ],
+      "known_gap": null
+    },
+    {
+      "id": "SWITCH-REGENERATOR-FAILED",
+      "declared_status": "covered",
+      "boundaries": [
+        "no-bench",
+        "failed-switch"
+      ],
+      "tests": [
+        {
+          "path": "tests/battle_edge_case_behavior_tests.js",
+          "result": "passed"
+        }
+      ],
+      "known_gap": null
+    },
+    {
+      "id": "SWITCH-REGENERATOR-DAMAGING-PIVOT",
+      "declared_status": "partial",
+      "boundaries": [
+        "U-turn",
+        "Volt-Switch",
+        "Flip-Turn"
+      ],
+      "tests": [
+        {
+          "path": "tests/move_verification_registry_tests.js",
+          "result": "passed"
+        },
+        {
+          "path": "tests/battle_edge_case_behavior_tests.js",
+          "result": "passed"
+        }
+      ],
+      "known_gap": "The shared switch hook is covered, but no dedicated damaging-pivot Regenerator fixture asserts all three moves."
+    },
+    {
+      "id": "SWITCH-STATE-RESET",
+      "declared_status": "partial",
+      "boundaries": [
+        "toxic-counter",
+        "stat-stages",
+        "Substitute",
+        "major-status"
+      ],
+      "tests": [
+        {
+          "path": "tests/t9j17_tests.js",
+          "result": "failed"
+        },
+        {
+          "path": "tests/move_verification_registry_tests.js",
+          "result": "passed"
+        }
+      ],
+      "known_gap": "Several resets are source-contract tests rather than one executable leave-and-return fixture."
+    },
+    {
+      "id": "ORDER-PRIORITY-BRACKET",
+      "declared_status": "covered",
+      "boundaries": [
+        "positive-vs-zero",
+        "zero-vs-negative",
+        "priority-ability"
+      ],
+      "tests": [
+        {
+          "path": "tests/turn_order_priority_tests.js",
+          "result": "passed"
+        },
+        {
+          "path": "tests/ability_priority_targeting_tests.js",
+          "result": "passed"
+        }
+      ],
+      "known_gap": null
+    },
+    {
+      "id": "ORDER-TRICK-ROOM",
+      "declared_status": "covered",
+      "boundaries": [
+        "same-priority",
+        "different-priority",
+        "four-action-doubles"
+      ],
+      "tests": [
+        {
+          "path": "tests/turn_order_priority_tests.js",
+          "result": "passed"
+        }
+      ],
+      "known_gap": null
+    },
+    {
+      "id": "ORDER-EXACT-SPEED-TIE",
+      "declared_status": "covered",
+      "boundaries": [
+        "normal-field",
+        "Trick-Room",
+        "SP-and-nature-break-tie"
+      ],
+      "tests": [
+        {
+          "path": "tests/turn_order_priority_tests.js",
+          "result": "passed"
+        }
+      ],
+      "known_gap": null
+    },
+    {
+      "id": "ORDER-MULTI-ACTION-SPEED-TIE",
+      "declared_status": "covered",
+      "boundaries": [
+        "three-way-tie",
+        "four-way-tie",
+        "normal-field",
+        "Trick-Room",
+        "same-seed-replay"
+      ],
+      "tests": [
+        {
+          "path": "tests/battle_edge_case_behavior_tests.js",
+          "result": "passed"
+        },
+        {
+          "path": "tests/turn_order_priority_tests.js",
+          "result": "passed"
+        }
+      ],
+      "known_gap": null
+    },
+    {
+      "id": "ORDER-MIRROR-SIDE-SYMMETRY",
+      "declared_status": "partial",
+      "boundaries": [
+        "identical-leads",
+        "exact-speed-ties",
+        "entry-hooks",
+        "target-selection",
+        "residual-order",
+        "simultaneous-resolution"
+      ],
+      "tests": [
+        {
+          "path": "tests/battle_edge_case_behavior_tests.js",
+          "result": "passed"
+        }
+      ],
+      "known_gap": "Sequential replacement Intimidate was causal and is fixed locally. Broader multi-team side symmetry and explicit bring-four parity remain release gates."
+    },
+    {
+      "id": "STATS-STAGE-CLAMP",
+      "declared_status": "covered",
+      "boundaries": [
+        "minus-six",
+        "plus-six",
+        "attempt-beyond-limit"
+      ],
+      "tests": [
+        {
+          "path": "tests/t9j9_tests.js",
+          "result": "passed"
+        },
+        {
+          "path": "tests/turn_order_priority_tests.js",
+          "result": "passed"
+        }
+      ],
+      "known_gap": null
+    },
+    {
+      "id": "RNG-ACCURACY-BOUNDARY",
+      "declared_status": "covered",
+      "boundaries": [
+        "zero",
+        "threshold-minus-epsilon",
+        "exact-threshold",
+        "one"
+      ],
+      "tests": [
+        {
+          "path": "tests/battle_edge_case_behavior_tests.js",
+          "result": "passed"
+        }
+      ],
+      "known_gap": null
+    },
+    {
+      "id": "RNG-SINGLE-DAMAGE-ACCURACY",
+      "declared_status": "partial",
+      "boundaries": [
+        "90-percent-move",
+        "No-Guard",
+        "always-hit"
+      ],
+      "tests": [
+        {
+          "path": "tests/battle_edge_case_behavior_tests.js",
+          "result": "passed"
+        }
+      ],
+      "known_gap": "The duplicate engine check was removed, but an injected RNG call-count fixture is still needed."
+    },
+    {
+      "id": "RNG-TARGETED-STATUS-ACCURACY",
+      "declared_status": "partial",
+      "boundaries": [
+        "Will-O-Wisp-miss",
+        "Sleep-Powder-miss",
+        "type-immunity",
+        "Good-as-Gold",
+        "Magic-Bounce",
+        "Substitute"
+      ],
+      "tests": [
+        {
+          "path": "tests/move_verification_registry_tests.js",
+          "result": "passed"
+        },
+        {
+          "path": "tests/ability_priority_targeting_tests.js",
+          "result": "passed"
+        }
+      ],
+      "known_gap": "Common hit and miss paths exist, but one fixture does not yet prove immunity, reflection, Substitute, and accuracy-roll ordering together."
+    },
+    {
+      "id": "TARGET-SPREAD-INDEPENDENT-ACCURACY",
+      "declared_status": "covered",
+      "boundaries": [
+        "first-hit-second-miss",
+        "fixed-seed-4-5-6-7"
+      ],
+      "tests": [
+        {
+          "path": "tests/battle_edge_case_behavior_tests.js",
+          "result": "passed"
+        }
+      ],
+      "known_gap": null
+    },
+    {
+      "id": "TARGET-IMMUNITY-BEFORE-ACCURACY",
+      "declared_status": "partial",
+      "boundaries": [
+        "one-immune-one-vulnerable",
+        "ability-immunity",
+        "type-immunity"
+      ],
+      "tests": [
+        {
+          "path": "tests/battle_edge_case_behavior_tests.js",
+          "result": "passed"
+        },
+        {
+          "path": "tests/ability_damage_parity_tests.js",
+          "result": "passed"
+        }
+      ],
+      "known_gap": "A mixed-target Earth Eater spread fixture is proved; dedicated type-immunity and single-target RNG-consumption fixtures remain."
+    },
+    {
+      "id": "TARGET-NO-GUARD-PER-TARGET",
+      "declared_status": "partial",
+      "boundaries": [
+        "attacker-No-Guard",
+        "one-target-No-Guard",
+        "mixed-spread-targets"
+      ],
+      "tests": [
+        {
+          "path": "tests/ability_priority_targeting_tests.js",
+          "result": "passed"
+        }
+      ],
+      "known_gap": "Single-target No Guard is covered; mixed spread targets are not."
+    },
+    {
+      "id": "TARGET-RETARGET-AFTER-FAINT",
+      "declared_status": "covered",
+      "boundaries": [
+        "intended-target-fainted",
+        "other-foe-alive",
+        "no-valid-target"
+      ],
+      "tests": [
+        {
+          "path": "tests/move_verification_registry_tests.js",
+          "result": "passed"
+        },
+        {
+          "path": "tests/turn_log_export_validator_tests.js",
+          "result": "passed"
+        }
+      ],
+      "known_gap": null
+    },
+    {
+      "id": "TARGET-REDIRECTION",
+      "declared_status": "covered",
+      "boundaries": [
+        "Follow-Me",
+        "Rage-Powder",
+        "Grass-bypass",
+        "Overcoat",
+        "Safety-Goggles",
+        "Stalwart"
+      ],
+      "tests": [
+        {
+          "path": "tests/battle_system_mechanics_tests.js",
+          "result": "passed"
+        },
+        {
+          "path": "tests/ability_priority_targeting_tests.js",
+          "result": "passed"
+        }
+      ],
+      "known_gap": null
+    },
+    {
+      "id": "TARGET-ALLY-SWITCH-CROSS",
+      "declared_status": "open",
+      "boundaries": [
+        "Ally-Switch-plus-Protect",
+        "Ally-Switch-plus-redirection",
+        "fainted-slot-before-action"
+      ],
+      "tests": [],
+      "known_gap": "No deterministic interaction fixture covers this cross-product."
+    },
+    {
+      "id": "TARGET-WIDE-GUARD-MIXED",
+      "declared_status": "partial",
+      "boundaries": [
+        "all-foes-damage",
+        "all-adjacent",
+        "status-spread-exclusion"
+      ],
+      "tests": [
+        {
+          "path": "tests/battle_system_mechanics_tests.js",
+          "result": "passed"
+        },
+        {
+          "path": "tests/t9j11_tests.js",
+          "result": "passed"
+        }
+      ],
+      "known_gap": "Wide Guard basics are covered, but mixed per-target protection and accuracy ordering is not."
+    },
+    {
+      "id": "RESIDUAL-GLOBAL-ORDER",
+      "declared_status": "partial",
+      "boundaries": [
+        "weather",
+        "Solar-Power",
+        "status",
+        "Leech-Seed",
+        "Wish",
+        "Leftovers",
+        "terrain",
+        "field-expiry"
+      ],
+      "tests": [
+        {
+          "path": "tests/company_audit_regressions.mjs",
+          "result": "passed"
+        }
+      ],
+      "known_gap": "Eight side-swapped Leftovers/Toxic probes cover full HP and ticks through five, including rounding before multiplication. Effects still use fixed family loops; mixed recovery, Heal Block expiry, lethal residual boundaries and full queue parity remain unproved."
+    },
+    {
+      "id": "RESIDUAL-SPEED-TIE-ORDER",
+      "declared_status": "open",
+      "boundaries": [
+        "different-speed",
+        "exact-speed-tie",
+        "Trick-Room"
+      ],
+      "tests": [],
+      "known_gap": "Residual loops currently use side/slot array order."
+    },
+    {
+      "id": "RESIDUAL-WISH-SLOT",
+      "declared_status": "covered",
+      "boundaries": [
+        "user-switches",
+        "replacement-occupies-slot"
+      ],
+      "tests": [
+        {
+          "path": "tests/move_verification_registry_tests.js",
+          "result": "passed"
+        }
+      ],
+      "known_gap": null
+    },
+    {
+      "id": "RESIDUAL-LEECH-SEED-SOURCE",
+      "declared_status": "partial",
+      "boundaries": [
+        "ordinary-drain",
+        "source-switches",
+        "source-faints",
+        "recipient-slot-changes"
+      ],
+      "tests": [
+        {
+          "path": "tests/move_verification_registry_tests.js",
+          "result": "passed"
+        }
+      ],
+      "known_gap": "Ordinary drain is covered; source and recipient lifecycle boundaries are not."
+    },
+    {
+      "id": "RESIDUAL-PERISH-SIMULTANEOUS",
+      "declared_status": "partial",
+      "boundaries": [
+        "single-faint",
+        "both-sides-zero",
+        "bench-available",
+        "fourth-end-of-turn",
+        "side-swapped",
+        "Soundproof-source",
+        "Soundproof-target",
+        "Mold-Breaker",
+        "Ability-Shield",
+        "recast-does-not-reset",
+        "replacement-lifecycle"
+      ],
+      "tests": [
+        {
+          "path": "tests/move_verification_registry_tests.js",
+          "result": "passed"
+        },
+        {
+          "path": "tests/perish_song_reference_tests.mjs",
+          "result": "passed"
+        }
+      ],
+      "known_gap": "Four-turn reference probes cover countdown, recast and named immunity gates; two-wave terminal winner/faint-order with/without Trick Room and Phantom Force/No Guard controls also pass. Tied residual speeds, voluntary switch/re-entry and other semi-invulnerability remain unproved. Replacement choices differ by policy; matching counts and legal membership do not prove identical tactical continuation."
+    },
+    {
+      "id": "RESOURCE-PP-PRESSURE",
+      "declared_status": "covered",
+      "boundaries": [
+        "single-Pressure",
+        "double-Pressure",
+        "last-PP",
+        "all-moves-empty"
+      ],
+      "tests": [
+        {
+          "path": "tests/pp_pressure_tests.mjs",
+          "result": "passed"
+        },
+        {
+          "path": "tests/showdown_complete_game_tests.mjs",
+          "result": "passed"
+        }
+      ],
+      "known_gap": null
+    },
+    {
+      "id": "RESOURCE-PP-DRAIN-SUBSTITUTE",
+      "declared_status": "partial",
+      "boundaries": [
+        "side-swapped",
+        "Spite-bypass-Substitute",
+        "Protect-before-Magic-Bounce",
+        "Good-as-Gold",
+        "reflected-Good-as-Gold",
+        "Prankster-Dark",
+        "Mold-Breaker",
+        "Ability-Shield",
+        "Infiltrator",
+        "sound-bypass-Substitute",
+        "Substitute-HP-preservation",
+        "Soundproof",
+        "Sheer-Force",
+        "Shield-Dust",
+        "Covert-Cloak",
+        "knockout-suppresses-drain"
+      ],
+      "tests": [
+        {
+          "path": "tests/pp_drain_move_tests.mjs",
+          "result": "passed"
+        },
+        {
+          "path": "tests/pp_substitute_reference_tests.mjs",
+          "result": "passed"
+        }
+      ],
+      "known_gap": "Slot-1 and ally targeting, general reflection recursion, item suppression, exact random damage and complete-game/UI parity are not established by these bounded probes."
+    },
+    {
+      "id": "RESOURCE-STRUGGLE-RESOLUTION",
+      "declared_status": "partial",
+      "boundaries": [
+        "both-sides",
+        "late-injected-Fake-Out-fails",
+        "no-extra-hit-or-recoil",
+        "Protect-blocked-first-attempt-consumes-window",
+        "all-unavailable-selects-Struggle"
+      ],
+      "tests": [
+        {
+          "path": "tests/t9j17_tests.js",
+          "result": "failed"
+        },
+        {
+          "path": "tests/struggle_boundary_reference_tests.mjs",
+          "result": "passed"
+        }
+      ],
+      "known_gap": "Bounded reference/request/execution probes, not current-client evidence or universal forced-action lifecycle."
+    },
+    {
+      "id": "FORM-MC-ADMISSION",
+      "declared_status": "partial",
+      "boundaries": [
+        "case-and-ID-alias",
+        "unsupported-on-either-side",
+        "base-plus-X-or-Y-stone",
+        "wrong-species-stone",
+        "delayed-evolution",
+        "one-Mega-per-side",
+        "registration-preserved"
+      ],
+      "tests": [
+        {
+          "path": "tests/mc_reference_execution_tests.js",
+          "result": "passed"
+        }
+      ],
+      "known_gap": "Missing descriptors, form-specific weight/ability parity, all switch interactions and official M-C approval remain unproved."
+    },
+    {
+      "id": "FORM-SWITCH-PERSISTENCE",
+      "declared_status": "partial",
+      "boundaries": [
+        "Mega-switch-return",
+        "Aegislash-switch-reset",
+        "Tera-switch-return"
+      ],
+      "tests": [
+        {
+          "path": "tests/mega_runtime_form_guard_tests.js",
+          "result": "passed"
+        },
+        {
+          "path": "tests/stance_change_tests.js",
+          "result": "passed"
+        },
+        {
+          "path": "tests/t152_tera_activation_tests.js",
+          "result": "passed"
+        }
+      ],
+      "known_gap": "The individual systems are covered, but one lifecycle suite does not prove every supported transformation through switching."
+    },
+    {
+      "id": "IMPORT-UNIVERSAL-BEHAVIOR",
+      "declared_status": "open",
+      "boundaries": [
+        "all-imported-moves",
+        "all-imported-abilities",
+        "all-imported-items",
+        "all-imported-forms"
+      ],
+      "tests": [],
+      "known_gap": "Import legality is broader than verified battle behavior."
+    },
+    {
+      "id": "ENTRY-HOSPITALITY-SIDE-PARITY",
+      "declared_status": "covered",
+      "boundaries": [
+        "player-entry",
+        "opponent-entry",
+        "full-hp-ally",
+        "no-ally",
+        "Heal-Block",
+        "fainted-ally",
+        "switch-entry-effect-math"
+      ],
+      "tests": [
+        {
+          "path": "tests/accuracy_boundary_tests.mjs",
+          "result": "passed"
+        }
+      ],
+      "known_gap": null
+    },
+    {
+      "id": "FORMAT-DEFAULT-BRING-FOUR",
+      "declared_status": "covered",
+      "boundaries": [
+        "default-selection",
+        "explicit-bring-four",
+        "bench-replacements",
+        "legacy-leads",
+        "omitted-opponent",
+        "duplicate-picks",
+        "registered-member-id",
+        "reordered-registration",
+        "generic-six-member-fixture",
+        "singles-three"
+      ],
+      "tests": [
+        {
+          "path": "tests/participant_identity_tests.js",
+          "result": "passed"
+        }
+      ],
+      "known_gap": null
+    },
+    {
+      "id": "MOVE-THOUSAND-ARROWS-FLYING",
+      "declared_status": "partial",
+      "boundaries": [
+        "Flying-type",
+        "Levitate",
+        "grounding-follow-up",
+        "switch-reset",
+        "Protect",
+        "Substitute",
+        "Tera-Flying",
+        "Roost",
+        "later-Protean-Flying"
+      ],
+      "tests": [
+        {
+          "path": "tests/accuracy_boundary_tests.mjs",
+          "result": "passed"
+        }
+      ],
+      "known_gap": "Listed synthetic boundaries pass; Air Balloon, Gravity, semi-invulnerable states and approved Champion legality remain unproven."
+    },
+    {
+      "id": "PRIORITY-MULTIHIT-SIDE-BLOCKERS",
+      "declared_status": "partial",
+      "boundaries": [
+        "Armor-Tail",
+        "Dazzling",
+        "Queenly-Majesty",
+        "Quick-Guard",
+        "Psychic-Terrain",
+        "injured-Gale-Wings",
+        "exact-HP-priority-audit"
+      ],
+      "tests": [
+        {
+          "path": "tests/accuracy_boundary_tests.mjs",
+          "result": "passed"
+        },
+        {
+          "path": "tests/turn_log_export_validator_tests.js",
+          "result": "passed"
+        }
+      ],
+      "known_gap": "Protection boundaries pass locally; broader multi-hit accuracy, redirection and per-hit ability parity are not established."
+    },
+    {
+      "id": "ORDER-TAILWIND-SAME-TURN",
+      "declared_status": "partial",
+      "boundaries": [
+        "Prankster-Tailwind",
+        "remaining-partner-overtakes-foe",
+        "side-swapped",
+        "priority-bracket",
+        "Trick-Room-inversion",
+        "Gale-Wings-priority-loss",
+        "pending-tie-reshuffle"
+      ],
+      "tests": [
+        {
+          "path": "tests/showdown_reference_tests.mjs",
+          "result": "passed"
+        },
+        {
+          "path": "tests/tailwind_dynamic_order_tests.mjs",
+          "result": "passed"
+        }
+      ],
+      "known_gap": "Pinned synthetic doubles probes agree for the listed boundaries. Other arbitrary mid-turn Speed or priority changes, exact ties after a change, full-game/UI parity and official Champions confirmation remain unproved. No production promotion."
+    },
+    {
+      "id": "DAMAGE-SEISMIC-TOSS-LEVEL",
+      "declared_status": "partial",
+      "boundaries": [
+        "side-swapped-level-50-reference",
+        "Ghost-reference",
+        "Protect-reference",
+        "Unseen-Fist-Protect-reference",
+        "Parental-Bond-two-hits-reference",
+        "level-1-37-50-100-preview",
+        "resistance-weakness-preview",
+        "crit-and-damage-RNG-bypass",
+        "burn-stages-screens-Helping-Hand-preview",
+        "Scrappy-and-Tera-preview",
+        "HP-cap",
+        "Focus-Sash",
+        "Sturdy",
+        "Substitute"
+      ],
+      "tests": [
+        {
+          "path": "tests/showdown_reference_tests.mjs",
+          "result": "passed"
+        },
+        {
+          "path": "tests/seismic_toss_tests.mjs",
+          "result": "passed"
+        }
+      ],
+      "known_gap": "Ten isolated pinned doubles probes agree; additional preview and HP-application tests are local only. Other fixed-damage moves, arbitrary ability/item combinations, full-game/UI parity and official Champions confirmation remain unproved."
+    },
+    {
+      "id": "MOVE-GROWL-LEER-STAGES",
+      "declared_status": "partial",
+      "boundaries": [
+        "two-opposing-targets",
+        "Protect-on-one-target",
+        "Attack-stage",
+        "Defense-stage",
+        "side-swapped",
+        "Clear-Body",
+        "White-Smoke",
+        "Hyper-Cutter",
+        "Defiant",
+        "Competitive",
+        "Clear-Amulet",
+        "Good-as-Gold",
+        "Soundproof",
+        "Contrary",
+        "Mirror-Armor",
+        "Mold-Breaker",
+        "protected-Magic-Bounce",
+        "dual-Magic-Bounce",
+        "spread-Magic-Bounce",
+        "allied-Bulldoze-drop",
+        "Growl-bypass-Substitute",
+        "Leer-accuracy-before-Substitute",
+        "Magic-Bounce-before-accuracy"
+      ],
+      "tests": [
+        {
+          "path": "tests/showdown_reference_tests.mjs",
+          "result": "passed"
+        },
+        {
+          "path": "tests/growl_leer_stage_tests.mjs",
+          "result": "passed"
+        }
+      ],
+      "known_gap": "Pinned synthetic doubles probes agree for the listed boundaries. The broader stat-stage move, ability and item inventory, imported full games, UI parity and official Champions confirmation remain unproved."
+    },
+    {
+      "id": "ITEM-TERRAIN-SEED-ACTIVATION",
+      "declared_status": "partial",
+      "boundaries": [
+        "Flying-holder",
+        "Levitate-four-seeds",
+        "matching-terrain",
+        "wrong-terrain",
+        "already-consumed"
+      ],
+      "tests": [
+        {
+          "path": "tests/t9j17_tests.js",
+          "result": "failed"
+        },
+        {
+          "path": "tests/terrain_seed_lifecycle_tests.js",
+          "result": "passed"
+        }
+      ],
+      "known_gap": "Scoped Surge/Seed Sower dispatch, capped stages, Klutz and shared Simple/Contrary regressions plus synthetic doubles entry. Full Mega lifecycle, general suppression, item transfer, Unburden reset and official seasonal approval remain unproved."
+    },
+    {
+      "id": "MOVE-SOAK-TYPE-LIFECYCLE",
+      "declared_status": "partial",
+      "boundaries": [
+        "dual-type-replacement",
+        "Water-dual-versus-pure",
+        "Protect",
+        "Substitute-Infiltrator",
+        "Magic-Bounce-behind-Substitute",
+        "allied-bounce",
+        "Good-as-Gold",
+        "Water-absorption",
+        "Storm-Drain-redirection",
+        "Mold-Breaker",
+        "successful-and-failed-pivot",
+        "Arceus-Silvally-Tera-locks",
+        "grounding",
+        "next-hit-effectiveness",
+        "type-state-evidence"
+      ],
+      "tests": [
+        {
+          "path": "tests/soak_lifecycle_tests.js",
+          "result": "passed"
+        }
+      ],
+      "known_gap": "Scoped synthetic battles and direct-effect tests, not full imported-game parity. Full form-change, general suppression, ability redirection tie ordering and Champions-specific approval remain unproved."
+    },
+    {
+      "id": "ABILITY-ELECTROMORPHOSIS-CHARGE",
+      "declared_status": "partial",
+      "boundaries": [
+        "damaging-hit",
+        "spread-three-targets",
+        "Substitute",
+        "Protect",
+        "type-immunity",
+        "Electric-status",
+        "non-Electric-retention",
+        "switch-success-failure",
+        "faint",
+        "multihit-nonstacking",
+        "preview-purity",
+        "no-SpD-boost",
+        "sleep-denial-original-type",
+        "resolved-Terrain-Pulse",
+        "Electro-Shot-windup",
+        "Sleep-Talk-called-move"
+      ],
+      "tests": [
+        {
+          "path": "tests/electromorphosis_lifecycle_tests.js",
+          "result": "passed"
+        }
+      ],
+      "known_gap": "Scoped synthetic battles and reference probes, not full imported-game parity. General ability suppression, all combined modifier rounding, Charge/Wind Power activation and Champions-specific approval remain unproved."
+    },
+    {
+      "id": "ITEM-SHUCA-HIT-LIFECYCLE",
+      "declared_status": "partial",
+      "boundaries": [
+        "super-effective",
+        "neutral-resistant-immune",
+        "Protect",
+        "Substitute",
+        "Infiltrator",
+        "Klutz",
+        "Unnerve",
+        "Soak-current-types",
+        "spread-holders",
+        "preview-purity",
+        "multi-hit",
+        "Unburden"
+      ],
+      "tests": [
+        {
+          "path": "tests/shuca_lifecycle_tests.js",
+          "result": "passed"
+        }
+      ],
+      "known_gap": "General ability/item suppression, Ripen and berry-transfer/EatItem callbacks, combined modifier ordering, official seasonal approval and full-game parity remain unproved."
+    },
+    {
+      "id": "CHAMPION-REG-MB-DELTAS",
+      "declared_status": "open",
+      "boundaries": [
+        "move-deltas",
+        "ability-deltas",
+        "item-deltas",
+        "format-rules"
+      ],
+      "tests": [],
+      "known_gap": "Authoritative Regulation M-B evidence remains incomplete."
+    },
+    {
+      "id": "MC-REFERENCE-MOVE-AUDIT",
+      "declared_status": "partial",
+      "boundaries": [
+        "actor-context-isolation",
+        "base-power-type-accuracy-PP",
+        "Make-It-Rain-spread-Protect-Simple-Contrary",
+        "First-Impression-entry-selection-forced-failure",
+        "Infernal-Parade-status-Comatose",
+        "Apple-Acid-Fire-Lash-Grav-Apple-target-drops",
+        "Growth-sun-Cloud-Nine",
+        "Snipe-Shot-Follow-Me",
+        "Mountain-Gale-flinch-blockers"
+      ],
+      "tests": [
+        {
+          "path": "tests/mc_move_metadata_tests.js",
+          "result": "passed"
+        },
+        {
+          "path": "tests/mc_move_effects_tests.js",
+          "result": "passed"
+        },
+        {
+          "path": "tests/mc_remaining_effects_tests.js",
+          "result": "passed"
+        },
+        {
+          "path": "tests/mc_reference_registration_tests.js",
+          "result": "passed"
+        },
+        {
+          "path": "tests/mc_mega_lifecycle_tests.js",
+          "result": "passed"
+        },
+        {
+          "path": "tests/priority_selection_policy_tests.js",
+          "result": "passed"
+        }
+      ],
+      "known_gap": "Synthetic fixtures are not legal-team or full-game validation. Beak Blast, Snap Trap, Syrup Bomb, Strength Sap and Gravity have scoped side-swapped synthetic reference proof; arbitrary combinations and full-game parity remain open. Voluntary switching and complete Fly/Bounce/Sky Drop execution remain unsupported. Re-entry is tested as selector state, not a complete switch lifecycle. General redirection, suppression, Substitute combinations and exact-package official approval remain unproved."
+    },
+    {
+      "id": "SWITCH-SCRIPTED-DIAGNOSTIC",
+      "declared_status": "partial",
+      "boundaries": [
+        "both-sides-and-slots",
+        "explicit-replacement",
+        "enemy-and-ally-slot-targets",
+        "PP-status-item-identity",
+        "Regenerator-Intimidate",
+        "Trick-Room",
+        "script-rejection-history"
+      ],
+      "tests": [
+        {
+          "path": "tests/scripted_switch_reference_tests.mjs",
+          "result": "passed"
+        }
+      ],
+      "known_gap": "No public/automatic switching, client approval, simultaneous switches, switch-plus-Mega, hazards or unsupported lifecycle contexts. Incoming sleep/freeze rejected."
+    },
+    {
+      "id": "ABILITY-SWITCH-OUT-HOOKS",
+      "declared_status": "partial",
+      "boundaries": [
+        "both-sides",
+        "burn-poison-toxic-no-status",
+        "Gas-Shield-consumed-Shield",
+        "sleep-freeze-paralysis-diagnostic"
+      ],
+      "tests": [
+        {
+          "path": "tests/switch_out_hooks_reference_tests.mjs",
+          "result": "passed"
+        },
+        {
+          "path": "tests/scripted_switch_reference_tests.mjs",
+          "result": "passed"
+        }
+      ],
+      "known_gap": "General ability suppression, suppressed Gas, other item disabling and Champions client parity remain unproved."
+    },
+    {
+      "id": "MOVE-AMNESIA-SELF-STAGE",
+      "declared_status": "partial",
+      "boundaries": [
+        "both-sides",
+        "self-only-stage-and-action-identity",
+        "upper-and-lower-cap",
+        "Contrary-Simple",
+        "Neutralizing-Gas",
+        "Ability-Shield-intact-consumed",
+        "PP-at-cap"
+      ],
+      "tests": [
+        {
+          "path": "tests/amnesia_reference_tests.mjs",
+          "result": "passed"
+        }
+      ],
+      "known_gap": "Current-client certification, called moves, wider stat-stage interactions and complete legal-team inventory remain unproved."
+    },
+    {
+      "id": "MOVE-REST-SLEEP-TIMING",
+      "declared_status": "partial",
+      "boundaries": [
+        "both-sides-and-active-slots",
+        "ordinary-burn-fullhp",
+        "EarlyBird-Gas-Shield-consumed",
+        "SleepTalk-calls-Rest",
+        "Insomnia-VitalSpirit-Comatose",
+        "Electric-Misty-terrain-no-heal",
+        "Levitate-Balloon-IronBall-Gravity",
+        "Gas-Shield-Klutz-consumed-items",
+        "active-ally-SweetVeil",
+        "failed-Rest-next-Tantrum-executed-damage"
+      ],
+      "tests": [
+        {
+          "path": "tests/rest_reference_tests.mjs",
+          "result": "passed"
+        }
+      ],
+      "known_gap": "Synthetic pinned-reference scope, not current-client or legal-roster certification. Generic sleep distribution, switching, cure then subsequent sleep, Roost/Tera grounding and wider immunity/lifecycle combinations remain unproved."
+    },
+    {
+      "id": "MOVE-STRUGGLE-NO-PP",
+      "declared_status": "partial",
+      "boundaries": [
+        "both-sides-and-active-slots",
+        "maxHP235-238",
+        "ordinary-Ghost-target",
+        "recoil-KO",
+        "Protect-no-recoil",
+        "MagicGuard-RockHead",
+        "zero-PP-autoselection",
+        "fixed-damage-floor-recoil-Normal-type-mutants",
+        "Imprison-availability",
+        "both-side-slot-random-target",
+        "special-shields-contact-and-suppression",
+        "Disguise-cross-move-and-nonhit-boundaries",
+        "five-boundary-reversal-mutants"
+      ],
+      "tests": [
+        {
+          "path": "tests/struggle_reference_tests.mjs",
+          "result": "passed"
+        },
+        {
+          "path": "tests/struggle_boundary_reference_tests.mjs",
+          "result": "passed"
+        },
+        {
+          "path": "tests/test_method_mutation_tests.mjs",
+          "result": "failed"
+        }
+      ],
+      "known_gap": "Synthetic pinned-reference scope, not current-client or official legal M-C proof. Broader Disguise paths and unenumerated move/ability/lifecycle combinations remain unproved. Counts describe scoped executions, not full-move certification."
+    },
+    {
+      "id": "MOVE-ENCORE-QUEUE",
+      "declared_status": "partial",
+      "boundaries": [
+        "both-sides-and-slots",
+        "before-after-target",
+        "changed-priority",
+        "last-PP",
+        "MentalHerb",
+        "HelpingHand-ally-target-evidence"
+      ],
+      "tests": [
+        {
+          "path": "tests/encore_reference_tests.mjs",
+          "result": "passed"
+        },
+        {
+          "path": "tests/test_method_mutation_tests.mjs",
+          "result": "failed"
+        }
+      ],
+      "known_gap": "No current-client or legal-team proof. Suppressed Herb, full duration/switch lifecycle, immunity combinations and broader targetclasses remain unproved."
+    },
+    {
+      "id": "DAMAGE-ROLL-DISCRETE-016",
+      "declared_status": "partial",
+      "boundaries": [
+        "all-sixteen-bucket-centers-and-boundaries",
+        "zero-and-just-below-one",
+        "synthetic-one-clamped",
+        "sixteen-executed-Tackle-damage-values",
+        "fifteen-bucket-and-continuous-mutants"
+      ],
+      "tests": [
+        {
+          "path": "tests/discrete_damage_reference_tests.mjs",
+          "result": "passed"
+        },
+        {
+          "path": "tests/test_method_mutation_tests.mjs",
+          "result": "failed"
+        }
+      ],
+      "known_gap": "Not current-client observation or full move/damage pipeline certification. Equal semantic roll indices do not establish synchronized RNG seeds. Historical golden expectations remain unapproved for the separately loaded current runtime profile."
+    },
+    {
+      "id": "MOVE-FLY-CONTAINED-001",
+      "declared_status": "partial",
+      "boundaries": [
+        "seven-airborne-exceptions-both-sides",
+        "both-active-slots",
+        "Gust-Twister-final-damage-16-rolls",
+        "effective-NoGuard-Klutz-Gas-Shield",
+        "sleep-freeze-paralysis-flinch-confusion-Imprison-abort",
+        "SmackDown-ThousandArrows-Gravity-cancellation-and-next-action",
+        "FollowMe-charge-release-stored-slot",
+        "Soak-StrengthSap-DragonDarts-NoGuard",
+        "six-reversal-mutants",
+        "confusion33-of100-self-hit-causal-events-and-HP"
+      ],
+      "tests": [
+        {
+          "path": "tests/fly_repair_tests.mjs",
+          "result": "passed"
+        },
+        {
+          "path": "tests/fly_lifecycle_tests.mjs",
+          "result": "passed"
+        },
+        {
+          "path": "tests/fly_mutation_tests.mjs",
+          "result": "passed"
+        }
+      ],
+      "known_gap": "Eject Button unsupported (four retained discrepancies); forced-switch/re-entry, Coaching, target replacement/faint/ally selection and broader immunity/status combinations unproved. No client proof. Public Fly blocked."
+    },
+    {
+      "id": "MOVE-CHARGE-SPA-TIMING-001",
+      "declared_status": "partial",
+      "boundaries": [
+        "first-release-repeat-both-sides-slots",
+        "Herb-consumed-Klutz-Gas",
+        "Simple-Contrary-Gas-Shield-caps",
+        "rain-CloudNine-Protect-miss",
+        "sleep-frozen-paralysis-flinch-confusion-causal-denial",
+        "missing-delayed-double-boost-mutants"
+      ],
+      "tests": [
+        {
+          "path": "tests/charge_spa_timing_tests.mjs",
+          "result": "passed"
+        },
+        {
+          "path": "tests/charge_herb_suppression_tests.mjs",
+          "result": "passed"
+        }
+      ],
+      "known_gap": "No current-client or legal-team proof. Switching/re-entry, all targeting or ability changes and other charge moves are not certified."
+    },
+    {
+      "id": "FIELD-WEATHER-GAS-001",
+      "declared_status": "partial",
+      "boundaries": [
+        "four-weather-setters-both-sides",
+        "Gas-Shield-consumed-entry",
+        "pivot-faint-reentry-two-Gas",
+        "same-weather-duration-and-speed-order",
+        "residual-KO-and-simultaneous-spread-KO",
+        "reversal-controls"
+      ],
+      "tests": [
+        {
+          "path": "tests/weather_gas_tests.mjs",
+          "result": "passed"
+        }
+      ],
+      "known_gap": "Reference Gas-to-Gas switch ordering has upstream FIXME. Ice/snow physical damage, copied/transformed Gas, full residual/mixed-entry interactions and client proof remain open."
+    },
+    {
+      "id": "FIELD-SNOW-DEF-001",
+      "declared_status": "partial",
+      "boundaries": [
+        "sixteen-rolls",
+        "both-sides",
+        "defense-overrides",
+        "Body-Press-offense-exclusion",
+        "critical-stages",
+        "current-types",
+        "Cloud-Nine-Air-Lock",
+        "stage-zero-Eviolite",
+        "reversal"
+      ],
+      "tests": [
+        {
+          "path": "tests/snow_defense_tests.mjs",
+          "result": "passed"
+        }
+      ],
+      "known_gap": "Eviolite with negative stages, mixed suppression/restoration, full singles/doubles interaction coverage and client proof remain open."
+    },
+    {
+      "id": "TYPE-MATRIX-001",
+      "declared_status": "partial",
+      "boundaries": [
+        "324-single-type",
+        "5508-ordered-dual-type",
+        "both-side-Uturn-Venusaur-16rolls",
+        "eight-reversal-controls"
+      ],
+      "tests": [
+        {
+          "path": "tests/type_effectiveness_reference_tests.mjs",
+          "result": "passed"
+        }
+      ],
+      "known_gap": "Special move, ability/item, grounding and Tera exceptions are outside this baseline matrix. Full singles/doubles turn coverage remains incomplete."
+    },
+    {
+      "id": "ITEM-EVIOLITE-ACTIVATION-001",
+      "declared_status": "partial",
+      "boundaries": [
+        "eligible-ineligible",
+        "exact-form-Basculin-White-Striped",
+        "Klutz-consumed-no-item",
+        "Klutz-under-Gas",
+        "Def-SpD-both-sides"
+      ],
+      "tests": [
+        {
+          "path": "tests/eviolite_activation_tests.mjs",
+          "result": "passed"
+        }
+      ],
+      "known_gap": "Magic Room, Embargo, transformation, all offensive ability/item combinations, singles and fresh client proof remain unverified."
+    },
+    {
+      "id": "DAMAGE-BODY-PRESS-DEFENSE-001",
+      "declared_status": "partial",
+      "boundaries": [
+        "both-sides",
+        "offensive-defensive-Eviolite",
+        "no-item-control",
+        "negative-positive-stages",
+        "critical-overrides",
+        "snow-clear"
+      ],
+      "tests": [
+        {
+          "path": "tests/eviolite_activation_tests.mjs",
+          "result": "passed"
+        }
+      ],
+      "known_gap": "Magic Room, Embargo, transformation, all offensive ability/item combinations, singles and fresh client proof remain unverified."
+    }
+  ],
+  "failures": [
+    "tests/t9j17_tests.js: exit 1",
+    "tests/test_method_mutation_tests.mjs: exit 1"
+  ]
+}

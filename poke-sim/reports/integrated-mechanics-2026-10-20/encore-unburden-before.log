@@ -1,0 +1,97 @@
+Γ£û Encore false/0/herb-unburden (517.0668ms)
+Γ£û Encore false/1/herb-unburden (135.3455ms)
+Γ£û Encore true/0/herb-unburden (144.9865ms)
+Γ£û Encore true/1/herb-unburden (165.2136ms)
+Γä╣ tests 4
+Γä╣ suites 0
+Γä╣ pass 0
+Γä╣ fail 4
+Γä╣ cancelled 0
+Γä╣ skipped 0
+Γä╣ todo 0
+Γä╣ duration_ms 1094.5629
+
+Γ£û failing tests:
+
+test at poke-sim\tests\encore_reference_tests.mjs:4:172
+Γ£û Encore false/0/herb-unburden (517.0668ms)
+  AssertionError [ERR_ASSERTION]: local item lifecycle activates Unburden
+  
+  false !== true
+  
+      at TestContext.<anonymous> (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-14/task-2/champions-moves-repair/poke-sim/tests/encore_reference_tests.mjs:17:125)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1201:25)
+      at Test.start (node:internal/test_runner/test:1096:17)
+      at startSubtestAfterBootstrap (node:internal/test_runner/harness:385:17) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at poke-sim\tests\encore_reference_tests.mjs:4:172
+Γ£û Encore false/1/herb-unburden (135.3455ms)
+  AssertionError [ERR_ASSERTION]: local item lifecycle activates Unburden
+  
+  false !== true
+  
+      at TestContext.<anonymous> (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-14/task-2/champions-moves-repair/poke-sim/tests/encore_reference_tests.mjs:17:125)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1201:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:831:18) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at poke-sim\tests\encore_reference_tests.mjs:4:172
+Γ£û Encore true/0/herb-unburden (144.9865ms)
+  AssertionError [ERR_ASSERTION]: local item lifecycle activates Unburden
+  
+  false !== true
+  
+      at TestContext.<anonymous> (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-14/task-2/champions-moves-repair/poke-sim/tests/encore_reference_tests.mjs:17:125)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1201:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:831:18)
+      at Test.postRun (node:internal/test_runner/test:1330:19)
+      at node:internal/test_runner/test:1133:31
+      at node:internal/process/task_queues:150:7
+      at AsyncResource.runInAsyncScope (node:async_hooks:227:14)
+      at AsyncResource.runMicrotask (node:internal/process/task_queues:147:8) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at poke-sim\tests\encore_reference_tests.mjs:4:172
+Γ£û Encore true/1/herb-unburden (165.2136ms)
+  AssertionError [ERR_ASSERTION]: local item lifecycle activates Unburden
+  
+  false !== true
+  
+      at TestContext.<anonymous> (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-14/task-2/champions-moves-repair/poke-sim/tests/encore_reference_tests.mjs:17:125)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1201:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:831:18)
+      at Test.postRun (node:internal/test_runner/test:1330:19)
+      at node:internal/test_runner/test:1133:31
+      at node:internal/process/task_queues:150:7
+      at AsyncResource.runInAsyncScope (node:async_hooks:227:14)
+      at AsyncResource.runMicrotask (node:internal/process/task_queues:147:8) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }

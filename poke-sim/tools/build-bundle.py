@@ -74,7 +74,61 @@ css     = read('style.css')
 if re.search(r'\\\r?\n', css):
     raise RuntimeError('CSS escaped newline requires preserving indentation')
 css = re.sub(r'(?m)^[ \t]+', '', css)
-css = re.sub(r'(?m)^/\*(?:(?!\*/)[^\n])*\*/[ \t]*\n', '', css)
+# Compact CSS comment bodies with a quote-aware scanner. Keep the comment
+# token itself: replacing it with whitespace can change compound selectors.
+# Quoted comment markers and escapes are data.
+def omit_css_comments(source):
+    out, index, quote = [], 0, None
+    while index < len(source):
+        char = source[index]
+        if quote:
+            out.append(char)
+            if char == "\\" and index + 1 < len(source):
+                index += 1
+                out.append(source[index])
+            elif char == quote:
+                quote = None
+        elif char == "\\" and index + 1 < len(source):
+            out.extend((char, source[index + 1]))
+            index += 1
+        elif source[index:index + 4].lower() == 'url(':
+            # URL tokens can contain literal comment markers. Preserve the
+            # complete function, including escaped delimiters and quoted URLs.
+            end, url_quote = index + 4, None
+            while end < len(source):
+                token = source[end]
+                if token == "\\":
+                    end += 2
+                    continue
+                if url_quote:
+                    if token == url_quote:
+                        url_quote = None
+                elif token in ("'", '"'):
+                    url_quote = token
+                elif token == ')':
+                    break
+                end += 1
+            if end >= len(source):
+                raise RuntimeError('Unterminated CSS URL')
+            out.append(source[index:end + 1])
+            index = end
+        elif char in ("'", '"'):
+            quote = char
+            out.append(char)
+        elif source.startswith('/*', index):
+            end = source.find('*/', index + 2)
+            if end < 0:
+                raise RuntimeError('Unterminated CSS comment')
+            out.append('/**/')
+            index = end + 1
+        else:
+            out.append(char)
+        index += 1
+    if quote:
+        raise RuntimeError('Unterminated CSS string')
+    return ''.join(out)
+
+css = omit_css_comments(css)
 data    = read('data.js')
 tournament_catalog = read('generated/tournament_catalog.js')
 project_roadmap = read('generated/project_roadmap.js')
@@ -84,6 +138,7 @@ if manifest_value(release_manifest, 'reference_artifact_sha256') != hashlib.sha2
 app_shell = read('app_shell.js')
 logger  = read('logger.js')
 runtime_data = read('runtime_data.js')
+outcome_policy = read('outcome_policy.js')
 engine  = read('engine.js')
 ui      = read('ui.js')
 legality = read('legality.js')
@@ -115,7 +170,9 @@ html = html.replace('<script src="release_manifest.js"></script>', '')
 html = html.replace('<script src="app_shell.js"></script>', '')
 html = html.replace('<script src="logger.js"></script>', '')
 html = html.replace('<script src="runtime_data.js"></script>', '')
+html = html.replace('<script src="outcome_policy.js"></script>', '')
 html = html.replace('<script src="engine.js"></script>', '')
+html = html.replace('<script src="own_state_policy.js"></script>', '')
 html = html.replace('<script src="ui.js"></script>', '')
 html = html.replace('<script src="rulesets.js"></script>', '')
 html = html.replace('<script src="regmb_source_conversion.js"></script>', '')
@@ -171,7 +228,7 @@ inline_js = (
     + sanitize_inline_js(release_manifest) + '\n\n'
     + sanitize_inline_js(app_shell) + '\n\n'
     + sanitize_inline_js(data) + '\n\n'
-    + '</script>\n<script src="mc_review.js"></script>\n<script>\n'
+    + '</script>\n<script src="mc_review.js"></script>\n<script src="own_state_policy.js"></script>\n<script>\n'
     + sanitize_inline_js(tournament_catalog) + '\n\n'
     + sanitize_inline_js(project_roadmap) + '\n\n'
     + sanitize_inline_js(logger) + '\n\n'
@@ -181,6 +238,7 @@ inline_js = (
     + sanitize_inline_js(news_feed) + '\n\n'
     + sanitize_inline_js(source_registry) + '\n\n'
     + sanitize_inline_js(runtime_data) + '\n\n'
+    + sanitize_inline_js(outcome_policy) + '\n\n'
     + sanitize_inline_js(engine) + '\n\n'
     + sanitize_inline_js(rulesets) + '\n\n'
     + sanitize_inline_js(regmb_source_conversion) + '\n\n'
@@ -227,7 +285,7 @@ else:
         'hash_scope': 'sha256 of committed poke-sim/pokemon-champion-2026.html bytes'
     }
     artifact['external_assets'] = {}
-    for asset in ['generated/champions_move_pools.js', 'generated/mc_review_reference.js', 'mc_review.js',
+    for asset in ['generated/source_sync_status.js', 'generated/champions_move_pools.js', 'generated/mc_review_reference.js', 'mc_review.js', 'own_state_policy.js',
                   'assets/retro-intro/gengar.png', 'assets/retro-intro/nidorino.png']:
         with open(os.path.join(BASE, asset), 'rb') as f:
             asset_bytes = f.read()

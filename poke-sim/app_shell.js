@@ -66,9 +66,9 @@
       if (manifest && manifest.build_id) return String(manifest.build_id);
       var el = root.document && root.document.getElementById('build-version');
       var txt = el && typeof el.textContent === 'string' ? el.textContent.trim() : '';
-      return txt || 'v2.2.216-beta-feedback';
+      return txt || 'v2.2.248-eviolite-activation';
     } catch (e) {
-      return 'v2.2.216-beta-feedback';
+      return 'v2.2.248-eviolite-activation';
     }
   }
 

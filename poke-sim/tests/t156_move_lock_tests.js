@@ -144,7 +144,7 @@ T('5. Feint breaks through Protect and Quick Guard', () => {
     moves: ['Protect'],
     evs: { hp: 0, atk: 0, def: 0, spa: 0, spd: 0, spe: 0 }
   }]);
-  const battle = ctx.simulateBattle(playerTeam, oppTeam, { format: 'doubles', seed: [21, 22, 23, 24], maxTurns: 1 });
+  const battle = ctx.simulateBattle(playerTeam, oppTeam, { format: 'doubles', seed: [21, 22, 23, 24], maxTurns: 1, forcedActions:[{turn:1,side:'player',slot:0,move:'Feint',targetSlot:1}] });
   truthy(battle.log.some(line => String(line).includes('used Feint!')), 'Feint should resolve');
   truthy(battle.log.some(line => String(line).includes('broke through')), 'Feint should break protection');
   truthy(battle.log.some(line => String(line).includes('used Quick Guard!')), 'Quick Guard setup missing');

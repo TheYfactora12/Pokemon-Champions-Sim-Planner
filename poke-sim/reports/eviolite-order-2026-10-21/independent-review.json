@@ -1,0 +1,27 @@
+{
+  "reviewer": "/root/battle_auditor",
+  "role": "independent read-only mechanics review",
+  "status": "no further demonstrated bounded patch defect",
+  "initial_execution": {
+    "passed": 225,
+    "total": 226,
+    "failure": "sand mutant invisible in final damage; 145 and146 have identical damage vectors"
+  },
+  "corrected_independent_execution": {
+    "passed": 2,
+    "total": 2,
+    "scope": "sand scalar expected145 and mutant146; frozen damage unchanged"
+  },
+  "scope": "Champions custom game; Eviolite Past; eligibility/suppression and offensive Body Press remain unresolved; no fresh client proof",
+  "reviewed_working_sha256": {
+    "poke-sim/engine.js": "4b1e9561fdeb6c6953a859a342f25b35a1d1e626565c64af14e44ebb435ae1e0",
+    "poke-sim/tools/eviolite-order-probes.mjs": "25aac02f11f681cbb34fc56cb564d411564feb16b30ca7cc2489d9d79a3083e3",
+    "poke-sim/tools/eviolite-reference-pin.mjs": "1f90fa83363713011f2bc001e7e68cfea2618e63fa94e51fb6667b5c016cdb1c",
+    "poke-sim/tests/eviolite_order_tests.mjs": "a13f149af5a2ba437cf5188ef89c14ac56360008835ea7038bff3f7971240b26",
+    "poke-sim/tests/fixtures/eviolite_order_v1.json": "6c8102687948141cc3ba5d934ee3d5924375f6db7d58d17fef4262761a665863",
+    "poke-sim/tests/fixtures/eviolite_reference_v1.json": "34d8d44f3879c168a810af92910aed1356136efa2c5e4e9d85b1de41325307bf"
+  },
+  "final_review": "Checkout root or dist/sim resolves same commit/source/runtime guard. Manifest partial; documentation preserves failed control and Body Press effects. No new blocker found.",
+  "compatibility_review": "Approved explicit historical npm0.11.11 pinned runtime for default CI; override still binds exact upstream. Same frozen expectations. Not silent oracle substitution.",
+  "generated_export_review": "Previous954 moves,68025 pairs,75 prior interactions and generator unchanged. Only matrix source hash/interaction evidence/count76/snapshot identity changed. New case unverified with declared partial/no receipt; competitive_use false, client unknown. CSVs equivalent after newline normalization; old snapshots retained."
+}

@@ -1,0 +1,24 @@
+{
+  "actual_final": "NO-GO exit1",
+  "initial_attempt": "Workflow governance sandbox Bash initialization failed; host rerun passed",
+  "date": "2026-10-21",
+  "publication_performed": false,
+  "tests": {
+    "migration_negative_controls": 11,
+    "accuracy_workflow": "passed",
+    "workflow_governance": 29,
+    "readiness_and_cache": 101
+  },
+  "status": "prior circularity resolved",
+  "scope": "hosted phase separation and cache containment",
+  "primary_edits": false,
+  "hashes": {
+    "poke-sim/tools/check-competitive-readiness.mjs": "576c028510b20d4307e993e169bedc360f239734296d6e54445fde1f3eddd7ee",
+    ".github/workflows/pages.yml": "ea4fd114e850de4b85a3204d8b7e4ecd84f9ff8ffd4cae962888200ddf3eff5c",
+    "poke-sim/tools/validation-lifecycle.mjs": "aee10a2dcf120fc96983e1dac822e863ffd92654b3b54fbae4779e7307b1f4c4",
+    "poke-sim/sw.js": "c36eb0d1c1f6c5a7c4a449be2d67edbdbe43c8d0abccaaf4fe62499cfb28e88e",
+    "poke-sim/source/hosted-validation-targets.json": "eff3c079d1213dc75845fd34a96abcb8ff23ef076cdfa8f3a8b7bf6a996cabbd",
+    "poke-sim/tools/competitive-evidence-schema.mjs": "daed0f5a6ee837a5e9055ae6bd9773c48e7d6112c5953af4091cb8b8e27202cf"
+  },
+  "actual_predeployment": "NO-GO exit1"
+}

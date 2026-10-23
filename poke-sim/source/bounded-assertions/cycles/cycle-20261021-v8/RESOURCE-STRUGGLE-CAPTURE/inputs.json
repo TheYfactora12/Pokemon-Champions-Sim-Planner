@@ -1,0 +1,149 @@
+{
+  "schema_version": "bounded-inputs-v1",
+  "assertion_id": "RESOURCE-STRUGGLE-CAPTURE.current-runtime.v8",
+  "case_id": "RESOURCE-STRUGGLE-CAPTURE",
+  "scope": {
+    "oracle_kind": "shared_reference",
+    "format": "gen9championsdoublescustomgame",
+    "regulation_id": null,
+    "client_version": null,
+    "boundaries": [
+      "player slot0, no PP, target isolated to opposing slot0",
+      "ordinary physical damage and rounded maxHP recoil; no random-target claim"
+    ]
+  },
+  "contract_sha256": "c98a857f82e6521c272f3e8785aae74fa052581e4c1659147ef238d0857f9f84",
+  "kind": "struggle",
+  "teams": [
+    {
+      "format": "champions",
+      "members": [
+        {
+          "name": "Snorlax",
+          "ability": "Immunity",
+          "moves": [
+            "Amnesia"
+          ],
+          "item": "",
+          "nature": "Hardy",
+          "level": 50,
+          "evs": {
+            "hp": 0,
+            "atk": 0,
+            "def": 0,
+            "spa": 0,
+            "spd": 0,
+            "spe": 0
+          }
+        },
+        {
+          "name": "Blastoise",
+          "ability": "Torrent",
+          "moves": [
+            "Protect"
+          ],
+          "item": "",
+          "nature": "Hardy",
+          "level": 50,
+          "evs": {
+            "hp": 0,
+            "atk": 0,
+            "def": 0,
+            "spa": 0,
+            "spd": 0,
+            "spe": 0
+          }
+        }
+      ]
+    },
+    {
+      "format": "champions",
+      "members": [
+        {
+          "name": "Venusaur",
+          "ability": "Overgrow",
+          "moves": [
+            "Swords Dance"
+          ],
+          "item": "",
+          "nature": "Hardy",
+          "level": 50,
+          "evs": {
+            "hp": 0,
+            "atk": 0,
+            "def": 0,
+            "spa": 0,
+            "spd": 0,
+            "spe": 0
+          }
+        },
+        {
+          "name": "Blastoise",
+          "ability": "Torrent",
+          "moves": [
+            "Protect"
+          ],
+          "item": "",
+          "nature": "Hardy",
+          "level": 50,
+          "evs": {
+            "hp": 0,
+            "atk": 0,
+            "def": 0,
+            "spa": 0,
+            "spd": 0,
+            "spe": 0
+          }
+        }
+      ]
+    }
+  ],
+  "actions": [
+    {
+      "turn": 1,
+      "side": "player",
+      "slot": 0,
+      "move": "Struggle",
+      "targetSlot": 0
+    },
+    {
+      "turn": 1,
+      "side": "player",
+      "slot": 1,
+      "move": "Protect",
+      "targetSlot": 0
+    },
+    {
+      "turn": 1,
+      "side": "opponent",
+      "slot": 0,
+      "move": "Swords Dance",
+      "targetSlot": 0
+    },
+    {
+      "turn": 1,
+      "side": "opponent",
+      "slot": 1,
+      "move": "Protect",
+      "targetSlot": 0
+    }
+  ],
+  "seed": [
+    3,
+    7,
+    11,
+    13
+  ],
+  "initial_state": {
+    "player_slot0_pp": {
+      "Amnesia": 0
+    },
+    "struggle_target_slot": 0
+  },
+  "rng_controls": {
+    "damage": "maximum",
+    "critical_hits": false,
+    "accuracy": "forced_hit",
+    "same_seed_alignment": false
+  }
+}

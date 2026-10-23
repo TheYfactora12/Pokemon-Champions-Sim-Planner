@@ -1,0 +1,44 @@
+{
+  "base": "5c93802893a15bb9716f9143fe20f2cfc5a7c345",
+  "mutants": 4,
+  "additionalAgreements": 48,
+  "status": [],
+  "survivingBoundaryClasses": 4,
+  "survivingBoundaryCases": 8,
+  "frozenVectors": 221,
+  "reference": "9b136a8c8cdb860a8ab96fa063f906604e352547",
+  "invalidOracleTests": 1,
+  "target": "c9d071da34821ca559daf8dfb5d1800026589acc",
+  "timestampUtc": "2026-10-21T08:08:00.9424290Z",
+  "focusedPassed": 226,
+  "artifacts": [
+    {
+      "path": "C:\\Users\\The Rig\\Documents\\Codex\\2026-10-20\\task\\eviolite-c9d071d-evidence\\boundary-adapter.mjs",
+      "sha256": "bc00f7ff59cd9b5392562cce3b56e4b403f83a57ca772d8fdc849b3aee01f997"
+    },
+    {
+      "path": "C:\\Users\\The Rig\\Documents\\Codex\\2026-10-20\\task\\eviolite-c9d071d-evidence\\independent.json",
+      "sha256": "a22a5d3fa523943a9b5a3b79f171b3c8055f4eb89d01f717f691aa8389de7842"
+    },
+    {
+      "path": "C:\\Users\\The Rig\\Documents\\Codex\\2026-10-20\\task\\eviolite-c9d071d-tests.log",
+      "sha256": "5c66d230c70f539ce77e73ea57242a23ff661f13c10ddea707a76c7eb645e68b"
+    },
+    {
+      "path": "C:\\Users\\The Rig\\Documents\\Codex\\2026-10-20\\task\\eviolite-c9d071d-independent.mjs",
+      "sha256": "e559e4474e63ae697fc3a0ac3be17f5bbe5c9836a2e1e0eb00ea213f22b708a1"
+    },
+    {
+      "path": "C:\\Users\\The Rig\\Documents\\Codex\\2026-10-20\\task\\eviolite-c9d071d-independent.log",
+      "sha256": "9fea6b26c32a5a94c5ac71f0195188531472ae7f954e664ee1a37de39fe21989"
+    },
+    {
+      "path": "C:\\Users\\The Rig\\Documents\\Codex\\2026-10-20\\task\\EVIOLITE_RETEST_C9D071D.md",
+      "sha256": "efe8b06a539ba5c248bb0a1030a1b214cc7a31d17d15b7bca086384446a06347"
+    },
+    {
+      "path": "C:\\Users\\The Rig\\Documents\\Codex\\2026-10-20\\task-2\\eviolite-order.bundle",
+      "sha256": "31acdc7d379f29774dba0d421b15a4b1e2ead70b57ca9431a9a5c171c3ea35d2"
+    }
+  ]
+}

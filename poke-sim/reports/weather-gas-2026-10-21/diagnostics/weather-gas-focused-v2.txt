@@ -1,0 +1,294 @@
+Γ£ö WEATHER-GAS-entry-Drizzle-player-none (678.3943ms)
+Γ£ö WEATHER-GAS-entry-Drizzle-player-active (143.7868ms)
+Γ£ö WEATHER-GAS-entry-Drizzle-player-consumed (132.2511ms)
+Γ£ö WEATHER-GAS-healthy-Drizzle-player (151.7491ms)
+Γ£ö WEATHER-GAS-pivot-Drizzle-player-none (117.6569ms)
+Γ£ö WEATHER-GAS-pivot-Drizzle-player-active (134.0441ms)
+Γ£ö WEATHER-GAS-pivot-Drizzle-player-consumed (130.3522ms)
+Γ£ö WEATHER-GAS-faint-Drizzle-player-none (131.8157ms)
+Γ£ö WEATHER-GAS-faint-Drizzle-player-active (127.7393ms)
+Γ£ö WEATHER-GAS-faint-Drizzle-player-consumed (127.5323ms)
+Γ£ö WEATHER-GAS-reentry-Drizzle-player-none (131.4084ms)
+Γ£ö WEATHER-GAS-reentry-Drizzle-player-active (132.03ms)
+Γ£ö WEATHER-GAS-reentry-Drizzle-player-consumed (135.2113ms)
+Γ£ö WEATHER-GAS-two-Drizzle-player (127.6693ms)
+Γ£ö WEATHER-GAS-entry-Drought-player-none (125.5037ms)
+Γ£ö WEATHER-GAS-entry-Drought-player-active (128.6168ms)
+Γ£ö WEATHER-GAS-entry-Drought-player-consumed (130.8229ms)
+Γ£ö WEATHER-GAS-healthy-Drought-player (136.2427ms)
+Γ£ö WEATHER-GAS-pivot-Drought-player-none (178.2731ms)
+Γ£ö WEATHER-GAS-pivot-Drought-player-active (121.8872ms)
+Γ£ö WEATHER-GAS-pivot-Drought-player-consumed (129.6213ms)
+Γ£ö WEATHER-GAS-faint-Drought-player-none (129.4096ms)
+Γ£ö WEATHER-GAS-faint-Drought-player-active (131.193ms)
+Γ£ö WEATHER-GAS-faint-Drought-player-consumed (130.6513ms)
+Γ£ö WEATHER-GAS-reentry-Drought-player-none (134.5138ms)
+Γ£ö WEATHER-GAS-reentry-Drought-player-active (143.7886ms)
+Γ£ö WEATHER-GAS-reentry-Drought-player-consumed (132.1256ms)
+Γ£ö WEATHER-GAS-two-Drought-player (132.9423ms)
+Γ£ö WEATHER-GAS-entry-Sand Stream-player-none (130.0601ms)
+Γ£ö WEATHER-GAS-entry-Sand Stream-player-active (129.1793ms)
+Γ£ö WEATHER-GAS-entry-Sand Stream-player-consumed (128.9406ms)
+Γ£ö WEATHER-GAS-healthy-Sand Stream-player (130.8503ms)
+Γ£ö WEATHER-GAS-pivot-Sand Stream-player-none (137.6693ms)
+Γ£ö WEATHER-GAS-pivot-Sand Stream-player-active (188.4187ms)
+Γ£ö WEATHER-GAS-pivot-Sand Stream-player-consumed (122.4385ms)
+Γ£ö WEATHER-GAS-faint-Sand Stream-player-none (133.3423ms)
+Γ£ö WEATHER-GAS-faint-Sand Stream-player-active (133.3723ms)
+Γ£ö WEATHER-GAS-faint-Sand Stream-player-consumed (132.6803ms)
+Γ£ö WEATHER-GAS-reentry-Sand Stream-player-none (136.9562ms)
+Γ£ö WEATHER-GAS-reentry-Sand Stream-player-active (129.0479ms)
+Γ£ö WEATHER-GAS-reentry-Sand Stream-player-consumed (134.1303ms)
+Γ£ö WEATHER-GAS-two-Sand Stream-player (132.3393ms)
+Γ£ö WEATHER-GAS-entry-Snow Warning-player-none (131.0551ms)
+Γ£ö WEATHER-GAS-entry-Snow Warning-player-active (133.5127ms)
+Γ£ö WEATHER-GAS-entry-Snow Warning-player-consumed (131.718ms)
+Γ£ö WEATHER-GAS-healthy-Snow Warning-player (132.9921ms)
+Γ£ö WEATHER-GAS-pivot-Snow Warning-player-none (132.6637ms)
+Γ£û WEATHER-GAS-pivot-Snow Warning-player-active (129.7253ms)
+Γ£ö WEATHER-GAS-pivot-Snow Warning-player-consumed (176.225ms)
+Γ£ö WEATHER-GAS-faint-Snow Warning-player-none (109.0027ms)
+Γ£ö WEATHER-GAS-faint-Snow Warning-player-active (129.3325ms)
+Γ£ö WEATHER-GAS-faint-Snow Warning-player-consumed (131.9857ms)
+Γ£ö WEATHER-GAS-reentry-Snow Warning-player-none (135.4704ms)
+Γ£û WEATHER-GAS-reentry-Snow Warning-player-active (130.6773ms)
+Γ£ö WEATHER-GAS-reentry-Snow Warning-player-consumed (128.4695ms)
+Γ£ö WEATHER-GAS-two-Snow Warning-player (158.1128ms)
+Γ£ö WEATHER-GAS-entry-Drizzle-opponent-none (138.7627ms)
+Γ£ö WEATHER-GAS-entry-Drizzle-opponent-active (120.7026ms)
+Γ£ö WEATHER-GAS-entry-Drizzle-opponent-consumed (125.6054ms)
+Γ£ö WEATHER-GAS-healthy-Drizzle-opponent (131.1096ms)
+Γ£ö WEATHER-GAS-pivot-Drizzle-opponent-none (127.8179ms)
+Γ£ö WEATHER-GAS-pivot-Drizzle-opponent-active (125.5143ms)
+Γ£ö WEATHER-GAS-pivot-Drizzle-opponent-consumed (127.9391ms)
+Γ£ö WEATHER-GAS-faint-Drizzle-opponent-none (169.6873ms)
+Γ£ö WEATHER-GAS-faint-Drizzle-opponent-active (119.8059ms)
+Γ£ö WEATHER-GAS-faint-Drizzle-opponent-consumed (123.4911ms)
+Γ£ö WEATHER-GAS-reentry-Drizzle-opponent-none (135.7647ms)
+Γ£ö WEATHER-GAS-reentry-Drizzle-opponent-active (131.2157ms)
+Γ£ö WEATHER-GAS-reentry-Drizzle-opponent-consumed (125.7497ms)
+Γ£ö WEATHER-GAS-two-Drizzle-opponent (123.8604ms)
+Γ£ö WEATHER-GAS-entry-Drought-opponent-none (120.2486ms)
+Γ£ö WEATHER-GAS-entry-Drought-opponent-active (123.5143ms)
+Γ£ö WEATHER-GAS-entry-Drought-opponent-consumed (126.1256ms)
+Γ£ö WEATHER-GAS-healthy-Drought-opponent (126.3112ms)
+Γ£ö WEATHER-GAS-pivot-Drought-opponent-none (130.0101ms)
+Γ£ö WEATHER-GAS-pivot-Drought-opponent-active (130.8538ms)
+Γ£ö WEATHER-GAS-pivot-Drought-opponent-consumed (126.4533ms)
+Γ£ö WEATHER-GAS-faint-Drought-opponent-none (128.4451ms)
+Γ£ö WEATHER-GAS-faint-Drought-opponent-active (177.7888ms)
+Γ£ö WEATHER-GAS-faint-Drought-opponent-consumed (114.1972ms)
+Γ£ö WEATHER-GAS-reentry-Drought-opponent-none (140.9599ms)
+Γ£ö WEATHER-GAS-reentry-Drought-opponent-active (134.8824ms)
+Γ£ö WEATHER-GAS-reentry-Drought-opponent-consumed (134.1595ms)
+Γ£ö WEATHER-GAS-two-Drought-opponent (130.6718ms)
+Γ£ö WEATHER-GAS-entry-Sand Stream-opponent-none (123.3058ms)
+Γ£ö WEATHER-GAS-entry-Sand Stream-opponent-active (126.9435ms)
+Γ£ö WEATHER-GAS-entry-Sand Stream-opponent-consumed (128.5257ms)
+Γ£ö WEATHER-GAS-healthy-Sand Stream-opponent (133.3552ms)
+Γ£ö WEATHER-GAS-pivot-Sand Stream-opponent-none (134.5494ms)
+Γ£ö WEATHER-GAS-pivot-Sand Stream-opponent-active (129.3393ms)
+Γ£ö WEATHER-GAS-pivot-Sand Stream-opponent-consumed (135.077ms)
+Γ£ö WEATHER-GAS-faint-Sand Stream-opponent-none (125.393ms)
+Γ£ö WEATHER-GAS-faint-Sand Stream-opponent-active (178.7769ms)
+Γ£ö WEATHER-GAS-faint-Sand Stream-opponent-consumed (115.6532ms)
+Γ£ö WEATHER-GAS-reentry-Sand Stream-opponent-none (129.5072ms)
+Γ£ö WEATHER-GAS-reentry-Sand Stream-opponent-active (125.2095ms)
+Γ£ö WEATHER-GAS-reentry-Sand Stream-opponent-consumed (128.61ms)
+Γ£ö WEATHER-GAS-two-Sand Stream-opponent (126.0731ms)
+Γ£ö WEATHER-GAS-entry-Snow Warning-opponent-none (124.9056ms)
+Γ£ö WEATHER-GAS-entry-Snow Warning-opponent-active (121.848ms)
+Γ£ö WEATHER-GAS-entry-Snow Warning-opponent-consumed (122.8581ms)
+Γ£ö WEATHER-GAS-healthy-Snow Warning-opponent (124.4402ms)
+Γ£ö WEATHER-GAS-pivot-Snow Warning-opponent-none (125.2917ms)
+Γ£û WEATHER-GAS-pivot-Snow Warning-opponent-active (127.48ms)
+Γ£ö WEATHER-GAS-pivot-Snow Warning-opponent-consumed (131.9752ms)
+Γ£ö WEATHER-GAS-faint-Snow Warning-opponent-none (125.6523ms)
+Γ£ö WEATHER-GAS-faint-Snow Warning-opponent-active (166.9887ms)
+Γ£ö WEATHER-GAS-faint-Snow Warning-opponent-consumed (106.7381ms)
+Γ£ö WEATHER-GAS-reentry-Snow Warning-opponent-none (133.6051ms)
+Γ£û WEATHER-GAS-reentry-Snow Warning-opponent-active (129.1288ms)
+Γ£ö WEATHER-GAS-reentry-Snow Warning-opponent-consumed (128.8852ms)
+Γ£ö WEATHER-GAS-two-Snow Warning-opponent (125.0829ms)
+Γ£ö WEATHER-GAS-order-player-true (130.8027ms)
+Γ£ö WEATHER-GAS-order-player-false (120.4614ms)
+Γ£ö WEATHER-GAS-order-opponent-true (128.6538ms)
+Γ£ö WEATHER-GAS-order-opponent-false (122.4505ms)
+Γ£û WEATHER-GAS-last-gas-player (5.9941ms)
+Γ£ö WEATHER-GAS-gas-replace-player (123.1847ms)
+Γ£ö WEATHER-GAS-shield-no-restart-player (126.5237ms)
+Γ£û WEATHER-GAS-last-gas-opponent (6.0605ms)
+Γ£ö WEATHER-GAS-gas-replace-opponent (124.8993ms)
+Γ£ö WEATHER-GAS-shield-no-restart-opponent (123.2748ms)
+Γ£ö WEATHER-GAS-same-weather-does-not-refresh (161.0941ms)
+Γ£ö WEATHER-GAS-mutant-raw-entry (125.7352ms)
+Γ£ö WEATHER-GAS-mutant-missing-restoration (146.6008ms)
+Γ£ö WEATHER-GAS-mutant-shield-restart (136.8443ms)
+Γ£ö WEATHER-GAS-mutant-remaining-gas (135.3522ms)
+Γ£ö WEATHER-GAS-mutant-reverse-order (137.0331ms)
+Γä╣ tests 128
+Γä╣ suites 0
+Γä╣ pass 122
+Γä╣ fail 6
+Γä╣ cancelled 0
+Γä╣ skipped 0
+Γä╣ todo 0
+Γä╣ duration_ms 17670.64
+
+Γ£û failing tests:
+
+test at tests\weather_gas_tests.mjs:16:97
+Γ£û WEATHER-GAS-pivot-Snow Warning-player-active (129.7253ms)
+  AssertionError [ERR_ASSERTION]: weather/charge state must match pinned reference
+  + actual - expected
+  
+    {
+      charging: true,
+      gas_active: false,
+      pp: 1,
+      stage: 1,
+      weather: 'snow',
+  +   weather_hp: 91,
+  -   weather_hp: 115,
+      weather_turns: 3
+    }
+  
+      at check (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-14/task-2/champions-moves-repair/poke-sim/tests/weather_gas_tests.mjs:8:9)
+      at TestContext.<anonymous> (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-14/task-2/champions-moves-repair/poke-sim/tests/weather_gas_tests.mjs:21:3)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1201:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:831:18)
+      at Test.postRun (node:internal/test_runner/test:1330:19)
+      at Test.run (node:internal/test_runner/test:1258:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:831:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: { weather: 'snow', weather_turns: 3, stage: 1, charging: true, pp: 1, gas_active: false, weather_hp: 91 },
+    expected: { weather: 'snow', weather_turns: 3, stage: 1, charging: true, pp: 1, gas_active: false, weather_hp: 115 },
+    operator: 'deepStrictEqual',
+    diff: 'simple'
+  }
+
+test at tests\weather_gas_tests.mjs:16:97
+Γ£û WEATHER-GAS-reentry-Snow Warning-player-active (130.6773ms)
+  AssertionError [ERR_ASSERTION]: weather/charge state must match pinned reference
+  + actual - expected
+  
+    {
+      charging: true,
+      gas_active: true,
+      pp: 1,
+      stage: 1,
+      weather: 'snow',
+  +   weather_hp: 91,
+  -   weather_hp: 115,
+      weather_turns: 2
+    }
+  
+      at check (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-14/task-2/champions-moves-repair/poke-sim/tests/weather_gas_tests.mjs:8:9)
+      at TestContext.<anonymous> (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-14/task-2/champions-moves-repair/poke-sim/tests/weather_gas_tests.mjs:21:3)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1201:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:831:18)
+      at Test.postRun (node:internal/test_runner/test:1330:19)
+      at Test.run (node:internal/test_runner/test:1258:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:831:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: { weather: 'snow', weather_turns: 2, stage: 1, charging: true, pp: 1, gas_active: true, weather_hp: 91 },
+    expected: { weather: 'snow', weather_turns: 2, stage: 1, charging: true, pp: 1, gas_active: true, weather_hp: 115 },
+    operator: 'deepStrictEqual',
+    diff: 'simple'
+  }
+
+test at tests\weather_gas_tests.mjs:16:97
+Γ£û WEATHER-GAS-pivot-Snow Warning-opponent-active (127.48ms)
+  AssertionError [ERR_ASSERTION]: weather/charge state must match pinned reference
+  + actual - expected
+  
+    {
+      charging: true,
+      gas_active: false,
+      pp: 1,
+      stage: 1,
+      weather: 'snow',
+  +   weather_hp: 91,
+  -   weather_hp: 115,
+      weather_turns: 3
+    }
+  
+      at check (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-14/task-2/champions-moves-repair/poke-sim/tests/weather_gas_tests.mjs:8:9)
+      at TestContext.<anonymous> (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-14/task-2/champions-moves-repair/poke-sim/tests/weather_gas_tests.mjs:21:3)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1201:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:831:18)
+      at Test.postRun (node:internal/test_runner/test:1330:19)
+      at Test.run (node:internal/test_runner/test:1258:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:831:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: { weather: 'snow', weather_turns: 3, stage: 1, charging: true, pp: 1, gas_active: false, weather_hp: 91 },
+    expected: { weather: 'snow', weather_turns: 3, stage: 1, charging: true, pp: 1, gas_active: false, weather_hp: 115 },
+    operator: 'deepStrictEqual',
+    diff: 'simple'
+  }
+
+test at tests\weather_gas_tests.mjs:16:97
+Γ£û WEATHER-GAS-reentry-Snow Warning-opponent-active (129.1288ms)
+  AssertionError [ERR_ASSERTION]: weather/charge state must match pinned reference
+  + actual - expected
+  
+    {
+      charging: true,
+      gas_active: true,
+      pp: 1,
+      stage: 1,
+      weather: 'snow',
+  +   weather_hp: 91,
+  -   weather_hp: 115,
+      weather_turns: 2
+    }
+  
+      at check (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-14/task-2/champions-moves-repair/poke-sim/tests/weather_gas_tests.mjs:8:9)
+      at TestContext.<anonymous> (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-14/task-2/champions-moves-repair/poke-sim/tests/weather_gas_tests.mjs:21:3)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1201:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:831:18)
+      at Test.postRun (node:internal/test_runner/test:1330:19)
+      at Test.run (node:internal/test_runner/test:1258:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:831:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: { weather: 'snow', weather_turns: 2, stage: 1, charging: true, pp: 1, gas_active: true, weather_hp: 91 },
+    expected: { weather: 'snow', weather_turns: 2, stage: 1, charging: true, pp: 1, gas_active: true, weather_hp: 115 },
+    operator: 'deepStrictEqual',
+    diff: 'simple'
+  }
+
+test at tests\weather_gas_tests.mjs:27:47
+Γ£û WEATHER-GAS-last-gas-player (5.9941ms)
+  Error: [Invalid choice] Can't switch: You can't switch to an active Pok├⌐mon
+      at Side.emitChoiceError (C:\Users\The Rig\Documents\Codex\2026-10-14\task-2\upstream-reference-audit\executable\pokemon-showdown-9b136a8c8cdb860a8ab96fa063f906604e352547\dist\sim\side.js:328:42)
+      at Side.chooseSwitch (C:\Users\The Rig\Documents\Codex\2026-10-14\task-2\upstream-reference-audit\executable\pokemon-showdown-9b136a8c8cdb860a8ab96fa063f906604e352547\dist\sim\side.js:703:19)
+      at Side.choose (C:\Users\The Rig\Documents\Codex\2026-10-14\task-2\upstream-reference-audit\executable\pokemon-showdown-9b136a8c8cdb860a8ab96fa063f906604e352547\dist\sim\side.js:974:21)
+      at Battle.choose (C:\Users\The Rig\Documents\Codex\2026-10-14\task-2\upstream-reference-audit\executable\pokemon-showdown-9b136a8c8cdb860a8ab96fa063f906604e352547\dist\sim\battle.js:2475:15)
+      at weatherProbe (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-14/task-2/champions-moves-repair/poke-sim/tools/weather-gas-probes.mjs:49:44)
+      at TestContext.<anonymous> (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-14/task-2/champions-moves-repair/poke-sim/tests/weather_gas_tests.mjs:28:11)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1201:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:831:18)
+      at Test.postRun (node:internal/test_runner/test:1330:19)
+
+test at tests\weather_gas_tests.mjs:27:47
+Γ£û WEATHER-GAS-last-gas-opponent (6.0605ms)
+  Error: [Invalid choice] Can't switch: You can't switch to an active Pok├⌐mon
+      at Side.emitChoiceError (C:\Users\The Rig\Documents\Codex\2026-10-14\task-2\upstream-reference-audit\executable\pokemon-showdown-9b136a8c8cdb860a8ab96fa063f906604e352547\dist\sim\side.js:328:42)
+      at Side.chooseSwitch (C:\Users\The Rig\Documents\Codex\2026-10-14\task-2\upstream-reference-audit\executable\pokemon-showdown-9b136a8c8cdb860a8ab96fa063f906604e352547\dist\sim\side.js:703:19)
+      at Side.choose (C:\Users\The Rig\Documents\Codex\2026-10-14\task-2\upstream-reference-audit\executable\pokemon-showdown-9b136a8c8cdb860a8ab96fa063f906604e352547\dist\sim\side.js:974:21)
+      at Battle.choose (C:\Users\The Rig\Documents\Codex\2026-10-14\task-2\upstream-reference-audit\executable\pokemon-showdown-9b136a8c8cdb860a8ab96fa063f906604e352547\dist\sim\battle.js:2475:15)
+      at weatherProbe (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-14/task-2/champions-moves-repair/poke-sim/tools/weather-gas-probes.mjs:49:44)
+      at TestContext.<anonymous> (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-14/task-2/champions-moves-repair/poke-sim/tests/weather_gas_tests.mjs:28:11)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1201:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:831:18)
+      at Test.postRun (node:internal/test_runner/test:1330:19)

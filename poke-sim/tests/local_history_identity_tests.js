@@ -12,6 +12,7 @@ const ctx = vm.createContext({ console, UILog: console, ENGINE_VERSION: '1.1.1',
   TEAMS: { player: { members: [] }, opp: { members: [] } },
   _csRunTeamIdentities: { player: { input: '{"members":[]}', digest: 'a'.repeat(64) }, opp: { input: '{"members":[]}', digest: 'b'.repeat(64) } }
 });
+vm.runInContext(fs.readFileSync(path.join(root, 'outcome_policy.js'), 'utf8'), ctx);
 vm.runInContext(fs.readFileSync(path.join(root, 'rulesets.js'), 'utf8'), ctx);
 const ui = fs.readFileSync(path.join(root, 'ui.js'), 'utf8');
 vm.runInContext(ui.slice(ui.indexOf('var CS_SIMLOG_KEY'), ui.indexOf('// Render the adaptive-state banner')), ctx);
@@ -22,9 +23,9 @@ const provenance = { schema_version: 'champions-simulation-provenance-v1', engin
   player_team_digest: 'a'.repeat(64), opp_team_digest: 'b'.repeat(64), selection_policy: { player: 'manual', opponent: 'random' } };
 let failed = 0;
 function test(name, fn) { stored = null; ctx.CHAMPIONS_RULESETS.champions_reg_m_a_2026.regulationDataApproved = false; ctx.csInvalidateTeamHistory(); try { fn(); console.log('PASS ' + name); } catch(e) { failed++; console.error('FAIL ' + name + ': ' + e.message); } }
-function append(p = provenance, format = 'doubles') {
+function append(p = provenance, format = 'doubles', outcome = { terminal: true, timerExpired: false, playerSurvivors: 1, oppSurvivors: 0 }) {
   ctx.csSimLogAppendSeries({ playerKey: 'player', oppKey: 'opp', bo: 1, format, seriesResult: 'win',
-    battleResults: [{ result: 'win', turns: 2, provenance: p, format, participants: { player: [{ member_id: 'one' }] } }] });
+    battleResults: [{ ...outcome, result: 'win', turns: 2, provenance: p, format, participants: { player: [{ member_id: 'one' }] } }] });
 }
 test('unknown legacy history is retained for inspection but never counted as trusted', () => {
   append(null);
@@ -42,7 +43,7 @@ test('complete identity roundtrips locally and original participant IDs survive'
   assert.equal(ctx.computeTeamHistory('player').total_battles, 0, 'unapproved historical data remains quarantined');
   const rows = ctx.csSimLogGetAll({ includeQuarantined: true });
   assert.equal(rows[0].games[0].participants.player[0].member_id, 'one');
-  assert.deepEqual(JSON.parse(JSON.stringify(rows[0].provenance)), provenance);
+  assert.deepEqual(JSON.parse(JSON.stringify(rows[0].provenance)), { ...provenance, outcome_count: 1 });
 });
 test('mirrored history preserves original provenance without treating player-only telemetry as opponent evidence', () => {
   // Isolated hypothetical approved-package fixture, not the shipped registry.
@@ -60,5 +61,12 @@ test('stale build or edited team cannot reuse a trusted history cache', () => {
   ctx.TEAMS.player.members = [];
   append(Object.assign({}, provenance, { build_id: 'old-build' }));
   assert.equal(ctx.csSimLogGetAll().length, 1);
+});
+test('legacy outcome without terminal proof remains quarantined even with approved identity', () => {
+  ctx.CHAMPIONS_RULESETS.champions_reg_m_a_2026.regulationDataApproved = true;
+  append(provenance, 'doubles', {});
+  assert.equal(ctx.csSimLogGetAll({ includeQuarantined: true }).length, 1);
+  assert.equal(ctx.csSimLogGetAll().length, 0);
+  assert.equal(ctx.computeTeamHistory('player').total_battles, 0);
 });
 process.exitCode = failed ? 1 : 0;

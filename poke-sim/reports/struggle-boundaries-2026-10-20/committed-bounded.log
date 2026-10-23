@@ -1,0 +1,20 @@
+Γ£ö historical positive has exact scope and no whole-move/client promotion (871.6118ms)
+Γ£ö engine change invalidates current while preserving historical comparison (73.8462ms)
+Γ£ö tampered independent capture rejects (32.3669ms)
+Γ£ö missing independent links reject (32.6407ms)
+Γ£ö wrong independent target cannot replace historical target (36.1507ms)
+Γ£ö rehashed local result mismatch still fails historical assertion (68.9939ms)
+Γ£ö scope promotion rejects even with valid content hashes (71.1384ms)
+Γ£ö reference pin cannot be relabeled (35.138ms)
+Γ£ö actual Tackle action cannot be labeled Fissure (31.5052ms)
+Γ£ö rewriting all result dependencies cannot launder independent historical sources (111.3231ms)
+Γ£ö required engine dependency cannot be removed (1.2918ms)
+Γ£ö rehashed independent source cannot contradict original audit digest (34.6903ms)
+Γä╣ tests 12
+Γä╣ suites 0
+Γä╣ pass 12
+Γä╣ fail 0
+Γä╣ cancelled 0
+Γä╣ skipped 0
+Γä╣ todo 0
+Γä╣ duration_ms 1649.9697

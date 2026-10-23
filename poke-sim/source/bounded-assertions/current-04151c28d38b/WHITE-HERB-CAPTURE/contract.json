@@ -1,0 +1,41 @@
+{
+  "schema_version": "bounded-contract-v1",
+  "assertion_id": "WHITE-HERB-CAPTURE.current-runtime.v1",
+  "case_id": "WHITE-HERB-CAPTURE",
+  "scope": {
+    "oracle_kind": "shared_reference",
+    "format": "gen9championsdoublescustomgame",
+    "regulation_id": null,
+    "client_version": null,
+    "boundaries": [
+      "synthetic initial atk-2 def-1 spa+3 stages",
+      "negative stages reset and positive stage retained"
+    ]
+  },
+  "fields": [
+    {
+      "field": "attack_stage",
+      "type": "number",
+      "unit": "stage",
+      "expected": 0
+    },
+    {
+      "field": "defense_stage",
+      "type": "number",
+      "unit": "stage",
+      "expected": 0
+    },
+    {
+      "field": "special_attack_stage",
+      "type": "number",
+      "unit": "stage",
+      "expected": 3
+    },
+    {
+      "field": "item_consumed",
+      "type": "boolean",
+      "unit": "value",
+      "expected": true
+    }
+  ]
+}

@@ -1,0 +1,43 @@
+{
+  "schema_version": "weather-gas-independent-review-v1",
+  "reviewed_at": "2026-10-21T02:49:41.8624924Z",
+  "source_hashes": {
+    "champions-moves-repair/poke-sim/tools/weather-gas-probes.mjs": "497a442abd4cc98232157c31355e09a864853edcb8e6b1fe809792d1e4828204",
+    "champions-moves-repair/poke-sim/engine.js": "67a2904d88ae371e1a48889511230eae7ba4332aa07b8f95c58f2bcf71f2aeda",
+    "champions-moves-repair/poke-sim/tests/weather_gas_tests.mjs": "f1496edfdb794d4de24926ac1fcedf89a948a56b1d263a28dc2ca1b2845bc847",
+    "champions-moves-repair/poke-sim/pokemon-champion-2026.html": "93f6dd3e5b57adc214f13537c1dbcc4e23753775e5be22110b18b9df28f3ab75"
+  },
+  "engine_version": "1.1.44",
+  "bundle_bytes": 11534153,
+  "reference_pin": "9b136a8c8cdb860a8ab96fa063f906604e352547",
+  "focused_tests": {
+    "skipped": 0,
+    "passed": 140,
+    "failed": 0
+  },
+  "evidence_hashes": {
+    "simultaneous-final-results.json": "effb9a1db074cb6fea73a66570eb660838a53140db3ffc83d43219be3e7533f2",
+    "candidate-final-focused.txt": "ea6c24ff9ae2a283e8a1fcc89869e7438587dd844db4585cf80a83f67aa92323",
+    "residual-final-results.json": "e9f9f886bdf454c0616d69123a12cc66564e35e3cb1cd4112284b9e2ed518abb",
+    "simultaneous-final-probe.mjs": "30ddbc1f808c9e117b702555395fad9fb9af94bbd90abf80363d05ddf00f85bf",
+    "residual-final-probe.mjs": "6bf432ad5ca32c211a7b1ecb53305a1e34ace03025c7217c32486fd31082b8f9"
+  },
+  "independent_controls": {
+    "new_probe_review": "Array.from normalizes VM array identity only; ordered activation entries and reversal mutant retained",
+    "residual_both_sides": "exact snapshots match: rain duration 5, SpA 1, charging true, PP 1, Gas inactive, setter HP 135",
+    "simultaneous_two_gas_earthquake": "single rain then sand activation sequence matches reference"
+  },
+  "preserved_failures": [
+    "candidate-focused.txt",
+    "residual-results.json",
+    "simultaneous-results.json"
+  ],
+  "limitations": [
+    "No whole-game or client parity claim",
+    "Transformed/copied Gas and mixed non-weather entry ordering not certified",
+    "Full residual speed ordering not certified",
+    "Previously observed Ice/snow physical U-turn discrepancies remain separate",
+    "No broad aggregate tests run by this review"
+  ],
+  "verdict": "No further concrete blocker found within examined weather restoration scope"
+}

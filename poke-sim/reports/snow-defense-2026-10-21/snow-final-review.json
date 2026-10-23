@@ -1,0 +1,35 @@
+{
+  "schema_version": "snow-defense-independent-review-v1",
+  "reviewed_at": "2026-10-21T04:21:43.9590823Z",
+  "runtime_source_commit": "99507bdb78f577b0b966cbaff8e10935e33ea698",
+  "source_hashes": {
+    "tests/weather_gas_tests.mjs": "bf49993ad8dbe39192d609ef3be0d3e7c2ad28c0d854e90eb5b2eb9652b40029",
+    "tests/snow_defense_tests.mjs": "05be8103c45ce49924382ce90ad5d04b261522c9ab489219876a3568f2296cf5",
+    "tools/snow-defense-probes.mjs": "e7e8e3a54187f673ea26e7686b99b6253a71bfd5b09b079f39c46055a1ce54e8",
+    "engine.js": "081c9746fc599cefcf1518d8743991f23f299be195633e645b18f69f8caca3bd"
+  },
+  "reference_pin": "9b136a8c8cdb860a8ab96fa063f906604e352547",
+  "tests": {
+    "skipped": 0,
+    "passed": 207,
+    "snow": 67,
+    "weather": 140,
+    "failed": 0,
+    "total": 207
+  },
+  "test_log": {
+    "sha256": "d111fc8b8a2b7f1337a3058f7dc63b2fcc331ec3f55098165169a1b7ab78f5f3",
+    "path": "snow-final-fixed-focused.txt"
+  },
+  "finding_resolution": "Raw-entry reversal now uniquely binds applyWeatherAbility and rejects reverted behavior; runtime unchanged since independent Gas counterexample repair verification",
+  "preserved_failed_review": "snow-review-before-mutant-anchor-fix.json",
+  "bounded_capture_review": "../snow-defense-v10-independent/independent-review.json",
+  "status": "passed_declared_scope",
+  "limits": [
+    "Eviolite negative-stage rounding remains open; stage-zero item controls only",
+    "Tera unproved",
+    "Bug-versus-Poison chart mismatch separate",
+    "No client or whole-weather approval",
+    "No broad aggregate suite run"
+  ]
+}

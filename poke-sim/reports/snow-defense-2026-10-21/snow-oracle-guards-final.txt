@@ -1,0 +1,472 @@
+TAP version 13
+# Subtest: SNOW-DEF-001 original U-turn player
+ok 1 - SNOW-DEF-001 original U-turn player
+  ---
+  duration_ms: 651.4835
+  type: 'test'
+  ...
+# Subtest: SNOW-DEF-001 original U-turn opponent
+ok 2 - SNOW-DEF-001 original U-turn opponent
+  ---
+  duration_ms: 140.6977
+  type: 'test'
+  ...
+# Subtest: SNOW-DEF-002 U-turn/snow
+ok 3 - SNOW-DEF-002 U-turn/snow
+  ---
+  duration_ms: 128.2193
+  type: 'test'
+  ...
+# Subtest: SNOW-DEF-002 U-turn/none
+ok 4 - SNOW-DEF-002 U-turn/none
+  ---
+  duration_ms: 128.4921
+  type: 'test'
+  ...
+# Subtest: SNOW-DEF-002 U-turn/sun
+ok 5 - SNOW-DEF-002 U-turn/sun
+  ---
+  duration_ms: 129.1734
+  type: 'test'
+  ...
+# Subtest: SNOW-DEF-002 Psyshock/snow
+ok 6 - SNOW-DEF-002 Psyshock/snow
+  ---
+  duration_ms: 127.5174
+  type: 'test'
+  ...
+# Subtest: SNOW-DEF-002 Psyshock/none
+ok 7 - SNOW-DEF-002 Psyshock/none
+  ---
+  duration_ms: 126.1992
+  type: 'test'
+  ...
+# Subtest: SNOW-DEF-002 Psyshock/sun
+ok 8 - SNOW-DEF-002 Psyshock/sun
+  ---
+  duration_ms: 125.0174
+  type: 'test'
+  ...
+# Subtest: SNOW-DEF-002 Psystrike/snow
+ok 9 - SNOW-DEF-002 Psystrike/snow
+  ---
+  duration_ms: 126.4607
+  type: 'test'
+  ...
+# Subtest: SNOW-DEF-002 Psystrike/none
+ok 10 - SNOW-DEF-002 Psystrike/none
+  ---
+  duration_ms: 154.4384
+  type: 'test'
+  ...
+# Subtest: SNOW-DEF-002 Psystrike/sun
+ok 11 - SNOW-DEF-002 Psystrike/sun
+  ---
+  duration_ms: 110.0849
+  type: 'test'
+  ...
+# Subtest: SNOW-DEF-002 Secret Sword/snow
+ok 12 - SNOW-DEF-002 Secret Sword/snow
+  ---
+  duration_ms: 125.5864
+  type: 'test'
+  ...
+# Subtest: SNOW-DEF-002 Secret Sword/none
+ok 13 - SNOW-DEF-002 Secret Sword/none
+  ---
+  duration_ms: 122.4825
+  type: 'test'
+  ...
+# Subtest: SNOW-DEF-002 Secret Sword/sun
+ok 14 - SNOW-DEF-002 Secret Sword/sun
+  ---
+  duration_ms: 123.5916
+  type: 'test'
+  ...
+# Subtest: SNOW-DEF-002 Body Press/snow
+ok 15 - SNOW-DEF-002 Body Press/snow
+  ---
+  duration_ms: 121.5615
+  type: 'test'
+  ...
+# Subtest: SNOW-DEF-002 Body Press/none
+ok 16 - SNOW-DEF-002 Body Press/none
+  ---
+  duration_ms: 120.4283
+  type: 'test'
+  ...
+# Subtest: SNOW-DEF-002 Body Press/sun
+ok 17 - SNOW-DEF-002 Body Press/sun
+  ---
+  duration_ms: 121.5438
+  type: 'test'
+  ...
+# Subtest: SNOW-DEF-002 Ice Beam/snow
+ok 18 - SNOW-DEF-002 Ice Beam/snow
+  ---
+  duration_ms: 130.0748
+  type: 'test'
+  ...
+# Subtest: SNOW-DEF-002 Ice Beam/none
+ok 19 - SNOW-DEF-002 Ice Beam/none
+  ---
+  duration_ms: 130.78
+  type: 'test'
+  ...
+# Subtest: SNOW-DEF-002 Ice Beam/sun
+ok 20 - SNOW-DEF-002 Ice Beam/sun
+  ---
+  duration_ms: 134.9854
+  type: 'test'
+  ...
+# Subtest: SNOW-DEF-003 rounding 94/-2
+ok 21 - SNOW-DEF-003 rounding 94/-2
+  ---
+  duration_ms: 132.5873
+  type: 'test'
+  ...
+# Subtest: SNOW-DEF-003 rounding 94/-1
+ok 22 - SNOW-DEF-003 rounding 94/-1
+  ---
+  duration_ms: 132.1324
+  type: 'test'
+  ...
+# Subtest: SNOW-DEF-003 rounding 94/0
+ok 23 - SNOW-DEF-003 rounding 94/0
+  ---
+  duration_ms: 132.3279
+  type: 'test'
+  ...
+# Subtest: SNOW-DEF-003 rounding 94/1
+ok 24 - SNOW-DEF-003 rounding 94/1
+  ---
+  duration_ms: 134.2979
+  type: 'test'
+  ...
+# Subtest: SNOW-DEF-003 rounding 94/2
+ok 25 - SNOW-DEF-003 rounding 94/2
+  ---
+  duration_ms: 171.2807
+  type: 'test'
+  ...
+# Subtest: SNOW-DEF-003 rounding 95/-2
+ok 26 - SNOW-DEF-003 rounding 95/-2
+  ---
+  duration_ms: 115.6791
+  type: 'test'
+  ...
+# Subtest: SNOW-DEF-003 rounding 95/-1
+ok 27 - SNOW-DEF-003 rounding 95/-1
+  ---
+  duration_ms: 127.665
+  type: 'test'
+  ...
+# Subtest: SNOW-DEF-003 rounding 95/0
+ok 28 - SNOW-DEF-003 rounding 95/0
+  ---
+  duration_ms: 126.2466
+  type: 'test'
+  ...
+# Subtest: SNOW-DEF-003 rounding 95/1
+ok 29 - SNOW-DEF-003 rounding 95/1
+  ---
+  duration_ms: 126.2585
+  type: 'test'
+  ...
+# Subtest: SNOW-DEF-003 rounding 95/2
+ok 30 - SNOW-DEF-003 rounding 95/2
+  ---
+  duration_ms: 127.3966
+  type: 'test'
+  ...
+# Subtest: SNOW-DEF-003 rounding 96/-2
+ok 31 - SNOW-DEF-003 rounding 96/-2
+  ---
+  duration_ms: 127.2563
+  type: 'test'
+  ...
+# Subtest: SNOW-DEF-003 rounding 96/-1
+ok 32 - SNOW-DEF-003 rounding 96/-1
+  ---
+  duration_ms: 134.0097
+  type: 'test'
+  ...
+# Subtest: SNOW-DEF-003 rounding 96/0
+ok 33 - SNOW-DEF-003 rounding 96/0
+  ---
+  duration_ms: 127.7196
+  type: 'test'
+  ...
+# Subtest: SNOW-DEF-003 rounding 96/1
+ok 34 - SNOW-DEF-003 rounding 96/1
+  ---
+  duration_ms: 127.6954
+  type: 'test'
+  ...
+# Subtest: SNOW-DEF-003 rounding 96/2
+ok 35 - SNOW-DEF-003 rounding 96/2
+  ---
+  duration_ms: 131.0653
+  type: 'test'
+  ...
+# Subtest: SNOW-DEF-003 rounding 97/-2
+ok 36 - SNOW-DEF-003 rounding 97/-2
+  ---
+  duration_ms: 127.8314
+  type: 'test'
+  ...
+# Subtest: SNOW-DEF-003 rounding 97/-1
+ok 37 - SNOW-DEF-003 rounding 97/-1
+  ---
+  duration_ms: 134.4531
+  type: 'test'
+  ...
+# Subtest: SNOW-DEF-003 rounding 97/0
+ok 38 - SNOW-DEF-003 rounding 97/0
+  ---
+  duration_ms: 133.873
+  type: 'test'
+  ...
+# Subtest: SNOW-DEF-003 rounding 97/1
+ok 39 - SNOW-DEF-003 rounding 97/1
+  ---
+  duration_ms: 129.6127
+  type: 'test'
+  ...
+# Subtest: SNOW-DEF-003 rounding 97/2
+ok 40 - SNOW-DEF-003 rounding 97/2
+  ---
+  duration_ms: 178.131
+  type: 'test'
+  ...
+# Subtest: SNOW-DEF-004 Cloud Nine
+ok 41 - SNOW-DEF-004 Cloud Nine
+  ---
+  duration_ms: 119.444
+  type: 'test'
+  ...
+# Subtest: SNOW-DEF-004 Air Lock
+ok 42 - SNOW-DEF-004 Air Lock
+  ---
+  duration_ms: 140.1558
+  type: 'test'
+  ...
+# Subtest: SNOW-DEF-004 Neutralizing Gas
+ok 43 - SNOW-DEF-004 Neutralizing Gas
+  ---
+  duration_ms: 135.9167
+  type: 'test'
+  ...
+# Subtest: SNOW-DEF-005 non-Ice target receives no snow bonus
+ok 44 - SNOW-DEF-005 non-Ice target receives no snow bonus
+  ---
+  duration_ms: 130.6531
+  type: 'test'
+  ...
+# Subtest: SNOW-DEF-006 Ice Body Press user receives no offensive snow bonus
+ok 45 - SNOW-DEF-006 Ice Body Press user receives no offensive snow bonus
+  ---
+  duration_ms: 128.2985
+  type: 'test'
+  ...
+# Subtest: SNOW-DEF-007 critical stage -2
+ok 46 - SNOW-DEF-007 critical stage -2
+  ---
+  duration_ms: 127.3506
+  type: 'test'
+  ...
+# Subtest: SNOW-DEF-007 critical stage 0
+ok 47 - SNOW-DEF-007 critical stage 0
+  ---
+  duration_ms: 131.9862
+  type: 'test'
+  ...
+# Subtest: SNOW-DEF-007 critical stage 2
+ok 48 - SNOW-DEF-007 critical stage 2
+  ---
+  duration_ms: 133.5995
+  type: 'test'
+  ...
+# Subtest: SNOW-DEF-008 current typing Ice
+ok 49 - SNOW-DEF-008 current typing Ice
+  ---
+  duration_ms: 129.2715
+  type: 'test'
+  ...
+# Subtest: SNOW-DEF-008 current typing Normal
+ok 50 - SNOW-DEF-008 current typing Normal
+  ---
+  duration_ms: 127.1788
+  type: 'test'
+  ...
+# Subtest: SNOW-DEF-009 Eviolite order 94
+ok 51 - SNOW-DEF-009 Eviolite order 94
+  ---
+  duration_ms: 123.9899
+  type: 'test'
+  ...
+# Subtest: SNOW-DEF-009 Eviolite order 95
+ok 52 - SNOW-DEF-009 Eviolite order 95
+  ---
+  duration_ms: 125.2895
+  type: 'test'
+  ...
+# Subtest: SNOW-DEF-009 Eviolite order 101
+ok 53 - SNOW-DEF-009 Eviolite order 101
+  ---
+  duration_ms: 123.0078
+  type: 'test'
+  ...
+# Subtest: SNOW-DEF-010 reversal removing snow modifier is caught
+ok 54 - SNOW-DEF-010 reversal removing snow modifier is caught
+  ---
+  duration_ms: 135.1833
+  type: 'test'
+  ...
+# Subtest: SNOW-DEF-011 Gas player/Cloud Nine/none
+ok 55 - SNOW-DEF-011 Gas player/Cloud Nine/none
+  ---
+  duration_ms: 173.6296
+  type: 'test'
+  ...
+# Subtest: SNOW-DEF-011 Gas player/Cloud Nine/active
+ok 56 - SNOW-DEF-011 Gas player/Cloud Nine/active
+  ---
+  duration_ms: 107.5703
+  type: 'test'
+  ...
+# Subtest: SNOW-DEF-011 Gas player/Cloud Nine/consumed
+ok 57 - SNOW-DEF-011 Gas player/Cloud Nine/consumed
+  ---
+  duration_ms: 126.7113
+  type: 'test'
+  ...
+# Subtest: SNOW-DEF-011 Gas player/Air Lock/none
+ok 58 - SNOW-DEF-011 Gas player/Air Lock/none
+  ---
+  duration_ms: 125.4878
+  type: 'test'
+  ...
+# Subtest: SNOW-DEF-011 Gas player/Air Lock/active
+ok 59 - SNOW-DEF-011 Gas player/Air Lock/active
+  ---
+  duration_ms: 129.2179
+  type: 'test'
+  ...
+# Subtest: SNOW-DEF-011 Gas player/Air Lock/consumed
+ok 60 - SNOW-DEF-011 Gas player/Air Lock/consumed
+  ---
+  duration_ms: 122.0238
+  type: 'test'
+  ...
+# Subtest: SNOW-DEF-011 Gas opponent/Cloud Nine/none
+ok 61 - SNOW-DEF-011 Gas opponent/Cloud Nine/none
+  ---
+  duration_ms: 124.878
+  type: 'test'
+  ...
+# Subtest: SNOW-DEF-011 Gas opponent/Cloud Nine/active
+ok 62 - SNOW-DEF-011 Gas opponent/Cloud Nine/active
+  ---
+  duration_ms: 119.7642
+  type: 'test'
+  ...
+# Subtest: SNOW-DEF-011 Gas opponent/Cloud Nine/consumed
+ok 63 - SNOW-DEF-011 Gas opponent/Cloud Nine/consumed
+  ---
+  duration_ms: 122.958
+  type: 'test'
+  ...
+# Subtest: SNOW-DEF-011 Gas opponent/Air Lock/none
+ok 64 - SNOW-DEF-011 Gas opponent/Air Lock/none
+  ---
+  duration_ms: 122.6937
+  type: 'test'
+  ...
+# Subtest: SNOW-DEF-011 Gas opponent/Air Lock/active
+ok 65 - SNOW-DEF-011 Gas opponent/Air Lock/active
+  ---
+  duration_ms: 127.6519
+  type: 'test'
+  ...
+# Subtest: SNOW-DEF-011 Gas opponent/Air Lock/consumed
+ok 66 - SNOW-DEF-011 Gas opponent/Air Lock/consumed
+  ---
+  duration_ms: 130.1469
+  type: 'test'
+  ...
+# Subtest: SNOW-DEF-012 raw suppression reversal caught
+ok 67 - SNOW-DEF-012 raw suppression reversal caught
+  ---
+  duration_ms: 129.5408
+  type: 'test'
+  ...
+# Subtest: SNOW-DEF-013 preserved actual turn player/pivot/active
+ok 68 - SNOW-DEF-013 preserved actual turn player/pivot/active
+  ---
+  duration_ms: 151.2966
+  type: 'test'
+  ...
+# Subtest: SNOW-DEF-013 preserved actual turn player/pivot/none
+ok 69 - SNOW-DEF-013 preserved actual turn player/pivot/none
+  ---
+  duration_ms: 131.2547
+  type: 'test'
+  ...
+# Subtest: SNOW-DEF-013 preserved actual turn player/reentry/active
+ok 70 - SNOW-DEF-013 preserved actual turn player/reentry/active
+  ---
+  duration_ms: 174.2007
+  type: 'test'
+  ...
+# Subtest: SNOW-DEF-013 preserved actual turn player/reentry/none
+ok 71 - SNOW-DEF-013 preserved actual turn player/reentry/none
+  ---
+  duration_ms: 121.1933
+  type: 'test'
+  ...
+# Subtest: SNOW-DEF-013 preserved actual turn opponent/pivot/active
+ok 72 - SNOW-DEF-013 preserved actual turn opponent/pivot/active
+  ---
+  duration_ms: 137.7232
+  type: 'test'
+  ...
+# Subtest: SNOW-DEF-013 preserved actual turn opponent/pivot/none
+ok 73 - SNOW-DEF-013 preserved actual turn opponent/pivot/none
+  ---
+  duration_ms: 124.9527
+  type: 'test'
+  ...
+# Subtest: SNOW-DEF-013 preserved actual turn opponent/reentry/active
+ok 74 - SNOW-DEF-013 preserved actual turn opponent/reentry/active
+  ---
+  duration_ms: 130.4082
+  type: 'test'
+  ...
+# Subtest: SNOW-DEF-013 preserved actual turn opponent/reentry/none
+ok 75 - SNOW-DEF-013 preserved actual turn opponent/reentry/none
+  ---
+  duration_ms: 129.2172
+  type: 'test'
+  ...
+# Subtest: SNOW-DEF-014 unsupported singles and extreme stats reject before runtime load
+ok 76 - SNOW-DEF-014 unsupported singles and extreme stats reject before runtime load
+  ---
+  duration_ms: 1.2443
+  type: 'test'
+  ...
+# Subtest: SNOW-DEF-015 nonnumerical oracle cannot count as agreement
+ok 77 - SNOW-DEF-015 nonnumerical oracle cannot count as agreement
+  ---
+  duration_ms: 127.33
+  type: 'test'
+  ...
+1..77
+# tests 77
+# suites 0
+# pass 77
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 10884.8207

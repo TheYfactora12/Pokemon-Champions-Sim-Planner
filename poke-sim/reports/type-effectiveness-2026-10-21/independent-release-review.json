@@ -1,0 +1,37 @@
+{
+  "reviewed_at_utc": "2026-10-21T06:34:16.951164+00:00",
+  "commit": "55a1136bd1a0ed539dc5dba74259a8c4366faed6",
+  "source_hashes": {
+    "poke-sim/data.js": "e4f03e2abb3ad0f3c3c4f48fc083842db6b32a154c8bf20106c623cdd7888654",
+    "poke-sim/engine.js": "40de6c69ba138310d0bd54a1f82926c2b55bfdbac5ae0d95528a7420a2960728",
+    "poke-sim/tools/generate-type-multiplier-audit.mjs": "961a537a8ca00f44921a04bd12178195f25e0ce8eb0eddb2703ad9d105f69968",
+    "poke-sim/tests/type_effectiveness_reference_tests.mjs": "6914e2d6c01dbf9a8151fc105e9c73302b17cda30ed762982fb2413c48ec05d9",
+    "poke-sim/tools/type-effectiveness-probes.mjs": "58e9a97b322157926aedb1f2fa17b10bafd6e14d9abda103ca6f82853018e3b6",
+    "poke-sim/pokemon-champion-2026.html": "758df809fe814c45615b6b64668296aa4998ea29477ee6b4d3021989e7b42800",
+    "poke-sim/release_manifest.js": "91e11056583582d9348c2e03e14f976c2ea5ccbf2a7506498e7cdfaffc1e1624",
+    "poke-sim/sw.js": "53bb2901ac63f4d809df90fae76612bde3da43efa9606f2543f056381809f11d"
+  },
+  "committed_source_matches_normalized": {
+    "poke-sim/data.js": true,
+    "poke-sim/engine.js": true,
+    "poke-sim/tools/generate-type-multiplier-audit.mjs": true,
+    "poke-sim/tests/type_effectiveness_reference_tests.mjs": true,
+    "poke-sim/tools/type-effectiveness-probes.mjs": true,
+    "poke-sim/pokemon-champion-2026.html": true,
+    "poke-sim/release_manifest.js": true,
+    "poke-sim/sw.js": true
+  },
+  "release_tests": {
+    "passed": 12,
+    "failed": 0
+  },
+  "type_reference_tests": {
+    "passed": 11,
+    "failed": 0
+  },
+  "external_assets": "passed",
+  "bundle_bytes": 11531789,
+  "headroom_11MiB": 2547,
+  "findings": [],
+  "limits": "Pinned reference baseline proof, not current Champions client certification. Aggregate and v11 captures owned by primary; no publication."
+}

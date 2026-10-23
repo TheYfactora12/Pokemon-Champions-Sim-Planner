@@ -2,7 +2,7 @@
 
 <!-- Generated from poke-sim/source/project-roadmap.json. Run npm run roadmap:build in poke-sim. -->
 
-Reviewed: 2026-10-17. Current runtime/deployment evidence: [STATUS.md](STATUS.md).
+Reviewed: 2026-10-20. Current runtime/deployment evidence: [STATUS.md](STATUS.md).
 
 **Prove the doubles simulator before expanding coaching.**
 
@@ -12,7 +12,7 @@ Local tests are not live database, deployment or universal game-accuracy proof. 
 
 ## Next Action
 
-Startup hardening shipped in v214; the original interruption (#271) remains unproved. Validate priority-blocker suppression and remaining move-choice policy (#264), then paired team evidence. See STATUS.md for release proof. Official M-C approval (#232), trusted rankings and database learning remain gated.
+Complete independent retest and exact-head checks for the v226 PR279 candidate. Competitive release remains NO-GO pending current-client/regulation, gameplay and service evidence. See docs/release/COMPETITIVE_READINESS_2026-10-20.md for owners, gates and the Wednesday decision.
 
 ## Milestone Index
 
@@ -80,7 +80,7 @@ Remaining:
 - [ ] October 8: all 262 official M-C roster IDs have review-only identity mappings. Approve format scope and complete-package evidence separately. See docs/release/MC_RELEASE_INVENTORY_2026-10-08.md.
 - [ ] A pinned M-C reference now exists with 42 individual-set probes. Verify item/move/Ability inventory with official or in-game evidence, and preserve historical M-B routing during any reference upgrade. M-A, M-B and M-C remain unverified.
 - [ ] Add complete-team accepted/rejected fixtures and controlled Z Mega mechanics fixtures, including Aura Guard contact boundaries, switching, suppression, multi-hit and spread interactions.
-- [ ] Activate hosted monitoring and encrypted evidence retention; validate permissions and immutable candidate readback.
+- [ ] Official-source watcher repair is locally tested; workflow349252390 remains disabled_manually. Verify repaired default-branch code and separately authorize activation, then validate encrypted retention and immutable candidate readback. See docs/release/OFFICIAL_WATCH_REPAIR_2026-10-20.md.
 - [ ] Compile complete regulation-specific eligibility packages and implement separate digest-bound human approval and atomic publication, preserving old versions.
 
 **Exit:** The selected regulation has complete reviewed eligibility evidence and an immutable published package; source outages and unknown facts cannot silently pass.

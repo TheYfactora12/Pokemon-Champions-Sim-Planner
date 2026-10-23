@@ -1,0 +1,45 @@
+{
+  "schema_version": 1,
+  "runtime_source_commit": "064ac1f2ea0c686910e82e4bd5a8a970697eb22a",
+  "local_project_initial": {
+    "fast_files": 271,
+    "failed_files": [
+      "battle_audit_system_tests.mjs"
+    ],
+    "db_contract_files": 12,
+    "db_failures": 0,
+    "failure": "Expected70 matrix cases; Fly adds explicitly partial71st case",
+    "repair": "Count71/partial49 plus assertion Fly remains unproved; targeted rerun passed"
+  },
+  "additional_receipt_test": "passed; created after aggregate discovery",
+  "clean_archive": {
+    "commit": "064ac1f2ea0c686910e82e4bd5a8a970697eb22a",
+    "tests": 277,
+    "failures": 0
+  },
+  "battle_audit": {
+    "status": "passed",
+    "battles": 4500,
+    "js_errors": 0,
+    "historical_goldens_passed": 3
+  },
+  "browser": {
+    "status": "passed",
+    "games": 2,
+    "pairs": 3,
+    "turns": 16,
+    "mismatches": 0,
+    "page_errors": 0
+  },
+  "independent_review": {
+    "tests": 210,
+    "failures": 0,
+    "gap_assertions_in_count": 4
+  },
+  "not_run": [
+    "Live database",
+    "Deployment",
+    "Current-client observation"
+  ],
+  "hosted_status": "pending publication; verify exact-head Actions rather than treating this local record as hosted success"
+}

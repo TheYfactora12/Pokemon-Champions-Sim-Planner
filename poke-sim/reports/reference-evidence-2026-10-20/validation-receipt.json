@@ -1,0 +1,68 @@
+{
+  "candidate": "v2.2.238-reference-evidence",
+  "engine": "1.1.39",
+  "scope": "Development consistency and pinned reference checks; competitive NO-GO, current-client not verified",
+  "bundle_sha256": "a8d96468353392b00a59896aca45162186c1fb9f257cec415ded30991ae84ab5",
+  "files": [
+    {
+      "path": "v238-project.log",
+      "sha256": "6953611dbfb5c9ec617bad6df82375b7ee33cdf2377794ef8c3c37eea2742a89",
+      "bytes": 295332
+    },
+    {
+      "path": "v238-battle.log",
+      "sha256": "0d1812f10d90b834d8a160cd15e6ce2a35caf316e3fcd5126c9875be7da27fd1",
+      "bytes": 169852
+    },
+    {
+      "path": "v238-methodology.log",
+      "sha256": "fd0d5a87d4e5ef7f8cc9fd1326fe92cdb656153fa762e555576a21bdb2bb19c9",
+      "bytes": 1282
+    },
+    {
+      "path": "v238-invariants.log",
+      "sha256": "f2b3f3845ab138fa1150ceebf6a18f6817b2cc6204db5715892025f3ee6816c8",
+      "bytes": 728
+    },
+    {
+      "path": "v238-browser.log",
+      "sha256": "0a9605604c2ff1cef00f9bbe8440def4c8d1b89cd3b8d81c6ff855d96286e203",
+      "bytes": 209
+    },
+    {
+      "path": "v238-register-tests.log",
+      "sha256": "f994bd53de872f8ac1bd9d51aa139238efbebfa1404b4d441cfc8e0c0e5409c1",
+      "bytes": 3177
+    },
+    {
+      "path": "v238-register-export.log",
+      "sha256": "19effb3c73767109531a3c384268492b79bae226d942792ed860b74f5f6cea3d",
+      "bytes": 410
+    },
+    {
+      "path": "v238-workflow.log",
+      "sha256": "ba783911cc445863b99e99fa1b4f449f7a7e787268c6e6b12d5d1b0869db042a",
+      "bytes": 144
+    },
+    {
+      "path": "v238-workflow-sandbox-failure.log",
+      "sha256": "3c9b42ca70353460bbe08b9017257016ffc5f8c7031151585e642db5e3585b2a",
+      "bytes": 3875
+    },
+    {
+      "path": "item-causality-focused.log",
+      "sha256": "005cd34b7d5419cc3160367fd39c55b56939494a4ee8e42d0b756dcbc485be52",
+      "bytes": 531
+    },
+    {
+      "path": "item-causality-independent.log",
+      "sha256": "f7c7f5d03623072ec9479c11fd6b0545673f9d16d9d83f786aab2666f7722890",
+      "bytes": 81
+    },
+    {
+      "path": "c97866f-hosted-tests.log",
+      "sha256": "4b45b5e88a8dfd15df3486e282a9b304d61b5cf98db91fc9f6bf39c428fcf87f",
+      "bytes": 1576733
+    }
+  ]
+}

@@ -1,0 +1,45 @@
+{
+  "schema_version": "bounded-result-v1",
+  "assertion_id": "RESOURCE-STRUGGLE-CAPTURE.current-runtime.v3",
+  "case_id": "RESOURCE-STRUGGLE-CAPTURE",
+  "scope": {
+    "oracle_kind": "shared_reference",
+    "format": "gen9championsdoublescustomgame",
+    "regulation_id": null,
+    "client_version": null,
+    "boundaries": [
+      "player slot0, no PP, target isolated to opposing slot0",
+      "ordinary physical damage and rounded maxHP recoil; no random-target claim"
+    ]
+  },
+  "role": "reference_result",
+  "status": "complete",
+  "inputs_sha256": "91092d550136773b9d294c4f915be02c661dfd314cfe55b1005f143ecea26d99",
+  "contract_sha256": "6015911b832fed7cd579cc4eee32b18de25ca616ca1d6b69cab297befbd83f0f",
+  "dependencies": {
+    "engine": "75d75d4d5377b286765ff8dac65a7d5f912c434ef26e8253429dd55c4b89fd71",
+    "data": "dd258aec23104c305658a95eeb20c8af71204ef43311d7033d00f33a64943409",
+    "runner": "7324e992dc86371999bd2686edb4e2c649ea1d9b2e655ad3850ac5121608df08",
+    "test": "3d7cfd2e383fa6e32f8dc626c9a9bef27ac9b25d298e90646014bf95b1e524e1",
+    "checker": "469e4c27b2d4c3824fa4068f741cc0ff66d0211033c0f0e6ef630d33f5e4745d",
+    "reference": "de66162a28b270bdf17ea17a804a7ec65c6d2f286815ae17eaa3336273405f61"
+  },
+  "executed_at": "2026-10-20T22:26:59.161Z",
+  "observations": {
+    "target_hp_loss": {
+      "pointer": "/observations/target_hp_loss/value",
+      "unit": "HP",
+      "value": 29
+    },
+    "user_hp_loss": {
+      "pointer": "/observations/user_hp_loss/value",
+      "unit": "HP",
+      "value": 59
+    },
+    "amnesia_pp_spent": {
+      "pointer": "/observations/amnesia_pp_spent/value",
+      "unit": "PP",
+      "value": 0
+    }
+  }
+}

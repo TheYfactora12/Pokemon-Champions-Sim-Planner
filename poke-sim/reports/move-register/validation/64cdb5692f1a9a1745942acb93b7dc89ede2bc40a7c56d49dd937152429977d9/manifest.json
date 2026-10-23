@@ -1,0 +1,11 @@
+{
+  "identity": "64cdb5692f1a9a1745942acb93b7dc89ede2bc40a7c56d49dd937152429977d9",
+  "bounded_identity": "c74bc7150593acadb60b7208b92159ba03d198db3c1193b6a6ef63081a797f44",
+  "schema_version": "bounded-validation-tracker-v1",
+  "limitations": [
+    "Reference-backed bounded assertions only",
+    "No automatic workbook refresh",
+    "No merge or deployment authorization",
+    "Missing evidence stops export; failed captures cannot be enrolled as passes"
+  ]
+}

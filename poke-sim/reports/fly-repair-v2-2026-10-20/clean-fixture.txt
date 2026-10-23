@@ -1,0 +1,44 @@
+
+=== Phase 5 turn log tests ===
+
+  PASS T5a-1 turnLog is populated after simulateBattle
+  PASS T5a-1a live turn snapshots keep player/opponent side keys distinct
+  PASS T5a-1b exported turn snapshots can be rescored directly
+  PASS T5a-1c roster calculated stats include non-HP stats
+  PASS T5a-1d stable roster identity survives bench to active movement
+  PASS T5a-1e action summaries export stable actor and target identity
+  PASS T5a-2 turnLog clears on new sim run
+  PASS T5b-1 positionScore returns 0..1
+  PASS T5b-2 positionScore favors higher player HP
+  PASS T5b-2a positionScore uses actual turn order under Trick Room
+  PASS T5b-3 winProbabilityDelta length is turnLog.length - 1
+  PASS T5b-4 swing turn is flagged on known fixture
+  PASS T5c-1 Replay Log v2 renders turn rows
+  PASS T5c-1initial Replay Log uses true starting state before post-Mega pre-action state
+  PASS T5c-1a Replay Log v2 renders Turn 0 and both board sides
+  PASS T5c-1ab Replay Log v2 does not duplicate planned move lines when resolved events exist
+  PASS T5c-1ac Replay Log v2 groups spread damage and surfaces miss/failure details
+  PASS T5c-1ad Replay Log preserves status moves, resolved move order and Tailwind field tags
+  PASS T5c-1ae Replay Log preserves identical mirror-match move actions
+  PASS T5c-1aa Replay Log v2 supports singles and doubles field visibility
+  PASS T5c-1b Battle Sensei renders Turn 0 and both side boards
+  PASS T5c-1c replay snapshot surfaces field-state chips and impact summaries
+  PASS T5c-1ca replay impact deduplicates recoil represented by damage and effect evidence
+  PASS T5c-2 swing turn row is highlighted
+  PASS T5c-3 JSON download produces valid parseable file
+  PASS T5c-3identity download retains original run identity and snapshots
+  PASS T5c-3a QA coverage counts recoil occurrences once and keeps damage-row evidence separate
+  PASS T5c-4 Sparkline renders without error on 1-turn game
+  PASS T5c-4a replay HP bars hide snapshot side prefixes on mirror species
+  PASS T5c-5 move inventories do not prove an alternative was usable
+  PASS T5c-6 Replay Log does not render an unsupported better-line chip
+  PASS T5c-7 replay coaching does not diagnose execution from heuristic scores
+  PASS T5c-8 replay coaching summary does not fall back to strategy context in v1
+  PASS T5c-9 replay coaching summary supports not enough evidence
+  PASS T5c-10 replay coaching summary renderer prints the bounded output rows
+  PASS T5c-11 QA coverage counts blocked-priority families separately
+  PASS T5c-12 QA coverage counts status denial and move-lock families separately
+  PASS T5c-13 QA coverage counts status resolution pass-through families separately
+
+Phase 5 turn log: 38 pass, 0 fail
+

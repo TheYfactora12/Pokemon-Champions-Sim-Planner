@@ -1,0 +1,162 @@
+{
+  "schema_version": "bounded-inputs-v1",
+  "assertion_id": "RED-CARD-CAPTURE.current-runtime.v10",
+  "case_id": "RED-CARD-CAPTURE",
+  "scope": {
+    "oracle_kind": "shared_reference",
+    "format": "gen9championsdoublescustomgame",
+    "regulation_id": null,
+    "client_version": null,
+    "boundaries": [
+      "single fixed damage hit, surviving holder, exactly one legal reserve",
+      "consumption and forced replacement; no random-reserve claim"
+    ]
+  },
+  "contract_sha256": "832dc9c4bb3f91b0b53334142f4b4e2546221e3c0171c7c476f13799b19d19ab",
+  "kind": "redcard",
+  "teams": [
+    {
+      "format": "champions",
+      "members": [
+        {
+          "name": "Machamp",
+          "ability": "Guts",
+          "moves": [
+            "Seismic Toss"
+          ],
+          "item": "",
+          "nature": "Hardy",
+          "level": 50,
+          "evs": {
+            "hp": 0,
+            "atk": 0,
+            "def": 0,
+            "spa": 0,
+            "spd": 0,
+            "spe": 0
+          }
+        },
+        {
+          "name": "Blastoise",
+          "ability": "Torrent",
+          "moves": [
+            "Protect"
+          ],
+          "item": "",
+          "nature": "Hardy",
+          "level": 50,
+          "evs": {
+            "hp": 0,
+            "atk": 0,
+            "def": 0,
+            "spa": 0,
+            "spd": 0,
+            "spe": 0
+          }
+        },
+        {
+          "name": "Garchomp",
+          "ability": "Rough Skin",
+          "moves": [
+            "Protect"
+          ],
+          "item": "",
+          "nature": "Hardy",
+          "level": 50,
+          "evs": {
+            "hp": 0,
+            "atk": 0,
+            "def": 0,
+            "spa": 0,
+            "spd": 0,
+            "spe": 0
+          }
+        }
+      ]
+    },
+    {
+      "format": "champions",
+      "members": [
+        {
+          "name": "Snorlax",
+          "ability": "Immunity",
+          "moves": [
+            "Amnesia"
+          ],
+          "item": "Red Card",
+          "nature": "Hardy",
+          "level": 50,
+          "evs": {
+            "hp": 0,
+            "atk": 0,
+            "def": 0,
+            "spa": 0,
+            "spd": 0,
+            "spe": 0
+          }
+        },
+        {
+          "name": "Blastoise",
+          "ability": "Torrent",
+          "moves": [
+            "Protect"
+          ],
+          "item": "",
+          "nature": "Hardy",
+          "level": 50,
+          "evs": {
+            "hp": 0,
+            "atk": 0,
+            "def": 0,
+            "spa": 0,
+            "spd": 0,
+            "spe": 0
+          }
+        }
+      ]
+    }
+  ],
+  "actions": [
+    {
+      "turn": 1,
+      "side": "player",
+      "slot": 0,
+      "move": "Seismic Toss",
+      "targetSlot": 0
+    },
+    {
+      "turn": 1,
+      "side": "player",
+      "slot": 1,
+      "move": "Protect",
+      "targetSlot": 0
+    },
+    {
+      "turn": 1,
+      "side": "opponent",
+      "slot": 0,
+      "move": "Amnesia",
+      "targetSlot": 0
+    },
+    {
+      "turn": 1,
+      "side": "opponent",
+      "slot": 1,
+      "move": "Protect",
+      "targetSlot": 0
+    }
+  ],
+  "seed": [
+    3,
+    7,
+    11,
+    13
+  ],
+  "initial_state": {},
+  "rng_controls": {
+    "damage": "maximum",
+    "critical_hits": false,
+    "accuracy": "forced_hit",
+    "same_seed_alignment": false
+  }
+}

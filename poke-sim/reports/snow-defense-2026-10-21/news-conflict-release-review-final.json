@@ -1,0 +1,17 @@
+{
+  "reviewed_at_utc": "2026-10-21T05:14:14.754634+00:00",
+  "scope": "draft-only news conflict resolution",
+  "head": "a33c97a2e1c99204501e3552ef4aae7241daccc9",
+  "news_commit": "ed8e11ca263bf4d06d95a8811aed3b83c9b9edfe",
+  "news_exact_git_bytes": true,
+  "ui_comment_only_diff": true,
+  "engine_unchanged": true,
+  "css_unchanged": true,
+  "release_checks": "12/12 including builder reproduction",
+  "external_assets": "passed",
+  "syntax_diff_checks": "passed",
+  "bundle_bytes": 11533315,
+  "bundle_sha256": "de874f5f387080666cfc84187f03678c2c32b00c057b88c834accb95e601e536",
+  "headroom_11MiB": 1021,
+  "publication": false
+}

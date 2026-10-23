@@ -1,0 +1,323 @@
+[
+  {
+    "scope_key": "c6f99e0794e8d42b18e81d90bbefba5fd9a12901bb4b65f6e64ac4ab01654105",
+    "case_id": "DAMAGE-ROLL-CAPTURE",
+    "assertion_id": "DAMAGE-ROLL-CAPTURE.current-runtime.v5",
+    "result": "pass",
+    "checked": true,
+    "latest_validation_at": "2026-10-20T23:04:24.357Z",
+    "reviewed_at": "2026-10-20T23:04:41.602Z",
+    "simulator_commit": "066b49a2fd3e326f4fde5027ee6a2c02195cdfff",
+    "source_revision": "9b136a8c8cdb860a8ab96fa063f906604e352547",
+    "reference_fingerprint": "de66162a28b270bdf17ea17a804a7ec65c6d2f286815ae17eaa3336273405f61",
+    "regulation_id": null,
+    "client_version": null,
+    "format": "gen9championsdoublescustomgame",
+    "boundaries": [
+      "level50 Hardy zeroEV Snorlax Tackle into Venusaur",
+      "16 explicitly controlled damage draws, no critical hits; calculation API in doubles field"
+    ],
+    "receipt": {
+      "path": "source/bounded-assertions/cycles/cycle-20261020-v5/DAMAGE-ROLL-CAPTURE/receipt.json",
+      "sha256": "f43c1f3ba6fe3f783d69bf0ce7f7c229775f1c214f4b1dfb7966eab1b0ef2f9e"
+    },
+    "review_evidence": [
+      {
+        "path": "source/bounded-assertions/reviews/b2a0603839d4cbcae681fb81cad71378c4f765cc0ecb207784bfc75506ef1867/review.json",
+        "sha256": "61fe82b35660a34710cdc4d38e909b9ace0eaf40cb6de08561f3716f05436d01"
+      },
+      {
+        "path": "source/bounded-assertions/reviews/b2a0603839d4cbcae681fb81cad71378c4f765cc0ecb207784bfc75506ef1867/independent-replay.mjs",
+        "sha256": "a3a73e488a2995663572c71fb962c45fa79d1b3f52f45a2689d80dcdeef9d7b3",
+        "role": "execution_script"
+      },
+      {
+        "path": "source/bounded-assertions/reviews/b2a0603839d4cbcae681fb81cad71378c4f765cc0ecb207784bfc75506ef1867/independent-replay-raw.json",
+        "sha256": "a52d96fbce50c4efd3651085cba68506901f6e93e4cbbdddfb9d9ea905cf1df8",
+        "role": "execution_results"
+      }
+    ],
+    "stale_dependencies": [],
+    "blockers": [],
+    "client_verified": false,
+    "competitive_use": false
+  },
+  {
+    "scope_key": "28b7d2dafc025e13ea0ff9b3d46949d9bca8fffbb00130c4ee2edf4085bdca7d",
+    "case_id": "DAMAGE-ROLL-DISCRETE-016",
+    "assertion_id": "DAMAGE-ROLL-DISCRETE-016.tackle-vector.v1",
+    "result": "stale",
+    "checked": false,
+    "latest_validation_at": null,
+    "reviewed_at": "2026-10-20T18:26:48.656Z",
+    "simulator_commit": "146ba91093ad9c0c3c3b7e675850e2e0f5f57475",
+    "source_revision": "9b136a8c8cdb860a8ab96fa063f906604e352547",
+    "reference_fingerprint": "de66162a28b270bdf17ea17a804a7ec65c6d2f286815ae17eaa3336273405f61",
+    "regulation_id": null,
+    "client_version": null,
+    "format": "gen9championsdoublescustomgame",
+    "boundaries": [
+      "Snorlax Tackle into Venusaur",
+      "level50 Hardy zero EVs",
+      "no crit",
+      "16 discrete RNG bucket midpoints",
+      "doubles custom format"
+    ],
+    "receipt": {
+      "path": "source/bounded-assertions/8a13b340b33ddf3bcda1a7395298317c90f72887b4114af0818a4f9cc81575c5/receipt.json",
+      "sha256": "16ae2051a2262bdf626957d88b48cd1e3dd7c6fa6d037cf07dfc47e0324b606f"
+    },
+    "review_evidence": [
+      {
+        "path": "source/bounded-assertions/8a13b340b33ddf3bcda1a7395298317c90f72887b4114af0818a4f9cc81575c5/independent/FOCUSED_RETEST_146BA91.md",
+        "sha256": "2d411549e32c53e3d37d2d30c393c91ac8990281446a75f5c998529487e71576",
+        "role": "report"
+      },
+      {
+        "path": "source/bounded-assertions/8a13b340b33ddf3bcda1a7395298317c90f72887b4114af0818a4f9cc81575c5/independent/focused-receipt.json",
+        "sha256": "351b3108e14adf3c08953447d516e79b96067b21e2debb03722d3e89129cf077",
+        "role": "audit_manifest"
+      },
+      {
+        "path": "source/bounded-assertions/8a13b340b33ddf3bcda1a7395298317c90f72887b4114af0818a4f9cc81575c5/independent/focused-buckets.mjs",
+        "sha256": "7ea0ab95f8ae630f3a812a1eb5db32bd54200cba41bcea3f5a2070223096a0ef",
+        "role": "sampler_script"
+      },
+      {
+        "path": "source/bounded-assertions/8a13b340b33ddf3bcda1a7395298317c90f72887b4114af0818a4f9cc81575c5/independent/buckets.json",
+        "sha256": "dd90f0674ae63adacdff5fd4f589759fb40dc20a9752a276b34e70f719501450",
+        "role": "sampler_grid"
+      },
+      {
+        "path": "source/bounded-assertions/8a13b340b33ddf3bcda1a7395298317c90f72887b4114af0818a4f9cc81575c5/independent/discrete.log",
+        "sha256": "7156dc2e2aaef99ce4760fcaa82427a61274fdf7c845f762ccaa887047f7c6a5",
+        "role": "execution_log"
+      },
+      {
+        "path": "source/bounded-assertions/8a13b340b33ddf3bcda1a7395298317c90f72887b4114af0818a4f9cc81575c5/independent/candidate-check.json",
+        "sha256": "a6342b71a2a13072baedc6576cce272ab5a4999e2fbe438006f93c0752c69c95",
+        "role": "reference_check"
+      }
+    ],
+    "stale_dependencies": [
+      "dependencies changed"
+    ],
+    "blockers": [],
+    "client_verified": false,
+    "competitive_use": false
+  },
+  {
+    "scope_key": "20f783d6e6b5f946abd6db94b1497eaa3107fd53e63e785186082e690125c0b5",
+    "case_id": "ENCORE-QUEUE-CAPTURE",
+    "assertion_id": "ENCORE-QUEUE-CAPTURE.current-runtime.v5",
+    "result": "pass",
+    "checked": true,
+    "latest_validation_at": "2026-10-20T23:04:24.357Z",
+    "reviewed_at": "2026-10-20T23:04:41.602Z",
+    "simulator_commit": "066b49a2fd3e326f4fde5027ee6a2c02195cdfff",
+    "source_revision": "9b136a8c8cdb860a8ab96fa063f906604e352547",
+    "reference_fingerprint": "de66162a28b270bdf17ea17a804a7ec65c6d2f286815ae17eaa3336273405f61",
+    "regulation_id": null,
+    "client_version": null,
+    "format": "gen9championsdoublescustomgame",
+    "boundaries": [
+      "two turns, Prankster Encore before queued Flamethrower",
+      "replacement executes Will-O-Wisp and spends replacement PP"
+    ],
+    "receipt": {
+      "path": "source/bounded-assertions/cycles/cycle-20261020-v5/ENCORE-QUEUE-CAPTURE/receipt.json",
+      "sha256": "4dd4192acf47dd7a61e953ba5ce61768b76d55897d946771c2f5cb8f73d4621c"
+    },
+    "review_evidence": [
+      {
+        "path": "source/bounded-assertions/reviews/b2a0603839d4cbcae681fb81cad71378c4f765cc0ecb207784bfc75506ef1867/review.json",
+        "sha256": "61fe82b35660a34710cdc4d38e909b9ace0eaf40cb6de08561f3716f05436d01"
+      },
+      {
+        "path": "source/bounded-assertions/reviews/b2a0603839d4cbcae681fb81cad71378c4f765cc0ecb207784bfc75506ef1867/independent-replay.mjs",
+        "sha256": "a3a73e488a2995663572c71fb962c45fa79d1b3f52f45a2689d80dcdeef9d7b3",
+        "role": "execution_script"
+      },
+      {
+        "path": "source/bounded-assertions/reviews/b2a0603839d4cbcae681fb81cad71378c4f765cc0ecb207784bfc75506ef1867/independent-replay-raw.json",
+        "sha256": "a52d96fbce50c4efd3651085cba68506901f6e93e4cbbdddfb9d9ea905cf1df8",
+        "role": "execution_results"
+      }
+    ],
+    "stale_dependencies": [],
+    "blockers": [],
+    "client_verified": false,
+    "competitive_use": false
+  },
+  {
+    "scope_key": "ad89b4f10b5ddf57a538391ef271d267e5c1bd1e2dd847f59cb006496b19a134",
+    "case_id": "RED-CARD-CAPTURE",
+    "assertion_id": "RED-CARD-CAPTURE.current-runtime.v5",
+    "result": "pass",
+    "checked": true,
+    "latest_validation_at": "2026-10-20T23:04:24.357Z",
+    "reviewed_at": "2026-10-20T23:04:41.602Z",
+    "simulator_commit": "066b49a2fd3e326f4fde5027ee6a2c02195cdfff",
+    "source_revision": "9b136a8c8cdb860a8ab96fa063f906604e352547",
+    "reference_fingerprint": "de66162a28b270bdf17ea17a804a7ec65c6d2f286815ae17eaa3336273405f61",
+    "regulation_id": null,
+    "client_version": null,
+    "format": "gen9championsdoublescustomgame",
+    "boundaries": [
+      "single fixed damage hit, surviving holder, exactly one legal reserve",
+      "consumption and forced replacement; no random-reserve claim"
+    ],
+    "receipt": {
+      "path": "source/bounded-assertions/cycles/cycle-20261020-v5/RED-CARD-CAPTURE/receipt.json",
+      "sha256": "2a7b3aa262f938c8fb5a37c6a844fde89fc072264ae9845bffbb53f1dc48617e"
+    },
+    "review_evidence": [
+      {
+        "path": "source/bounded-assertions/reviews/b2a0603839d4cbcae681fb81cad71378c4f765cc0ecb207784bfc75506ef1867/review.json",
+        "sha256": "61fe82b35660a34710cdc4d38e909b9ace0eaf40cb6de08561f3716f05436d01"
+      },
+      {
+        "path": "source/bounded-assertions/reviews/b2a0603839d4cbcae681fb81cad71378c4f765cc0ecb207784bfc75506ef1867/independent-replay.mjs",
+        "sha256": "a3a73e488a2995663572c71fb962c45fa79d1b3f52f45a2689d80dcdeef9d7b3",
+        "role": "execution_script"
+      },
+      {
+        "path": "source/bounded-assertions/reviews/b2a0603839d4cbcae681fb81cad71378c4f765cc0ecb207784bfc75506ef1867/independent-replay-raw.json",
+        "sha256": "a52d96fbce50c4efd3651085cba68506901f6e93e4cbbdddfb9d9ea905cf1df8",
+        "role": "execution_results"
+      }
+    ],
+    "stale_dependencies": [],
+    "blockers": [],
+    "client_verified": false,
+    "competitive_use": false
+  },
+  {
+    "scope_key": "8bd3fbbbaa6f9459fd60184903a5729de1ed2eee57f6e8a2d68cd658a085e0fe",
+    "case_id": "RESOURCE-STRUGGLE-CAPTURE",
+    "assertion_id": "RESOURCE-STRUGGLE-CAPTURE.current-runtime.v5",
+    "result": "pass",
+    "checked": true,
+    "latest_validation_at": "2026-10-20T23:04:24.357Z",
+    "reviewed_at": "2026-10-20T23:04:41.602Z",
+    "simulator_commit": "066b49a2fd3e326f4fde5027ee6a2c02195cdfff",
+    "source_revision": "9b136a8c8cdb860a8ab96fa063f906604e352547",
+    "reference_fingerprint": "de66162a28b270bdf17ea17a804a7ec65c6d2f286815ae17eaa3336273405f61",
+    "regulation_id": null,
+    "client_version": null,
+    "format": "gen9championsdoublescustomgame",
+    "boundaries": [
+      "player slot0, no PP, target isolated to opposing slot0",
+      "ordinary physical damage and rounded maxHP recoil; no random-target claim"
+    ],
+    "receipt": {
+      "path": "source/bounded-assertions/cycles/cycle-20261020-v5/RESOURCE-STRUGGLE-CAPTURE/receipt.json",
+      "sha256": "30323140b1dbd355216ab4bdb555eb62e92e67bdd5255f1cf9fe022a503c0596"
+    },
+    "review_evidence": [
+      {
+        "path": "source/bounded-assertions/reviews/b2a0603839d4cbcae681fb81cad71378c4f765cc0ecb207784bfc75506ef1867/review.json",
+        "sha256": "61fe82b35660a34710cdc4d38e909b9ace0eaf40cb6de08561f3716f05436d01"
+      },
+      {
+        "path": "source/bounded-assertions/reviews/b2a0603839d4cbcae681fb81cad71378c4f765cc0ecb207784bfc75506ef1867/independent-replay.mjs",
+        "sha256": "a3a73e488a2995663572c71fb962c45fa79d1b3f52f45a2689d80dcdeef9d7b3",
+        "role": "execution_script"
+      },
+      {
+        "path": "source/bounded-assertions/reviews/b2a0603839d4cbcae681fb81cad71378c4f765cc0ecb207784bfc75506ef1867/independent-replay-raw.json",
+        "sha256": "a52d96fbce50c4efd3651085cba68506901f6e93e4cbbdddfb9d9ea905cf1df8",
+        "role": "execution_results"
+      }
+    ],
+    "stale_dependencies": [],
+    "blockers": [],
+    "client_verified": false,
+    "competitive_use": false
+  },
+  {
+    "scope_key": "d5ab51c4b8af3de8fea55debdc4998b063e6ea177b97d8ca0cbca729c3c0b823",
+    "case_id": "REST-ELECTRIC-CAPTURE",
+    "assertion_id": "REST-ELECTRIC-CAPTURE.current-runtime.v5",
+    "result": "pass",
+    "checked": true,
+    "latest_validation_at": "2026-10-20T23:04:24.357Z",
+    "reviewed_at": "2026-10-20T23:04:41.602Z",
+    "simulator_commit": "066b49a2fd3e326f4fde5027ee6a2c02195cdfff",
+    "source_revision": "9b136a8c8cdb860a8ab96fa063f906604e352547",
+    "reference_fingerprint": "de66162a28b270bdf17ea17a804a7ec65c6d2f286815ae17eaa3336273405f61",
+    "regulation_id": null,
+    "client_version": null,
+    "format": "gen9championsdoublescustomgame",
+    "boundaries": [
+      "grounded player slot0, missing20HP, ElectricTerrain admission rejection"
+    ],
+    "receipt": {
+      "path": "source/bounded-assertions/cycles/cycle-20261020-v5/REST-ELECTRIC-CAPTURE/receipt.json",
+      "sha256": "8b0085b79038550d65af64772c2697a5b3514c0cc2e8f5bad828bfced3cf8f17"
+    },
+    "review_evidence": [
+      {
+        "path": "source/bounded-assertions/reviews/b2a0603839d4cbcae681fb81cad71378c4f765cc0ecb207784bfc75506ef1867/review.json",
+        "sha256": "61fe82b35660a34710cdc4d38e909b9ace0eaf40cb6de08561f3716f05436d01"
+      },
+      {
+        "path": "source/bounded-assertions/reviews/b2a0603839d4cbcae681fb81cad71378c4f765cc0ecb207784bfc75506ef1867/independent-replay.mjs",
+        "sha256": "a3a73e488a2995663572c71fb962c45fa79d1b3f52f45a2689d80dcdeef9d7b3",
+        "role": "execution_script"
+      },
+      {
+        "path": "source/bounded-assertions/reviews/b2a0603839d4cbcae681fb81cad71378c4f765cc0ecb207784bfc75506ef1867/independent-replay-raw.json",
+        "sha256": "a52d96fbce50c4efd3651085cba68506901f6e93e4cbbdddfb9d9ea905cf1df8",
+        "role": "execution_results"
+      }
+    ],
+    "stale_dependencies": [],
+    "blockers": [],
+    "client_verified": false,
+    "competitive_use": false
+  },
+  {
+    "scope_key": "3683cd64a93c39652ab641d24e07cb4a3db437c05118e43d38cc4702e0f801d8",
+    "case_id": "WHITE-HERB-CAPTURE",
+    "assertion_id": "WHITE-HERB-CAPTURE.current-runtime.v5",
+    "result": "pass",
+    "checked": true,
+    "latest_validation_at": "2026-10-20T23:04:24.357Z",
+    "reviewed_at": "2026-10-20T23:04:41.602Z",
+    "simulator_commit": "066b49a2fd3e326f4fde5027ee6a2c02195cdfff",
+    "source_revision": "9b136a8c8cdb860a8ab96fa063f906604e352547",
+    "reference_fingerprint": "de66162a28b270bdf17ea17a804a7ec65c6d2f286815ae17eaa3336273405f61",
+    "regulation_id": null,
+    "client_version": null,
+    "format": "gen9championsdoublescustomgame",
+    "boundaries": [
+      "synthetic initial atk-2 def-1 spa+3 stages",
+      "negative stages reset and positive stage retained"
+    ],
+    "receipt": {
+      "path": "source/bounded-assertions/cycles/cycle-20261020-v5/WHITE-HERB-CAPTURE/receipt.json",
+      "sha256": "71769e043937eae838cd5ffeae1f163c45155ab0a265152a417ec84c438273ec"
+    },
+    "review_evidence": [
+      {
+        "path": "source/bounded-assertions/reviews/b2a0603839d4cbcae681fb81cad71378c4f765cc0ecb207784bfc75506ef1867/review.json",
+        "sha256": "61fe82b35660a34710cdc4d38e909b9ace0eaf40cb6de08561f3716f05436d01"
+      },
+      {
+        "path": "source/bounded-assertions/reviews/b2a0603839d4cbcae681fb81cad71378c4f765cc0ecb207784bfc75506ef1867/independent-replay.mjs",
+        "sha256": "a3a73e488a2995663572c71fb962c45fa79d1b3f52f45a2689d80dcdeef9d7b3",
+        "role": "execution_script"
+      },
+      {
+        "path": "source/bounded-assertions/reviews/b2a0603839d4cbcae681fb81cad71378c4f765cc0ecb207784bfc75506ef1867/independent-replay-raw.json",
+        "sha256": "a52d96fbce50c4efd3651085cba68506901f6e93e4cbbdddfb9d9ea905cf1df8",
+        "role": "execution_results"
+      }
+    ],
+    "stale_dependencies": [],
+    "blockers": [],
+    "client_verified": false,
+    "competitive_use": false
+  }
+]

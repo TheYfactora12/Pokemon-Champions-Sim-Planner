@@ -1,0 +1,50 @@
+{
+  "schema_version": "bounded-result-v1",
+  "assertion_id": "ENCORE-QUEUE-CAPTURE.current-runtime.v5",
+  "case_id": "ENCORE-QUEUE-CAPTURE",
+  "scope": {
+    "oracle_kind": "shared_reference",
+    "format": "gen9championsdoublescustomgame",
+    "regulation_id": null,
+    "client_version": null,
+    "boundaries": [
+      "two turns, Prankster Encore before queued Flamethrower",
+      "replacement executes Will-O-Wisp and spends replacement PP"
+    ]
+  },
+  "role": "reference_result",
+  "status": "complete",
+  "inputs_sha256": "daf718532e1105aa60998d7f2393f5398aef6cda56e593a12f331441d4160303",
+  "contract_sha256": "6f051c1d05d1afca57bea973f7a22f4cb5cac9f50e4272956bc6739b9ff0c6a9",
+  "dependencies": {
+    "engine": "75d75d4d5377b286765ff8dac65a7d5f912c434ef26e8253429dd55c4b89fd71",
+    "data": "dd258aec23104c305658a95eeb20c8af71204ef43311d7033d00f33a64943409",
+    "runner": "7324e992dc86371999bd2686edb4e2c649ea1d9b2e655ad3850ac5121608df08",
+    "test": "3d7cfd2e383fa6e32f8dc626c9a9bef27ac9b25d298e90646014bf95b1e524e1",
+    "checker": "38863985f9f0f8dc9b5225cf74f5a91ee78158a7e385c46095fdc6c0dedf8bc4",
+    "reference": "de66162a28b270bdf17ea17a804a7ec65c6d2f286815ae17eaa3336273405f61"
+  },
+  "executed_at": "2026-10-20T23:04:24.357Z",
+  "observations": {
+    "executed_move": {
+      "pointer": "/observations/executed_move/value",
+      "unit": "value",
+      "value": "Will-O-Wisp"
+    },
+    "willowisp_pp_spent": {
+      "pointer": "/observations/willowisp_pp_spent/value",
+      "unit": "PP",
+      "value": 2
+    },
+    "flamethrower_pp_spent": {
+      "pointer": "/observations/flamethrower_pp_spent/value",
+      "unit": "PP",
+      "value": 0
+    },
+    "lock_move": {
+      "pointer": "/observations/lock_move/value",
+      "unit": "value",
+      "value": "willowisp"
+    }
+  }
+}

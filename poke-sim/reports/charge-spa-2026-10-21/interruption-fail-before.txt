@@ -1,0 +1,708 @@
+Γ£ö CHARGE-SPA-normal-Meteor Beam-player-0-t1 (688.5446ms)
+Γ£ö CHARGE-SPA-normal-Meteor Beam-player-0-t2 (144.6381ms)
+Γ£ö CHARGE-SPA-normal-Meteor Beam-player-0-t3 (138.4807ms)
+Γ£ö CHARGE-SPA-normal-Meteor Beam-player-0-t4 (164.8175ms)
+Γ£ö CHARGE-SPA-herb-Meteor Beam-player-0 (119.3117ms)
+Γ£ö CHARGE-SPA-herb-consumed-Meteor Beam-player-0 (139.4209ms)
+Γ£ö CHARGE-SPA-klutz-Meteor Beam-player-0 (132.3092ms)
+Γ£ö CHARGE-SPA-klutz-gas-Meteor Beam-player-0 (134.7883ms)
+Γ£ö CHARGE-SPA-simple-Meteor Beam-player-0 (127.6472ms)
+Γ£ö CHARGE-SPA-contrary-Meteor Beam-player-0 (132.1882ms)
+Γ£ö CHARGE-SPA-simple-gas-Meteor Beam-player-0 (131.4843ms)
+Γ£ö CHARGE-SPA-contrary-gas-Meteor Beam-player-0 (132.3346ms)
+Γ£ö CHARGE-SPA-shield-Meteor Beam-player-0 (133.0162ms)
+Γ£ö CHARGE-SPA-cap-Meteor Beam-player-0 (132.0331ms)
+Γ£ö CHARGE-SPA-lower-cap-Meteor Beam-player-0 (130.2341ms)
+Γ£ö CHARGE-SPA-protected-Meteor Beam-player-0 (134.1358ms)
+Γ£û CHARGE-SPA-sleep-Meteor Beam-player-0 (139.1947ms)
+Γ£û CHARGE-SPA-paralysis-Meteor Beam-player-0 (138.1314ms)
+Γ£û CHARGE-SPA-confusion-Meteor Beam-player-0 (183.7698ms)
+Γ£ö CHARGE-SPA-normal-Meteor Beam-player-1-t1 (171.894ms)
+Γ£ö CHARGE-SPA-normal-Meteor Beam-player-1-t2 (228.6843ms)
+Γ£ö CHARGE-SPA-normal-Meteor Beam-player-1-t3 (126.9159ms)
+Γ£ö CHARGE-SPA-normal-Meteor Beam-player-1-t4 (136.7099ms)
+Γ£ö CHARGE-SPA-herb-Meteor Beam-player-1 (130.3289ms)
+Γ£ö CHARGE-SPA-herb-consumed-Meteor Beam-player-1 (132.3523ms)
+Γ£ö CHARGE-SPA-klutz-Meteor Beam-player-1 (132.0255ms)
+Γ£ö CHARGE-SPA-klutz-gas-Meteor Beam-player-1 (136.0942ms)
+Γ£ö CHARGE-SPA-simple-Meteor Beam-player-1 (133.0198ms)
+Γ£ö CHARGE-SPA-contrary-Meteor Beam-player-1 (133.8382ms)
+Γ£ö CHARGE-SPA-simple-gas-Meteor Beam-player-1 (131.7875ms)
+Γ£ö CHARGE-SPA-contrary-gas-Meteor Beam-player-1 (130.8607ms)
+Γ£ö CHARGE-SPA-shield-Meteor Beam-player-1 (134.2244ms)
+Γ£ö CHARGE-SPA-cap-Meteor Beam-player-1 (136.7459ms)
+Γ£ö CHARGE-SPA-lower-cap-Meteor Beam-player-1 (133.5446ms)
+Γ£ö CHARGE-SPA-protected-Meteor Beam-player-1 (139.915ms)
+Γ£û CHARGE-SPA-sleep-Meteor Beam-player-1 (133.7706ms)
+Γ£û CHARGE-SPA-paralysis-Meteor Beam-player-1 (132.4997ms)
+Γ£û CHARGE-SPA-confusion-Meteor Beam-player-1 (179.1248ms)
+Γ£ö CHARGE-SPA-normal-Meteor Beam-opponent-0-t1 (116.5676ms)
+Γ£ö CHARGE-SPA-normal-Meteor Beam-opponent-0-t2 (133.0198ms)
+Γ£ö CHARGE-SPA-normal-Meteor Beam-opponent-0-t3 (130.4284ms)
+Γ£ö CHARGE-SPA-normal-Meteor Beam-opponent-0-t4 (132.8562ms)
+Γ£ö CHARGE-SPA-herb-Meteor Beam-opponent-0 (130.8156ms)
+Γ£ö CHARGE-SPA-herb-consumed-Meteor Beam-opponent-0 (137.1608ms)
+Γ£ö CHARGE-SPA-klutz-Meteor Beam-opponent-0 (131.4719ms)
+Γ£ö CHARGE-SPA-klutz-gas-Meteor Beam-opponent-0 (128.5738ms)
+Γ£ö CHARGE-SPA-simple-Meteor Beam-opponent-0 (129.3641ms)
+Γ£ö CHARGE-SPA-contrary-Meteor Beam-opponent-0 (127.6875ms)
+Γ£ö CHARGE-SPA-simple-gas-Meteor Beam-opponent-0 (126.2618ms)
+Γ£ö CHARGE-SPA-contrary-gas-Meteor Beam-opponent-0 (133.2012ms)
+Γ£ö CHARGE-SPA-shield-Meteor Beam-opponent-0 (131.7772ms)
+Γ£ö CHARGE-SPA-cap-Meteor Beam-opponent-0 (129.4111ms)
+Γ£ö CHARGE-SPA-lower-cap-Meteor Beam-opponent-0 (176.2044ms)
+Γ£ö CHARGE-SPA-protected-Meteor Beam-opponent-0 (113.4673ms)
+Γ£û CHARGE-SPA-sleep-Meteor Beam-opponent-0 (126.5404ms)
+Γ£û CHARGE-SPA-paralysis-Meteor Beam-opponent-0 (124.8198ms)
+Γ£û CHARGE-SPA-confusion-Meteor Beam-opponent-0 (128.0623ms)
+Γ£ö CHARGE-SPA-normal-Meteor Beam-opponent-1-t1 (126.9138ms)
+Γ£ö CHARGE-SPA-normal-Meteor Beam-opponent-1-t2 (129.1014ms)
+Γ£ö CHARGE-SPA-normal-Meteor Beam-opponent-1-t3 (132.3189ms)
+Γ£ö CHARGE-SPA-normal-Meteor Beam-opponent-1-t4 (135.4884ms)
+Γ£ö CHARGE-SPA-herb-Meteor Beam-opponent-1 (127.4022ms)
+Γ£ö CHARGE-SPA-herb-consumed-Meteor Beam-opponent-1 (128.3397ms)
+Γ£ö CHARGE-SPA-klutz-Meteor Beam-opponent-1 (130.6523ms)
+Γ£ö CHARGE-SPA-klutz-gas-Meteor Beam-opponent-1 (125.0616ms)
+Γ£ö CHARGE-SPA-simple-Meteor Beam-opponent-1 (131.3437ms)
+Γ£ö CHARGE-SPA-contrary-Meteor Beam-opponent-1 (135.5749ms)
+Γ£ö CHARGE-SPA-simple-gas-Meteor Beam-opponent-1 (139.8309ms)
+Γ£ö CHARGE-SPA-contrary-gas-Meteor Beam-opponent-1 (184.6941ms)
+Γ£ö CHARGE-SPA-shield-Meteor Beam-opponent-1 (122.0582ms)
+Γ£ö CHARGE-SPA-cap-Meteor Beam-opponent-1 (135.0525ms)
+Γ£ö CHARGE-SPA-lower-cap-Meteor Beam-opponent-1 (126.4661ms)
+Γ£ö CHARGE-SPA-protected-Meteor Beam-opponent-1 (123.1242ms)
+Γ£û CHARGE-SPA-sleep-Meteor Beam-opponent-1 (131.9217ms)
+Γ£û CHARGE-SPA-paralysis-Meteor Beam-opponent-1 (128.5621ms)
+Γ£û CHARGE-SPA-confusion-Meteor Beam-opponent-1 (122.4553ms)
+Γ£ö CHARGE-SPA-normal-Electro Shot-player-0-t1 (126.1137ms)
+Γ£ö CHARGE-SPA-normal-Electro Shot-player-0-t2 (130.7117ms)
+Γ£ö CHARGE-SPA-normal-Electro Shot-player-0-t3 (128.2116ms)
+Γ£ö CHARGE-SPA-normal-Electro Shot-player-0-t4 (131.4342ms)
+Γ£ö CHARGE-SPA-herb-Electro Shot-player-0 (127.4874ms)
+Γ£ö CHARGE-SPA-herb-consumed-Electro Shot-player-0 (134.6244ms)
+Γ£ö CHARGE-SPA-klutz-Electro Shot-player-0 (130.8084ms)
+Γ£ö CHARGE-SPA-klutz-gas-Electro Shot-player-0 (124.8211ms)
+Γ£ö CHARGE-SPA-simple-Electro Shot-player-0 (180.0561ms)
+Γ£ö CHARGE-SPA-contrary-Electro Shot-player-0 (118.9749ms)
+Γ£ö CHARGE-SPA-simple-gas-Electro Shot-player-0 (131.7594ms)
+Γ£ö CHARGE-SPA-contrary-gas-Electro Shot-player-0 (125.0992ms)
+Γ£ö CHARGE-SPA-shield-Electro Shot-player-0 (128.7952ms)
+Γ£ö CHARGE-SPA-cap-Electro Shot-player-0 (127.9651ms)
+Γ£ö CHARGE-SPA-lower-cap-Electro Shot-player-0 (133.0238ms)
+Γ£ö CHARGE-SPA-protected-Electro Shot-player-0 (125.2857ms)
+Γ£û CHARGE-SPA-sleep-Electro Shot-player-0 (125.6815ms)
+Γ£û CHARGE-SPA-paralysis-Electro Shot-player-0 (126.2015ms)
+Γ£û CHARGE-SPA-confusion-Electro Shot-player-0 (126.0386ms)
+Γ£ö CHARGE-SPA-normal-Electro Shot-player-1-t1 (122.4898ms)
+Γ£ö CHARGE-SPA-normal-Electro Shot-player-1-t2 (124.1829ms)
+Γ£ö CHARGE-SPA-normal-Electro Shot-player-1-t3 (128.5357ms)
+Γ£ö CHARGE-SPA-normal-Electro Shot-player-1-t4 (128.3704ms)
+Γ£ö CHARGE-SPA-herb-Electro Shot-player-1 (179.126ms)
+Γ£ö CHARGE-SPA-herb-consumed-Electro Shot-player-1 (118.7188ms)
+Γ£ö CHARGE-SPA-klutz-Electro Shot-player-1 (128.2286ms)
+Γ£ö CHARGE-SPA-klutz-gas-Electro Shot-player-1 (120.778ms)
+Γ£ö CHARGE-SPA-simple-Electro Shot-player-1 (125.4614ms)
+Γ£ö CHARGE-SPA-contrary-Electro Shot-player-1 (127.3404ms)
+Γ£ö CHARGE-SPA-simple-gas-Electro Shot-player-1 (126.8162ms)
+Γ£ö CHARGE-SPA-contrary-gas-Electro Shot-player-1 (123.1936ms)
+Γ£ö CHARGE-SPA-shield-Electro Shot-player-1 (125.1877ms)
+Γ£ö CHARGE-SPA-cap-Electro Shot-player-1 (125.5828ms)
+Γ£ö CHARGE-SPA-lower-cap-Electro Shot-player-1 (130.4692ms)
+Γ£ö CHARGE-SPA-protected-Electro Shot-player-1 (138.8742ms)
+Γ£û CHARGE-SPA-sleep-Electro Shot-player-1 (124.923ms)
+Γ£û CHARGE-SPA-paralysis-Electro Shot-player-1 (126.3948ms)
+Γ£û CHARGE-SPA-confusion-Electro Shot-player-1 (130.8237ms)
+Γ£ö CHARGE-SPA-normal-Electro Shot-opponent-0-t1 (166.1976ms)
+Γ£ö CHARGE-SPA-normal-Electro Shot-opponent-0-t2 (112.3763ms)
+Γ£ö CHARGE-SPA-normal-Electro Shot-opponent-0-t3 (129.4865ms)
+Γ£ö CHARGE-SPA-normal-Electro Shot-opponent-0-t4 (131.1547ms)
+Γ£ö CHARGE-SPA-herb-Electro Shot-opponent-0 (126.7202ms)
+Γ£ö CHARGE-SPA-herb-consumed-Electro Shot-opponent-0 (126.8871ms)
+Γ£ö CHARGE-SPA-klutz-Electro Shot-opponent-0 (125.093ms)
+Γ£ö CHARGE-SPA-klutz-gas-Electro Shot-opponent-0 (126.317ms)
+Γ£ö CHARGE-SPA-simple-Electro Shot-opponent-0 (128.9144ms)
+Γ£ö CHARGE-SPA-contrary-Electro Shot-opponent-0 (125.8651ms)
+Γ£ö CHARGE-SPA-simple-gas-Electro Shot-opponent-0 (130.1375ms)
+Γ£ö CHARGE-SPA-contrary-gas-Electro Shot-opponent-0 (131.2022ms)
+Γ£ö CHARGE-SPA-shield-Electro Shot-opponent-0 (127.1233ms)
+Γ£ö CHARGE-SPA-cap-Electro Shot-opponent-0 (173.9018ms)
+Γ£ö CHARGE-SPA-lower-cap-Electro Shot-opponent-0 (117.5091ms)
+Γ£ö CHARGE-SPA-protected-Electro Shot-opponent-0 (132.1809ms)
+Γ£û CHARGE-SPA-sleep-Electro Shot-opponent-0 (125.1166ms)
+Γ£û CHARGE-SPA-paralysis-Electro Shot-opponent-0 (133.0606ms)
+Γ£û CHARGE-SPA-confusion-Electro Shot-opponent-0 (127.252ms)
+Γ£ö CHARGE-SPA-normal-Electro Shot-opponent-1-t1 (125.7034ms)
+Γ£ö CHARGE-SPA-normal-Electro Shot-opponent-1-t2 (127.1278ms)
+Γ£ö CHARGE-SPA-normal-Electro Shot-opponent-1-t3 (127.8491ms)
+Γ£ö CHARGE-SPA-normal-Electro Shot-opponent-1-t4 (129.5265ms)
+Γ£ö CHARGE-SPA-herb-Electro Shot-opponent-1 (122.2405ms)
+Γ£ö CHARGE-SPA-herb-consumed-Electro Shot-opponent-1 (123.0612ms)
+Γ£ö CHARGE-SPA-klutz-Electro Shot-opponent-1 (130.0276ms)
+Γ£ö CHARGE-SPA-klutz-gas-Electro Shot-opponent-1 (126.4635ms)
+Γ£ö CHARGE-SPA-simple-Electro Shot-opponent-1 (132.8181ms)
+Γ£ö CHARGE-SPA-contrary-Electro Shot-opponent-1 (181.0559ms)
+Γ£ö CHARGE-SPA-simple-gas-Electro Shot-opponent-1 (115.9394ms)
+Γ£ö CHARGE-SPA-contrary-gas-Electro Shot-opponent-1 (132.4571ms)
+Γ£ö CHARGE-SPA-shield-Electro Shot-opponent-1 (135.0934ms)
+Γ£ö CHARGE-SPA-cap-Electro Shot-opponent-1 (126.0814ms)
+Γ£ö CHARGE-SPA-lower-cap-Electro Shot-opponent-1 (128.468ms)
+Γ£ö CHARGE-SPA-protected-Electro Shot-opponent-1 (129.9768ms)
+Γ£û CHARGE-SPA-sleep-Electro Shot-opponent-1 (126.2277ms)
+Γ£û CHARGE-SPA-paralysis-Electro Shot-opponent-1 (127.1008ms)
+Γ£û CHARGE-SPA-confusion-Electro Shot-opponent-1 (127.4056ms)
+Γ£ö CHARGE-SPA-rain-player-0 (127.1031ms)
+Γ£ö CHARGE-SPA-cloud-nine-player-0 (130.8921ms)
+Γ£ö CHARGE-SPA-miss-player-0 (147.5798ms)
+Γ£ö CHARGE-SPA-rain-player-1 (150.1664ms)
+Γ£ö CHARGE-SPA-cloud-nine-player-1 (125.4746ms)
+Γ£ö CHARGE-SPA-miss-player-1 (172.4959ms)
+Γ£ö CHARGE-SPA-rain-opponent-0 (116.2085ms)
+Γ£ö CHARGE-SPA-cloud-nine-opponent-0 (127.2862ms)
+Γ£ö CHARGE-SPA-miss-opponent-0 (131.1256ms)
+Γ£ö CHARGE-SPA-rain-opponent-1 (128.0928ms)
+Γ£ö CHARGE-SPA-cloud-nine-opponent-1 (128.0254ms)
+Γ£ö CHARGE-SPA-miss-opponent-1 (127.7568ms)
+Γ£ö CHARGE-SPA-reversal-missing-Meteor Beam (133.5939ms)
+Γ£ö CHARGE-SPA-reversal-double-Meteor Beam (134.875ms)
+Γ£ö CHARGE-SPA-reversal-delayed-Meteor Beam (136.6054ms)
+Γ£ö CHARGE-SPA-reversal-missing-Electro Shot (127.2313ms)
+Γ£ö CHARGE-SPA-reversal-double-Electro Shot (127.3592ms)
+Γ£ö CHARGE-SPA-reversal-delayed-Electro Shot (125.5369ms)
+Γä╣ tests 170
+Γä╣ suites 0
+Γä╣ pass 146
+Γä╣ fail 24
+Γä╣ cancelled 0
+Γä╣ skipped 0
+Γä╣ todo 0
+Γä╣ duration_ms 23664.5971
+
+Γ£û failing tests:
+
+test at poke-sim\tests\charge_spa_timing_tests.mjs:30:4
+Γ£û CHARGE-SPA-sleep-Meteor Beam-player-0 (139.1947ms)
+  AssertionError [ERR_ASSERTION]: charging
+  
+  true !== false
+  
+      at check (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-14/task-2/champions-moves-repair/poke-sim/tests/charge_spa_timing_tests.mjs:9:31)
+      at TestContext.<anonymous> (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-14/task-2/champions-moves-repair/poke-sim/tests/charge_spa_timing_tests.mjs:30:62)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1201:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:831:18)
+      at Test.postRun (node:internal/test_runner/test:1330:19)
+      at Test.run (node:internal/test_runner/test:1258:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:831:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: true,
+    expected: false,
+    operator: 'deepStrictEqual',
+    diff: 'simple'
+  }
+
+test at poke-sim\tests\charge_spa_timing_tests.mjs:30:4
+Γ£û CHARGE-SPA-paralysis-Meteor Beam-player-0 (138.1314ms)
+  AssertionError [ERR_ASSERTION]: charging
+  
+  true !== false
+  
+      at check (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-14/task-2/champions-moves-repair/poke-sim/tests/charge_spa_timing_tests.mjs:9:31)
+      at TestContext.<anonymous> (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-14/task-2/champions-moves-repair/poke-sim/tests/charge_spa_timing_tests.mjs:30:62)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1201:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:831:18)
+      at Test.postRun (node:internal/test_runner/test:1330:19)
+      at Test.run (node:internal/test_runner/test:1258:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:831:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: true,
+    expected: false,
+    operator: 'deepStrictEqual',
+    diff: 'simple'
+  }
+
+test at poke-sim\tests\charge_spa_timing_tests.mjs:30:4
+Γ£û CHARGE-SPA-confusion-Meteor Beam-player-0 (183.7698ms)
+  AssertionError [ERR_ASSERTION]: charging
+  
+  true !== false
+  
+      at check (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-14/task-2/champions-moves-repair/poke-sim/tests/charge_spa_timing_tests.mjs:9:31)
+      at TestContext.<anonymous> (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-14/task-2/champions-moves-repair/poke-sim/tests/charge_spa_timing_tests.mjs:30:62)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1201:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:831:18)
+      at Test.postRun (node:internal/test_runner/test:1330:19)
+      at Test.run (node:internal/test_runner/test:1258:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:831:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: true,
+    expected: false,
+    operator: 'deepStrictEqual',
+    diff: 'simple'
+  }
+
+test at poke-sim\tests\charge_spa_timing_tests.mjs:30:4
+Γ£û CHARGE-SPA-sleep-Meteor Beam-player-1 (133.7706ms)
+  AssertionError [ERR_ASSERTION]: charging
+  
+  true !== false
+  
+      at check (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-14/task-2/champions-moves-repair/poke-sim/tests/charge_spa_timing_tests.mjs:9:31)
+      at TestContext.<anonymous> (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-14/task-2/champions-moves-repair/poke-sim/tests/charge_spa_timing_tests.mjs:30:62)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1201:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:831:18)
+      at Test.postRun (node:internal/test_runner/test:1330:19)
+      at Test.run (node:internal/test_runner/test:1258:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:831:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: true,
+    expected: false,
+    operator: 'deepStrictEqual',
+    diff: 'simple'
+  }
+
+test at poke-sim\tests\charge_spa_timing_tests.mjs:30:4
+Γ£û CHARGE-SPA-paralysis-Meteor Beam-player-1 (132.4997ms)
+  AssertionError [ERR_ASSERTION]: charging
+  
+  true !== false
+  
+      at check (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-14/task-2/champions-moves-repair/poke-sim/tests/charge_spa_timing_tests.mjs:9:31)
+      at TestContext.<anonymous> (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-14/task-2/champions-moves-repair/poke-sim/tests/charge_spa_timing_tests.mjs:30:62)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1201:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:831:18)
+      at Test.postRun (node:internal/test_runner/test:1330:19)
+      at Test.run (node:internal/test_runner/test:1258:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:831:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: true,
+    expected: false,
+    operator: 'deepStrictEqual',
+    diff: 'simple'
+  }
+
+test at poke-sim\tests\charge_spa_timing_tests.mjs:30:4
+Γ£û CHARGE-SPA-confusion-Meteor Beam-player-1 (179.1248ms)
+  AssertionError [ERR_ASSERTION]: charging
+  
+  true !== false
+  
+      at check (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-14/task-2/champions-moves-repair/poke-sim/tests/charge_spa_timing_tests.mjs:9:31)
+      at TestContext.<anonymous> (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-14/task-2/champions-moves-repair/poke-sim/tests/charge_spa_timing_tests.mjs:30:62)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1201:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:831:18)
+      at Test.postRun (node:internal/test_runner/test:1330:19)
+      at Test.run (node:internal/test_runner/test:1258:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:831:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: true,
+    expected: false,
+    operator: 'deepStrictEqual',
+    diff: 'simple'
+  }
+
+test at poke-sim\tests\charge_spa_timing_tests.mjs:30:4
+Γ£û CHARGE-SPA-sleep-Meteor Beam-opponent-0 (126.5404ms)
+  AssertionError [ERR_ASSERTION]: charging
+  
+  true !== false
+  
+      at check (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-14/task-2/champions-moves-repair/poke-sim/tests/charge_spa_timing_tests.mjs:9:31)
+      at TestContext.<anonymous> (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-14/task-2/champions-moves-repair/poke-sim/tests/charge_spa_timing_tests.mjs:30:62)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1201:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:831:18)
+      at Test.postRun (node:internal/test_runner/test:1330:19)
+      at Test.run (node:internal/test_runner/test:1258:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:831:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: true,
+    expected: false,
+    operator: 'deepStrictEqual',
+    diff: 'simple'
+  }
+
+test at poke-sim\tests\charge_spa_timing_tests.mjs:30:4
+Γ£û CHARGE-SPA-paralysis-Meteor Beam-opponent-0 (124.8198ms)
+  AssertionError [ERR_ASSERTION]: charging
+  
+  true !== false
+  
+      at check (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-14/task-2/champions-moves-repair/poke-sim/tests/charge_spa_timing_tests.mjs:9:31)
+      at TestContext.<anonymous> (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-14/task-2/champions-moves-repair/poke-sim/tests/charge_spa_timing_tests.mjs:30:62)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1201:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:831:18)
+      at Test.postRun (node:internal/test_runner/test:1330:19)
+      at Test.run (node:internal/test_runner/test:1258:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:831:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: true,
+    expected: false,
+    operator: 'deepStrictEqual',
+    diff: 'simple'
+  }
+
+test at poke-sim\tests\charge_spa_timing_tests.mjs:30:4
+Γ£û CHARGE-SPA-confusion-Meteor Beam-opponent-0 (128.0623ms)
+  AssertionError [ERR_ASSERTION]: charging
+  
+  true !== false
+  
+      at check (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-14/task-2/champions-moves-repair/poke-sim/tests/charge_spa_timing_tests.mjs:9:31)
+      at TestContext.<anonymous> (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-14/task-2/champions-moves-repair/poke-sim/tests/charge_spa_timing_tests.mjs:30:62)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1201:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:831:18)
+      at Test.postRun (node:internal/test_runner/test:1330:19)
+      at Test.run (node:internal/test_runner/test:1258:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:831:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: true,
+    expected: false,
+    operator: 'deepStrictEqual',
+    diff: 'simple'
+  }
+
+test at poke-sim\tests\charge_spa_timing_tests.mjs:30:4
+Γ£û CHARGE-SPA-sleep-Meteor Beam-opponent-1 (131.9217ms)
+  AssertionError [ERR_ASSERTION]: charging
+  
+  true !== false
+  
+      at check (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-14/task-2/champions-moves-repair/poke-sim/tests/charge_spa_timing_tests.mjs:9:31)
+      at TestContext.<anonymous> (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-14/task-2/champions-moves-repair/poke-sim/tests/charge_spa_timing_tests.mjs:30:62)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1201:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:831:18)
+      at Test.postRun (node:internal/test_runner/test:1330:19)
+      at Test.run (node:internal/test_runner/test:1258:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:831:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: true,
+    expected: false,
+    operator: 'deepStrictEqual',
+    diff: 'simple'
+  }
+
+test at poke-sim\tests\charge_spa_timing_tests.mjs:30:4
+Γ£û CHARGE-SPA-paralysis-Meteor Beam-opponent-1 (128.5621ms)
+  AssertionError [ERR_ASSERTION]: charging
+  
+  true !== false
+  
+      at check (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-14/task-2/champions-moves-repair/poke-sim/tests/charge_spa_timing_tests.mjs:9:31)
+      at TestContext.<anonymous> (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-14/task-2/champions-moves-repair/poke-sim/tests/charge_spa_timing_tests.mjs:30:62)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1201:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:831:18)
+      at Test.postRun (node:internal/test_runner/test:1330:19)
+      at Test.run (node:internal/test_runner/test:1258:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:831:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: true,
+    expected: false,
+    operator: 'deepStrictEqual',
+    diff: 'simple'
+  }
+
+test at poke-sim\tests\charge_spa_timing_tests.mjs:30:4
+Γ£û CHARGE-SPA-confusion-Meteor Beam-opponent-1 (122.4553ms)
+  AssertionError [ERR_ASSERTION]: charging
+  
+  true !== false
+  
+      at check (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-14/task-2/champions-moves-repair/poke-sim/tests/charge_spa_timing_tests.mjs:9:31)
+      at TestContext.<anonymous> (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-14/task-2/champions-moves-repair/poke-sim/tests/charge_spa_timing_tests.mjs:30:62)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1201:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:831:18)
+      at Test.postRun (node:internal/test_runner/test:1330:19)
+      at Test.run (node:internal/test_runner/test:1258:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:831:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: true,
+    expected: false,
+    operator: 'deepStrictEqual',
+    diff: 'simple'
+  }
+
+test at poke-sim\tests\charge_spa_timing_tests.mjs:30:4
+Γ£û CHARGE-SPA-sleep-Electro Shot-player-0 (125.6815ms)
+  AssertionError [ERR_ASSERTION]: charging
+  
+  true !== false
+  
+      at check (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-14/task-2/champions-moves-repair/poke-sim/tests/charge_spa_timing_tests.mjs:9:31)
+      at TestContext.<anonymous> (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-14/task-2/champions-moves-repair/poke-sim/tests/charge_spa_timing_tests.mjs:30:62)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1201:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:831:18)
+      at Test.postRun (node:internal/test_runner/test:1330:19)
+      at Test.run (node:internal/test_runner/test:1258:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:831:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: true,
+    expected: false,
+    operator: 'deepStrictEqual',
+    diff: 'simple'
+  }
+
+test at poke-sim\tests\charge_spa_timing_tests.mjs:30:4
+Γ£û CHARGE-SPA-paralysis-Electro Shot-player-0 (126.2015ms)
+  AssertionError [ERR_ASSERTION]: charging
+  
+  true !== false
+  
+      at check (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-14/task-2/champions-moves-repair/poke-sim/tests/charge_spa_timing_tests.mjs:9:31)
+      at TestContext.<anonymous> (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-14/task-2/champions-moves-repair/poke-sim/tests/charge_spa_timing_tests.mjs:30:62)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1201:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:831:18)
+      at Test.postRun (node:internal/test_runner/test:1330:19)
+      at Test.run (node:internal/test_runner/test:1258:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:831:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: true,
+    expected: false,
+    operator: 'deepStrictEqual',
+    diff: 'simple'
+  }
+
+test at poke-sim\tests\charge_spa_timing_tests.mjs:30:4
+Γ£û CHARGE-SPA-confusion-Electro Shot-player-0 (126.0386ms)
+  AssertionError [ERR_ASSERTION]: charging
+  
+  true !== false
+  
+      at check (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-14/task-2/champions-moves-repair/poke-sim/tests/charge_spa_timing_tests.mjs:9:31)
+      at TestContext.<anonymous> (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-14/task-2/champions-moves-repair/poke-sim/tests/charge_spa_timing_tests.mjs:30:62)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1201:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:831:18)
+      at Test.postRun (node:internal/test_runner/test:1330:19)
+      at Test.run (node:internal/test_runner/test:1258:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:831:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: true,
+    expected: false,
+    operator: 'deepStrictEqual',
+    diff: 'simple'
+  }
+
+test at poke-sim\tests\charge_spa_timing_tests.mjs:30:4
+Γ£û CHARGE-SPA-sleep-Electro Shot-player-1 (124.923ms)
+  AssertionError [ERR_ASSERTION]: charging
+  
+  true !== false
+  
+      at check (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-14/task-2/champions-moves-repair/poke-sim/tests/charge_spa_timing_tests.mjs:9:31)
+      at TestContext.<anonymous> (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-14/task-2/champions-moves-repair/poke-sim/tests/charge_spa_timing_tests.mjs:30:62)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1201:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:831:18)
+      at Test.postRun (node:internal/test_runner/test:1330:19)
+      at Test.run (node:internal/test_runner/test:1258:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:831:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: true,
+    expected: false,
+    operator: 'deepStrictEqual',
+    diff: 'simple'
+  }
+
+test at poke-sim\tests\charge_spa_timing_tests.mjs:30:4
+Γ£û CHARGE-SPA-paralysis-Electro Shot-player-1 (126.3948ms)
+  AssertionError [ERR_ASSERTION]: charging
+  
+  true !== false
+  
+      at check (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-14/task-2/champions-moves-repair/poke-sim/tests/charge_spa_timing_tests.mjs:9:31)
+      at TestContext.<anonymous> (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-14/task-2/champions-moves-repair/poke-sim/tests/charge_spa_timing_tests.mjs:30:62)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1201:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:831:18)
+      at Test.postRun (node:internal/test_runner/test:1330:19)
+      at Test.run (node:internal/test_runner/test:1258:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:831:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: true,
+    expected: false,
+    operator: 'deepStrictEqual',
+    diff: 'simple'
+  }
+
+test at poke-sim\tests\charge_spa_timing_tests.mjs:30:4
+Γ£û CHARGE-SPA-confusion-Electro Shot-player-1 (130.8237ms)
+  AssertionError [ERR_ASSERTION]: charging
+  
+  true !== false
+  
+      at check (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-14/task-2/champions-moves-repair/poke-sim/tests/charge_spa_timing_tests.mjs:9:31)
+      at TestContext.<anonymous> (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-14/task-2/champions-moves-repair/poke-sim/tests/charge_spa_timing_tests.mjs:30:62)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1201:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:831:18)
+      at Test.postRun (node:internal/test_runner/test:1330:19)
+      at Test.run (node:internal/test_runner/test:1258:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:831:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: true,
+    expected: false,
+    operator: 'deepStrictEqual',
+    diff: 'simple'
+  }
+
+test at poke-sim\tests\charge_spa_timing_tests.mjs:30:4
+Γ£û CHARGE-SPA-sleep-Electro Shot-opponent-0 (125.1166ms)
+  AssertionError [ERR_ASSERTION]: charging
+  
+  true !== false
+  
+      at check (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-14/task-2/champions-moves-repair/poke-sim/tests/charge_spa_timing_tests.mjs:9:31)
+      at TestContext.<anonymous> (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-14/task-2/champions-moves-repair/poke-sim/tests/charge_spa_timing_tests.mjs:30:62)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1201:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:831:18)
+      at Test.postRun (node:internal/test_runner/test:1330:19)
+      at Test.run (node:internal/test_runner/test:1258:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:831:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: true,
+    expected: false,
+    operator: 'deepStrictEqual',
+    diff: 'simple'
+  }
+
+test at poke-sim\tests\charge_spa_timing_tests.mjs:30:4
+Γ£û CHARGE-SPA-paralysis-Electro Shot-opponent-0 (133.0606ms)
+  AssertionError [ERR_ASSERTION]: charging
+  
+  true !== false
+  
+      at check (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-14/task-2/champions-moves-repair/poke-sim/tests/charge_spa_timing_tests.mjs:9:31)
+      at TestContext.<anonymous> (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-14/task-2/champions-moves-repair/poke-sim/tests/charge_spa_timing_tests.mjs:30:62)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1201:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:831:18)
+      at Test.postRun (node:internal/test_runner/test:1330:19)
+      at Test.run (node:internal/test_runner/test:1258:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:831:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: true,
+    expected: false,
+    operator: 'deepStrictEqual',
+    diff: 'simple'
+  }
+
+test at poke-sim\tests\charge_spa_timing_tests.mjs:30:4
+Γ£û CHARGE-SPA-confusion-Electro Shot-opponent-0 (127.252ms)
+  AssertionError [ERR_ASSERTION]: charging
+  
+  true !== false
+  
+      at check (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-14/task-2/champions-moves-repair/poke-sim/tests/charge_spa_timing_tests.mjs:9:31)
+      at TestContext.<anonymous> (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-14/task-2/champions-moves-repair/poke-sim/tests/charge_spa_timing_tests.mjs:30:62)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1201:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:831:18)
+      at Test.postRun (node:internal/test_runner/test:1330:19)
+      at Test.run (node:internal/test_runner/test:1258:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:831:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: true,
+    expected: false,
+    operator: 'deepStrictEqual',
+    diff: 'simple'
+  }
+
+test at poke-sim\tests\charge_spa_timing_tests.mjs:30:4
+Γ£û CHARGE-SPA-sleep-Electro Shot-opponent-1 (126.2277ms)
+  AssertionError [ERR_ASSERTION]: charging
+  
+  true !== false
+  
+      at check (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-14/task-2/champions-moves-repair/poke-sim/tests/charge_spa_timing_tests.mjs:9:31)
+      at TestContext.<anonymous> (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-14/task-2/champions-moves-repair/poke-sim/tests/charge_spa_timing_tests.mjs:30:62)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1201:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:831:18)
+      at Test.postRun (node:internal/test_runner/test:1330:19)
+      at Test.run (node:internal/test_runner/test:1258:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:831:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: true,
+    expected: false,
+    operator: 'deepStrictEqual',
+    diff: 'simple'
+  }
+
+test at poke-sim\tests\charge_spa_timing_tests.mjs:30:4
+Γ£û CHARGE-SPA-paralysis-Electro Shot-opponent-1 (127.1008ms)
+  AssertionError [ERR_ASSERTION]: charging
+  
+  true !== false
+  
+      at check (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-14/task-2/champions-moves-repair/poke-sim/tests/charge_spa_timing_tests.mjs:9:31)
+      at TestContext.<anonymous> (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-14/task-2/champions-moves-repair/poke-sim/tests/charge_spa_timing_tests.mjs:30:62)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1201:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:831:18)
+      at Test.postRun (node:internal/test_runner/test:1330:19)
+      at Test.run (node:internal/test_runner/test:1258:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:831:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: true,
+    expected: false,
+    operator: 'deepStrictEqual',
+    diff: 'simple'
+  }
+
+test at poke-sim\tests\charge_spa_timing_tests.mjs:30:4
+Γ£û CHARGE-SPA-confusion-Electro Shot-opponent-1 (127.4056ms)
+  AssertionError [ERR_ASSERTION]: charging
+  
+  true !== false
+  
+      at check (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-14/task-2/champions-moves-repair/poke-sim/tests/charge_spa_timing_tests.mjs:9:31)
+      at TestContext.<anonymous> (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-14/task-2/champions-moves-repair/poke-sim/tests/charge_spa_timing_tests.mjs:30:62)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1201:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:831:18)
+      at Test.postRun (node:internal/test_runner/test:1330:19)
+      at Test.run (node:internal/test_runner/test:1258:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:831:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: true,
+    expected: false,
+    operator: 'deepStrictEqual',
+    diff: 'simple'
+  }

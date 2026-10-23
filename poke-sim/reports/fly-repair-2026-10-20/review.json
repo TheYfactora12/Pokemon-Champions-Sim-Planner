@@ -1,0 +1,44 @@
+{
+  "schema_version": 1,
+  "reviewer": "read-only battle_auditor",
+  "review_scope": "Uncommitted contained Fly source and exact reference fixtures; not independent client oracle",
+  "source_hashes": {
+    "data.js": "178082d978975af7326db079bbaea71899796baa2dff29574a8a4ade9e6d3406",
+    "generated/pokemon_showdown_legal_data.js": "d00ab46ddf9d86f87b1848385b7ee0b3ee22ee7419956350d3e955c5d15b108a",
+    "generated/pokemon_showdown_species_weights.js": "2449654923721da570bc0379c49e6bdeea5e59ba05009d722fe81af088775c51",
+    "generated/champions_move_overrides.js": "6f37d6b3a47863d67f4d6bc3855ff0184621bd44746eccc9be665d4e534b2277",
+    "generated/champions_move_pools.js": "21099bad04135f23de2d8b23203628c98004faf4a7d1da179ba808ccef2087f9",
+    "runtime_data.js": "c9ad5dc5c847b5e1be5685a4ee575c6838e2ae958b8063f30adc296eec2dc2eb",
+    "move_legality.js": "cbd3754cef4559fc8cd27844577a44c2e3fc654d4a8be97636a86011cb62aa70",
+    "generated/mc_review_reference.js": "d81091273c06c39dd1a234c5eeb2bb89af2d6e64d36998b2ae9450d8b6c43827",
+    "mc_review.js": "7d51fec376e60c05e81d23e74770c5f00333570e87e08b7b0a598ac790a6b7e2",
+    "legality.js": "0a4baf4c504d6fbfead8604fde0923ac76f6a41900ddcec24d521bfe768ca64a",
+    "rulesets.js": "7849101ba7749b37bc81eafedad611ec86f209e43885c525540c2897de21fe64",
+    "outcome_policy.js": "9b356f341f0600b28a157ee7d0f9da33149a63538e824701272fc93b1c3f4832",
+    "engine.js": "71bfbb45e7c3d9a0b081f3e4b28c53b060effbd406dc21908381b53ab5a77762",
+    "tools/fly-lifecycle-probes.mjs": "b72993133a8fba17edc0be654659e5bf516cae807155fa3c8de2042ec88a5608",
+    "tools/probe-fly-repair.mjs": "506460aa9a8b4bb06cf8e11fe9f4b5cfad4ef0d8a364d362f1f85da76c108178",
+    "tools/capture-fly-repair.mjs": "69aab715135df737707221bd4d5e4ef4fe895b0ee6ff00d1c1fbd9f28f75a191",
+    "tools/showdown-reference.mjs": "fa84a79f24ec2b022fa2ebc726f19e7ba84d7e299527a35c3e4b565ae78a168a",
+    "tools/bounded-runtime-capture.mjs": "95aa8266bb5d303d4c34e62c9291d685554058d4bb68b07d1dd0a17206c3c3b7",
+    "tests/fly_lifecycle_tests.mjs": "f3e65d5dc4e625df8ec712ef5b6af89b3bddf89a3692a6c25503b5a9fd98fe25",
+    "tests/fly_mutation_tests.mjs": "44987bb953d41a2663cd2c0ab3895a4ca0632a2181e72943de4ad76209a5d631",
+    "tests/fly_repair_tests.mjs": "f0237e810ed5e56216eccebafd3c1df06302f01e321e7e24c9c24856ff627dfa"
+  },
+  "tests_passed": 210,
+  "known_gap_assertions_in_count": 4,
+  "new_blockers": [],
+  "decision": "accepted contained scope only; public admission remains blocked",
+  "open": [
+    "Eject Button",
+    "Coaching",
+    "forced switch/re-entry",
+    "target replacement/faint/ally selection",
+    "current-client proof"
+  ],
+  "findings_fixed": [
+    "No Guard Soak special guard",
+    "No Guard Dragon Darts target viability"
+  ],
+  "mutation_baselines_independently_checked": 6
+}

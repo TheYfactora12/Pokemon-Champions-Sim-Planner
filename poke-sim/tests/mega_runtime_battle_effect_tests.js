@@ -125,12 +125,13 @@ T('3. Froslass-Mega triggers Snow Warning snow during battle Mega phase', () => 
   truthy(logIncludes(battle, "Froslass-Mega's Snow Warning summoned snow!"), 'Snow Warning log missing');
 });
 
-T('4. Abomasnow-Mega triggers Snow Warning snow during battle Mega phase', () => {
+T('4. Abomasnow Mega preserves existing snow without restarting it', () => {
   const battle = runOne(mon('Abomasnow-Mega', 'Abomasite', 'Snow Warning', ['Protect']));
   const field = firstPostField(battle);
   eq(field.weather, 'snow', 'post-turn weather');
   truthy(logIncludes(battle, 'Abomasnow-Mega Mega Evolved!'), 'Mega log missing');
-  truthy(logIncludes(battle, "Abomasnow-Mega's Snow Warning summoned snow!"), 'Snow Warning log missing');
+  eq((battle.log || []).filter(line => line.includes('Snow Warning summoned snow!')).length, 1, 'only initial weather activation');
+  eq(field.weather_turns, 4, 'initial snow duration after first turn');
 });
 
 T('5. base Charizard with Charizardite Y does not claim immediate Drought in current runtime model', () => {
@@ -148,6 +149,18 @@ T('6. Manectric-Mega re-fires Intimidate after Mega ability swap', () => {
   truthy(logIncludes(battle, 'Manectric-Mega Mega Evolved!'), 'Mega log missing');
   truthy(logIncludes(battle, "Manectric-Mega's Intimidate activated!"), 'Intimidate activation missing');
   truthy(logIncludes(battle, "Manectric-Mega's Intimidate lowered Garchomp's Attack!"), 'Intimidate attack-drop log missing');
+});
+
+// Pinned 9b136a8 reference: delayed Mega does not refresh existing Snow Warning.
+T('7. delayed Abomasnow Mega retains the remaining snow timer', () => {
+  const battle = ctx.simulateBattle(team('Delayed Mega', mon('Abomasnow-Mega', 'Abomasite', 'Snow Warning', ['Protect'])), opponent(), {
+    format: 'singles', seed: [17, 31, 47, 63], maxTurns: 3,
+    _megaPolicyOverride: {side: 'player', policy: 'at_turn', triggerTurn: 3}
+  });
+  eq(battle.turnLog[2].pre.field.weather_turns, 3, 'snow before delayed Mega');
+  eq(battle.turnLog[2].post.field.weather_turns, 2, 'snow after delayed Mega');
+  truthy(logIncludes(battle, 'Abomasnow-Mega Mega Evolved!'), 'actual Mega required');
+  eq(battle.log.filter(line => line.includes('Snow Warning summoned snow!')).length, 1, 'no duplicate activation');
 });
 
 console.log(`\nMega runtime battle effects: ${pass} pass, ${fail} fail\n`);

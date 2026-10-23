@@ -1,0 +1,1886 @@
+✖ SNOW-DEF-001 original U-turn player (703.3464ms)
+✖ SNOW-DEF-001 original U-turn opponent (150.2424ms)
+✖ SNOW-DEF-002 U-turn/snow (136.493ms)
+✔ SNOW-DEF-002 U-turn/none (134.9334ms)
+✔ SNOW-DEF-002 U-turn/sun (133.1539ms)
+✖ SNOW-DEF-002 Psyshock/snow (134.8695ms)
+✔ SNOW-DEF-002 Psyshock/none (129.7109ms)
+✔ SNOW-DEF-002 Psyshock/sun (163.8446ms)
+✖ SNOW-DEF-002 Psystrike/snow (118.5507ms)
+✔ SNOW-DEF-002 Psystrike/none (132.8058ms)
+✔ SNOW-DEF-002 Psystrike/sun (129.5834ms)
+✖ SNOW-DEF-002 Secret Sword/snow (136.3045ms)
+✔ SNOW-DEF-002 Secret Sword/none (127.8736ms)
+✔ SNOW-DEF-002 Secret Sword/sun (128.3226ms)
+✖ SNOW-DEF-002 Body Press/snow (137.8712ms)
+✔ SNOW-DEF-002 Body Press/none (184.3791ms)
+✔ SNOW-DEF-002 Body Press/sun (188.9708ms)
+✔ SNOW-DEF-002 Ice Beam/snow (178.4213ms)
+✔ SNOW-DEF-002 Ice Beam/none (185.1866ms)
+✔ SNOW-DEF-002 Ice Beam/sun (177.0152ms)
+✖ SNOW-DEF-003 rounding 94/-2 (169.0266ms)
+✖ SNOW-DEF-003 rounding 94/-1 (177.9943ms)
+✖ SNOW-DEF-003 rounding 94/0 (221.9111ms)
+✖ SNOW-DEF-003 rounding 94/1 (153.4785ms)
+✖ SNOW-DEF-003 rounding 94/2 (172.5793ms)
+✖ SNOW-DEF-003 rounding 95/-2 (162.3828ms)
+✖ SNOW-DEF-003 rounding 95/-1 (184.0757ms)
+✖ SNOW-DEF-003 rounding 95/0 (174.1808ms)
+✖ SNOW-DEF-003 rounding 95/1 (170.3004ms)
+✖ SNOW-DEF-003 rounding 95/2 (172.5555ms)
+✖ SNOW-DEF-003 rounding 96/-2 (161.5687ms)
+✖ SNOW-DEF-003 rounding 96/-1 (178.2051ms)
+✖ SNOW-DEF-003 rounding 96/0 (165.9079ms)
+✖ SNOW-DEF-003 rounding 96/1 (166.9798ms)
+✖ SNOW-DEF-003 rounding 96/2 (179.1085ms)
+✖ SNOW-DEF-003 rounding 97/-2 (173.1919ms)
+✖ SNOW-DEF-003 rounding 97/-1 (175.3689ms)
+✖ SNOW-DEF-003 rounding 97/0 (215.2247ms)
+✖ SNOW-DEF-003 rounding 97/1 (139.1778ms)
+✖ SNOW-DEF-003 rounding 97/2 (170.1945ms)
+✔ SNOW-DEF-004 Cloud Nine (150.8543ms)
+✔ SNOW-DEF-004 Air Lock (179.6017ms)
+✖ SNOW-DEF-004 Neutralizing Gas (162.0524ms)
+✖ SNOW-DEF-005 non-Ice target receives no snow bonus (186.2402ms)
+✔ SNOW-DEF-006 Ice Body Press user receives no offensive snow bonus (184.1928ms)
+ℹ tests 45
+ℹ suites 0
+ℹ pass 16
+ℹ fail 29
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 8318.9344
+
+✖ failing tests:
+
+test at tests\snow_defense_tests.mjs:6:41
+✖ SNOW-DEF-001 original U-turn player (703.3464ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly deep-equal:
+  + actual - expected
+  
+    [
+  +   62,
+  +   62,
+  +   64,
+  +   64,
+  +   64,
+  +   66,
+  +   66,
+  +   68,
+  +   68,
+  +   68,
+  +   70,
+  +   70,
+  +   70,
+  +   72,
+  +   72,
+  +   74
+  -   42,
+  -   42,
+  -   42,
+  -   44,
+  -   44,
+  -   44,
+  -   44,
+  -   46,
+  -   46,
+  -   46,
+  -   46,
+  -   48,
+  -   48,
+  -   48,
+  -   48,
+  -   50
+    ]
+  
+      at TestContext.<anonymous> (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-14/task-2/champions-moves-repair/poke-sim/tests/snow_defense_tests.mjs:7:80)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1201:25)
+      at Test.start (node:internal/test_runner/test:1096:17)
+      at startSubtestAfterBootstrap (node:internal/test_runner/harness:385:17) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: [
+      62, 62, 64, 64, 64, 66,
+      66, 68, 68, 68, 70, 70,
+      70, 72, 72, 74
+    ],
+    expected: [
+      42, 42, 42, 44, 44, 44,
+      44, 46, 46, 46, 46, 48,
+      48, 48, 48, 50
+    ],
+    operator: 'deepStrictEqual',
+    diff: 'simple'
+  }
+
+test at tests\snow_defense_tests.mjs:6:41
+✖ SNOW-DEF-001 original U-turn opponent (150.2424ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly deep-equal:
+  + actual - expected
+  
+    [
+  +   62,
+  +   62,
+  +   64,
+  +   64,
+  +   64,
+  +   66,
+  +   66,
+  +   68,
+  +   68,
+  +   68,
+  +   70,
+  +   70,
+  +   70,
+  +   72,
+  +   72,
+  +   74
+  -   42,
+  -   42,
+  -   42,
+  -   44,
+  -   44,
+  -   44,
+  -   44,
+  -   46,
+  -   46,
+  -   46,
+  -   46,
+  -   48,
+  -   48,
+  -   48,
+  -   48,
+  -   50
+    ]
+  
+      at TestContext.<anonymous> (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-14/task-2/champions-moves-repair/poke-sim/tests/snow_defense_tests.mjs:7:80)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1201:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:831:18)
+      at Test.postRun (node:internal/test_runner/test:1330:19)
+      at Test.run (node:internal/test_runner/test:1258:12)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:385:3) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: [
+      62, 62, 64, 64, 64, 66,
+      66, 68, 68, 68, 70, 70,
+      70, 72, 72, 74
+    ],
+    expected: [
+      42, 42, 42, 44, 44, 44,
+      44, 46, 46, 46, 46, 48,
+      48, 48, 48, 50
+    ],
+    operator: 'deepStrictEqual',
+    diff: 'simple'
+  }
+
+test at tests\snow_defense_tests.mjs:10:45
+✖ SNOW-DEF-002 U-turn/snow (136.493ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly deep-equal:
+  + actual - expected
+  
+    [
+  +   62,
+  +   62,
+  +   64,
+  +   64,
+  +   64,
+  +   66,
+  +   66,
+  +   68,
+  +   68,
+  +   68,
+  +   70,
+  +   70,
+  +   70,
+  +   72,
+  +   72,
+  +   74
+  -   42,
+  -   42,
+  -   42,
+  -   44,
+  -   44,
+  -   44,
+  -   44,
+  -   46,
+  -   46,
+  -   46,
+  -   46,
+  -   48,
+  -   48,
+  -   48,
+  -   48,
+  -   50
+    ]
+  
+      at TestContext.<anonymous> (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-14/task-2/champions-moves-repair/poke-sim/tests/snow_defense_tests.mjs:11:50)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1201:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:831:18)
+      at Test.postRun (node:internal/test_runner/test:1330:19)
+      at Test.run (node:internal/test_runner/test:1258:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:831:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: [
+      62, 62, 64, 64, 64, 66,
+      66, 68, 68, 68, 70, 70,
+      70, 72, 72, 74
+    ],
+    expected: [
+      42, 42, 42, 44, 44, 44,
+      44, 46, 46, 46, 46, 48,
+      48, 48, 48, 50
+    ],
+    operator: 'deepStrictEqual',
+    diff: 'simple'
+  }
+
+test at tests\snow_defense_tests.mjs:10:45
+✖ SNOW-DEF-002 Psyshock/snow (134.8695ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly deep-equal:
+  + actual - expected
+  
+    [
+  +   34,
+  +   34,
+  +   34,
+  +   35,
+  +   35,
+  +   36,
+  +   36,
+  +   36,
+  +   37,
+  +   37,
+  +   38,
+  +   38,
+  +   38,
+  +   39,
+  +   39,
+  +   40
+  -   23,
+  -   24,
+  -   24,
+  -   24,
+  -   24,
+  -   25,
+  -   25,
+  -   25,
+  -   26,
+  -   26,
+  -   26,
+  -   26,
+  -   27,
+  -   27,
+  -   27,
+  -   28
+    ]
+  
+      at TestContext.<anonymous> (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-14/task-2/champions-moves-repair/poke-sim/tests/snow_defense_tests.mjs:11:50)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1201:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:831:18)
+      at Test.postRun (node:internal/test_runner/test:1330:19)
+      at Test.run (node:internal/test_runner/test:1258:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:831:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: [
+      34, 34, 34, 35, 35, 36,
+      36, 36, 37, 37, 38, 38,
+      38, 39, 39, 40
+    ],
+    expected: [
+      23, 24, 24, 24, 24, 25,
+      25, 25, 26, 26, 26, 26,
+      27, 27, 27, 28
+    ],
+    operator: 'deepStrictEqual',
+    diff: 'simple'
+  }
+
+test at tests\snow_defense_tests.mjs:10:45
+✖ SNOW-DEF-002 Psystrike/snow (118.5507ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly deep-equal:
+  + actual - expected
+  
+    [
+  +   42,
+  +   43,
+  +   43,
+  +   44,
+  +   44,
+  +   45,
+  +   45,
+  +   46,
+  +   46,
+  +   47,
+  +   47,
+  +   48,
+  +   48,
+  +   49,
+  +   49,
+  +   50
+  -   28,
+  -   29,
+  -   29,
+  -   29,
+  -   30,
+  -   30,
+  -   30,
+  -   31,
+  -   31,
+  -   31,
+  -   32,
+  -   32,
+  -   32,
+  -   33,
+  -   33,
+  -   34
+    ]
+  
+      at TestContext.<anonymous> (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-14/task-2/champions-moves-repair/poke-sim/tests/snow_defense_tests.mjs:11:50)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1201:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:831:18)
+      at Test.postRun (node:internal/test_runner/test:1330:19)
+      at Test.run (node:internal/test_runner/test:1258:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:831:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: [
+      42, 43, 43, 44, 44, 45,
+      45, 46, 46, 47, 47, 48,
+      48, 49, 49, 50
+    ],
+    expected: [
+      28, 29, 29, 29, 30, 30,
+      30, 31, 31, 31, 32, 32,
+      32, 33, 33, 34
+    ],
+    operator: 'deepStrictEqual',
+    diff: 'simple'
+  }
+
+test at tests\snow_defense_tests.mjs:10:45
+✖ SNOW-DEF-002 Secret Sword/snow (136.3045ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly deep-equal:
+  + actual - expected
+  
+    [
+  +   72,
+  +   72,
+  +   74,
+  +   74,
+  +   76,
+  +   76,
+  +   78,
+  +   78,
+  +   78,
+  +   80,
+  +   80,
+  +   82,
+  +   82,
+  +   84,
+  +   84,
+  +   86
+  -   48,
+  -   48,
+  -   50,
+  -   50,
+  -   50,
+  -   52,
+  -   52,
+  -   52,
+  -   52,
+  -   54,
+  -   54,
+  -   54,
+  -   56,
+  -   56,
+  -   56,
+  -   58
+    ]
+  
+      at TestContext.<anonymous> (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-14/task-2/champions-moves-repair/poke-sim/tests/snow_defense_tests.mjs:11:50)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1201:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:831:18)
+      at Test.postRun (node:internal/test_runner/test:1330:19)
+      at Test.run (node:internal/test_runner/test:1258:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:831:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: [
+      72, 72, 74, 74, 76, 76,
+      78, 78, 78, 80, 80, 82,
+      82, 84, 84, 86
+    ],
+    expected: [
+      48, 48, 50, 50, 50, 52,
+      52, 52, 52, 54, 54, 54,
+      56, 56, 56, 58
+    ],
+    operator: 'deepStrictEqual',
+    diff: 'simple'
+  }
+
+test at tests\snow_defense_tests.mjs:10:45
+✖ SNOW-DEF-002 Body Press/snow (137.8712ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly deep-equal:
+  + actual - expected
+  
+    [
+  +   90,
+  +   90,
+  +   92,
+  +   92,
+  +   94,
+  +   94,
+  +   96,
+  +   96,
+  +   98,
+  +   98,
+  +   100,
+  +   100,
+  +   102,
+  +   102,
+  +   104,
+  +   106
+  -   60,
+  -   60,
+  -   62,
+  -   62,
+  -   64,
+  -   64,
+  -   64,
+  -   66,
+  -   66,
+  -   66,
+  -   68,
+  -   68,
+  -   68,
+  -   70,
+  -   70,
+  -   72
+    ]
+  
+      at TestContext.<anonymous> (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-14/task-2/champions-moves-repair/poke-sim/tests/snow_defense_tests.mjs:11:50)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1201:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:831:18)
+      at Test.postRun (node:internal/test_runner/test:1330:19)
+      at Test.run (node:internal/test_runner/test:1258:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:831:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: [
+       90,  90,  92,  92,  94,  94,
+       96,  96,  98,  98, 100, 100,
+      102, 102, 104, 106
+    ],
+    expected: [
+      60, 60, 62, 62, 64, 64,
+      64, 66, 66, 66, 68, 68,
+      68, 70, 70, 72
+    ],
+    operator: 'deepStrictEqual',
+    diff: 'simple'
+  }
+
+test at tests\snow_defense_tests.mjs:13:65
+✖ SNOW-DEF-003 rounding 94/-2 (169.0266ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly deep-equal:
+  + actual - expected
+  
+    [
+  +   124,
+  +   126,
+  +   128,
+  +   130,
+  +   130,
+  +   132,
+  +   134,
+  +   136,
+  +   136,
+  +   138,
+  +   140,
+  +   142,
+  +   142,
+  +   144,
+  +   146,
+  +   148
+  -   84,
+  -   86,
+  -   86,
+  -   88,
+  -   88,
+  -   90,
+  -   90,
+  -   92,
+  -   92,
+  -   94,
+  -   94,
+  -   96,
+  -   96,
+  -   98,
+  -   98,
+  -   100
+    ]
+  
+      at TestContext.<anonymous> (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-14/task-2/champions-moves-repair/poke-sim/tests/snow_defense_tests.mjs:14:46)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1201:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:831:18)
+      at Test.postRun (node:internal/test_runner/test:1330:19)
+      at Test.run (node:internal/test_runner/test:1258:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:831:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: [
+      124, 126, 128, 130,
+      130, 132, 134, 136,
+      136, 138, 140, 142,
+      142, 144, 146, 148
+    ],
+    expected: [
+      84, 86, 86,  88, 88, 90,
+      90, 92, 92,  94, 94, 96,
+      96, 98, 98, 100
+    ],
+    operator: 'deepStrictEqual',
+    diff: 'simple'
+  }
+
+test at tests\snow_defense_tests.mjs:13:65
+✖ SNOW-DEF-003 rounding 94/-1 (177.9943ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly deep-equal:
+  + actual - expected
+  
+    [
+  +   94,
+  +   96,
+  +   96,
+  +   98,
+  +   98,
+  +   100,
+  +   100,
+  +   102,
+  +   104,
+  +   104,
+  +   106,
+  +   106,
+  +   108,
+  +   108,
+  +   110,
+  +   112
+  -   64,
+  -   64,
+  -   66,
+  -   66,
+  -   66,
+  -   68,
+  -   68,
+  -   68,
+  -   70,
+  -   70,
+  -   72,
+  -   72,
+  -   72,
+  -   74,
+  -   74,
+  -   76
+    ]
+  
+      at TestContext.<anonymous> (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-14/task-2/champions-moves-repair/poke-sim/tests/snow_defense_tests.mjs:14:46)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1201:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:831:18)
+      at Test.postRun (node:internal/test_runner/test:1330:19)
+      at Test.run (node:internal/test_runner/test:1258:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:831:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: [
+       94,  96,  96,  98,  98,
+      100, 100, 102, 104, 104,
+      106, 106, 108, 108, 110,
+      112
+    ],
+    expected: [
+      64, 64, 66, 66, 66, 68,
+      68, 68, 70, 70, 72, 72,
+      72, 74, 74, 76
+    ],
+    operator: 'deepStrictEqual',
+    diff: 'simple'
+  }
+
+test at tests\snow_defense_tests.mjs:13:65
+✖ SNOW-DEF-003 rounding 94/0 (221.9111ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly deep-equal:
+  + actual - expected
+  
+    [
+  +   64,
+  +   64,
+  +   66,
+  +   66,
+  +   66,
+  +   68,
+  +   68,
+  +   68,
+  +   70,
+  +   70,
+  +   72,
+  +   72,
+  +   72,
+  +   74,
+  +   74,
+  +   76
+  -   44,
+  -   44,
+  -   44,
+  -   44,
+  -   46,
+  -   46,
+  -   46,
+  -   46,
+  -   48,
+  -   48,
+  -   48,
+  -   48,
+  -   50,
+  -   50,
+  -   50,
+  -   52
+    ]
+  
+      at TestContext.<anonymous> (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-14/task-2/champions-moves-repair/poke-sim/tests/snow_defense_tests.mjs:14:46)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1201:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:831:18)
+      at Test.postRun (node:internal/test_runner/test:1330:19)
+      at Test.run (node:internal/test_runner/test:1258:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:831:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: [
+      64, 64, 66, 66, 66, 68,
+      68, 68, 70, 70, 72, 72,
+      72, 74, 74, 76
+    ],
+    expected: [
+      44, 44, 44, 44, 46, 46,
+      46, 46, 48, 48, 48, 48,
+      50, 50, 50, 52
+    ],
+    operator: 'deepStrictEqual',
+    diff: 'simple'
+  }
+
+test at tests\snow_defense_tests.mjs:13:65
+✖ SNOW-DEF-003 rounding 94/1 (153.4785ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly deep-equal:
+  + actual - expected
+  
+    [
+  +   44,
+  +   44,
+  +   44,
+  +   44,
+  +   46,
+  +   46,
+  +   46,
+  +   46,
+  +   48,
+  +   48,
+  +   48,
+  +   48,
+  +   50,
+  +   50,
+  +   50,
+  +   52
+  -   30,
+  -   30,
+  -   30,
+  -   30,
+  -   32,
+  -   32,
+  -   32,
+  -   32,
+  -   32,
+  -   32,
+  -   34,
+  -   34,
+  -   34,
+  -   34,
+  -   34,
+  -   36
+    ]
+  
+      at TestContext.<anonymous> (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-14/task-2/champions-moves-repair/poke-sim/tests/snow_defense_tests.mjs:14:46)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1201:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:831:18)
+      at Test.postRun (node:internal/test_runner/test:1330:19)
+      at Test.run (node:internal/test_runner/test:1258:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:831:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: [
+      44, 44, 44, 44, 46, 46,
+      46, 46, 48, 48, 48, 48,
+      50, 50, 50, 52
+    ],
+    expected: [
+      30, 30, 30, 30, 32, 32,
+      32, 32, 32, 32, 34, 34,
+      34, 34, 34, 36
+    ],
+    operator: 'deepStrictEqual',
+    diff: 'simple'
+  }
+
+test at tests\snow_defense_tests.mjs:13:65
+✖ SNOW-DEF-003 rounding 94/2 (172.5793ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly deep-equal:
+  + actual - expected
+  
+    [
+  +   34,
+  +   34,
+  +   34,
+  +   34,
+  +   34,
+  +   36,
+  +   36,
+  +   36,
+  +   36,
+  +   36,
+  +   38,
+  +   38,
+  +   38,
+  +   38,
+  +   38,
+  +   40
+  -   22,
+  -   24,
+  -   24,
+  -   24,
+  -   24,
+  -   24,
+  -   24,
+  -   24,
+  -   26,
+  -   26,
+  -   26,
+  -   26,
+  -   26,
+  -   26,
+  -   26,
+  -   28
+    ]
+  
+      at TestContext.<anonymous> (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-14/task-2/champions-moves-repair/poke-sim/tests/snow_defense_tests.mjs:14:46)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1201:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:831:18)
+      at Test.postRun (node:internal/test_runner/test:1330:19)
+      at Test.run (node:internal/test_runner/test:1258:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:831:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: [
+      34, 34, 34, 34, 34, 36,
+      36, 36, 36, 36, 38, 38,
+      38, 38, 38, 40
+    ],
+    expected: [
+      22, 24, 24, 24, 24, 24,
+      24, 24, 26, 26, 26, 26,
+      26, 26, 26, 28
+    ],
+    operator: 'deepStrictEqual',
+    diff: 'simple'
+  }
+
+test at tests\snow_defense_tests.mjs:13:65
+✖ SNOW-DEF-003 rounding 95/-2 (162.3828ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly deep-equal:
+  + actual - expected
+  
+    [
+  +   124,
+  +   126,
+  +   128,
+  +   130,
+  +   130,
+  +   132,
+  +   134,
+  +   136,
+  +   136,
+  +   138,
+  +   140,
+  +   142,
+  +   142,
+  +   144,
+  +   146,
+  +   148
+  -   84,
+  -   86,
+  -   86,
+  -   88,
+  -   88,
+  -   90,
+  -   90,
+  -   92,
+  -   92,
+  -   94,
+  -   94,
+  -   96,
+  -   96,
+  -   98,
+  -   98,
+  -   100
+    ]
+  
+      at TestContext.<anonymous> (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-14/task-2/champions-moves-repair/poke-sim/tests/snow_defense_tests.mjs:14:46)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1201:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:831:18)
+      at Test.postRun (node:internal/test_runner/test:1330:19)
+      at Test.run (node:internal/test_runner/test:1258:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:831:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: [
+      124, 126, 128, 130,
+      130, 132, 134, 136,
+      136, 138, 140, 142,
+      142, 144, 146, 148
+    ],
+    expected: [
+      84, 86, 86,  88, 88, 90,
+      90, 92, 92,  94, 94, 96,
+      96, 98, 98, 100
+    ],
+    operator: 'deepStrictEqual',
+    diff: 'simple'
+  }
+
+test at tests\snow_defense_tests.mjs:13:65
+✖ SNOW-DEF-003 rounding 95/-1 (184.0757ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly deep-equal:
+  + actual - expected
+  
+    [
+  +   92,
+  +   94,
+  +   94,
+  +   96,
+  +   96,
+  +   98,
+  +   100,
+  +   100,
+  +   102,
+  +   102,
+  +   104,
+  +   104,
+  +   106,
+  +   106,
+  +   108,
+  +   110
+  -   64,
+  -   64,
+  -   66,
+  -   66,
+  -   66,
+  -   68,
+  -   68,
+  -   68,
+  -   70,
+  -   70,
+  -   72,
+  -   72,
+  -   72,
+  -   74,
+  -   74,
+  -   76
+    ]
+  
+      at TestContext.<anonymous> (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-14/task-2/champions-moves-repair/poke-sim/tests/snow_defense_tests.mjs:14:46)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1201:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:831:18)
+      at Test.postRun (node:internal/test_runner/test:1330:19)
+      at Test.run (node:internal/test_runner/test:1258:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:831:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: [
+       92,  94,  94,  96,  96,
+       98, 100, 100, 102, 102,
+      104, 104, 106, 106, 108,
+      110
+    ],
+    expected: [
+      64, 64, 66, 66, 66, 68,
+      68, 68, 70, 70, 72, 72,
+      72, 74, 74, 76
+    ],
+    operator: 'deepStrictEqual',
+    diff: 'simple'
+  }
+
+test at tests\snow_defense_tests.mjs:13:65
+✖ SNOW-DEF-003 rounding 95/0 (174.1808ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly deep-equal:
+  + actual - expected
+  
+    [
+  +   62,
+  +   62,
+  +   64,
+  +   64,
+  +   64,
+  +   66,
+  +   66,
+  +   68,
+  +   68,
+  +   68,
+  +   70,
+  +   70,
+  +   70,
+  +   72,
+  +   72,
+  +   74
+  -   42,
+  -   42,
+  -   42,
+  -   44,
+  -   44,
+  -   44,
+  -   44,
+  -   46,
+  -   46,
+  -   46,
+  -   46,
+  -   48,
+  -   48,
+  -   48,
+  -   48,
+  -   50
+    ]
+  
+      at TestContext.<anonymous> (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-14/task-2/champions-moves-repair/poke-sim/tests/snow_defense_tests.mjs:14:46)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1201:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:831:18)
+      at Test.postRun (node:internal/test_runner/test:1330:19)
+      at Test.run (node:internal/test_runner/test:1258:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:831:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: [
+      62, 62, 64, 64, 64, 66,
+      66, 68, 68, 68, 70, 70,
+      70, 72, 72, 74
+    ],
+    expected: [
+      42, 42, 42, 44, 44, 44,
+      44, 46, 46, 46, 46, 48,
+      48, 48, 48, 50
+    ],
+    operator: 'deepStrictEqual',
+    diff: 'simple'
+  }
+
+test at tests\snow_defense_tests.mjs:13:65
+✖ SNOW-DEF-003 rounding 95/1 (170.3004ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly deep-equal:
+  + actual - expected
+  
+    [
+  +   42,
+  +   42,
+  +   42,
+  +   44,
+  +   44,
+  +   44,
+  +   44,
+  +   46,
+  +   46,
+  +   46,
+  +   46,
+  +   48,
+  +   48,
+  +   48,
+  +   48,
+  +   50
+  -   28,
+  -   28,
+  -   28,
+  -   28,
+  -   30,
+  -   30,
+  -   30,
+  -   30,
+  -   30,
+  -   30,
+  -   32,
+  -   32,
+  -   32,
+  -   32,
+  -   32,
+  -   34
+    ]
+  
+      at TestContext.<anonymous> (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-14/task-2/champions-moves-repair/poke-sim/tests/snow_defense_tests.mjs:14:46)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1201:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:831:18)
+      at Test.postRun (node:internal/test_runner/test:1330:19)
+      at Test.run (node:internal/test_runner/test:1258:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:831:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: [
+      42, 42, 42, 44, 44, 44,
+      44, 46, 46, 46, 46, 48,
+      48, 48, 48, 50
+    ],
+    expected: [
+      28, 28, 28, 28, 30, 30,
+      30, 30, 30, 30, 32, 32,
+      32, 32, 32, 34
+    ],
+    operator: 'deepStrictEqual',
+    diff: 'simple'
+  }
+
+test at tests\snow_defense_tests.mjs:13:65
+✖ SNOW-DEF-003 rounding 95/2 (172.5555ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly deep-equal:
+  + actual - expected
+  
+    [
+  +   32,
+  +   32,
+  +   32,
+  +   32,
+  +   32,
+  +   34,
+  +   34,
+  +   34,
+  +   34,
+  +   34,
+  +   36,
+  +   36,
+  +   36,
+  +   36,
+  +   36,
+  +   38
+  -   22,
+  -   22,
+  -   22,
+  -   22,
+  -   22,
+  -   22,
+  -   22,
+  -   22,
+  -   24,
+  -   24,
+  -   24,
+  -   24,
+  -   24,
+  -   24,
+  -   24,
+  -   26
+    ]
+  
+      at TestContext.<anonymous> (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-14/task-2/champions-moves-repair/poke-sim/tests/snow_defense_tests.mjs:14:46)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1201:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:831:18)
+      at Test.postRun (node:internal/test_runner/test:1330:19)
+      at Test.run (node:internal/test_runner/test:1258:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:831:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: [
+      32, 32, 32, 32, 32, 34,
+      34, 34, 34, 34, 36, 36,
+      36, 36, 36, 38
+    ],
+    expected: [
+      22, 22, 22, 22, 22, 22,
+      22, 22, 24, 24, 24, 24,
+      24, 24, 24, 26
+    ],
+    operator: 'deepStrictEqual',
+    diff: 'simple'
+  }
+
+test at tests\snow_defense_tests.mjs:13:65
+✖ SNOW-DEF-003 rounding 96/-2 (161.5687ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly deep-equal:
+  + actual - expected
+  
+    [
+  +   122,
+  +   122,
+  +   124,
+  +   126,
+  +   128,
+  +   128,
+  +   130,
+  +   132,
+  +   132,
+  +   134,
+  +   136,
+  +   138,
+  +   138,
+  +   140,
+  +   142,
+  +   144
+  -   82,
+  -   84,
+  -   84,
+  -   86,
+  -   86,
+  -   88,
+  -   88,
+  -   90,
+  -   90,
+  -   92,
+  -   92,
+  -   94,
+  -   94,
+  -   96,
+  -   96,
+  -   98
+    ]
+  
+      at TestContext.<anonymous> (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-14/task-2/champions-moves-repair/poke-sim/tests/snow_defense_tests.mjs:14:46)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1201:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:831:18)
+      at Test.postRun (node:internal/test_runner/test:1330:19)
+      at Test.run (node:internal/test_runner/test:1258:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:831:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: [
+      122, 122, 124, 126,
+      128, 128, 130, 132,
+      132, 134, 136, 138,
+      138, 140, 142, 144
+    ],
+    expected: [
+      82, 84, 84, 86, 86, 88,
+      88, 90, 90, 92, 92, 94,
+      94, 96, 96, 98
+    ],
+    operator: 'deepStrictEqual',
+    diff: 'simple'
+  }
+
+test at tests\snow_defense_tests.mjs:13:65
+✖ SNOW-DEF-003 rounding 96/-1 (178.2051ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly deep-equal:
+  + actual - expected
+  
+    [
+  +   90,
+  +   92,
+  +   92,
+  +   94,
+  +   96,
+  +   96,
+  +   98,
+  +   98,
+  +   100,
+  +   100,
+  +   102,
+  +   102,
+  +   104,
+  +   104,
+  +   106,
+  +   108
+  -   62,
+  -   62,
+  -   64,
+  -   64,
+  -   64,
+  -   66,
+  -   66,
+  -   68,
+  -   68,
+  -   68,
+  -   70,
+  -   70,
+  -   70,
+  -   72,
+  -   72,
+  -   74
+    ]
+  
+      at TestContext.<anonymous> (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-14/task-2/champions-moves-repair/poke-sim/tests/snow_defense_tests.mjs:14:46)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1201:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:831:18)
+      at Test.postRun (node:internal/test_runner/test:1330:19)
+      at Test.run (node:internal/test_runner/test:1258:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:831:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: [
+       90,  92,  92,  94,  96,  96,
+       98,  98, 100, 100, 102, 102,
+      104, 104, 106, 108
+    ],
+    expected: [
+      62, 62, 64, 64, 64, 66,
+      66, 68, 68, 68, 70, 70,
+      70, 72, 72, 74
+    ],
+    operator: 'deepStrictEqual',
+    diff: 'simple'
+  }
+
+test at tests\snow_defense_tests.mjs:13:65
+✖ SNOW-DEF-003 rounding 96/0 (165.9079ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly deep-equal:
+  + actual - expected
+  
+    [
+  +   62,
+  +   62,
+  +   64,
+  +   64,
+  +   64,
+  +   66,
+  +   66,
+  +   68,
+  +   68,
+  +   68,
+  +   70,
+  +   70,
+  +   70,
+  +   72,
+  +   72,
+  +   74
+  -   42,
+  -   42,
+  -   42,
+  -   44,
+  -   44,
+  -   44,
+  -   44,
+  -   46,
+  -   46,
+  -   46,
+  -   46,
+  -   48,
+  -   48,
+  -   48,
+  -   48,
+  -   50
+    ]
+  
+      at TestContext.<anonymous> (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-14/task-2/champions-moves-repair/poke-sim/tests/snow_defense_tests.mjs:14:46)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1201:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:831:18)
+      at Test.postRun (node:internal/test_runner/test:1330:19)
+      at Test.run (node:internal/test_runner/test:1258:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:831:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: [
+      62, 62, 64, 64, 64, 66,
+      66, 68, 68, 68, 70, 70,
+      70, 72, 72, 74
+    ],
+    expected: [
+      42, 42, 42, 44, 44, 44,
+      44, 46, 46, 46, 46, 48,
+      48, 48, 48, 50
+    ],
+    operator: 'deepStrictEqual',
+    diff: 'simple'
+  }
+
+test at tests\snow_defense_tests.mjs:13:65
+✖ SNOW-DEF-003 rounding 96/1 (166.9798ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly deep-equal:
+  + actual - expected
+  
+    [
+  +   42,
+  +   42,
+  +   42,
+  +   44,
+  +   44,
+  +   44,
+  +   44,
+  +   46,
+  +   46,
+  +   46,
+  +   46,
+  +   48,
+  +   48,
+  +   48,
+  +   48,
+  +   50
+  -   28,
+  -   28,
+  -   28,
+  -   28,
+  -   30,
+  -   30,
+  -   30,
+  -   30,
+  -   30,
+  -   30,
+  -   32,
+  -   32,
+  -   32,
+  -   32,
+  -   32,
+  -   34
+    ]
+  
+      at TestContext.<anonymous> (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-14/task-2/champions-moves-repair/poke-sim/tests/snow_defense_tests.mjs:14:46)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1201:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:831:18)
+      at Test.postRun (node:internal/test_runner/test:1330:19)
+      at Test.run (node:internal/test_runner/test:1258:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:831:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: [
+      42, 42, 42, 44, 44, 44,
+      44, 46, 46, 46, 46, 48,
+      48, 48, 48, 50
+    ],
+    expected: [
+      28, 28, 28, 28, 30, 30,
+      30, 30, 30, 30, 32, 32,
+      32, 32, 32, 34
+    ],
+    operator: 'deepStrictEqual',
+    diff: 'simple'
+  }
+
+test at tests\snow_defense_tests.mjs:13:65
+✖ SNOW-DEF-003 rounding 96/2 (179.1085ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly deep-equal:
+  + actual - expected
+  
+    [
+  +   32,
+  +   32,
+  +   32,
+  +   32,
+  +   32,
+  +   34,
+  +   34,
+  +   34,
+  +   34,
+  +   34,
+  +   36,
+  +   36,
+  +   36,
+  +   36,
+  +   36,
+  +   38
+  -   22,
+  -   22,
+  -   22,
+  -   22,
+  -   22,
+  -   22,
+  -   22,
+  -   22,
+  -   24,
+  -   24,
+  -   24,
+  -   24,
+  -   24,
+  -   24,
+  -   24,
+  -   26
+    ]
+  
+      at TestContext.<anonymous> (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-14/task-2/champions-moves-repair/poke-sim/tests/snow_defense_tests.mjs:14:46)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1201:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:831:18)
+      at Test.postRun (node:internal/test_runner/test:1330:19)
+      at Test.run (node:internal/test_runner/test:1258:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:831:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: [
+      32, 32, 32, 32, 32, 34,
+      34, 34, 34, 34, 36, 36,
+      36, 36, 36, 38
+    ],
+    expected: [
+      22, 22, 22, 22, 22, 22,
+      22, 22, 24, 24, 24, 24,
+      24, 24, 24, 26
+    ],
+    operator: 'deepStrictEqual',
+    diff: 'simple'
+  }
+
+test at tests\snow_defense_tests.mjs:13:65
+✖ SNOW-DEF-003 rounding 97/-2 (173.1919ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly deep-equal:
+  + actual - expected
+  
+    [
+  +   122,
+  +   122,
+  +   124,
+  +   126,
+  +   128,
+  +   128,
+  +   130,
+  +   132,
+  +   132,
+  +   134,
+  +   136,
+  +   138,
+  +   138,
+  +   140,
+  +   142,
+  +   144
+  -   82,
+  -   84,
+  -   84,
+  -   86,
+  -   86,
+  -   88,
+  -   88,
+  -   90,
+  -   90,
+  -   92,
+  -   92,
+  -   94,
+  -   94,
+  -   96,
+  -   96,
+  -   98
+    ]
+  
+      at TestContext.<anonymous> (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-14/task-2/champions-moves-repair/poke-sim/tests/snow_defense_tests.mjs:14:46)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1201:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:831:18)
+      at Test.postRun (node:internal/test_runner/test:1330:19)
+      at Test.run (node:internal/test_runner/test:1258:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:831:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: [
+      122, 122, 124, 126,
+      128, 128, 130, 132,
+      132, 134, 136, 138,
+      138, 140, 142, 144
+    ],
+    expected: [
+      82, 84, 84, 86, 86, 88,
+      88, 90, 90, 92, 92, 94,
+      94, 96, 96, 98
+    ],
+    operator: 'deepStrictEqual',
+    diff: 'simple'
+  }
+
+test at tests\snow_defense_tests.mjs:13:65
+✖ SNOW-DEF-003 rounding 97/-1 (175.3689ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly deep-equal:
+  + actual - expected
+  
+    [
+  +   90,
+  +   92,
+  +   92,
+  +   94,
+  +   96,
+  +   96,
+  +   98,
+  +   98,
+  +   100,
+  +   100,
+  +   102,
+  +   102,
+  +   104,
+  +   104,
+  +   106,
+  +   108
+  -   62,
+  -   62,
+  -   64,
+  -   64,
+  -   64,
+  -   66,
+  -   66,
+  -   68,
+  -   68,
+  -   68,
+  -   70,
+  -   70,
+  -   70,
+  -   72,
+  -   72,
+  -   74
+    ]
+  
+      at TestContext.<anonymous> (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-14/task-2/champions-moves-repair/poke-sim/tests/snow_defense_tests.mjs:14:46)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1201:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:831:18)
+      at Test.postRun (node:internal/test_runner/test:1330:19)
+      at Test.run (node:internal/test_runner/test:1258:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:831:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: [
+       90,  92,  92,  94,  96,  96,
+       98,  98, 100, 100, 102, 102,
+      104, 104, 106, 108
+    ],
+    expected: [
+      62, 62, 64, 64, 64, 66,
+      66, 68, 68, 68, 70, 70,
+      70, 72, 72, 74
+    ],
+    operator: 'deepStrictEqual',
+    diff: 'simple'
+  }
+
+test at tests\snow_defense_tests.mjs:13:65
+✖ SNOW-DEF-003 rounding 97/0 (215.2247ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly deep-equal:
+  + actual - expected
+  
+    [
+  +   60,
+  +   60,
+  +   62,
+  +   62,
+  +   64,
+  +   64,
+  +   64,
+  +   66,
+  +   66,
+  +   66,
+  +   68,
+  +   68,
+  +   68,
+  +   70,
+  +   70,
+  +   72
+  -   42,
+  -   42,
+  -   42,
+  -   44,
+  -   44,
+  -   44,
+  -   44,
+  -   46,
+  -   46,
+  -   46,
+  -   46,
+  -   48,
+  -   48,
+  -   48,
+  -   48,
+  -   50
+    ]
+  
+      at TestContext.<anonymous> (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-14/task-2/champions-moves-repair/poke-sim/tests/snow_defense_tests.mjs:14:46)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1201:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:831:18)
+      at Test.postRun (node:internal/test_runner/test:1330:19)
+      at Test.run (node:internal/test_runner/test:1258:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:831:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: [
+      60, 60, 62, 62, 64, 64,
+      64, 66, 66, 66, 68, 68,
+      68, 70, 70, 72
+    ],
+    expected: [
+      42, 42, 42, 44, 44, 44,
+      44, 46, 46, 46, 46, 48,
+      48, 48, 48, 50
+    ],
+    operator: 'deepStrictEqual',
+    diff: 'simple'
+  }
+
+test at tests\snow_defense_tests.mjs:13:65
+✖ SNOW-DEF-003 rounding 97/1 (139.1778ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly deep-equal:
+  + actual - expected
+  
+    [
+  +   42,
+  +   42,
+  +   42,
+  +   44,
+  +   44,
+  +   44,
+  +   44,
+  +   46,
+  +   46,
+  +   46,
+  +   46,
+  +   48,
+  +   48,
+  +   48,
+  +   48,
+  +   50
+  -   28,
+  -   28,
+  -   28,
+  -   28,
+  -   30,
+  -   30,
+  -   30,
+  -   30,
+  -   30,
+  -   30,
+  -   32,
+  -   32,
+  -   32,
+  -   32,
+  -   32,
+  -   34
+    ]
+  
+      at TestContext.<anonymous> (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-14/task-2/champions-moves-repair/poke-sim/tests/snow_defense_tests.mjs:14:46)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1201:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:831:18)
+      at Test.postRun (node:internal/test_runner/test:1330:19)
+      at Test.run (node:internal/test_runner/test:1258:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:831:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: [
+      42, 42, 42, 44, 44, 44,
+      44, 46, 46, 46, 46, 48,
+      48, 48, 48, 50
+    ],
+    expected: [
+      28, 28, 28, 28, 30, 30,
+      30, 30, 30, 30, 32, 32,
+      32, 32, 32, 34
+    ],
+    operator: 'deepStrictEqual',
+    diff: 'simple'
+  }
+
+test at tests\snow_defense_tests.mjs:13:65
+✖ SNOW-DEF-003 rounding 97/2 (170.1945ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly deep-equal:
+  + actual - expected
+  
+    [
+  +   32,
+  +   32,
+  +   32,
+  +   32,
+  +   32,
+  +   34,
+  +   34,
+  +   34,
+  +   34,
+  +   34,
+  +   36,
+  +   36,
+  +   36,
+  +   36,
+  +   36,
+  +   38
+  -   22,
+  -   22,
+  -   22,
+  -   22,
+  -   22,
+  -   22,
+  -   22,
+  -   22,
+  -   24,
+  -   24,
+  -   24,
+  -   24,
+  -   24,
+  -   24,
+  -   24,
+  -   26
+    ]
+  
+      at TestContext.<anonymous> (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-14/task-2/champions-moves-repair/poke-sim/tests/snow_defense_tests.mjs:14:46)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1201:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:831:18)
+      at Test.postRun (node:internal/test_runner/test:1330:19)
+      at Test.run (node:internal/test_runner/test:1258:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:831:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: [
+      32, 32, 32, 32, 32, 34,
+      34, 34, 34, 34, 36, 36,
+      36, 36, 36, 38
+    ],
+    expected: [
+      22, 22, 22, 22, 22, 22,
+      22, 22, 24, 24, 24, 24,
+      24, 24, 24, 26
+    ],
+    operator: 'deepStrictEqual',
+    diff: 'simple'
+  }
+
+test at tests\snow_defense_tests.mjs:16:70
+✖ SNOW-DEF-004 Neutralizing Gas (162.0524ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly deep-equal:
+  + actual - expected
+  
+    [
+  +   62,
+  +   62,
+  +   64,
+  +   64,
+  +   64,
+  +   66,
+  +   66,
+  +   68,
+  +   68,
+  +   68,
+  +   70,
+  +   70,
+  +   70,
+  +   72,
+  +   72,
+  +   74
+  -   42,
+  -   42,
+  -   42,
+  -   44,
+  -   44,
+  -   44,
+  -   44,
+  -   46,
+  -   46,
+  -   46,
+  -   46,
+  -   48,
+  -   48,
+  -   48,
+  -   48,
+  -   50
+    ]
+  
+      at TestContext.<anonymous> (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-14/task-2/champions-moves-repair/poke-sim/tests/snow_defense_tests.mjs:17:47)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1201:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:831:18)
+      at Test.postRun (node:internal/test_runner/test:1330:19)
+      at Test.run (node:internal/test_runner/test:1258:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:831:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: [
+      62, 62, 64, 64, 64, 66,
+      66, 68, 68, 68, 70, 70,
+      70, 72, 72, 74
+    ],
+    expected: [
+      42, 42, 42, 44, 44, 44,
+      44, 46, 46, 46, 46, 48,
+      48, 48, 48, 50
+    ],
+    operator: 'deepStrictEqual',
+    diff: 'simple'
+  }
+
+test at tests\snow_defense_tests.mjs:19:1
+✖ SNOW-DEF-005 non-Ice target receives no snow bonus (186.2402ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly deep-equal:
+  + actual - expected
+  
+    [
+  +   62,
+  +   62,
+  +   64,
+  +   64,
+  +   64,
+  +   66,
+  +   66,
+  +   68,
+  +   68,
+  +   68,
+  +   70,
+  +   70,
+  +   70,
+  +   72,
+  +   72,
+  +   74
+  -   31,
+  -   31,
+  -   32,
+  -   32,
+  -   32,
+  -   33,
+  -   33,
+  -   34,
+  -   34,
+  -   34,
+  -   35,
+  -   35,
+  -   35,
+  -   36,
+  -   36,
+  -   37
+    ]
+  
+      at TestContext.<anonymous> (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-14/task-2/champions-moves-repair/poke-sim/tests/snow_defense_tests.mjs:20:54)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1201:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:831:18)
+      at Test.postRun (node:internal/test_runner/test:1330:19)
+      at Test.run (node:internal/test_runner/test:1258:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:831:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: [
+      62, 62, 64, 64, 64, 66,
+      66, 68, 68, 68, 70, 70,
+      70, 72, 72, 74
+    ],
+    expected: [
+      31, 31, 32, 32, 32, 33,
+      33, 34, 34, 34, 35, 35,
+      35, 36, 36, 37
+    ],
+    operator: 'deepStrictEqual',
+    diff: 'simple'
+  }

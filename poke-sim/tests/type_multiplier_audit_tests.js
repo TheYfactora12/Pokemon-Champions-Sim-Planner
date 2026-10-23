@@ -28,7 +28,8 @@ T('1. generator and report exist', () => {
 T('2. report documents source, scope, and fixed chart examples', () => {
   const report = fs.readFileSync(reportPath, 'utf8');
   inc(report, '# Type Multiplier Audit');
-  inc(report, 'Source: smogon/pokemon-showdown data/pokedex.ts + learnsets.ts + moves.ts');
+  const source = require('../generated/pokemon_showdown_legal_data.js').source;
+  inc(report, 'Source: ' + source);
   inc(report, 'Shipped move-user rows audited:');
   inc(report, 'Electric move into Pelipper [Water/Flying] | 4x');
   inc(report, 'Ice move into Garchomp [Dragon/Ground] | 4x');
@@ -48,7 +49,7 @@ T('4. report names dynamic move-type cases and promoted Tera Blast behavior', ()
   inc(report, 'Weather Ball in rain');
   inc(report, 'Terrain Pulse in electric terrain');
   inc(report, 'Pixilate converts Normal damage to Fairy');
-  inc(report, 'active Tera Blast uses declared');
+  inc(report, 'active Tera Blast uses the declared');
   inc(report, 'Category is chosen in the damage engine from the higher boosted Attack vs Special Attack stat');
   inc(report, 'Low Kick / Grass Knot');
   inc(report, 'bp=variable(weight; showdown row 0)');
@@ -57,7 +58,7 @@ T('4. report names dynamic move-type cases and promoted Tera Blast behavior', ()
 
 T('5. generator keeps the engine-equivalent type chart examples visible', () => {
   const tool = fs.readFileSync(toolPath, 'utf8');
-  inc(tool, 'Electric: {Electric: 0.5, Grass: 0.5, Dragon: 0.5, Ground: 0, Flying: 2, Water: 2}');
+  inc(tool, "const TYPE_CHART = vm.runInContext('TYPE_CHART', ctx);");
   inc(tool, "if (move === 'Freeze-Dry' && targetType === 'Water') eff = 2;");
   inc(tool, "NORMAL_CONVERSION");
   inc(tool, "VARIABLE_BASE_POWER_DAMAGE");

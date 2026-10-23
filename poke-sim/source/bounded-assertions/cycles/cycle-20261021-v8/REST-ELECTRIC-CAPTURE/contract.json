@@ -1,0 +1,34 @@
+{
+  "schema_version": "bounded-contract-v1",
+  "assertion_id": "REST-ELECTRIC-CAPTURE.current-runtime.v8",
+  "case_id": "REST-ELECTRIC-CAPTURE",
+  "scope": {
+    "oracle_kind": "shared_reference",
+    "format": "gen9championsdoublescustomgame",
+    "regulation_id": null,
+    "client_version": null,
+    "boundaries": [
+      "grounded player slot0, missing20HP, ElectricTerrain admission rejection"
+    ]
+  },
+  "fields": [
+    {
+      "field": "hp_restored",
+      "type": "number",
+      "unit": "HP",
+      "expected": 0
+    },
+    {
+      "field": "asleep",
+      "type": "boolean",
+      "unit": "value",
+      "expected": false
+    },
+    {
+      "field": "rest_pp_spent",
+      "type": "number",
+      "unit": "PP",
+      "expected": 1
+    }
+  ]
+}

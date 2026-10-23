@@ -1,0 +1,1577 @@
+{
+  "local_result": {
+    "observations": {
+      "target_hp_loss": 29,
+      "user_hp_loss": 59,
+      "amnesia_pp_spent": 0
+    },
+    "raw": {
+      "log": [
+        "--- Turn 1 ---",
+        "Blastoise used Protect!",
+        "Blastoise used Protect!",
+        "Venusaur used Swords Dance!",
+        "Venusaur's Attack sharply rose!",
+        "Snorlax used Struggle!",
+        "Snorlax used Struggle! → Venusaur [29 dmg, 126/155 HP]",
+        "Snorlax is hit by Struggle recoil! [59 dmg]"
+      ],
+      "turnLog": [
+        {
+          "turn": 1,
+          "initial": {
+            "active": {
+              "player": [
+                "Snorlax",
+                "Blastoise"
+              ],
+              "opponent": [
+                "Venusaur",
+                "Blastoise"
+              ]
+            },
+            "bench": {
+              "player": [],
+              "opponent": []
+            },
+            "active_keys": {
+              "player": [
+                "player:active:0:Snorlax",
+                "player:active:1:Blastoise"
+              ],
+              "opponent": [
+                "opponent:active:0:Venusaur",
+                "opponent:active:1:Blastoise"
+              ]
+            },
+            "bench_keys": {
+              "player": [],
+              "opponent": []
+            },
+            "active_stable_keys": {
+              "player": [
+                "player:slot:0:Snorlax",
+                "player:slot:1:Blastoise"
+              ],
+              "opponent": [
+                "opponent:slot:0:Venusaur",
+                "opponent:slot:1:Blastoise"
+              ]
+            },
+            "bench_stable_keys": {
+              "player": [],
+              "opponent": []
+            },
+            "hp_pct": {
+              "player:active:0:Snorlax": 1,
+              "player:active:1:Blastoise": 1,
+              "opponent:active:0:Venusaur": 1,
+              "opponent:active:1:Blastoise": 1
+            },
+            "hp_pct_stable": {
+              "player:slot:0:Snorlax": 1,
+              "player:slot:1:Blastoise": 1,
+              "opponent:slot:0:Venusaur": 1,
+              "opponent:slot:1:Blastoise": 1
+            },
+            "score_state": {
+              "player": {
+                "active": [
+                  "Snorlax",
+                  "Blastoise"
+                ],
+                "bench": [],
+                "active_keys": [
+                  "player:active:0:Snorlax",
+                  "player:active:1:Blastoise"
+                ],
+                "bench_keys": [],
+                "active_stable_keys": [
+                  "player:slot:0:Snorlax",
+                  "player:slot:1:Blastoise"
+                ],
+                "bench_stable_keys": [],
+                "alive_count": 2,
+                "hp_total": 2,
+                "max_count": 2
+              },
+              "opponent": {
+                "active": [
+                  "Venusaur",
+                  "Blastoise"
+                ],
+                "bench": [],
+                "active_keys": [
+                  "opponent:active:0:Venusaur",
+                  "opponent:active:1:Blastoise"
+                ],
+                "bench_keys": [],
+                "active_stable_keys": [
+                  "opponent:slot:0:Venusaur",
+                  "opponent:slot:1:Blastoise"
+                ],
+                "bench_stable_keys": [],
+                "alive_count": 2,
+                "hp_total": 2,
+                "max_count": 2
+              }
+            },
+            "roster": {
+              "player": [
+                {
+                  "key": "player:active:0:Snorlax",
+                  "stableKey": "player:slot:0:Snorlax",
+                  "teamSlot": 0,
+                  "zone": "active",
+                  "zoneIndex": 0,
+                  "side": "player",
+                  "status": "active",
+                  "displayName": "Snorlax",
+                  "species": "Snorlax",
+                  "types": [
+                    "Normal"
+                  ],
+                  "hp": 100,
+                  "hp_current": 235,
+                  "substitute_hp": 0,
+                  "perish_song_turns": 0,
+                  "hp_max": 235,
+                  "hpLabel": "100%",
+                  "level": 50,
+                  "item": "",
+                  "itemConsumed": false,
+                  "electric_charge": false,
+                  "mc_syrup_turns": 0,
+                  "mc_trap_turns": 0,
+                  "mc_partially_trapped": false,
+                  "ability": "Immunity",
+                  "moves": [
+                    "Amnesia"
+                  ],
+                  "move_pp": {
+                    "Amnesia": {
+                      "current": 0,
+                      "max": 20
+                    }
+                  },
+                  "baseStatsLabel": "160/110/65/65/110/30",
+                  "calculatedStats": "235/130/85/85/130/50"
+                },
+                {
+                  "key": "player:active:1:Blastoise",
+                  "stableKey": "player:slot:1:Blastoise",
+                  "teamSlot": 1,
+                  "zone": "active",
+                  "zoneIndex": 1,
+                  "side": "player",
+                  "status": "active",
+                  "displayName": "Blastoise",
+                  "species": "Blastoise",
+                  "types": [
+                    "Water"
+                  ],
+                  "hp": 100,
+                  "hp_current": 154,
+                  "substitute_hp": 0,
+                  "perish_song_turns": 0,
+                  "hp_max": 154,
+                  "hpLabel": "100%",
+                  "level": 50,
+                  "item": "",
+                  "itemConsumed": false,
+                  "electric_charge": false,
+                  "mc_syrup_turns": 0,
+                  "mc_trap_turns": 0,
+                  "mc_partially_trapped": false,
+                  "ability": "Torrent",
+                  "moves": [
+                    "Protect"
+                  ],
+                  "move_pp": {
+                    "Protect": {
+                      "current": 8,
+                      "max": 8
+                    }
+                  },
+                  "baseStatsLabel": "79/83/100/85/105/78",
+                  "calculatedStats": "154/103/120/105/125/98"
+                }
+              ],
+              "opponent": [
+                {
+                  "key": "opponent:active:0:Venusaur",
+                  "stableKey": "opponent:slot:0:Venusaur",
+                  "teamSlot": 0,
+                  "zone": "active",
+                  "zoneIndex": 0,
+                  "side": "opponent",
+                  "status": "active",
+                  "displayName": "Venusaur",
+                  "species": "Venusaur",
+                  "types": [
+                    "Grass",
+                    "Poison"
+                  ],
+                  "hp": 100,
+                  "hp_current": 155,
+                  "substitute_hp": 0,
+                  "perish_song_turns": 0,
+                  "hp_max": 155,
+                  "hpLabel": "100%",
+                  "level": 50,
+                  "item": "",
+                  "itemConsumed": false,
+                  "electric_charge": false,
+                  "mc_syrup_turns": 0,
+                  "mc_trap_turns": 0,
+                  "mc_partially_trapped": false,
+                  "ability": "Overgrow",
+                  "moves": [
+                    "Swords Dance"
+                  ],
+                  "move_pp": {
+                    "Swords Dance": {
+                      "current": 20,
+                      "max": 20
+                    }
+                  },
+                  "baseStatsLabel": "80/82/83/100/100/80",
+                  "calculatedStats": "155/102/103/120/120/100"
+                },
+                {
+                  "key": "opponent:active:1:Blastoise",
+                  "stableKey": "opponent:slot:1:Blastoise",
+                  "teamSlot": 1,
+                  "zone": "active",
+                  "zoneIndex": 1,
+                  "side": "opponent",
+                  "status": "active",
+                  "displayName": "Blastoise",
+                  "species": "Blastoise",
+                  "types": [
+                    "Water"
+                  ],
+                  "hp": 100,
+                  "hp_current": 154,
+                  "substitute_hp": 0,
+                  "perish_song_turns": 0,
+                  "hp_max": 154,
+                  "hpLabel": "100%",
+                  "level": 50,
+                  "item": "",
+                  "itemConsumed": false,
+                  "electric_charge": false,
+                  "mc_syrup_turns": 0,
+                  "mc_trap_turns": 0,
+                  "mc_partially_trapped": false,
+                  "ability": "Torrent",
+                  "moves": [
+                    "Protect"
+                  ],
+                  "move_pp": {
+                    "Protect": {
+                      "current": 8,
+                      "max": 8
+                    }
+                  },
+                  "baseStatsLabel": "79/83/100/85/105/78",
+                  "calculatedStats": "154/103/120/105/125/98"
+                }
+              ]
+            },
+            "status": {},
+            "status_stable": {},
+            "stat_boosts": {},
+            "stat_boosts_stable": {},
+            "field": {
+              "weather": null,
+              "weather_turns": 0,
+              "gravity_turns": 0,
+              "terrain": null,
+              "terrain_turns": 0,
+              "trick_room": 0
+            },
+            "speed_control": {
+              "player": {
+                "tailwind_turns": 0,
+                "screens": {
+                  "reflect": 0,
+                  "light": 0,
+                  "aurora": 0
+                }
+              },
+              "opponent": {
+                "tailwind_turns": 0,
+                "screens": {
+                  "reflect": 0,
+                  "light": 0,
+                  "aurora": 0
+                }
+              }
+            },
+            "speed_order": [
+              "Venusaur",
+              "Blastoise",
+              "Blastoise",
+              "Snorlax"
+            ],
+            "speed_order_keys": [
+              "opponent:active:0:Venusaur",
+              "player:active:1:Blastoise",
+              "opponent:active:1:Blastoise",
+              "player:active:0:Snorlax"
+            ],
+            "speed_order_stable_keys": [
+              "opponent:slot:0:Venusaur",
+              "player:slot:1:Blastoise",
+              "opponent:slot:1:Blastoise",
+              "player:slot:0:Snorlax"
+            ],
+            "speed_order_details": [
+              {
+                "side": "opponent",
+                "key": "opponent:active:0:Venusaur",
+                "stableKey": "opponent:slot:0:Venusaur",
+                "pokemon": "Venusaur",
+                "stat_format": "champions",
+                "nature": "Hardy",
+                "speed_points": 0,
+                "species_base_speed": 80,
+                "base_speed": 100,
+                "calculated_speed": 100,
+                "speed_stage": 0,
+                "effective_speed": 100,
+                "item": "",
+                "ability": "Overgrow",
+                "status": "",
+                "tailwind": false,
+                "trick_room": false,
+                "weather": "none",
+                "exact_speed_tie": false
+              },
+              {
+                "side": "player",
+                "key": "player:active:1:Blastoise",
+                "stableKey": "player:slot:1:Blastoise",
+                "pokemon": "Blastoise",
+                "stat_format": "champions",
+                "nature": "Hardy",
+                "speed_points": 0,
+                "species_base_speed": 78,
+                "base_speed": 98,
+                "calculated_speed": 98,
+                "speed_stage": 0,
+                "effective_speed": 98,
+                "item": "",
+                "ability": "Torrent",
+                "status": "",
+                "tailwind": false,
+                "trick_room": false,
+                "weather": "none",
+                "exact_speed_tie": true
+              },
+              {
+                "side": "opponent",
+                "key": "opponent:active:1:Blastoise",
+                "stableKey": "opponent:slot:1:Blastoise",
+                "pokemon": "Blastoise",
+                "stat_format": "champions",
+                "nature": "Hardy",
+                "speed_points": 0,
+                "species_base_speed": 78,
+                "base_speed": 98,
+                "calculated_speed": 98,
+                "speed_stage": 0,
+                "effective_speed": 98,
+                "item": "",
+                "ability": "Torrent",
+                "status": "",
+                "tailwind": false,
+                "trick_room": false,
+                "weather": "none",
+                "exact_speed_tie": true
+              },
+              {
+                "side": "player",
+                "key": "player:active:0:Snorlax",
+                "stableKey": "player:slot:0:Snorlax",
+                "pokemon": "Snorlax",
+                "stat_format": "champions",
+                "nature": "Hardy",
+                "speed_points": 0,
+                "species_base_speed": 30,
+                "base_speed": 50,
+                "calculated_speed": 50,
+                "speed_stage": 0,
+                "effective_speed": 50,
+                "item": "",
+                "ability": "Immunity",
+                "status": "",
+                "tailwind": false,
+                "trick_room": false,
+                "weather": "none",
+                "exact_speed_tie": false
+              }
+            ],
+            "legal_options": {},
+            "position_score": 0.493,
+            "win_probability": null
+          },
+          "playerHP": [
+            1,
+            1
+          ],
+          "oppHP": [
+            1,
+            1
+          ],
+          "activePair": [
+            "Snorlax",
+            "Blastoise",
+            "Venusaur",
+            "Blastoise"
+          ],
+          "action": "Snorlax:Struggle | Blastoise:Protect | Venusaur:Swords Dance | Blastoise:Protect",
+          "positionScore": 0.493,
+          "pre": {
+            "active": {
+              "player": [
+                "Snorlax",
+                "Blastoise"
+              ],
+              "opponent": [
+                "Venusaur",
+                "Blastoise"
+              ]
+            },
+            "bench": {
+              "player": [],
+              "opponent": []
+            },
+            "active_keys": {
+              "player": [
+                "player:active:0:Snorlax",
+                "player:active:1:Blastoise"
+              ],
+              "opponent": [
+                "opponent:active:0:Venusaur",
+                "opponent:active:1:Blastoise"
+              ]
+            },
+            "bench_keys": {
+              "player": [],
+              "opponent": []
+            },
+            "active_stable_keys": {
+              "player": [
+                "player:slot:0:Snorlax",
+                "player:slot:1:Blastoise"
+              ],
+              "opponent": [
+                "opponent:slot:0:Venusaur",
+                "opponent:slot:1:Blastoise"
+              ]
+            },
+            "bench_stable_keys": {
+              "player": [],
+              "opponent": []
+            },
+            "hp_pct": {
+              "player:active:0:Snorlax": 1,
+              "player:active:1:Blastoise": 1,
+              "opponent:active:0:Venusaur": 1,
+              "opponent:active:1:Blastoise": 1
+            },
+            "hp_pct_stable": {
+              "player:slot:0:Snorlax": 1,
+              "player:slot:1:Blastoise": 1,
+              "opponent:slot:0:Venusaur": 1,
+              "opponent:slot:1:Blastoise": 1
+            },
+            "score_state": {
+              "player": {
+                "active": [
+                  "Snorlax",
+                  "Blastoise"
+                ],
+                "bench": [],
+                "active_keys": [
+                  "player:active:0:Snorlax",
+                  "player:active:1:Blastoise"
+                ],
+                "bench_keys": [],
+                "active_stable_keys": [
+                  "player:slot:0:Snorlax",
+                  "player:slot:1:Blastoise"
+                ],
+                "bench_stable_keys": [],
+                "alive_count": 2,
+                "hp_total": 2,
+                "max_count": 2
+              },
+              "opponent": {
+                "active": [
+                  "Venusaur",
+                  "Blastoise"
+                ],
+                "bench": [],
+                "active_keys": [
+                  "opponent:active:0:Venusaur",
+                  "opponent:active:1:Blastoise"
+                ],
+                "bench_keys": [],
+                "active_stable_keys": [
+                  "opponent:slot:0:Venusaur",
+                  "opponent:slot:1:Blastoise"
+                ],
+                "bench_stable_keys": [],
+                "alive_count": 2,
+                "hp_total": 2,
+                "max_count": 2
+              }
+            },
+            "roster": {
+              "player": [
+                {
+                  "key": "player:active:0:Snorlax",
+                  "stableKey": "player:slot:0:Snorlax",
+                  "teamSlot": 0,
+                  "zone": "active",
+                  "zoneIndex": 0,
+                  "side": "player",
+                  "status": "active",
+                  "displayName": "Snorlax",
+                  "species": "Snorlax",
+                  "types": [
+                    "Normal"
+                  ],
+                  "hp": 100,
+                  "hp_current": 235,
+                  "substitute_hp": 0,
+                  "perish_song_turns": 0,
+                  "hp_max": 235,
+                  "hpLabel": "100%",
+                  "level": 50,
+                  "item": "",
+                  "itemConsumed": false,
+                  "electric_charge": false,
+                  "mc_syrup_turns": 0,
+                  "mc_trap_turns": 0,
+                  "mc_partially_trapped": false,
+                  "ability": "Immunity",
+                  "moves": [
+                    "Amnesia"
+                  ],
+                  "move_pp": {
+                    "Amnesia": {
+                      "current": 0,
+                      "max": 20
+                    }
+                  },
+                  "baseStatsLabel": "160/110/65/65/110/30",
+                  "calculatedStats": "235/130/85/85/130/50"
+                },
+                {
+                  "key": "player:active:1:Blastoise",
+                  "stableKey": "player:slot:1:Blastoise",
+                  "teamSlot": 1,
+                  "zone": "active",
+                  "zoneIndex": 1,
+                  "side": "player",
+                  "status": "active",
+                  "displayName": "Blastoise",
+                  "species": "Blastoise",
+                  "types": [
+                    "Water"
+                  ],
+                  "hp": 100,
+                  "hp_current": 154,
+                  "substitute_hp": 0,
+                  "perish_song_turns": 0,
+                  "hp_max": 154,
+                  "hpLabel": "100%",
+                  "level": 50,
+                  "item": "",
+                  "itemConsumed": false,
+                  "electric_charge": false,
+                  "mc_syrup_turns": 0,
+                  "mc_trap_turns": 0,
+                  "mc_partially_trapped": false,
+                  "ability": "Torrent",
+                  "moves": [
+                    "Protect"
+                  ],
+                  "move_pp": {
+                    "Protect": {
+                      "current": 8,
+                      "max": 8
+                    }
+                  },
+                  "baseStatsLabel": "79/83/100/85/105/78",
+                  "calculatedStats": "154/103/120/105/125/98"
+                }
+              ],
+              "opponent": [
+                {
+                  "key": "opponent:active:0:Venusaur",
+                  "stableKey": "opponent:slot:0:Venusaur",
+                  "teamSlot": 0,
+                  "zone": "active",
+                  "zoneIndex": 0,
+                  "side": "opponent",
+                  "status": "active",
+                  "displayName": "Venusaur",
+                  "species": "Venusaur",
+                  "types": [
+                    "Grass",
+                    "Poison"
+                  ],
+                  "hp": 100,
+                  "hp_current": 155,
+                  "substitute_hp": 0,
+                  "perish_song_turns": 0,
+                  "hp_max": 155,
+                  "hpLabel": "100%",
+                  "level": 50,
+                  "item": "",
+                  "itemConsumed": false,
+                  "electric_charge": false,
+                  "mc_syrup_turns": 0,
+                  "mc_trap_turns": 0,
+                  "mc_partially_trapped": false,
+                  "ability": "Overgrow",
+                  "moves": [
+                    "Swords Dance"
+                  ],
+                  "move_pp": {
+                    "Swords Dance": {
+                      "current": 20,
+                      "max": 20
+                    }
+                  },
+                  "baseStatsLabel": "80/82/83/100/100/80",
+                  "calculatedStats": "155/102/103/120/120/100"
+                },
+                {
+                  "key": "opponent:active:1:Blastoise",
+                  "stableKey": "opponent:slot:1:Blastoise",
+                  "teamSlot": 1,
+                  "zone": "active",
+                  "zoneIndex": 1,
+                  "side": "opponent",
+                  "status": "active",
+                  "displayName": "Blastoise",
+                  "species": "Blastoise",
+                  "types": [
+                    "Water"
+                  ],
+                  "hp": 100,
+                  "hp_current": 154,
+                  "substitute_hp": 0,
+                  "perish_song_turns": 0,
+                  "hp_max": 154,
+                  "hpLabel": "100%",
+                  "level": 50,
+                  "item": "",
+                  "itemConsumed": false,
+                  "electric_charge": false,
+                  "mc_syrup_turns": 0,
+                  "mc_trap_turns": 0,
+                  "mc_partially_trapped": false,
+                  "ability": "Torrent",
+                  "moves": [
+                    "Protect"
+                  ],
+                  "move_pp": {
+                    "Protect": {
+                      "current": 8,
+                      "max": 8
+                    }
+                  },
+                  "baseStatsLabel": "79/83/100/85/105/78",
+                  "calculatedStats": "154/103/120/105/125/98"
+                }
+              ]
+            },
+            "status": {},
+            "status_stable": {},
+            "stat_boosts": {},
+            "stat_boosts_stable": {},
+            "field": {
+              "weather": null,
+              "weather_turns": 0,
+              "gravity_turns": 0,
+              "terrain": null,
+              "terrain_turns": 0,
+              "trick_room": 0
+            },
+            "speed_control": {
+              "player": {
+                "tailwind_turns": 0,
+                "screens": {
+                  "reflect": 0,
+                  "light": 0,
+                  "aurora": 0
+                }
+              },
+              "opponent": {
+                "tailwind_turns": 0,
+                "screens": {
+                  "reflect": 0,
+                  "light": 0,
+                  "aurora": 0
+                }
+              }
+            },
+            "speed_order": [
+              "Venusaur",
+              "Blastoise",
+              "Blastoise",
+              "Snorlax"
+            ],
+            "speed_order_keys": [
+              "opponent:active:0:Venusaur",
+              "player:active:1:Blastoise",
+              "opponent:active:1:Blastoise",
+              "player:active:0:Snorlax"
+            ],
+            "speed_order_stable_keys": [
+              "opponent:slot:0:Venusaur",
+              "player:slot:1:Blastoise",
+              "opponent:slot:1:Blastoise",
+              "player:slot:0:Snorlax"
+            ],
+            "speed_order_details": [
+              {
+                "side": "opponent",
+                "key": "opponent:active:0:Venusaur",
+                "stableKey": "opponent:slot:0:Venusaur",
+                "pokemon": "Venusaur",
+                "stat_format": "champions",
+                "nature": "Hardy",
+                "speed_points": 0,
+                "species_base_speed": 80,
+                "base_speed": 100,
+                "calculated_speed": 100,
+                "speed_stage": 0,
+                "effective_speed": 100,
+                "item": "",
+                "ability": "Overgrow",
+                "status": "",
+                "tailwind": false,
+                "trick_room": false,
+                "weather": "none",
+                "exact_speed_tie": false
+              },
+              {
+                "side": "player",
+                "key": "player:active:1:Blastoise",
+                "stableKey": "player:slot:1:Blastoise",
+                "pokemon": "Blastoise",
+                "stat_format": "champions",
+                "nature": "Hardy",
+                "speed_points": 0,
+                "species_base_speed": 78,
+                "base_speed": 98,
+                "calculated_speed": 98,
+                "speed_stage": 0,
+                "effective_speed": 98,
+                "item": "",
+                "ability": "Torrent",
+                "status": "",
+                "tailwind": false,
+                "trick_room": false,
+                "weather": "none",
+                "exact_speed_tie": true
+              },
+              {
+                "side": "opponent",
+                "key": "opponent:active:1:Blastoise",
+                "stableKey": "opponent:slot:1:Blastoise",
+                "pokemon": "Blastoise",
+                "stat_format": "champions",
+                "nature": "Hardy",
+                "speed_points": 0,
+                "species_base_speed": 78,
+                "base_speed": 98,
+                "calculated_speed": 98,
+                "speed_stage": 0,
+                "effective_speed": 98,
+                "item": "",
+                "ability": "Torrent",
+                "status": "",
+                "tailwind": false,
+                "trick_room": false,
+                "weather": "none",
+                "exact_speed_tie": true
+              },
+              {
+                "side": "player",
+                "key": "player:active:0:Snorlax",
+                "stableKey": "player:slot:0:Snorlax",
+                "pokemon": "Snorlax",
+                "stat_format": "champions",
+                "nature": "Hardy",
+                "speed_points": 0,
+                "species_base_speed": 30,
+                "base_speed": 50,
+                "calculated_speed": 50,
+                "speed_stage": 0,
+                "effective_speed": 50,
+                "item": "",
+                "ability": "Immunity",
+                "status": "",
+                "tailwind": false,
+                "trick_room": false,
+                "weather": "none",
+                "exact_speed_tie": false
+              }
+            ],
+            "legal_options": {
+              "Snorlax": [
+                "Amnesia -> Venusaur"
+              ],
+              "Blastoise": [
+                "Protect -> Venusaur"
+              ]
+            },
+            "position_score": 0.493,
+            "win_probability": null
+          },
+          "actions": {
+            "player": [
+              {
+                "actor": "Snorlax",
+                "actor_key": "player:slot:0:Snorlax",
+                "kind": "move",
+                "move": "Struggle",
+                "target": "Venusaur",
+                "target_key": "opponent:slot:0:Venusaur",
+                "target_side": "opponent"
+              },
+              {
+                "actor": "Blastoise",
+                "actor_key": "player:slot:1:Blastoise",
+                "kind": "move",
+                "move": "Protect",
+                "target": "Venusaur",
+                "target_key": "opponent:slot:0:Venusaur",
+                "target_side": "opponent"
+              }
+            ],
+            "opponent": [
+              {
+                "actor": "Venusaur",
+                "actor_key": "opponent:slot:0:Venusaur",
+                "kind": "move",
+                "move": "Swords Dance",
+                "target": "Snorlax",
+                "target_key": "player:slot:0:Snorlax",
+                "target_side": "player"
+              },
+              {
+                "actor": "Blastoise",
+                "actor_key": "opponent:slot:1:Blastoise",
+                "kind": "move",
+                "move": "Protect",
+                "target": "Snorlax",
+                "target_key": "player:slot:0:Snorlax",
+                "target_side": "player"
+              }
+            ]
+          },
+          "events": [
+            {
+              "type": "log",
+              "text": "Blastoise used Protect!",
+              "actor": "Blastoise",
+              "actor_key": "opponent:slot:1:Blastoise",
+              "side": "opponent",
+              "move": "Protect",
+              "target": "Snorlax",
+              "target_key": "player:slot:0:Snorlax",
+              "target_side": "player",
+              "log_index": 0,
+              "called_by": null
+            },
+            {
+              "type": "log",
+              "text": "Blastoise used Protect!",
+              "actor": "Blastoise",
+              "actor_key": "player:slot:1:Blastoise",
+              "side": "player",
+              "move": "Protect",
+              "target": "Venusaur",
+              "target_key": "opponent:slot:0:Venusaur",
+              "target_side": "opponent",
+              "log_index": 1,
+              "called_by": null
+            },
+            {
+              "type": "log",
+              "text": "Venusaur used Swords Dance!",
+              "actor": "Venusaur",
+              "actor_key": "opponent:slot:0:Venusaur",
+              "side": "opponent",
+              "move": "Swords Dance",
+              "target": "Snorlax",
+              "target_key": "player:slot:0:Snorlax",
+              "target_side": "player",
+              "log_index": 2,
+              "called_by": null
+            },
+            {
+              "type": "log",
+              "text": "Venusaur's Attack sharply rose!"
+            },
+            {
+              "type": "log",
+              "text": "Snorlax used Struggle!",
+              "actor": "Snorlax",
+              "actor_key": "player:slot:0:Snorlax",
+              "side": "player",
+              "move": "Struggle",
+              "target": "Venusaur",
+              "target_key": "opponent:slot:0:Venusaur",
+              "target_side": "opponent",
+              "log_index": 4,
+              "called_by": null
+            },
+            {
+              "type": "damage",
+              "text": "Snorlax used Struggle! → Venusaur [29 dmg, 126/155 HP]"
+            },
+            {
+              "type": "damage",
+              "text": "Snorlax is hit by Struggle recoil! [59 dmg]"
+            }
+          ],
+          "damage_events": [
+            {
+              "attacker": "Snorlax",
+              "attacker_key": "player:slot:0:Snorlax",
+              "target": "Venusaur",
+              "target_key": "opponent:slot:0:Venusaur",
+              "move": "Struggle",
+              "damage_kind": "calculated",
+              "damage": 29,
+              "applied_damage": 29,
+              "hp_delta": 29,
+              "calculated_damage": 29,
+              "overkill_damage": 0,
+              "damage_capped_by_hp": false,
+              "target_hp_before": 155,
+              "target_hp_after": 126,
+              "target_max_hp": 155,
+              "target_survived": true,
+              "move_context": "User loses 1/4 of its max HP.",
+              "effect_tags": [],
+              "move_type": "???",
+              "category": "physical",
+              "type_effectiveness": 1,
+              "critical": false,
+              "base_power_initial": 50,
+              "base_power_modified": 50,
+              "attack_stat_key": "atk",
+              "defense_stat_key": "def",
+              "attack_stat_stage": 0,
+              "defense_stat_stage": 0,
+              "attack_stat_stage_used": 0,
+              "defense_stat_stage_used": 0,
+              "attack_stat_value": 130,
+              "defense_stat_value": 103,
+              "attacker_stat_format": "champions",
+              "defender_stat_format": "champions",
+              "attacker_item": "",
+              "defender_item": "",
+              "attacker_ability": "Immunity",
+              "defender_ability": "Overgrow",
+              "typed_item_boost": false,
+              "typed_item_boost_mod": 4096,
+              "knock_off_boost": false,
+              "knock_off_boost_mod": 4096,
+              "spread_mod": 4096,
+              "weather_mod": 4096,
+              "screen_mod": 4096,
+              "stab_mod": 4096,
+              "final_mod": 4096,
+              "resist_berry_mod": 4096,
+              "status_penalty": false,
+              "roll": 1,
+              "weather": "none",
+              "terrain": "none",
+              "move_rule_trace": {
+                "schema_version": "champions-move-rule-trace-v1",
+                "source": "engine.calcDamage",
+                "move": "Struggle",
+                "move_type": "???",
+                "category": "physical",
+                "offensive_stat": {
+                  "source_role": "attacker",
+                  "source_side": "player",
+                  "source_name": "Snorlax",
+                  "source_key": "player:slot:0:Snorlax",
+                  "stat_key": "atk",
+                  "stage_seen": 0,
+                  "stage_used": 0,
+                  "value_used": 130,
+                  "ability": "Immunity",
+                  "target_side_power_ability_ignored": false,
+                  "user_side_power_ability_applied": false
+                },
+                "defensive_stat": {
+                  "source_role": "target",
+                  "source_side": "opponent",
+                  "source_name": "Venusaur",
+                  "source_key": "opponent:slot:0:Venusaur",
+                  "stat_key": "def",
+                  "stage_seen": 0,
+                  "stage_used": 0,
+                  "value_used": 103,
+                  "ability": "Overgrow"
+                },
+                "modifiers": {
+                  "base_power_initial": 50,
+                  "base_power_modified": 50,
+                  "typed_item_boost": false,
+                  "typed_item_boost_mod": 4096,
+                  "knock_off_boost": false,
+                  "knock_off_boost_mod": 4096,
+                  "spread_mod": 4096,
+                  "weather_mod": 4096,
+                  "screen_mod": 4096,
+                  "stab_mod": 4096,
+                  "final_mod": 4096,
+                  "resist_berry_mod": 4096,
+                  "status_penalty": false,
+                  "critical": false,
+                  "roll": 1,
+                  "type_effectiveness": 1
+                },
+                "ruleset_flags": {
+                  "nonstandard_offensive_stat_source": false,
+                  "nonstandard_defensive_stat": false,
+                  "foul_play_target_attack_source": false,
+                  "foul_play_target_power_ability_ignored": false,
+                  "user_physical_power_ability_applied_to_nonstandard_source": false,
+                  "psyshock_targets_defense": false,
+                  "body_press_uses_user_defense": false,
+                  "champion_choice_item_modifiers_absent": false
+                }
+              }
+            }
+          ],
+          "effect_events": [
+            {
+              "actor": "Snorlax",
+              "actor_key": "player:slot:0:Snorlax",
+              "side": "player",
+              "move": "Struggle",
+              "effect_kind": "recoil",
+              "hp_before": 235,
+              "hp_after": 176,
+              "hp_delta": -59,
+              "max_hp": 235,
+              "source": "pokemon-showdown move metadata + engine rule",
+              "move_context": "User loses 1/4 of its max HP.",
+              "rule": {
+                "numerator": 1,
+                "denominator": 4,
+                "basis": "max_hp",
+                "rounding": "half_up"
+              },
+              "calculated_effect_damage": 59,
+              "damage_applied_to_user": 59
+            }
+          ],
+          "post": {
+            "active": {
+              "player": [
+                "Snorlax",
+                "Blastoise"
+              ],
+              "opponent": [
+                "Venusaur",
+                "Blastoise"
+              ]
+            },
+            "bench": {
+              "player": [],
+              "opponent": []
+            },
+            "active_keys": {
+              "player": [
+                "player:active:0:Snorlax",
+                "player:active:1:Blastoise"
+              ],
+              "opponent": [
+                "opponent:active:0:Venusaur",
+                "opponent:active:1:Blastoise"
+              ]
+            },
+            "bench_keys": {
+              "player": [],
+              "opponent": []
+            },
+            "active_stable_keys": {
+              "player": [
+                "player:slot:0:Snorlax",
+                "player:slot:1:Blastoise"
+              ],
+              "opponent": [
+                "opponent:slot:0:Venusaur",
+                "opponent:slot:1:Blastoise"
+              ]
+            },
+            "bench_stable_keys": {
+              "player": [],
+              "opponent": []
+            },
+            "hp_pct": {
+              "player:active:0:Snorlax": 0.749,
+              "player:active:1:Blastoise": 1,
+              "opponent:active:0:Venusaur": 0.813,
+              "opponent:active:1:Blastoise": 1
+            },
+            "hp_pct_stable": {
+              "player:slot:0:Snorlax": 0.749,
+              "player:slot:1:Blastoise": 1,
+              "opponent:slot:0:Venusaur": 0.813,
+              "opponent:slot:1:Blastoise": 1
+            },
+            "score_state": {
+              "player": {
+                "active": [
+                  "Snorlax",
+                  "Blastoise"
+                ],
+                "bench": [],
+                "active_keys": [
+                  "player:active:0:Snorlax",
+                  "player:active:1:Blastoise"
+                ],
+                "bench_keys": [],
+                "active_stable_keys": [
+                  "player:slot:0:Snorlax",
+                  "player:slot:1:Blastoise"
+                ],
+                "bench_stable_keys": [],
+                "alive_count": 2,
+                "hp_total": 1.748936170212766,
+                "max_count": 2
+              },
+              "opponent": {
+                "active": [
+                  "Venusaur",
+                  "Blastoise"
+                ],
+                "bench": [],
+                "active_keys": [
+                  "opponent:active:0:Venusaur",
+                  "opponent:active:1:Blastoise"
+                ],
+                "bench_keys": [],
+                "active_stable_keys": [
+                  "opponent:slot:0:Venusaur",
+                  "opponent:slot:1:Blastoise"
+                ],
+                "bench_stable_keys": [],
+                "alive_count": 2,
+                "hp_total": 1.8129032258064517,
+                "max_count": 2
+              }
+            },
+            "roster": {
+              "player": [
+                {
+                  "key": "player:active:0:Snorlax",
+                  "stableKey": "player:slot:0:Snorlax",
+                  "teamSlot": 0,
+                  "zone": "active",
+                  "zoneIndex": 0,
+                  "side": "player",
+                  "status": "active",
+                  "displayName": "Snorlax",
+                  "species": "Snorlax",
+                  "types": [
+                    "Normal"
+                  ],
+                  "hp": 75,
+                  "hp_current": 176,
+                  "substitute_hp": 0,
+                  "perish_song_turns": 0,
+                  "hp_max": 235,
+                  "hpLabel": "75%",
+                  "level": 50,
+                  "item": "",
+                  "itemConsumed": false,
+                  "electric_charge": false,
+                  "mc_syrup_turns": 0,
+                  "mc_trap_turns": 0,
+                  "mc_partially_trapped": false,
+                  "ability": "Immunity",
+                  "moves": [
+                    "Amnesia"
+                  ],
+                  "move_pp": {
+                    "Amnesia": {
+                      "current": 0,
+                      "max": 20
+                    }
+                  },
+                  "baseStatsLabel": "160/110/65/65/110/30",
+                  "calculatedStats": "235/130/85/85/130/50"
+                },
+                {
+                  "key": "player:active:1:Blastoise",
+                  "stableKey": "player:slot:1:Blastoise",
+                  "teamSlot": 1,
+                  "zone": "active",
+                  "zoneIndex": 1,
+                  "side": "player",
+                  "status": "active",
+                  "displayName": "Blastoise",
+                  "species": "Blastoise",
+                  "types": [
+                    "Water"
+                  ],
+                  "hp": 100,
+                  "hp_current": 154,
+                  "substitute_hp": 0,
+                  "perish_song_turns": 0,
+                  "hp_max": 154,
+                  "hpLabel": "100%",
+                  "level": 50,
+                  "item": "",
+                  "itemConsumed": false,
+                  "electric_charge": false,
+                  "mc_syrup_turns": 0,
+                  "mc_trap_turns": 0,
+                  "mc_partially_trapped": false,
+                  "ability": "Torrent",
+                  "moves": [
+                    "Protect"
+                  ],
+                  "move_pp": {
+                    "Protect": {
+                      "current": 7,
+                      "max": 8
+                    }
+                  },
+                  "baseStatsLabel": "79/83/100/85/105/78",
+                  "calculatedStats": "154/103/120/105/125/98"
+                }
+              ],
+              "opponent": [
+                {
+                  "key": "opponent:active:0:Venusaur",
+                  "stableKey": "opponent:slot:0:Venusaur",
+                  "teamSlot": 0,
+                  "zone": "active",
+                  "zoneIndex": 0,
+                  "side": "opponent",
+                  "status": "active",
+                  "displayName": "Venusaur",
+                  "species": "Venusaur",
+                  "types": [
+                    "Grass",
+                    "Poison"
+                  ],
+                  "hp": 81,
+                  "hp_current": 126,
+                  "substitute_hp": 0,
+                  "perish_song_turns": 0,
+                  "hp_max": 155,
+                  "hpLabel": "81%",
+                  "level": 50,
+                  "item": "",
+                  "itemConsumed": false,
+                  "electric_charge": false,
+                  "mc_syrup_turns": 0,
+                  "mc_trap_turns": 0,
+                  "mc_partially_trapped": false,
+                  "ability": "Overgrow",
+                  "moves": [
+                    "Swords Dance"
+                  ],
+                  "move_pp": {
+                    "Swords Dance": {
+                      "current": 19,
+                      "max": 20
+                    }
+                  },
+                  "baseStatsLabel": "80/82/83/100/100/80",
+                  "calculatedStats": "155/102/103/120/120/100"
+                },
+                {
+                  "key": "opponent:active:1:Blastoise",
+                  "stableKey": "opponent:slot:1:Blastoise",
+                  "teamSlot": 1,
+                  "zone": "active",
+                  "zoneIndex": 1,
+                  "side": "opponent",
+                  "status": "active",
+                  "displayName": "Blastoise",
+                  "species": "Blastoise",
+                  "types": [
+                    "Water"
+                  ],
+                  "hp": 100,
+                  "hp_current": 154,
+                  "substitute_hp": 0,
+                  "perish_song_turns": 0,
+                  "hp_max": 154,
+                  "hpLabel": "100%",
+                  "level": 50,
+                  "item": "",
+                  "itemConsumed": false,
+                  "electric_charge": false,
+                  "mc_syrup_turns": 0,
+                  "mc_trap_turns": 0,
+                  "mc_partially_trapped": false,
+                  "ability": "Torrent",
+                  "moves": [
+                    "Protect"
+                  ],
+                  "move_pp": {
+                    "Protect": {
+                      "current": 7,
+                      "max": 8
+                    }
+                  },
+                  "baseStatsLabel": "79/83/100/85/105/78",
+                  "calculatedStats": "154/103/120/105/125/98"
+                }
+              ]
+            },
+            "status": {},
+            "status_stable": {},
+            "stat_boosts": {
+              "opponent:active:0:Venusaur": {
+                "atk": 2,
+                "def": 0,
+                "spa": 0,
+                "spd": 0,
+                "spe": 0,
+                "acc": 0,
+                "eva": 0
+              }
+            },
+            "stat_boosts_stable": {
+              "opponent:slot:0:Venusaur": {
+                "atk": 2,
+                "def": 0,
+                "spa": 0,
+                "spd": 0,
+                "spe": 0,
+                "acc": 0,
+                "eva": 0
+              }
+            },
+            "field": {
+              "weather": null,
+              "weather_turns": 0,
+              "gravity_turns": 0,
+              "terrain": null,
+              "terrain_turns": 0,
+              "trick_room": 0
+            },
+            "speed_control": {
+              "player": {
+                "tailwind_turns": 0,
+                "screens": {
+                  "reflect": 0,
+                  "light": 0,
+                  "aurora": 0
+                }
+              },
+              "opponent": {
+                "tailwind_turns": 0,
+                "screens": {
+                  "reflect": 0,
+                  "light": 0,
+                  "aurora": 0
+                }
+              }
+            },
+            "speed_order": [
+              "Venusaur",
+              "Blastoise",
+              "Blastoise",
+              "Snorlax"
+            ],
+            "speed_order_keys": [
+              "opponent:active:0:Venusaur",
+              "player:active:1:Blastoise",
+              "opponent:active:1:Blastoise",
+              "player:active:0:Snorlax"
+            ],
+            "speed_order_stable_keys": [
+              "opponent:slot:0:Venusaur",
+              "player:slot:1:Blastoise",
+              "opponent:slot:1:Blastoise",
+              "player:slot:0:Snorlax"
+            ],
+            "speed_order_details": [
+              {
+                "side": "opponent",
+                "key": "opponent:active:0:Venusaur",
+                "stableKey": "opponent:slot:0:Venusaur",
+                "pokemon": "Venusaur",
+                "stat_format": "champions",
+                "nature": "Hardy",
+                "speed_points": 0,
+                "species_base_speed": 80,
+                "base_speed": 100,
+                "calculated_speed": 100,
+                "speed_stage": 0,
+                "effective_speed": 100,
+                "item": "",
+                "ability": "Overgrow",
+                "status": "",
+                "tailwind": false,
+                "trick_room": false,
+                "weather": "none",
+                "exact_speed_tie": false
+              },
+              {
+                "side": "player",
+                "key": "player:active:1:Blastoise",
+                "stableKey": "player:slot:1:Blastoise",
+                "pokemon": "Blastoise",
+                "stat_format": "champions",
+                "nature": "Hardy",
+                "speed_points": 0,
+                "species_base_speed": 78,
+                "base_speed": 98,
+                "calculated_speed": 98,
+                "speed_stage": 0,
+                "effective_speed": 98,
+                "item": "",
+                "ability": "Torrent",
+                "status": "",
+                "tailwind": false,
+                "trick_room": false,
+                "weather": "none",
+                "exact_speed_tie": true
+              },
+              {
+                "side": "opponent",
+                "key": "opponent:active:1:Blastoise",
+                "stableKey": "opponent:slot:1:Blastoise",
+                "pokemon": "Blastoise",
+                "stat_format": "champions",
+                "nature": "Hardy",
+                "speed_points": 0,
+                "species_base_speed": 78,
+                "base_speed": 98,
+                "calculated_speed": 98,
+                "speed_stage": 0,
+                "effective_speed": 98,
+                "item": "",
+                "ability": "Torrent",
+                "status": "",
+                "tailwind": false,
+                "trick_room": false,
+                "weather": "none",
+                "exact_speed_tie": true
+              },
+              {
+                "side": "player",
+                "key": "player:active:0:Snorlax",
+                "stableKey": "player:slot:0:Snorlax",
+                "pokemon": "Snorlax",
+                "stat_format": "champions",
+                "nature": "Hardy",
+                "speed_points": 0,
+                "species_base_speed": 30,
+                "base_speed": 50,
+                "calculated_speed": 50,
+                "speed_stage": 0,
+                "effective_speed": 50,
+                "item": "",
+                "ability": "Immunity",
+                "status": "",
+                "tailwind": false,
+                "trick_room": false,
+                "weather": "none",
+                "exact_speed_tie": false
+              }
+            ],
+            "legal_options": {},
+            "position_score": 0.488,
+            "win_probability": null
+          },
+          "delta": {
+            "position_score": -0.005,
+            "win_probability": null,
+            "primary_cause": "position_lost",
+            "explanation": ""
+          }
+        }
+      ]
+    }
+  },
+  "reference_result": {
+    "observations": {
+      "target_hp_loss": 29,
+      "user_hp_loss": 59,
+      "amnesia_pp_spent": 0
+    },
+    "raw": {
+      "log": [
+        "|t:|1792527464",
+        "|gametype|doubles",
+        "|player|p1|Player 1||",
+        "|player|p2|Player 2||",
+        "|gen|9",
+        "|tier|[Gen 9 Champions] Doubles Custom Game",
+        "|clearpoke",
+        "|poke|p1|Snorlax, L50, M|",
+        "|poke|p1|Blastoise, L50, M|",
+        "|poke|p2|Venusaur, L50, F|",
+        "|poke|p2|Blastoise, L50, M|",
+        "|teampreview",
+        "|",
+        "|t:|1792527464",
+        "|teamsize|p1|2",
+        "|teamsize|p2|2",
+        "|start",
+        "|split|p1",
+        "|switch|p1a: p1m1|Snorlax, L50, M|235/235",
+        "|switch|p1a: p1m1|Snorlax, L50, M|235/235",
+        "|split|p1",
+        "|switch|p1b: p1m2|Blastoise, L50, M|154/154",
+        "|switch|p1b: p1m2|Blastoise, L50, M|154/154",
+        "|split|p2",
+        "|switch|p2a: p2m1|Venusaur, L50, F|155/155",
+        "|switch|p2a: p2m1|Venusaur, L50, F|155/155",
+        "|split|p2",
+        "|switch|p2b: p2m2|Blastoise, L50, M|154/154",
+        "|switch|p2b: p2m2|Blastoise, L50, M|154/154",
+        "|turn|1",
+        "|",
+        "|t:|1792527464",
+        "|move|p1b: p1m2|Protect|p1b: p1m2",
+        "|-singleturn|p1b: p1m2|Protect",
+        "|move|p2b: p2m2|Protect|p2b: p2m2",
+        "|-singleturn|p2b: p2m2|Protect",
+        "|move|p2a: p2m1|Swords Dance|p2a: p2m1",
+        "|-boost|p2a: p2m1|atk|2",
+        "|-activate|p1a: p1m1|move: Struggle",
+        "|move|p1a: p1m1|Struggle|p2a: p2m1",
+        "|split|p2",
+        "|-damage|p2a: p2m1|126/155",
+        "|-damage|p2a: p2m1|126/155",
+        "|split|p1",
+        "|-damage|p1a: p1m1|176/235|[from] recoil",
+        "|-damage|p1a: p1m1|176/235|[from] recoil",
+        "|",
+        "|upkeep",
+        "|turn|2"
+      ],
+      "mod": "champions",
+      "format_mod": "champions"
+    }
+  }
+}

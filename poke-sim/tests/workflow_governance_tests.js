@@ -18,11 +18,17 @@ check('CI live writes use isolated test-project secrets', /SUPABASE_TEST_URL/.te
 check('Migration input crosses shell boundary through environment only', migrate.includes('MIGRATION_FILENAME: ${{ inputs.migration }}') && migrate.includes('migration="$MIGRATION_FILENAME"') && !migrate.includes('migration="${{ inputs.migration }}"'));
 check('Migration filenames use a bounded SQL filename alphabet', migrate.includes('^[A-Za-z0-9][A-Za-z0-9_.-]*\\.sql$'));
 check('CI cleanup runs even after failure', /Clean up isolated Supabase test data[\s\S]*if: always\(\)/.test(ci));
-check('CI installs locked dependencies once per test job', (ci.match(/\bnpm ci\b/g) || []).length === 1);
+for (const job of ['tests','accuracy-standard']) {
+  const section=ci.split('\n  '+job+':')[1]?.split(/\n  [a-z-]+:/)[0] || '';
+  check('CI installs locked dependencies once in '+job, (section.match(/\bnpm ci\b/g) || []).length === 1);
+}
 check('CI cleanup requires a completed dependency install', /if: always\(\) && steps\.dependencies\.outcome == 'success'/.test(ci));
 check('CI cleanup is skipped for mock-only runs', /steps\.suite\.outputs\.live_db == 'true'/.test(ci) && /echo "live_db=true" >> "\$GITHUB_OUTPUT"/.test(ci));
 check('CI shared-project users are serialized without cancelling active jobs', /concurrency:[\s\S]*champions-supabase-test-project[\s\S]*cancel-in-progress: false/.test(ci));
 check('CI does not mutate an unused credential-injected deployment bundle', !/html = html\.replace|Building production bundle|fs\.writeFileSync\(file, html\)/.test(ci));
+const changeDetection = ci.slice(ci.indexOf('  detect-changes:'), ci.indexOf('  audit:'));
+check('change detection remains fail closed without API fallback', !/continue-on-error|github-script|gh api/.test(changeDetection) && (changeDetection.match(/token:/g) || []).length === 1);
+check('change detection uses local Git for large evidence diffs', /uses: dorny\/paths-filter@v4[\s\S]*?id: filter[\s\S]*?with:\s*(?:#[^\n]*\n\s*)*token: ''/.test(ci));
 check('mechanics audit watches runtime and move support', /poke-sim\/runtime_data\.js/.test(ci) && /poke-sim\/move_support\.js/.test(ci));
 check('Pages uses reproducible install', /npm ci/.test(pages) && !/npm install/.test(pages));
 check('Pages deploys an explicit runtime allowlist', /runtime_files=\(/.test(pages) && /generated_files=\(/.test(pages));

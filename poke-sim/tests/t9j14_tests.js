@@ -354,14 +354,43 @@ T('27. safe report excludes other teams and formats despite identical sets', () 
   const game = {playerKey:'other_team',format:'doubles',playerRegistration:members,
     participants:{player:[{stable_key:'player:slot:0:Whimsicott',team_slot:0}]},
     turnLog:[{events:[{side:'player',actor_key:'player:slot:0:Whimsicott',move:'Tailwind'}]}]};
-  ctx.window.ChampionsSim.state.lastResults = {o:{wins:1000000,allLogs:[game]}};
+  ctx.window.ChampionsSim.state.lastResults = {evidence_opponent:{wins:1000000,allLogs:[game]}};
   vm.runInContext("currentFormat = 'doubles'",ctx);
   const get = () => ctx.csBuildEvidenceOnlyStrategy('evidence_fixture');
   eq(get().members[0].moves[0].observation,'Unknown: no matching action evidence');
   game.playerKey = 'evidence_fixture'; game.format = 'singles';
   eq(get().members[0].moves[0].observation,'Unknown: no matching action evidence');
   game.format = 'doubles';
+  ctx.CHAMPIONS_RELEASE_MANIFEST = {build_id:'test-build',reference_artifact_sha256:'reference-sha'};
+  ctx.getSelectedRegulationId = () => 'champions_custom_practice';
+  ctx.getChampionsRuleset = id => ({id,version:id + '-v1'});
+  TEAMS.evidence_opponent = {name:'Opponent',members:[{name:'Target',moves:['Protect']}]};
+  game.oppKey = 'evidence_opponent';
+  const provenance = () => ({schema_version:'champions-simulation-provenance-v1',
+    player_team_id:'evidence_fixture',opp_team_id:'evidence_opponent',format:'doubles',
+    regulation_id:ctx.getSelectedRegulationId(),ruleset_id:ctx.getSelectedRegulationId(),
+    ruleset_version:ctx.getSelectedRegulationId() + '-v1',
+    engine_version:vm.runInContext('ENGINE_VERSION',ctx),build_id:'test-build',
+    player_team_digest:'a'.repeat(64),opp_team_digest:'b'.repeat(64)});
+  ctx._csRunTeamIdentities.evidence_fixture = {input:JSON.stringify(TEAMS.evidence_fixture),digest:'a'.repeat(64)};
+  ctx._csRunTeamIdentities.evidence_opponent = {input:JSON.stringify(TEAMS.evidence_opponent),digest:'b'.repeat(64)};
+  eq(get().members[0].moves[0].observation,'Unknown: no matching action evidence');
+  game.provenance = provenance();
   eq(get().members[0].moves[0].observation,'Recorded player attempt');
+  for (const key of ['regulation_id','ruleset_id','ruleset_version','engine_version','build_id','format','player_team_id','opp_team_id','player_team_digest','opp_team_digest']) {
+    game.provenance = {...provenance(),[key]:'stale'};
+    eq(get().members[0].moves[0].observation,'Unknown: no matching action evidence');
+  }
+  game.provenance = provenance();
+  TEAMS.evidence_opponent.members[0].item = 'Leftovers';
+  eq(get().members[0].moves[0].observation,'Unknown: no matching action evidence');
+  delete TEAMS.evidence_opponent.members[0].item;
+  ctx.getSelectedRegulationId = () => 'champions_mc_reference';
+  game.provenance = {...provenance(),reference_artifact_sha256:'reference-sha'};
+  eq(get().members[0].moves[0].observation,'Recorded player attempt');
+  game.provenance.reference_artifact_sha256 = 'old-reference';
+  eq(get().members[0].moves[0].observation,'Unknown: no matching action evidence');
+  game.provenance.reference_artifact_sha256 = 'reference-sha';
   eq(get().confidence,'unknown');
   eq(get().legality,'not assessed');
   members[0].nature = 'Timid';
@@ -369,6 +398,7 @@ T('27. safe report excludes other teams and formats despite identical sets', () 
   game.playerRegistration = [{name:'Whimsicott',moves:['Tailwind']}];
   eq(get().members[0].moves[0].observation,'Unknown: no matching action evidence');
   delete TEAMS.evidence_fixture;
+  delete TEAMS.evidence_opponent;
 });
 
 T('28. QA Brain volume cannot become confidence or tactical advice', () => {

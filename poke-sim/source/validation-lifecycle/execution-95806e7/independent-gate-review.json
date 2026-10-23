@@ -1,0 +1,39 @@
+{
+  "schema_version": "independent-source-lifecycle-gate-review-v1",
+  "reviewed_at": "2026-10-20T23:58:08.240Z",
+  "reviewer": "battle_auditor",
+  "source_commit": "95806e726f35c564e006e84b1355601d9ca6cf0b",
+  "status": "passed_declared_scope",
+  "repository_fingerprint": "a5cb5083a930488b9e845ef96ef1ef1df83fb954da8499db887d501810ec9fee",
+  "examined_files": [
+    {
+      "path": "poke-sim/tools/validation-lifecycle.mjs",
+      "sha256": "01af9f6f33242bca3d4a271ddf7211bb053108e4812619962fcce7c43106ddd3",
+      "git_blob_lf_sha256": "b74b5258950884740813e09901061b8775916becf6480df15241fc19d16a8721"
+    },
+    {
+      "path": "poke-sim/tests/lifecycle_inventory_tests.mjs",
+      "sha256": "5d362a95bcd9fb6ff5a70a1d680a7ac28e9162cc14d059b2839f8f79ef7bb4e1",
+      "git_blob_lf_sha256": "5d362a95bcd9fb6ff5a70a1d680a7ac28e9162cc14d059b2839f8f79ef7bb4e1"
+    }
+  ],
+  "controls": {
+    "passed": 6,
+    "failed": 0,
+    "items": [
+      "Extensionless valid UTF-8 LF/CRLF equivalence",
+      "Explicit ASCII binary .bin LF/CRLF distinction",
+      "Invalid UTF-8 0x80 versus 0x81 distinction",
+      "NUL-bearing CRLF versus LF distinction",
+      "Frozen commit repository fingerprint equals expected",
+      "Working repository fingerprint equals frozen commit"
+    ]
+  },
+  "prior_execution_context": "Earlier updated inventory test passed; an overlapping Git-fixture test was sandbox-blocked at git init. No broad test rerun in this final follow-up.",
+  "limits": [
+    "Narrow repository-input normalization review only",
+    "Full clean aggregate owned by parent and not claimed complete here",
+    "Six v6 bounded assertions remain separate and unchanged",
+    "No application edits, client certification, publication, merge or deployment"
+  ]
+}

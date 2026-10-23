@@ -1,0 +1,47 @@
+{
+  "base": "5c93802893a15bb9716f9143fe20f2cfc5a7c345",
+  "engine_commit": "0aa4640f40c364fab46f561f03ce9a44b3bfe2e5",
+  "reference_compatibility_commit": "8fb70b4c4cb6453eec55c0040cfb4e28c6676a5f",
+  "inventory_export_commit": "093ce702ef0e12f3e12d2d904679057f5e25be5c",
+  "focused_upstream": {
+    "passed": 226,
+    "failed": 0
+  },
+  "focused_historical_npm": {
+    "passed": 226,
+    "failed": 0
+  },
+  "frozen_vectors": {
+    "before_mismatches": 60,
+    "after_mismatches": 0,
+    "total": 221
+  },
+  "full_sweep": {
+    "fast_files": 282,
+    "failed_fast_files": [
+      "move_register_tests.mjs",
+      "validation_cycle_tests.mjs"
+    ],
+    "mock_db_files": 12,
+    "failed_db_files": 0,
+    "manual_helper_skipped": 4
+  },
+  "resolved_after_sweep": {
+    "move_register_tests.mjs": {
+      "passed": 12,
+      "failed": 0,
+      "action": "additive unverified inventory export; no golden changes"
+    }
+  },
+  "remaining_gate": "validation_cycle_tests.mjs:17/19; runtime-dependent bounded receipts require fresh capture/review/export in parent integration",
+  "battle_audit": {
+    "status": "passed_declared_scope",
+    "seeded_battles": 4500,
+    "js_errors": 0,
+    "historical_goldens_passed": 3,
+    "db_golden_cases_passed": 8
+  },
+  "source_truth": "passed",
+  "client_proof": "unverified",
+  "publication": "not performed"
+}

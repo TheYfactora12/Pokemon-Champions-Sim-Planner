@@ -35,7 +35,7 @@ function strings(value) {
 
 function validateSnapshot(value) {
   objectKeys(value, ['url', 'final_url', 'raw_sha256', 'semantic_sha256', 'kind', 'title', 'mentions', 'paragraph_hashes'],
-    ['potential_team_ids', 'discovery', 'manual_pdf_review']);
+    ['potential_team_ids', 'discovery', 'manual_pdf_review', 'roster', 'manual_roster_mapping_review']);
   requireShape(typeof value.url === 'string' && !!safeUrl(value.url, undefined, HOSTS));
   requireShape(typeof value.final_url === 'string' && !!safeUrl(value.final_url, undefined, HOSTS));
   requireShape(typeof value.kind === 'string' && value.kind.trim().length > 0 && typeof value.title === 'string');
@@ -51,6 +51,15 @@ function validateSnapshot(value) {
     requireShape(value.discovery.every(url => !!safeUrl(url, undefined, HOSTS)));
   }
   if (Object.hasOwn(value, 'manual_pdf_review')) requireShape(typeof value.manual_pdf_review === 'boolean');
+  if (Object.hasOwn(value, 'roster') || Object.hasOwn(value, 'manual_roster_mapping_review')) {
+    requireShape(value.kind === 'official_roster' && value.manual_roster_mapping_review === true && Array.isArray(value.roster) && value.roster.length > 0 && value.roster.length <= 5000);
+    requireShape([value.url, value.final_url].every(url => new URL(url).hostname === 'web-view.app.pokemonchampions.jp'));
+    for (const row of value.roster) {
+      objectKeys(row, ['form_id', 'source_flag', 'name']);
+      requireShape(typeof row.form_id === 'string' && /^\d{4}-\d{3}$/.test(row.form_id) && row.source_flag === 1 && typeof row.name === 'string' && row.name.trim().length > 0 && row.name.length <= 150);
+    }
+    requireShape(new Set(value.roster.map(row => row.form_id)).size === value.roster.length);
+  }
 }
 
 function validateEnvelope(candidate, envelope) {
@@ -58,7 +67,7 @@ function validateEnvelope(candidate, envelope) {
   objectKeys(envelope, ['schema_version', 'source_policy_sha256', 'parser_version', 'change_key', 'change_occurrence', 'review_status',
     'competitive_use', 'source', 'previous', 'changed_fields', 'impact', 'uncertainty']);
   requireShape(typeof envelope.source_policy_sha256 === 'string' && HASH.test(envelope.source_policy_sha256) &&
-    typeof envelope.change_key === 'string' && HASH.test(envelope.change_key) && envelope.parser_version === '1');
+    typeof envelope.change_key === 'string' && HASH.test(envelope.change_key) && ['1', '2'].includes(envelope.parser_version));
   requireShape(Number.isSafeInteger(envelope.change_occurrence) && envelope.change_occurrence >= 1);
   validateSnapshot(envelope.source);
   if (envelope.previous !== null) {

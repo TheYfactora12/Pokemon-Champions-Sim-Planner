@@ -1,0 +1,40 @@
+{
+  "schema_version": "champions-bounded-assertion-v1",
+  "assertion_id": "DAMAGE-ROLL-CAPTURE.current-runtime.v3",
+  "case_id": "DAMAGE-ROLL-CAPTURE",
+  "scope": {
+    "oracle_kind": "shared_reference",
+    "format": "gen9championsdoublescustomgame",
+    "regulation_id": null,
+    "client_version": null,
+    "boundaries": [
+      "level50 Hardy zeroEV Snorlax Tackle into Venusaur",
+      "16 explicitly controlled damage draws, no critical hits; calculation API in doubles field"
+    ]
+  },
+  "executed_at": "2026-10-20T22:26:59.161Z",
+  "dependencies": {
+    "engine": "75d75d4d5377b286765ff8dac65a7d5f912c434ef26e8253429dd55c4b89fd71",
+    "data": "dd258aec23104c305658a95eeb20c8af71204ef43311d7033d00f33a64943409",
+    "runner": "7324e992dc86371999bd2686edb4e2c649ea1d9b2e655ad3850ac5121608df08",
+    "test": "3d7cfd2e383fa6e32f8dc626c9a9bef27ac9b25d298e90646014bf95b1e524e1",
+    "checker": "469e4c27b2d4c3824fa4068f741cc0ff66d0211033c0f0e6ef630d33f5e4745d",
+    "reference": "de66162a28b270bdf17ea17a804a7ec65c6d2f286815ae17eaa3336273405f61"
+  },
+  "contract": {
+    "path": "source/bounded-assertions/cycles/cycle-20261020-v3/DAMAGE-ROLL-CAPTURE/contract.json",
+    "sha256": "771554d784e78f0df3bb48df2781834fa7f150b83e8f5650acf852c3cf72a270"
+  },
+  "inputs": {
+    "path": "source/bounded-assertions/cycles/cycle-20261020-v3/DAMAGE-ROLL-CAPTURE/inputs.json",
+    "sha256": "7709a296dd181d63a8ad30d340980dcde5bdf9528c36741bd1c0cfaa0edce8f3"
+  },
+  "local_result": {
+    "path": "source/bounded-assertions/cycles/cycle-20261020-v3/DAMAGE-ROLL-CAPTURE/local_result.json",
+    "sha256": "1781978d52a04141a84479a608ab56891dbc679d43128549a3881204686bf513"
+  },
+  "reference_result": {
+    "path": "source/bounded-assertions/cycles/cycle-20261020-v3/DAMAGE-ROLL-CAPTURE/reference_result.json",
+    "sha256": "5c6f21207c75f9806fbb2c1c6827c280de1e2830c08581b4b015d58cfc25788d"
+  }
+}

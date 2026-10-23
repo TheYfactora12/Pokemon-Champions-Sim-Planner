@@ -7,7 +7,7 @@
   ChampionsSim.overrides = ChampionsSim.overrides || {};
   ChampionsSim.overrides.damage = ChampionsSim.overrides.damage || {};
   ChampionsSim.overrides.damage.rollWindows = ChampionsSim.overrides.damage.rollWindows || {
-    champions: { mode: 'discrete_percent', min: 86, max: 100 },
+    champions: { mode: 'discrete_percent', min: 85, max: 100 },
     default: { mode: 'continuous_percent', min: 85, max: 100 }
   };
 
@@ -197,7 +197,7 @@
     var rng = typeof rngFn === 'function' ? rngFn : Math.random;
     if (rollWindow.mode === 'discrete_percent') {
       var span = Number(rollWindow.max) - Number(rollWindow.min) + 1;
-      var percent = Number(rollWindow.min) + Math.floor(rng() * span);
+      var percent = Number(rollWindow.min) + Math.min(span - 1, Math.floor(rng() * span));
       return percent / 100;
     }
     var min = Number(rollWindow.min);

@@ -1,0 +1,2654 @@
+{
+  "inputs": [
+    {
+      "format": "champions",
+      "members": [
+        {
+          "name": "Snorlax",
+          "ability": "Immunity",
+          "moves": [
+            "Amnesia"
+          ],
+          "item": "Red Card",
+          "nature": "Hardy",
+          "level": 50,
+          "evs": {
+            "hp": 0,
+            "atk": 0,
+            "def": 0,
+            "spa": 0,
+            "spd": 0,
+            "spe": 0
+          }
+        },
+        {
+          "name": "Farigiraf",
+          "ability": "Armor Tail",
+          "moves": [
+            "Protect"
+          ],
+          "item": "",
+          "nature": "Hardy",
+          "level": 50,
+          "evs": {
+            "hp": 0,
+            "atk": 0,
+            "def": 0,
+            "spa": 0,
+            "spd": 0,
+            "spe": 0
+          }
+        },
+        {
+          "name": "Gholdengo",
+          "ability": "Good as Gold",
+          "moves": [
+            "Protect"
+          ],
+          "item": "",
+          "nature": "Hardy",
+          "level": 50,
+          "evs": {
+            "hp": 0,
+            "atk": 0,
+            "def": 0,
+            "spa": 0,
+            "spd": 0,
+            "spe": 0
+          }
+        },
+        {
+          "name": "Dragonite",
+          "ability": "Inner Focus",
+          "moves": [
+            "Protect"
+          ],
+          "item": "",
+          "nature": "Hardy",
+          "level": 50,
+          "evs": {
+            "hp": 0,
+            "atk": 0,
+            "def": 0,
+            "spa": 0,
+            "spd": 0,
+            "spe": 0
+          }
+        },
+        {
+          "name": "Raichu",
+          "ability": "Static",
+          "moves": [
+            "Protect"
+          ],
+          "item": "",
+          "nature": "Hardy",
+          "level": 50,
+          "evs": {
+            "hp": 0,
+            "atk": 0,
+            "def": 0,
+            "spa": 0,
+            "spd": 0,
+            "spe": 0
+          }
+        },
+        {
+          "name": "Talonflame",
+          "ability": "Gale Wings",
+          "moves": [
+            "Protect"
+          ],
+          "item": "",
+          "nature": "Hardy",
+          "level": 50,
+          "evs": {
+            "hp": 0,
+            "atk": 0,
+            "def": 0,
+            "spa": 0,
+            "spd": 0,
+            "spe": 0
+          }
+        }
+      ]
+    },
+    {
+      "format": "champions",
+      "members": [
+        {
+          "name": "Machamp",
+          "ability": "Guts",
+          "moves": [
+            "Seismic Toss"
+          ],
+          "item": "",
+          "nature": "Hardy",
+          "level": 50,
+          "evs": {
+            "hp": 0,
+            "atk": 0,
+            "def": 0,
+            "spa": 0,
+            "spd": 0,
+            "spe": 0
+          }
+        },
+        {
+          "name": "Pelipper",
+          "ability": "Drizzle",
+          "moves": [
+            "Protect"
+          ],
+          "item": "",
+          "nature": "Hardy",
+          "level": 50,
+          "evs": {
+            "hp": 0,
+            "atk": 0,
+            "def": 0,
+            "spa": 0,
+            "spd": 0,
+            "spe": 0
+          }
+        },
+        {
+          "name": "Garchomp",
+          "ability": "Rough Skin",
+          "moves": [
+            "Protect"
+          ],
+          "item": "",
+          "nature": "Hardy",
+          "level": 50,
+          "evs": {
+            "hp": 0,
+            "atk": 0,
+            "def": 0,
+            "spa": 0,
+            "spd": 0,
+            "spe": 0
+          }
+        },
+        {
+          "name": "Incineroar",
+          "ability": "Intimidate",
+          "moves": [
+            "Protect"
+          ],
+          "item": "",
+          "nature": "Hardy",
+          "level": 50,
+          "evs": {
+            "hp": 0,
+            "atk": 0,
+            "def": 0,
+            "spa": 0,
+            "spd": 0,
+            "spe": 0
+          }
+        },
+        {
+          "name": "Venusaur",
+          "ability": "Overgrow",
+          "moves": [
+            "Protect"
+          ],
+          "item": "",
+          "nature": "Hardy",
+          "level": 50,
+          "evs": {
+            "hp": 0,
+            "atk": 0,
+            "def": 0,
+            "spa": 0,
+            "spd": 0,
+            "spe": 0
+          }
+        },
+        {
+          "name": "Tyranitar",
+          "ability": "Sand Stream",
+          "moves": [
+            "Protect"
+          ],
+          "item": "",
+          "nature": "Hardy",
+          "level": 50,
+          "evs": {
+            "hp": 0,
+            "atk": 0,
+            "def": 0,
+            "spa": 0,
+            "spd": 0,
+            "spe": 0
+          }
+        }
+      ]
+    }
+  ],
+  "seed": [
+    3,
+    7,
+    11,
+    13
+  ],
+  "reference_format": "gen9championsvgc2026regmc",
+  "local_ruleset": "champions_mc_reference",
+  "full_six": true,
+  "local": {
+    "result": "win",
+    "terminal": false,
+    "format": "doubles",
+    "engine_version": "1.1.31",
+    "turns": 1,
+    "simTurnsReported": 1,
+    "trTurns": 0,
+    "twTurnsPlayer": 0,
+    "twTurnsOpp": 0,
+    "twTurns": 0,
+    "screens": {
+      "playerReflect": 0,
+      "playerLightScreen": 0,
+      "playerAuroraVeil": 0,
+      "oppReflect": 0,
+      "oppLightScreen": 0,
+      "oppAuroraVeil": 0
+    },
+    "timerExpired": false,
+    "clockPlayer": 405000,
+    "clockOpp": 405000,
+    "pHpSum": 708,
+    "oHpSum": 653,
+    "log": [
+      "[REFERENCE ONLY] M-C experimental simulation; excluded from verified rankings.",
+      "[LEGALITY] Player team errors: ",
+      "[LEGALITY] Player warning: Reference simulation only; official M-C approval and full mechanics parity are incomplete.",
+      "[LEGALITY] Opponent team errors: ",
+      "[LEGALITY] Opponent warning: Reference simulation only; official M-C approval and full mechanics parity are incomplete.",
+      "Pelipper's Drizzle summoned rain!",
+      "--- Turn 1 ---",
+      "Pelipper used Protect!",
+      "Farigiraf used Protect!",
+      "Machamp used Seismic Toss!",
+      "Machamp used Seismic Toss! → Snorlax [50 dmg, 185/235 HP]",
+      "Snorlax's Red Card activated!",
+      "Machamp was forced out by Red Card!",
+      "Garchomp was sent out!",
+      "Snorlax used Amnesia!",
+      "Snorlax's Special Defense sharply rose!"
+    ],
+    "winCondition": "HP Tiebreak Win",
+    "seed": [
+      3,
+      7,
+      11,
+      13
+    ],
+    "turnLog": [
+      {
+        "turn": 1,
+        "initial": {
+          "active": {
+            "player": [
+              "Snorlax",
+              "Farigiraf"
+            ],
+            "opponent": [
+              "Machamp",
+              "Pelipper"
+            ]
+          },
+          "bench": {
+            "player": [
+              "Gholdengo",
+              "Dragonite"
+            ],
+            "opponent": [
+              "Garchomp",
+              "Incineroar"
+            ]
+          },
+          "active_keys": {
+            "player": [
+              "player:active:0:Snorlax",
+              "player:active:1:Farigiraf"
+            ],
+            "opponent": [
+              "opponent:active:0:Machamp",
+              "opponent:active:1:Pelipper"
+            ]
+          },
+          "bench_keys": {
+            "player": [
+              "player:bench:0:Gholdengo",
+              "player:bench:1:Dragonite"
+            ],
+            "opponent": [
+              "opponent:bench:0:Garchomp",
+              "opponent:bench:1:Incineroar"
+            ]
+          },
+          "active_stable_keys": {
+            "player": [
+              "player:slot:0:Snorlax",
+              "player:slot:1:Farigiraf"
+            ],
+            "opponent": [
+              "opponent:slot:0:Machamp",
+              "opponent:slot:1:Pelipper"
+            ]
+          },
+          "bench_stable_keys": {
+            "player": [
+              "player:slot:2:Gholdengo",
+              "player:slot:3:Dragonite"
+            ],
+            "opponent": [
+              "opponent:slot:2:Garchomp",
+              "opponent:slot:3:Incineroar"
+            ]
+          },
+          "hp_pct": {
+            "player:active:0:Snorlax": 1,
+            "player:active:1:Farigiraf": 1,
+            "player:bench:0:Gholdengo": 1,
+            "player:bench:1:Dragonite": 1,
+            "opponent:active:0:Machamp": 1,
+            "opponent:active:1:Pelipper": 1,
+            "opponent:bench:0:Garchomp": 1,
+            "opponent:bench:1:Incineroar": 1
+          },
+          "hp_pct_stable": {
+            "player:slot:0:Snorlax": 1,
+            "player:slot:1:Farigiraf": 1,
+            "player:slot:2:Gholdengo": 1,
+            "player:slot:3:Dragonite": 1,
+            "opponent:slot:0:Machamp": 1,
+            "opponent:slot:1:Pelipper": 1,
+            "opponent:slot:2:Garchomp": 1,
+            "opponent:slot:3:Incineroar": 1
+          },
+          "score_state": {
+            "player": {
+              "active": [
+                "Snorlax",
+                "Farigiraf"
+              ],
+              "bench": [
+                "Gholdengo",
+                "Dragonite"
+              ],
+              "active_keys": [
+                "player:active:0:Snorlax",
+                "player:active:1:Farigiraf"
+              ],
+              "bench_keys": [
+                "player:bench:0:Gholdengo",
+                "player:bench:1:Dragonite"
+              ],
+              "active_stable_keys": [
+                "player:slot:0:Snorlax",
+                "player:slot:1:Farigiraf"
+              ],
+              "bench_stable_keys": [
+                "player:slot:2:Gholdengo",
+                "player:slot:3:Dragonite"
+              ],
+              "alive_count": 4,
+              "hp_total": 4,
+              "max_count": 4
+            },
+            "opponent": {
+              "active": [
+                "Machamp",
+                "Pelipper"
+              ],
+              "bench": [
+                "Garchomp",
+                "Incineroar"
+              ],
+              "active_keys": [
+                "opponent:active:0:Machamp",
+                "opponent:active:1:Pelipper"
+              ],
+              "bench_keys": [
+                "opponent:bench:0:Garchomp",
+                "opponent:bench:1:Incineroar"
+              ],
+              "active_stable_keys": [
+                "opponent:slot:0:Machamp",
+                "opponent:slot:1:Pelipper"
+              ],
+              "bench_stable_keys": [
+                "opponent:slot:2:Garchomp",
+                "opponent:slot:3:Incineroar"
+              ],
+              "alive_count": 4,
+              "hp_total": 4,
+              "max_count": 4
+            }
+          },
+          "roster": {
+            "player": [
+              {
+                "key": "player:active:0:Snorlax",
+                "stableKey": "player:slot:0:Snorlax",
+                "teamSlot": 0,
+                "zone": "active",
+                "zoneIndex": 0,
+                "side": "player",
+                "status": "active",
+                "displayName": "Snorlax",
+                "species": "Snorlax",
+                "types": [
+                  "Normal"
+                ],
+                "hp": 100,
+                "hp_current": 235,
+                "substitute_hp": 0,
+                "perish_song_turns": 0,
+                "hp_max": 235,
+                "hpLabel": "100%",
+                "level": 50,
+                "item": "Red Card",
+                "itemConsumed": false,
+                "electric_charge": false,
+                "mc_syrup_turns": 0,
+                "mc_trap_turns": 0,
+                "mc_partially_trapped": false,
+                "ability": "Immunity",
+                "moves": [
+                  "Amnesia"
+                ],
+                "move_pp": {
+                  "Amnesia": {
+                    "current": 20,
+                    "max": 20
+                  }
+                },
+                "baseStatsLabel": "160/110/65/65/110/30",
+                "calculatedStats": "235/130/85/85/130/50"
+              },
+              {
+                "key": "player:active:1:Farigiraf",
+                "stableKey": "player:slot:1:Farigiraf",
+                "teamSlot": 1,
+                "zone": "active",
+                "zoneIndex": 1,
+                "side": "player",
+                "status": "active",
+                "displayName": "Farigiraf",
+                "species": "Farigiraf",
+                "types": [
+                  "Normal",
+                  "Psychic"
+                ],
+                "hp": 100,
+                "hp_current": 195,
+                "substitute_hp": 0,
+                "perish_song_turns": 0,
+                "hp_max": 195,
+                "hpLabel": "100%",
+                "level": 50,
+                "item": "",
+                "itemConsumed": false,
+                "electric_charge": false,
+                "mc_syrup_turns": 0,
+                "mc_trap_turns": 0,
+                "mc_partially_trapped": false,
+                "ability": "Armor Tail",
+                "moves": [
+                  "Protect"
+                ],
+                "move_pp": {
+                  "Protect": {
+                    "current": 8,
+                    "max": 8
+                  }
+                },
+                "baseStatsLabel": "120/90/70/110/70/60",
+                "calculatedStats": "195/110/90/130/90/80"
+              },
+              {
+                "key": "player:bench:0:Gholdengo",
+                "stableKey": "player:slot:2:Gholdengo",
+                "teamSlot": 2,
+                "zone": "bench",
+                "zoneIndex": 0,
+                "side": "player",
+                "status": "bench",
+                "displayName": "Gholdengo",
+                "species": "Gholdengo",
+                "types": [
+                  "Steel",
+                  "Ghost"
+                ],
+                "hp": 100,
+                "hp_current": 162,
+                "substitute_hp": 0,
+                "perish_song_turns": 0,
+                "hp_max": 162,
+                "hpLabel": "100%",
+                "level": 50,
+                "item": "",
+                "itemConsumed": false,
+                "electric_charge": false,
+                "mc_syrup_turns": 0,
+                "mc_trap_turns": 0,
+                "mc_partially_trapped": false,
+                "ability": "Good as Gold",
+                "moves": [
+                  "Protect"
+                ],
+                "move_pp": {
+                  "Protect": {
+                    "current": 8,
+                    "max": 8
+                  }
+                },
+                "baseStatsLabel": "87/60/95/133/91/84",
+                "calculatedStats": "162/80/115/153/111/104"
+              },
+              {
+                "key": "player:bench:1:Dragonite",
+                "stableKey": "player:slot:3:Dragonite",
+                "teamSlot": 3,
+                "zone": "bench",
+                "zoneIndex": 1,
+                "side": "player",
+                "status": "bench",
+                "displayName": "Dragonite",
+                "species": "Dragonite",
+                "types": [
+                  "Dragon",
+                  "Flying"
+                ],
+                "hp": 100,
+                "hp_current": 166,
+                "substitute_hp": 0,
+                "perish_song_turns": 0,
+                "hp_max": 166,
+                "hpLabel": "100%",
+                "level": 50,
+                "item": "",
+                "itemConsumed": false,
+                "electric_charge": false,
+                "mc_syrup_turns": 0,
+                "mc_trap_turns": 0,
+                "mc_partially_trapped": false,
+                "ability": "Inner Focus",
+                "moves": [
+                  "Protect"
+                ],
+                "move_pp": {
+                  "Protect": {
+                    "current": 8,
+                    "max": 8
+                  }
+                },
+                "baseStatsLabel": "91/134/95/100/100/80",
+                "calculatedStats": "166/154/115/120/120/100"
+              }
+            ],
+            "opponent": [
+              {
+                "key": "opponent:active:0:Machamp",
+                "stableKey": "opponent:slot:0:Machamp",
+                "teamSlot": 0,
+                "zone": "active",
+                "zoneIndex": 0,
+                "side": "opponent",
+                "status": "active",
+                "displayName": "Machamp",
+                "species": "Machamp",
+                "types": [
+                  "Fighting"
+                ],
+                "hp": 100,
+                "hp_current": 165,
+                "substitute_hp": 0,
+                "perish_song_turns": 0,
+                "hp_max": 165,
+                "hpLabel": "100%",
+                "level": 50,
+                "item": "",
+                "itemConsumed": false,
+                "electric_charge": false,
+                "mc_syrup_turns": 0,
+                "mc_trap_turns": 0,
+                "mc_partially_trapped": false,
+                "ability": "Guts",
+                "moves": [
+                  "Seismic Toss"
+                ],
+                "move_pp": {
+                  "Seismic Toss": {
+                    "current": 20,
+                    "max": 20
+                  }
+                },
+                "baseStatsLabel": "90/130/80/65/85/55",
+                "calculatedStats": "165/150/100/85/105/75"
+              },
+              {
+                "key": "opponent:active:1:Pelipper",
+                "stableKey": "opponent:slot:1:Pelipper",
+                "teamSlot": 1,
+                "zone": "active",
+                "zoneIndex": 1,
+                "side": "opponent",
+                "status": "active",
+                "displayName": "Pelipper",
+                "species": "Pelipper",
+                "types": [
+                  "Water",
+                  "Flying"
+                ],
+                "hp": 100,
+                "hp_current": 135,
+                "substitute_hp": 0,
+                "perish_song_turns": 0,
+                "hp_max": 135,
+                "hpLabel": "100%",
+                "level": 50,
+                "item": "",
+                "itemConsumed": false,
+                "electric_charge": false,
+                "mc_syrup_turns": 0,
+                "mc_trap_turns": 0,
+                "mc_partially_trapped": false,
+                "ability": "Drizzle",
+                "moves": [
+                  "Protect"
+                ],
+                "move_pp": {
+                  "Protect": {
+                    "current": 8,
+                    "max": 8
+                  }
+                },
+                "baseStatsLabel": "60/50/100/95/70/65",
+                "calculatedStats": "135/70/120/115/90/85"
+              },
+              {
+                "key": "opponent:bench:0:Garchomp",
+                "stableKey": "opponent:slot:2:Garchomp",
+                "teamSlot": 2,
+                "zone": "bench",
+                "zoneIndex": 0,
+                "side": "opponent",
+                "status": "bench",
+                "displayName": "Garchomp",
+                "species": "Garchomp",
+                "types": [
+                  "Dragon",
+                  "Ground"
+                ],
+                "hp": 100,
+                "hp_current": 183,
+                "substitute_hp": 0,
+                "perish_song_turns": 0,
+                "hp_max": 183,
+                "hpLabel": "100%",
+                "level": 50,
+                "item": "",
+                "itemConsumed": false,
+                "electric_charge": false,
+                "mc_syrup_turns": 0,
+                "mc_trap_turns": 0,
+                "mc_partially_trapped": false,
+                "ability": "Rough Skin",
+                "moves": [
+                  "Protect"
+                ],
+                "move_pp": {
+                  "Protect": {
+                    "current": 8,
+                    "max": 8
+                  }
+                },
+                "baseStatsLabel": "108/130/95/80/85/102",
+                "calculatedStats": "183/150/115/100/105/122"
+              },
+              {
+                "key": "opponent:bench:1:Incineroar",
+                "stableKey": "opponent:slot:3:Incineroar",
+                "teamSlot": 3,
+                "zone": "bench",
+                "zoneIndex": 1,
+                "side": "opponent",
+                "status": "bench",
+                "displayName": "Incineroar",
+                "species": "Incineroar",
+                "types": [
+                  "Fire",
+                  "Dark"
+                ],
+                "hp": 100,
+                "hp_current": 170,
+                "substitute_hp": 0,
+                "perish_song_turns": 0,
+                "hp_max": 170,
+                "hpLabel": "100%",
+                "level": 50,
+                "item": "",
+                "itemConsumed": false,
+                "electric_charge": false,
+                "mc_syrup_turns": 0,
+                "mc_trap_turns": 0,
+                "mc_partially_trapped": false,
+                "ability": "Intimidate",
+                "moves": [
+                  "Protect"
+                ],
+                "move_pp": {
+                  "Protect": {
+                    "current": 8,
+                    "max": 8
+                  }
+                },
+                "baseStatsLabel": "95/115/90/80/90/60",
+                "calculatedStats": "170/135/110/100/110/80"
+              }
+            ]
+          },
+          "status": {},
+          "status_stable": {},
+          "stat_boosts": {},
+          "stat_boosts_stable": {},
+          "field": {
+            "weather": "rain",
+            "weather_turns": 5,
+            "gravity_turns": 0,
+            "terrain": null,
+            "terrain_turns": 0,
+            "trick_room": 0
+          },
+          "speed_control": {
+            "player": {
+              "tailwind_turns": 0,
+              "screens": {
+                "reflect": 0,
+                "light": 0,
+                "aurora": 0
+              }
+            },
+            "opponent": {
+              "tailwind_turns": 0,
+              "screens": {
+                "reflect": 0,
+                "light": 0,
+                "aurora": 0
+              }
+            }
+          },
+          "speed_order": [
+            "Pelipper",
+            "Farigiraf",
+            "Machamp",
+            "Snorlax"
+          ],
+          "speed_order_keys": [
+            "opponent:active:1:Pelipper",
+            "player:active:1:Farigiraf",
+            "opponent:active:0:Machamp",
+            "player:active:0:Snorlax"
+          ],
+          "speed_order_stable_keys": [
+            "opponent:slot:1:Pelipper",
+            "player:slot:1:Farigiraf",
+            "opponent:slot:0:Machamp",
+            "player:slot:0:Snorlax"
+          ],
+          "speed_order_details": [
+            {
+              "side": "opponent",
+              "key": "opponent:active:1:Pelipper",
+              "stableKey": "opponent:slot:1:Pelipper",
+              "pokemon": "Pelipper",
+              "stat_format": "champions",
+              "nature": "Hardy",
+              "speed_points": 0,
+              "species_base_speed": 65,
+              "base_speed": 85,
+              "calculated_speed": 85,
+              "speed_stage": 0,
+              "effective_speed": 85,
+              "item": "",
+              "ability": "Drizzle",
+              "status": "",
+              "tailwind": false,
+              "trick_room": false,
+              "weather": "rain",
+              "exact_speed_tie": false
+            },
+            {
+              "side": "player",
+              "key": "player:active:1:Farigiraf",
+              "stableKey": "player:slot:1:Farigiraf",
+              "pokemon": "Farigiraf",
+              "stat_format": "champions",
+              "nature": "Hardy",
+              "speed_points": 0,
+              "species_base_speed": 60,
+              "base_speed": 80,
+              "calculated_speed": 80,
+              "speed_stage": 0,
+              "effective_speed": 80,
+              "item": "",
+              "ability": "Armor Tail",
+              "status": "",
+              "tailwind": false,
+              "trick_room": false,
+              "weather": "rain",
+              "exact_speed_tie": false
+            },
+            {
+              "side": "opponent",
+              "key": "opponent:active:0:Machamp",
+              "stableKey": "opponent:slot:0:Machamp",
+              "pokemon": "Machamp",
+              "stat_format": "champions",
+              "nature": "Hardy",
+              "speed_points": 0,
+              "species_base_speed": 55,
+              "base_speed": 75,
+              "calculated_speed": 75,
+              "speed_stage": 0,
+              "effective_speed": 75,
+              "item": "",
+              "ability": "Guts",
+              "status": "",
+              "tailwind": false,
+              "trick_room": false,
+              "weather": "rain",
+              "exact_speed_tie": false
+            },
+            {
+              "side": "player",
+              "key": "player:active:0:Snorlax",
+              "stableKey": "player:slot:0:Snorlax",
+              "pokemon": "Snorlax",
+              "stat_format": "champions",
+              "nature": "Hardy",
+              "speed_points": 0,
+              "species_base_speed": 30,
+              "base_speed": 50,
+              "calculated_speed": 50,
+              "speed_stage": 0,
+              "effective_speed": 50,
+              "item": "Red Card",
+              "ability": "Immunity",
+              "status": "",
+              "tailwind": false,
+              "trick_room": false,
+              "weather": "rain",
+              "exact_speed_tie": false
+            }
+          ],
+          "legal_options": {},
+          "position_score": 0.493,
+          "win_probability": null
+        },
+        "playerHP": [
+          1,
+          1,
+          1,
+          1,
+          1,
+          1
+        ],
+        "oppHP": [
+          1,
+          1,
+          1,
+          1,
+          1,
+          1
+        ],
+        "activePair": [
+          "Snorlax",
+          "Farigiraf",
+          "Machamp",
+          "Pelipper"
+        ],
+        "action": "Snorlax:Amnesia | Farigiraf:Protect | Machamp:Seismic Toss | Pelipper:Protect",
+        "positionScore": 0.493,
+        "pre": {
+          "active": {
+            "player": [
+              "Snorlax",
+              "Farigiraf"
+            ],
+            "opponent": [
+              "Machamp",
+              "Pelipper"
+            ]
+          },
+          "bench": {
+            "player": [
+              "Gholdengo",
+              "Dragonite"
+            ],
+            "opponent": [
+              "Garchomp",
+              "Incineroar"
+            ]
+          },
+          "active_keys": {
+            "player": [
+              "player:active:0:Snorlax",
+              "player:active:1:Farigiraf"
+            ],
+            "opponent": [
+              "opponent:active:0:Machamp",
+              "opponent:active:1:Pelipper"
+            ]
+          },
+          "bench_keys": {
+            "player": [
+              "player:bench:0:Gholdengo",
+              "player:bench:1:Dragonite"
+            ],
+            "opponent": [
+              "opponent:bench:0:Garchomp",
+              "opponent:bench:1:Incineroar"
+            ]
+          },
+          "active_stable_keys": {
+            "player": [
+              "player:slot:0:Snorlax",
+              "player:slot:1:Farigiraf"
+            ],
+            "opponent": [
+              "opponent:slot:0:Machamp",
+              "opponent:slot:1:Pelipper"
+            ]
+          },
+          "bench_stable_keys": {
+            "player": [
+              "player:slot:2:Gholdengo",
+              "player:slot:3:Dragonite"
+            ],
+            "opponent": [
+              "opponent:slot:2:Garchomp",
+              "opponent:slot:3:Incineroar"
+            ]
+          },
+          "hp_pct": {
+            "player:active:0:Snorlax": 1,
+            "player:active:1:Farigiraf": 1,
+            "player:bench:0:Gholdengo": 1,
+            "player:bench:1:Dragonite": 1,
+            "opponent:active:0:Machamp": 1,
+            "opponent:active:1:Pelipper": 1,
+            "opponent:bench:0:Garchomp": 1,
+            "opponent:bench:1:Incineroar": 1
+          },
+          "hp_pct_stable": {
+            "player:slot:0:Snorlax": 1,
+            "player:slot:1:Farigiraf": 1,
+            "player:slot:2:Gholdengo": 1,
+            "player:slot:3:Dragonite": 1,
+            "opponent:slot:0:Machamp": 1,
+            "opponent:slot:1:Pelipper": 1,
+            "opponent:slot:2:Garchomp": 1,
+            "opponent:slot:3:Incineroar": 1
+          },
+          "score_state": {
+            "player": {
+              "active": [
+                "Snorlax",
+                "Farigiraf"
+              ],
+              "bench": [
+                "Gholdengo",
+                "Dragonite"
+              ],
+              "active_keys": [
+                "player:active:0:Snorlax",
+                "player:active:1:Farigiraf"
+              ],
+              "bench_keys": [
+                "player:bench:0:Gholdengo",
+                "player:bench:1:Dragonite"
+              ],
+              "active_stable_keys": [
+                "player:slot:0:Snorlax",
+                "player:slot:1:Farigiraf"
+              ],
+              "bench_stable_keys": [
+                "player:slot:2:Gholdengo",
+                "player:slot:3:Dragonite"
+              ],
+              "alive_count": 4,
+              "hp_total": 4,
+              "max_count": 4
+            },
+            "opponent": {
+              "active": [
+                "Machamp",
+                "Pelipper"
+              ],
+              "bench": [
+                "Garchomp",
+                "Incineroar"
+              ],
+              "active_keys": [
+                "opponent:active:0:Machamp",
+                "opponent:active:1:Pelipper"
+              ],
+              "bench_keys": [
+                "opponent:bench:0:Garchomp",
+                "opponent:bench:1:Incineroar"
+              ],
+              "active_stable_keys": [
+                "opponent:slot:0:Machamp",
+                "opponent:slot:1:Pelipper"
+              ],
+              "bench_stable_keys": [
+                "opponent:slot:2:Garchomp",
+                "opponent:slot:3:Incineroar"
+              ],
+              "alive_count": 4,
+              "hp_total": 4,
+              "max_count": 4
+            }
+          },
+          "roster": {
+            "player": [
+              {
+                "key": "player:active:0:Snorlax",
+                "stableKey": "player:slot:0:Snorlax",
+                "teamSlot": 0,
+                "zone": "active",
+                "zoneIndex": 0,
+                "side": "player",
+                "status": "active",
+                "displayName": "Snorlax",
+                "species": "Snorlax",
+                "types": [
+                  "Normal"
+                ],
+                "hp": 100,
+                "hp_current": 235,
+                "substitute_hp": 0,
+                "perish_song_turns": 0,
+                "hp_max": 235,
+                "hpLabel": "100%",
+                "level": 50,
+                "item": "Red Card",
+                "itemConsumed": false,
+                "electric_charge": false,
+                "mc_syrup_turns": 0,
+                "mc_trap_turns": 0,
+                "mc_partially_trapped": false,
+                "ability": "Immunity",
+                "moves": [
+                  "Amnesia"
+                ],
+                "move_pp": {
+                  "Amnesia": {
+                    "current": 20,
+                    "max": 20
+                  }
+                },
+                "baseStatsLabel": "160/110/65/65/110/30",
+                "calculatedStats": "235/130/85/85/130/50"
+              },
+              {
+                "key": "player:active:1:Farigiraf",
+                "stableKey": "player:slot:1:Farigiraf",
+                "teamSlot": 1,
+                "zone": "active",
+                "zoneIndex": 1,
+                "side": "player",
+                "status": "active",
+                "displayName": "Farigiraf",
+                "species": "Farigiraf",
+                "types": [
+                  "Normal",
+                  "Psychic"
+                ],
+                "hp": 100,
+                "hp_current": 195,
+                "substitute_hp": 0,
+                "perish_song_turns": 0,
+                "hp_max": 195,
+                "hpLabel": "100%",
+                "level": 50,
+                "item": "",
+                "itemConsumed": false,
+                "electric_charge": false,
+                "mc_syrup_turns": 0,
+                "mc_trap_turns": 0,
+                "mc_partially_trapped": false,
+                "ability": "Armor Tail",
+                "moves": [
+                  "Protect"
+                ],
+                "move_pp": {
+                  "Protect": {
+                    "current": 8,
+                    "max": 8
+                  }
+                },
+                "baseStatsLabel": "120/90/70/110/70/60",
+                "calculatedStats": "195/110/90/130/90/80"
+              },
+              {
+                "key": "player:bench:0:Gholdengo",
+                "stableKey": "player:slot:2:Gholdengo",
+                "teamSlot": 2,
+                "zone": "bench",
+                "zoneIndex": 0,
+                "side": "player",
+                "status": "bench",
+                "displayName": "Gholdengo",
+                "species": "Gholdengo",
+                "types": [
+                  "Steel",
+                  "Ghost"
+                ],
+                "hp": 100,
+                "hp_current": 162,
+                "substitute_hp": 0,
+                "perish_song_turns": 0,
+                "hp_max": 162,
+                "hpLabel": "100%",
+                "level": 50,
+                "item": "",
+                "itemConsumed": false,
+                "electric_charge": false,
+                "mc_syrup_turns": 0,
+                "mc_trap_turns": 0,
+                "mc_partially_trapped": false,
+                "ability": "Good as Gold",
+                "moves": [
+                  "Protect"
+                ],
+                "move_pp": {
+                  "Protect": {
+                    "current": 8,
+                    "max": 8
+                  }
+                },
+                "baseStatsLabel": "87/60/95/133/91/84",
+                "calculatedStats": "162/80/115/153/111/104"
+              },
+              {
+                "key": "player:bench:1:Dragonite",
+                "stableKey": "player:slot:3:Dragonite",
+                "teamSlot": 3,
+                "zone": "bench",
+                "zoneIndex": 1,
+                "side": "player",
+                "status": "bench",
+                "displayName": "Dragonite",
+                "species": "Dragonite",
+                "types": [
+                  "Dragon",
+                  "Flying"
+                ],
+                "hp": 100,
+                "hp_current": 166,
+                "substitute_hp": 0,
+                "perish_song_turns": 0,
+                "hp_max": 166,
+                "hpLabel": "100%",
+                "level": 50,
+                "item": "",
+                "itemConsumed": false,
+                "electric_charge": false,
+                "mc_syrup_turns": 0,
+                "mc_trap_turns": 0,
+                "mc_partially_trapped": false,
+                "ability": "Inner Focus",
+                "moves": [
+                  "Protect"
+                ],
+                "move_pp": {
+                  "Protect": {
+                    "current": 8,
+                    "max": 8
+                  }
+                },
+                "baseStatsLabel": "91/134/95/100/100/80",
+                "calculatedStats": "166/154/115/120/120/100"
+              }
+            ],
+            "opponent": [
+              {
+                "key": "opponent:active:0:Machamp",
+                "stableKey": "opponent:slot:0:Machamp",
+                "teamSlot": 0,
+                "zone": "active",
+                "zoneIndex": 0,
+                "side": "opponent",
+                "status": "active",
+                "displayName": "Machamp",
+                "species": "Machamp",
+                "types": [
+                  "Fighting"
+                ],
+                "hp": 100,
+                "hp_current": 165,
+                "substitute_hp": 0,
+                "perish_song_turns": 0,
+                "hp_max": 165,
+                "hpLabel": "100%",
+                "level": 50,
+                "item": "",
+                "itemConsumed": false,
+                "electric_charge": false,
+                "mc_syrup_turns": 0,
+                "mc_trap_turns": 0,
+                "mc_partially_trapped": false,
+                "ability": "Guts",
+                "moves": [
+                  "Seismic Toss"
+                ],
+                "move_pp": {
+                  "Seismic Toss": {
+                    "current": 20,
+                    "max": 20
+                  }
+                },
+                "baseStatsLabel": "90/130/80/65/85/55",
+                "calculatedStats": "165/150/100/85/105/75"
+              },
+              {
+                "key": "opponent:active:1:Pelipper",
+                "stableKey": "opponent:slot:1:Pelipper",
+                "teamSlot": 1,
+                "zone": "active",
+                "zoneIndex": 1,
+                "side": "opponent",
+                "status": "active",
+                "displayName": "Pelipper",
+                "species": "Pelipper",
+                "types": [
+                  "Water",
+                  "Flying"
+                ],
+                "hp": 100,
+                "hp_current": 135,
+                "substitute_hp": 0,
+                "perish_song_turns": 0,
+                "hp_max": 135,
+                "hpLabel": "100%",
+                "level": 50,
+                "item": "",
+                "itemConsumed": false,
+                "electric_charge": false,
+                "mc_syrup_turns": 0,
+                "mc_trap_turns": 0,
+                "mc_partially_trapped": false,
+                "ability": "Drizzle",
+                "moves": [
+                  "Protect"
+                ],
+                "move_pp": {
+                  "Protect": {
+                    "current": 8,
+                    "max": 8
+                  }
+                },
+                "baseStatsLabel": "60/50/100/95/70/65",
+                "calculatedStats": "135/70/120/115/90/85"
+              },
+              {
+                "key": "opponent:bench:0:Garchomp",
+                "stableKey": "opponent:slot:2:Garchomp",
+                "teamSlot": 2,
+                "zone": "bench",
+                "zoneIndex": 0,
+                "side": "opponent",
+                "status": "bench",
+                "displayName": "Garchomp",
+                "species": "Garchomp",
+                "types": [
+                  "Dragon",
+                  "Ground"
+                ],
+                "hp": 100,
+                "hp_current": 183,
+                "substitute_hp": 0,
+                "perish_song_turns": 0,
+                "hp_max": 183,
+                "hpLabel": "100%",
+                "level": 50,
+                "item": "",
+                "itemConsumed": false,
+                "electric_charge": false,
+                "mc_syrup_turns": 0,
+                "mc_trap_turns": 0,
+                "mc_partially_trapped": false,
+                "ability": "Rough Skin",
+                "moves": [
+                  "Protect"
+                ],
+                "move_pp": {
+                  "Protect": {
+                    "current": 8,
+                    "max": 8
+                  }
+                },
+                "baseStatsLabel": "108/130/95/80/85/102",
+                "calculatedStats": "183/150/115/100/105/122"
+              },
+              {
+                "key": "opponent:bench:1:Incineroar",
+                "stableKey": "opponent:slot:3:Incineroar",
+                "teamSlot": 3,
+                "zone": "bench",
+                "zoneIndex": 1,
+                "side": "opponent",
+                "status": "bench",
+                "displayName": "Incineroar",
+                "species": "Incineroar",
+                "types": [
+                  "Fire",
+                  "Dark"
+                ],
+                "hp": 100,
+                "hp_current": 170,
+                "substitute_hp": 0,
+                "perish_song_turns": 0,
+                "hp_max": 170,
+                "hpLabel": "100%",
+                "level": 50,
+                "item": "",
+                "itemConsumed": false,
+                "electric_charge": false,
+                "mc_syrup_turns": 0,
+                "mc_trap_turns": 0,
+                "mc_partially_trapped": false,
+                "ability": "Intimidate",
+                "moves": [
+                  "Protect"
+                ],
+                "move_pp": {
+                  "Protect": {
+                    "current": 8,
+                    "max": 8
+                  }
+                },
+                "baseStatsLabel": "95/115/90/80/90/60",
+                "calculatedStats": "170/135/110/100/110/80"
+              }
+            ]
+          },
+          "status": {},
+          "status_stable": {},
+          "stat_boosts": {},
+          "stat_boosts_stable": {},
+          "field": {
+            "weather": "rain",
+            "weather_turns": 5,
+            "gravity_turns": 0,
+            "terrain": null,
+            "terrain_turns": 0,
+            "trick_room": 0
+          },
+          "speed_control": {
+            "player": {
+              "tailwind_turns": 0,
+              "screens": {
+                "reflect": 0,
+                "light": 0,
+                "aurora": 0
+              }
+            },
+            "opponent": {
+              "tailwind_turns": 0,
+              "screens": {
+                "reflect": 0,
+                "light": 0,
+                "aurora": 0
+              }
+            }
+          },
+          "speed_order": [
+            "Pelipper",
+            "Farigiraf",
+            "Machamp",
+            "Snorlax"
+          ],
+          "speed_order_keys": [
+            "opponent:active:1:Pelipper",
+            "player:active:1:Farigiraf",
+            "opponent:active:0:Machamp",
+            "player:active:0:Snorlax"
+          ],
+          "speed_order_stable_keys": [
+            "opponent:slot:1:Pelipper",
+            "player:slot:1:Farigiraf",
+            "opponent:slot:0:Machamp",
+            "player:slot:0:Snorlax"
+          ],
+          "speed_order_details": [
+            {
+              "side": "opponent",
+              "key": "opponent:active:1:Pelipper",
+              "stableKey": "opponent:slot:1:Pelipper",
+              "pokemon": "Pelipper",
+              "stat_format": "champions",
+              "nature": "Hardy",
+              "speed_points": 0,
+              "species_base_speed": 65,
+              "base_speed": 85,
+              "calculated_speed": 85,
+              "speed_stage": 0,
+              "effective_speed": 85,
+              "item": "",
+              "ability": "Drizzle",
+              "status": "",
+              "tailwind": false,
+              "trick_room": false,
+              "weather": "rain",
+              "exact_speed_tie": false
+            },
+            {
+              "side": "player",
+              "key": "player:active:1:Farigiraf",
+              "stableKey": "player:slot:1:Farigiraf",
+              "pokemon": "Farigiraf",
+              "stat_format": "champions",
+              "nature": "Hardy",
+              "speed_points": 0,
+              "species_base_speed": 60,
+              "base_speed": 80,
+              "calculated_speed": 80,
+              "speed_stage": 0,
+              "effective_speed": 80,
+              "item": "",
+              "ability": "Armor Tail",
+              "status": "",
+              "tailwind": false,
+              "trick_room": false,
+              "weather": "rain",
+              "exact_speed_tie": false
+            },
+            {
+              "side": "opponent",
+              "key": "opponent:active:0:Machamp",
+              "stableKey": "opponent:slot:0:Machamp",
+              "pokemon": "Machamp",
+              "stat_format": "champions",
+              "nature": "Hardy",
+              "speed_points": 0,
+              "species_base_speed": 55,
+              "base_speed": 75,
+              "calculated_speed": 75,
+              "speed_stage": 0,
+              "effective_speed": 75,
+              "item": "",
+              "ability": "Guts",
+              "status": "",
+              "tailwind": false,
+              "trick_room": false,
+              "weather": "rain",
+              "exact_speed_tie": false
+            },
+            {
+              "side": "player",
+              "key": "player:active:0:Snorlax",
+              "stableKey": "player:slot:0:Snorlax",
+              "pokemon": "Snorlax",
+              "stat_format": "champions",
+              "nature": "Hardy",
+              "speed_points": 0,
+              "species_base_speed": 30,
+              "base_speed": 50,
+              "calculated_speed": 50,
+              "speed_stage": 0,
+              "effective_speed": 50,
+              "item": "Red Card",
+              "ability": "Immunity",
+              "status": "",
+              "tailwind": false,
+              "trick_room": false,
+              "weather": "rain",
+              "exact_speed_tie": false
+            }
+          ],
+          "legal_options": {
+            "Snorlax": [
+              "Amnesia -> Machamp"
+            ],
+            "Farigiraf": [
+              "Protect -> Machamp"
+            ]
+          },
+          "position_score": 0.493,
+          "win_probability": null
+        },
+        "actions": {
+          "player": [
+            {
+              "actor": "Snorlax",
+              "actor_key": "player:slot:0:Snorlax",
+              "kind": "move",
+              "move": "Amnesia",
+              "target": "Machamp",
+              "target_key": "opponent:slot:0:Machamp",
+              "target_side": "opponent"
+            },
+            {
+              "actor": "Farigiraf",
+              "actor_key": "player:slot:1:Farigiraf",
+              "kind": "move",
+              "move": "Protect",
+              "target": "Machamp",
+              "target_key": "opponent:slot:0:Machamp",
+              "target_side": "opponent"
+            }
+          ],
+          "opponent": [
+            {
+              "actor": "Machamp",
+              "actor_key": "opponent:slot:0:Machamp",
+              "kind": "move",
+              "move": "Seismic Toss",
+              "target": "Snorlax",
+              "target_key": "player:slot:0:Snorlax",
+              "target_side": "player"
+            },
+            {
+              "actor": "Pelipper",
+              "actor_key": "opponent:slot:1:Pelipper",
+              "kind": "move",
+              "move": "Protect",
+              "target": "Snorlax",
+              "target_key": "player:slot:0:Snorlax",
+              "target_side": "player"
+            }
+          ]
+        },
+        "events": [
+          {
+            "type": "log",
+            "text": "Pelipper used Protect!",
+            "actor": "Pelipper",
+            "actor_key": "opponent:slot:1:Pelipper",
+            "side": "opponent",
+            "move": "Protect",
+            "target": "Snorlax",
+            "target_key": "player:slot:0:Snorlax",
+            "target_side": "player",
+            "log_index": 0,
+            "called_by": null
+          },
+          {
+            "type": "log",
+            "text": "Farigiraf used Protect!",
+            "actor": "Farigiraf",
+            "actor_key": "player:slot:1:Farigiraf",
+            "side": "player",
+            "move": "Protect",
+            "target": "Machamp",
+            "target_key": "opponent:slot:0:Machamp",
+            "target_side": "opponent",
+            "log_index": 1,
+            "called_by": null
+          },
+          {
+            "type": "log",
+            "text": "Machamp used Seismic Toss!",
+            "actor": "Machamp",
+            "actor_key": "opponent:slot:0:Machamp",
+            "side": "opponent",
+            "move": "Seismic Toss",
+            "target": "Snorlax",
+            "target_key": "player:slot:0:Snorlax",
+            "target_side": "player",
+            "log_index": 2,
+            "called_by": null
+          },
+          {
+            "type": "damage",
+            "text": "Machamp used Seismic Toss! → Snorlax [50 dmg, 185/235 HP]"
+          },
+          {
+            "type": "log",
+            "text": "Snorlax's Red Card activated!"
+          },
+          {
+            "type": "log",
+            "text": "Machamp was forced out by Red Card!"
+          },
+          {
+            "type": "log",
+            "text": "Garchomp was sent out!"
+          },
+          {
+            "type": "log",
+            "text": "Snorlax used Amnesia!",
+            "actor": "Snorlax",
+            "actor_key": "player:slot:0:Snorlax",
+            "side": "player",
+            "move": "Amnesia",
+            "target": "Snorlax",
+            "target_key": "player:slot:0:Snorlax",
+            "target_side": "player",
+            "log_index": 7,
+            "called_by": null
+          },
+          {
+            "type": "log",
+            "text": "Snorlax's Special Defense sharply rose!"
+          }
+        ],
+        "damage_events": [
+          {
+            "attacker": "Machamp",
+            "attacker_key": "opponent:slot:0:Machamp",
+            "target": "Snorlax",
+            "target_key": "player:slot:0:Snorlax",
+            "move": "Seismic Toss",
+            "damage_kind": "fixed_or_direct",
+            "damage": 50,
+            "applied_damage": 50,
+            "hp_delta": 50,
+            "calculated_damage": 50,
+            "overkill_damage": 0,
+            "damage_capped_by_hp": false,
+            "target_hp_before": 235,
+            "target_hp_after": 185,
+            "target_max_hp": 235,
+            "target_survived": true,
+            "move_context": "Does damage equal to the user's level.",
+            "effect_tags": [],
+            "move_type": "Fighting",
+            "category": "physical",
+            "type_effectiveness": null,
+            "critical": false
+          }
+        ],
+        "effect_events": [
+          {
+            "actor": "Snorlax",
+            "actor_key": "player:slot:0:Snorlax",
+            "side": "player",
+            "move": "Red Card",
+            "effect_kind": "item-forced-switch",
+            "hp_before": 185,
+            "hp_after": 185,
+            "hp_delta": 0,
+            "max_hp": 235,
+            "source": "pokemon-showdown@9b136a8 items.redcard / champions.scripts",
+            "move_context": "",
+            "source_actor": "Machamp",
+            "item_consumed": true
+          }
+        ],
+        "post": {
+          "active": {
+            "player": [
+              "Snorlax",
+              "Farigiraf"
+            ],
+            "opponent": [
+              "Garchomp",
+              "Pelipper"
+            ]
+          },
+          "bench": {
+            "player": [
+              "Gholdengo",
+              "Dragonite"
+            ],
+            "opponent": [
+              "Incineroar",
+              "Machamp"
+            ]
+          },
+          "active_keys": {
+            "player": [
+              "player:active:0:Snorlax",
+              "player:active:1:Farigiraf"
+            ],
+            "opponent": [
+              "opponent:active:0:Garchomp",
+              "opponent:active:1:Pelipper"
+            ]
+          },
+          "bench_keys": {
+            "player": [
+              "player:bench:0:Gholdengo",
+              "player:bench:1:Dragonite"
+            ],
+            "opponent": [
+              "opponent:bench:0:Incineroar",
+              "opponent:bench:1:Machamp"
+            ]
+          },
+          "active_stable_keys": {
+            "player": [
+              "player:slot:0:Snorlax",
+              "player:slot:1:Farigiraf"
+            ],
+            "opponent": [
+              "opponent:slot:2:Garchomp",
+              "opponent:slot:1:Pelipper"
+            ]
+          },
+          "bench_stable_keys": {
+            "player": [
+              "player:slot:2:Gholdengo",
+              "player:slot:3:Dragonite"
+            ],
+            "opponent": [
+              "opponent:slot:3:Incineroar",
+              "opponent:slot:0:Machamp"
+            ]
+          },
+          "hp_pct": {
+            "player:active:0:Snorlax": 0.787,
+            "player:active:1:Farigiraf": 1,
+            "player:bench:0:Gholdengo": 1,
+            "player:bench:1:Dragonite": 1,
+            "opponent:active:0:Garchomp": 1,
+            "opponent:active:1:Pelipper": 1,
+            "opponent:bench:0:Incineroar": 1,
+            "opponent:bench:1:Machamp": 1
+          },
+          "hp_pct_stable": {
+            "player:slot:0:Snorlax": 0.787,
+            "player:slot:1:Farigiraf": 1,
+            "player:slot:2:Gholdengo": 1,
+            "player:slot:3:Dragonite": 1,
+            "opponent:slot:2:Garchomp": 1,
+            "opponent:slot:1:Pelipper": 1,
+            "opponent:slot:3:Incineroar": 1,
+            "opponent:slot:0:Machamp": 1
+          },
+          "score_state": {
+            "player": {
+              "active": [
+                "Snorlax",
+                "Farigiraf"
+              ],
+              "bench": [
+                "Gholdengo",
+                "Dragonite"
+              ],
+              "active_keys": [
+                "player:active:0:Snorlax",
+                "player:active:1:Farigiraf"
+              ],
+              "bench_keys": [
+                "player:bench:0:Gholdengo",
+                "player:bench:1:Dragonite"
+              ],
+              "active_stable_keys": [
+                "player:slot:0:Snorlax",
+                "player:slot:1:Farigiraf"
+              ],
+              "bench_stable_keys": [
+                "player:slot:2:Gholdengo",
+                "player:slot:3:Dragonite"
+              ],
+              "alive_count": 4,
+              "hp_total": 3.7872340425531914,
+              "max_count": 4
+            },
+            "opponent": {
+              "active": [
+                "Garchomp",
+                "Pelipper"
+              ],
+              "bench": [
+                "Incineroar",
+                "Machamp"
+              ],
+              "active_keys": [
+                "opponent:active:0:Garchomp",
+                "opponent:active:1:Pelipper"
+              ],
+              "bench_keys": [
+                "opponent:bench:0:Incineroar",
+                "opponent:bench:1:Machamp"
+              ],
+              "active_stable_keys": [
+                "opponent:slot:2:Garchomp",
+                "opponent:slot:1:Pelipper"
+              ],
+              "bench_stable_keys": [
+                "opponent:slot:3:Incineroar",
+                "opponent:slot:0:Machamp"
+              ],
+              "alive_count": 4,
+              "hp_total": 4,
+              "max_count": 4
+            }
+          },
+          "roster": {
+            "player": [
+              {
+                "key": "player:active:0:Snorlax",
+                "stableKey": "player:slot:0:Snorlax",
+                "teamSlot": 0,
+                "zone": "active",
+                "zoneIndex": 0,
+                "side": "player",
+                "status": "active",
+                "displayName": "Snorlax",
+                "species": "Snorlax",
+                "types": [
+                  "Normal"
+                ],
+                "hp": 79,
+                "hp_current": 185,
+                "substitute_hp": 0,
+                "perish_song_turns": 0,
+                "hp_max": 235,
+                "hpLabel": "79%",
+                "level": 50,
+                "item": "Red Card",
+                "itemConsumed": true,
+                "electric_charge": false,
+                "mc_syrup_turns": 0,
+                "mc_trap_turns": 0,
+                "mc_partially_trapped": false,
+                "ability": "Immunity",
+                "moves": [
+                  "Amnesia"
+                ],
+                "move_pp": {
+                  "Amnesia": {
+                    "current": 19,
+                    "max": 20
+                  }
+                },
+                "baseStatsLabel": "160/110/65/65/110/30",
+                "calculatedStats": "235/130/85/85/130/50"
+              },
+              {
+                "key": "player:active:1:Farigiraf",
+                "stableKey": "player:slot:1:Farigiraf",
+                "teamSlot": 1,
+                "zone": "active",
+                "zoneIndex": 1,
+                "side": "player",
+                "status": "active",
+                "displayName": "Farigiraf",
+                "species": "Farigiraf",
+                "types": [
+                  "Normal",
+                  "Psychic"
+                ],
+                "hp": 100,
+                "hp_current": 195,
+                "substitute_hp": 0,
+                "perish_song_turns": 0,
+                "hp_max": 195,
+                "hpLabel": "100%",
+                "level": 50,
+                "item": "",
+                "itemConsumed": false,
+                "electric_charge": false,
+                "mc_syrup_turns": 0,
+                "mc_trap_turns": 0,
+                "mc_partially_trapped": false,
+                "ability": "Armor Tail",
+                "moves": [
+                  "Protect"
+                ],
+                "move_pp": {
+                  "Protect": {
+                    "current": 7,
+                    "max": 8
+                  }
+                },
+                "baseStatsLabel": "120/90/70/110/70/60",
+                "calculatedStats": "195/110/90/130/90/80"
+              },
+              {
+                "key": "player:bench:0:Gholdengo",
+                "stableKey": "player:slot:2:Gholdengo",
+                "teamSlot": 2,
+                "zone": "bench",
+                "zoneIndex": 0,
+                "side": "player",
+                "status": "bench",
+                "displayName": "Gholdengo",
+                "species": "Gholdengo",
+                "types": [
+                  "Steel",
+                  "Ghost"
+                ],
+                "hp": 100,
+                "hp_current": 162,
+                "substitute_hp": 0,
+                "perish_song_turns": 0,
+                "hp_max": 162,
+                "hpLabel": "100%",
+                "level": 50,
+                "item": "",
+                "itemConsumed": false,
+                "electric_charge": false,
+                "mc_syrup_turns": 0,
+                "mc_trap_turns": 0,
+                "mc_partially_trapped": false,
+                "ability": "Good as Gold",
+                "moves": [
+                  "Protect"
+                ],
+                "move_pp": {
+                  "Protect": {
+                    "current": 8,
+                    "max": 8
+                  }
+                },
+                "baseStatsLabel": "87/60/95/133/91/84",
+                "calculatedStats": "162/80/115/153/111/104"
+              },
+              {
+                "key": "player:bench:1:Dragonite",
+                "stableKey": "player:slot:3:Dragonite",
+                "teamSlot": 3,
+                "zone": "bench",
+                "zoneIndex": 1,
+                "side": "player",
+                "status": "bench",
+                "displayName": "Dragonite",
+                "species": "Dragonite",
+                "types": [
+                  "Dragon",
+                  "Flying"
+                ],
+                "hp": 100,
+                "hp_current": 166,
+                "substitute_hp": 0,
+                "perish_song_turns": 0,
+                "hp_max": 166,
+                "hpLabel": "100%",
+                "level": 50,
+                "item": "",
+                "itemConsumed": false,
+                "electric_charge": false,
+                "mc_syrup_turns": 0,
+                "mc_trap_turns": 0,
+                "mc_partially_trapped": false,
+                "ability": "Inner Focus",
+                "moves": [
+                  "Protect"
+                ],
+                "move_pp": {
+                  "Protect": {
+                    "current": 8,
+                    "max": 8
+                  }
+                },
+                "baseStatsLabel": "91/134/95/100/100/80",
+                "calculatedStats": "166/154/115/120/120/100"
+              }
+            ],
+            "opponent": [
+              {
+                "key": "opponent:bench:1:Machamp",
+                "stableKey": "opponent:slot:0:Machamp",
+                "teamSlot": 0,
+                "zone": "bench",
+                "zoneIndex": 1,
+                "side": "opponent",
+                "status": "bench",
+                "displayName": "Machamp",
+                "species": "Machamp",
+                "types": [
+                  "Fighting"
+                ],
+                "hp": 100,
+                "hp_current": 165,
+                "substitute_hp": 0,
+                "perish_song_turns": 0,
+                "hp_max": 165,
+                "hpLabel": "100%",
+                "level": 50,
+                "item": "",
+                "itemConsumed": false,
+                "electric_charge": false,
+                "mc_syrup_turns": 0,
+                "mc_trap_turns": 0,
+                "mc_partially_trapped": false,
+                "ability": "Guts",
+                "moves": [
+                  "Seismic Toss"
+                ],
+                "move_pp": {
+                  "Seismic Toss": {
+                    "current": 19,
+                    "max": 20
+                  }
+                },
+                "baseStatsLabel": "90/130/80/65/85/55",
+                "calculatedStats": "165/150/100/85/105/75"
+              },
+              {
+                "key": "opponent:active:1:Pelipper",
+                "stableKey": "opponent:slot:1:Pelipper",
+                "teamSlot": 1,
+                "zone": "active",
+                "zoneIndex": 1,
+                "side": "opponent",
+                "status": "active",
+                "displayName": "Pelipper",
+                "species": "Pelipper",
+                "types": [
+                  "Water",
+                  "Flying"
+                ],
+                "hp": 100,
+                "hp_current": 135,
+                "substitute_hp": 0,
+                "perish_song_turns": 0,
+                "hp_max": 135,
+                "hpLabel": "100%",
+                "level": 50,
+                "item": "",
+                "itemConsumed": false,
+                "electric_charge": false,
+                "mc_syrup_turns": 0,
+                "mc_trap_turns": 0,
+                "mc_partially_trapped": false,
+                "ability": "Drizzle",
+                "moves": [
+                  "Protect"
+                ],
+                "move_pp": {
+                  "Protect": {
+                    "current": 7,
+                    "max": 8
+                  }
+                },
+                "baseStatsLabel": "60/50/100/95/70/65",
+                "calculatedStats": "135/70/120/115/90/85"
+              },
+              {
+                "key": "opponent:active:0:Garchomp",
+                "stableKey": "opponent:slot:2:Garchomp",
+                "teamSlot": 2,
+                "zone": "active",
+                "zoneIndex": 0,
+                "side": "opponent",
+                "status": "active",
+                "displayName": "Garchomp",
+                "species": "Garchomp",
+                "types": [
+                  "Dragon",
+                  "Ground"
+                ],
+                "hp": 100,
+                "hp_current": 183,
+                "substitute_hp": 0,
+                "perish_song_turns": 0,
+                "hp_max": 183,
+                "hpLabel": "100%",
+                "level": 50,
+                "item": "",
+                "itemConsumed": false,
+                "electric_charge": false,
+                "mc_syrup_turns": 0,
+                "mc_trap_turns": 0,
+                "mc_partially_trapped": false,
+                "ability": "Rough Skin",
+                "moves": [
+                  "Protect"
+                ],
+                "move_pp": {
+                  "Protect": {
+                    "current": 8,
+                    "max": 8
+                  }
+                },
+                "baseStatsLabel": "108/130/95/80/85/102",
+                "calculatedStats": "183/150/115/100/105/122"
+              },
+              {
+                "key": "opponent:bench:0:Incineroar",
+                "stableKey": "opponent:slot:3:Incineroar",
+                "teamSlot": 3,
+                "zone": "bench",
+                "zoneIndex": 0,
+                "side": "opponent",
+                "status": "bench",
+                "displayName": "Incineroar",
+                "species": "Incineroar",
+                "types": [
+                  "Fire",
+                  "Dark"
+                ],
+                "hp": 100,
+                "hp_current": 170,
+                "substitute_hp": 0,
+                "perish_song_turns": 0,
+                "hp_max": 170,
+                "hpLabel": "100%",
+                "level": 50,
+                "item": "",
+                "itemConsumed": false,
+                "electric_charge": false,
+                "mc_syrup_turns": 0,
+                "mc_trap_turns": 0,
+                "mc_partially_trapped": false,
+                "ability": "Intimidate",
+                "moves": [
+                  "Protect"
+                ],
+                "move_pp": {
+                  "Protect": {
+                    "current": 8,
+                    "max": 8
+                  }
+                },
+                "baseStatsLabel": "95/115/90/80/90/60",
+                "calculatedStats": "170/135/110/100/110/80"
+              }
+            ]
+          },
+          "status": {},
+          "status_stable": {},
+          "stat_boosts": {
+            "player:active:0:Snorlax": {
+              "atk": 0,
+              "def": 0,
+              "spa": 0,
+              "spd": 2,
+              "spe": 0,
+              "acc": 0,
+              "eva": 0
+            }
+          },
+          "stat_boosts_stable": {
+            "player:slot:0:Snorlax": {
+              "atk": 0,
+              "def": 0,
+              "spa": 0,
+              "spd": 2,
+              "spe": 0,
+              "acc": 0,
+              "eva": 0
+            }
+          },
+          "field": {
+            "weather": "rain",
+            "weather_turns": 4,
+            "gravity_turns": 0,
+            "terrain": null,
+            "terrain_turns": 0,
+            "trick_room": 0
+          },
+          "speed_control": {
+            "player": {
+              "tailwind_turns": 0,
+              "screens": {
+                "reflect": 0,
+                "light": 0,
+                "aurora": 0
+              }
+            },
+            "opponent": {
+              "tailwind_turns": 0,
+              "screens": {
+                "reflect": 0,
+                "light": 0,
+                "aurora": 0
+              }
+            }
+          },
+          "speed_order": [
+            "Garchomp",
+            "Pelipper",
+            "Farigiraf",
+            "Snorlax"
+          ],
+          "speed_order_keys": [
+            "opponent:active:0:Garchomp",
+            "opponent:active:1:Pelipper",
+            "player:active:1:Farigiraf",
+            "player:active:0:Snorlax"
+          ],
+          "speed_order_stable_keys": [
+            "opponent:slot:2:Garchomp",
+            "opponent:slot:1:Pelipper",
+            "player:slot:1:Farigiraf",
+            "player:slot:0:Snorlax"
+          ],
+          "speed_order_details": [
+            {
+              "side": "opponent",
+              "key": "opponent:active:0:Garchomp",
+              "stableKey": "opponent:slot:2:Garchomp",
+              "pokemon": "Garchomp",
+              "stat_format": "champions",
+              "nature": "Hardy",
+              "speed_points": 0,
+              "species_base_speed": 102,
+              "base_speed": 122,
+              "calculated_speed": 122,
+              "speed_stage": 0,
+              "effective_speed": 122,
+              "item": "",
+              "ability": "Rough Skin",
+              "status": "",
+              "tailwind": false,
+              "trick_room": false,
+              "weather": "rain",
+              "exact_speed_tie": false
+            },
+            {
+              "side": "opponent",
+              "key": "opponent:active:1:Pelipper",
+              "stableKey": "opponent:slot:1:Pelipper",
+              "pokemon": "Pelipper",
+              "stat_format": "champions",
+              "nature": "Hardy",
+              "speed_points": 0,
+              "species_base_speed": 65,
+              "base_speed": 85,
+              "calculated_speed": 85,
+              "speed_stage": 0,
+              "effective_speed": 85,
+              "item": "",
+              "ability": "Drizzle",
+              "status": "",
+              "tailwind": false,
+              "trick_room": false,
+              "weather": "rain",
+              "exact_speed_tie": false
+            },
+            {
+              "side": "player",
+              "key": "player:active:1:Farigiraf",
+              "stableKey": "player:slot:1:Farigiraf",
+              "pokemon": "Farigiraf",
+              "stat_format": "champions",
+              "nature": "Hardy",
+              "speed_points": 0,
+              "species_base_speed": 60,
+              "base_speed": 80,
+              "calculated_speed": 80,
+              "speed_stage": 0,
+              "effective_speed": 80,
+              "item": "",
+              "ability": "Armor Tail",
+              "status": "",
+              "tailwind": false,
+              "trick_room": false,
+              "weather": "rain",
+              "exact_speed_tie": false
+            },
+            {
+              "side": "player",
+              "key": "player:active:0:Snorlax",
+              "stableKey": "player:slot:0:Snorlax",
+              "pokemon": "Snorlax",
+              "stat_format": "champions",
+              "nature": "Hardy",
+              "speed_points": 0,
+              "species_base_speed": 30,
+              "base_speed": 50,
+              "calculated_speed": 50,
+              "speed_stage": 0,
+              "effective_speed": 50,
+              "item": "Red Card",
+              "ability": "Immunity",
+              "status": "",
+              "tailwind": false,
+              "trick_room": false,
+              "weather": "rain",
+              "exact_speed_tie": false
+            }
+          ],
+          "legal_options": {},
+          "position_score": 0.477,
+          "win_probability": null
+        },
+        "delta": {
+          "position_score": -0.016,
+          "win_probability": null,
+          "primary_cause": "position_lost",
+          "explanation": ""
+        }
+      }
+    ],
+    "position_path": [
+      0.493,
+      0.477
+    ],
+    "position_deltas": [],
+    "turning_point": null,
+    "playerSurvivors": 4,
+    "oppSurvivors": 4,
+    "leads": {
+      "player": [
+        "Snorlax",
+        "Farigiraf"
+      ],
+      "opponent": [
+        "Machamp",
+        "Pelipper"
+      ]
+    },
+    "bring": {
+      "player": [
+        "Snorlax",
+        "Farigiraf",
+        "Gholdengo",
+        "Dragonite"
+      ],
+      "opponent": [
+        "Machamp",
+        "Pelipper",
+        "Garchomp",
+        "Incineroar"
+      ]
+    },
+    "participants": {
+      "player": [
+        {
+          "stable_key": "player:slot:0:Snorlax",
+          "team_slot": 0,
+          "member_id": null,
+          "name": "Snorlax",
+          "item": "Red Card"
+        },
+        {
+          "stable_key": "player:slot:1:Farigiraf",
+          "team_slot": 1,
+          "member_id": null,
+          "name": "Farigiraf",
+          "item": ""
+        },
+        {
+          "stable_key": "player:slot:2:Gholdengo",
+          "team_slot": 2,
+          "member_id": null,
+          "name": "Gholdengo",
+          "item": ""
+        },
+        {
+          "stable_key": "player:slot:3:Dragonite",
+          "team_slot": 3,
+          "member_id": null,
+          "name": "Dragonite",
+          "item": ""
+        }
+      ],
+      "opponent": [
+        {
+          "stable_key": "opponent:slot:0:Machamp",
+          "team_slot": 0,
+          "member_id": null,
+          "name": "Machamp",
+          "item": ""
+        },
+        {
+          "stable_key": "opponent:slot:1:Pelipper",
+          "team_slot": 1,
+          "member_id": null,
+          "name": "Pelipper",
+          "item": ""
+        },
+        {
+          "stable_key": "opponent:slot:2:Garchomp",
+          "team_slot": 2,
+          "member_id": null,
+          "name": "Garchomp",
+          "item": ""
+        },
+        {
+          "stable_key": "opponent:slot:3:Incineroar",
+          "team_slot": 3,
+          "member_id": null,
+          "name": "Incineroar",
+          "item": ""
+        }
+      ]
+    },
+    "playerRegistration": [
+      {
+        "name": "Snorlax",
+        "ability": "Immunity",
+        "moves": [
+          "Amnesia"
+        ],
+        "item": "Red Card",
+        "nature": "Hardy",
+        "level": 50,
+        "evs": {
+          "hp": 0,
+          "atk": 0,
+          "def": 0,
+          "spa": 0,
+          "spd": 0,
+          "spe": 0
+        }
+      },
+      {
+        "name": "Farigiraf",
+        "ability": "Armor Tail",
+        "moves": [
+          "Protect"
+        ],
+        "item": "",
+        "nature": "Hardy",
+        "level": 50,
+        "evs": {
+          "hp": 0,
+          "atk": 0,
+          "def": 0,
+          "spa": 0,
+          "spd": 0,
+          "spe": 0
+        }
+      },
+      {
+        "name": "Gholdengo",
+        "ability": "Good as Gold",
+        "moves": [
+          "Protect"
+        ],
+        "item": "",
+        "nature": "Hardy",
+        "level": 50,
+        "evs": {
+          "hp": 0,
+          "atk": 0,
+          "def": 0,
+          "spa": 0,
+          "spd": 0,
+          "spe": 0
+        }
+      },
+      {
+        "name": "Dragonite",
+        "ability": "Inner Focus",
+        "moves": [
+          "Protect"
+        ],
+        "item": "",
+        "nature": "Hardy",
+        "level": 50,
+        "evs": {
+          "hp": 0,
+          "atk": 0,
+          "def": 0,
+          "spa": 0,
+          "spd": 0,
+          "spe": 0
+        }
+      },
+      {
+        "name": "Raichu",
+        "ability": "Static",
+        "moves": [
+          "Protect"
+        ],
+        "item": "",
+        "nature": "Hardy",
+        "level": 50,
+        "evs": {
+          "hp": 0,
+          "atk": 0,
+          "def": 0,
+          "spa": 0,
+          "spd": 0,
+          "spe": 0
+        }
+      },
+      {
+        "name": "Talonflame",
+        "ability": "Gale Wings",
+        "moves": [
+          "Protect"
+        ],
+        "item": "",
+        "nature": "Hardy",
+        "level": 50,
+        "evs": {
+          "hp": 0,
+          "atk": 0,
+          "def": 0,
+          "spa": 0,
+          "spd": 0,
+          "spe": 0
+        }
+      }
+    ],
+    "policy_provenance": {
+      "id": "own-public-heuristic-v4",
+      "information_model": "own_state_public_field_target_slots",
+      "forced_actions": true,
+      "competitive_strength_verified": false,
+      "limitations": [
+        "Own-move heuristic, not predicted damage; target occupancy only.",
+        "No opponent reveal model or verified competitive strength; execution may reject hidden restrictions."
+      ]
+    },
+    "reference_policy": {
+      "mode": "champions_mc_reference",
+      "pin": "efe4948570d5e8189751792136d26e71710c6c66",
+      "official_approval": false,
+      "trusted_rankings": false
+    },
+    "legality": {
+      "player": {
+        "valid": false,
+        "errors": [],
+        "warnings": [
+          "Reference simulation only; official M-C approval and full mechanics parity are incomplete."
+        ]
+      },
+      "opp": {
+        "valid": false,
+        "errors": [],
+        "warnings": [
+          "Reference simulation only; official M-C approval and full mechanics parity are incomplete."
+        ]
+      }
+    },
+    "koEvents": [],
+    "movesUsed": {
+      "player": {
+        "Snorlax": {
+          "Amnesia": 1
+        },
+        "Farigiraf": {
+          "Protect": 1
+        }
+      },
+      "opp": {
+        "Machamp": {
+          "Seismic Toss": 1
+        },
+        "Pelipper": {
+          "Protect": 1
+        }
+      }
+    },
+    "protectStreakMax": {
+      "player:Farigiraf": 1,
+      "opp:Pelipper": 1
+    }
+  },
+  "reference_log": [
+    "|t:|1792515213",
+    "|gametype|doubles",
+    "|player|p1|Player 1||",
+    "|player|p2|Player 2||",
+    "|gen|9",
+    "|tier|[Gen 9 Champions] VGC 2026 Reg M-C",
+    "|rule|Species Clause: Limit one of each Pokemon",
+    "|rule|Item Clause: Limit 1 of each item",
+    "|clearpoke",
+    "|poke|p1|Snorlax, L50, M|",
+    "|poke|p1|Farigiraf, L50, M|",
+    "|poke|p1|Gholdengo, L50|",
+    "|poke|p1|Dragonite, L50, F|",
+    "|poke|p1|Raichu, L50, M|",
+    "|poke|p1|Talonflame, L50, M|",
+    "|poke|p2|Machamp, L50, M|",
+    "|poke|p2|Pelipper, L50, F|",
+    "|poke|p2|Garchomp, L50, M|",
+    "|poke|p2|Incineroar, L50, M|",
+    "|poke|p2|Venusaur, L50, F|",
+    "|poke|p2|Tyranitar, L50, M|",
+    "|teampreview|4",
+    "|split|p1",
+    "|uhtml|otsrequest|<button name=\"send\" value=\"/acceptopenteamsheets\" class=\"button\" style=\"margin-right: 10px;\"><strong>Accept Open Team Sheets</strong></button><button name=\"send\" value=\"/rejectopenteamsheets\" class=\"button\" style=\"margin-top: 10px\"><strong>Deny Open Team Sheets</strong></button>",
+    "",
+    "|split|p2",
+    "|uhtml|otsrequest|<button name=\"send\" value=\"/acceptopenteamsheets\" class=\"button\" style=\"margin-right: 10px;\"><strong>Accept Open Team Sheets</strong></button><button name=\"send\" value=\"/rejectopenteamsheets\" class=\"button\" style=\"margin-top: 10px\"><strong>Deny Open Team Sheets</strong></button>",
+    "",
+    "|",
+    "|t:|1792515213",
+    "|teamsize|p1|4",
+    "|teamsize|p2|4",
+    "|start",
+    "|split|p1",
+    "|uhtmlchange|otsrequest|",
+    "",
+    "|split|p2",
+    "|uhtmlchange|otsrequest|",
+    "",
+    "|split|p1",
+    "|switch|p1a: p1m1|Snorlax, L50, M|235/235",
+    "|switch|p1a: p1m1|Snorlax, L50, M|100/100",
+    "|split|p1",
+    "|switch|p1b: p1m2|Farigiraf, L50, M|195/195",
+    "|switch|p1b: p1m2|Farigiraf, L50, M|100/100",
+    "|split|p2",
+    "|switch|p2a: p2m1|Machamp, L50, M|165/165",
+    "|switch|p2a: p2m1|Machamp, L50, M|100/100",
+    "|split|p2",
+    "|switch|p2b: p2m2|Pelipper, L50, F|135/135",
+    "|switch|p2b: p2m2|Pelipper, L50, F|100/100",
+    "|-weather|RainDance|[from] ability: Drizzle|[of] p2b: p2m2",
+    "|turn|1",
+    "|",
+    "|t:|1792515213",
+    "|move|p2b: p2m2|Protect|p2b: p2m2",
+    "|-singleturn|p2b: p2m2|Protect",
+    "|move|p1b: p1m2|Protect|p1b: p1m2",
+    "|-singleturn|p1b: p1m2|Protect",
+    "|move|p2a: p2m1|Seismic Toss|p1a: p1m1",
+    "|split|p1",
+    "|-damage|p1a: p1m1|185/235",
+    "|-damage|p1a: p1m1|78/100",
+    "|-enditem|p1a: p1m1|Red Card|[of] p2a: p2m1",
+    "|split|p2",
+    "|drag|p2a: p2m3|Garchomp, L50, M|183/183",
+    "|drag|p2a: p2m3|Garchomp, L50, M|100/100",
+    "|move|p1a: p1m1|Amnesia|p1a: p1m1",
+    "|-boost|p1a: p1m1|spd|2",
+    "|",
+    "|-weather|RainDance|[upkeep]",
+    "|upkeep",
+    "|turn|2"
+  ],
+  "current_client_proof": false
+}

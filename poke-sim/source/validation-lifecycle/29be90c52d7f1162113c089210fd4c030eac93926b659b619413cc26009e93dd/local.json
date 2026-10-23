@@ -1,0 +1,11 @@
+{
+  "source_commit": "95806e726f35c564e006e84b1355601d9ca6cf0b",
+  "started_at": "2026-10-20T23:53:34.898Z",
+  "completed_at": "2026-10-21T00:01:18.144Z",
+  "mode": "clean checkout full offline project gate",
+  "project": {
+    "fast_files": 276,
+    "offline_db_files": 12,
+    "failures": 0
+  }
+}

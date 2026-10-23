@@ -25,6 +25,18 @@ var ADAPTER_PATH = path.resolve(__dirname, '..', 'supabase_adapter.js');
 var ENGINE_PATH = path.resolve(__dirname, '..', 'engine.js');
 var UI_PATH = path.resolve(__dirname, '..', 'ui.js');
 var FIXTURE_PATH = path.resolve(__dirname, 'fixtures', 'prior_snapshot_sample.json');
+var OUTCOME_PATH = path.resolve(__dirname, '..', 'outcome_policy.js');
+function loadOutcomePolicy(context) {
+  vm.runInContext(fs.readFileSync(OUTCOME_PATH, 'utf8'), context);
+}
+function terminalRecords(wins, losses) {
+  // Synthetic storage fixtures, not mechanics or client-parity evidence.
+  return Array.from({ length: wins + losses }, function(_, index) {
+    const won = index < wins;
+    return { schema_version: 'champions-outcome-v1', result: won ? 'win' : 'loss',
+      terminal: true, timerExpired: false, playerSurvivors: won ? 2 : 0, oppSurvivors: won ? 0 : 2 };
+  });
+}
 
 // Load fixture
 var FIXTURE = JSON.parse(fs.readFileSync(FIXTURE_PATH, 'utf8'));
@@ -44,6 +56,7 @@ var SEED_PRIORS = FIXTURE.snapshots.map(function(s) {
 
 // Create context and install adapter
 var ctx = freshCtx();
+loadOutcomePolicy(ctx);
 ctx.window.TEAMS = {
   player:         { name: 'Player Team',    members: [], source: 'preloaded' },
   mega_altaria:   { name: 'Mega Altaria',   members: [], source: 'preloaded' },
@@ -146,6 +159,7 @@ T('T-prior-6', function() {
     'engine must have applyPrior function or ctx.prior handling');
 
   var engineCtx = freshCtx();
+  loadOutcomePolicy(engineCtx);
   var dataPath = path.resolve(__dirname, '..', 'data.js');
   var dataSrc = fs.readFileSync(dataPath, 'utf8');
   vm.runInContext(dataSrc, engineCtx);
@@ -159,7 +173,8 @@ T('T-prior-6', function() {
   var mockPrior = SEED_PRIORS[2]; // May snapshot
   var mockRawResult = {
     winRate: 0.6, wins: 6, losses: 4, draws: 0,
-    sampleSize: 10, allLogs: [], seeds: []
+    sampleSize: 10, allLogs: [], seeds: [],
+    requestedBattles: 10, outcome_records: terminalRecords(6, 4)
   };
   var result = engineCtx.buildAnalysisPayload(mockRawResult, { prior: mockPrior });
   truthy(result.prior_id, 'result must include prior_id when prior is loaded');
@@ -169,6 +184,7 @@ T('T-prior-6', function() {
 T('T-prior-7', function() {
   // Engine hidden_info_priors.source changes when prior loaded
   var engineCtx = freshCtx();
+  loadOutcomePolicy(engineCtx);
   var dataPath = path.resolve(__dirname, '..', 'data.js');
   var dataSrc = fs.readFileSync(dataPath, 'utf8');
   vm.runInContext(dataSrc, engineCtx);
@@ -178,7 +194,8 @@ T('T-prior-7', function() {
   var mockPrior = SEED_PRIORS[2];
   var mockRawResult = {
     winRate: 0.6, wins: 6, losses: 4, draws: 0,
-    sampleSize: 10, allLogs: [], seeds: []
+    sampleSize: 10, allLogs: [], seeds: [],
+    requestedBattles: 10, outcome_records: terminalRecords(6, 4)
   };
   var result = engineCtx.buildAnalysisPayload(mockRawResult, { prior: mockPrior });
   truthy(result.hidden_info_priors, 'result must have hidden_info_priors');
@@ -189,6 +206,7 @@ T('T-prior-7', function() {
 T('T-prior-8', function() {
   // Engine without prior → identical behavior (no regression)
   var engineCtx = freshCtx();
+  loadOutcomePolicy(engineCtx);
   var dataPath = path.resolve(__dirname, '..', 'data.js');
   var dataSrc = fs.readFileSync(dataPath, 'utf8');
   vm.runInContext(dataSrc, engineCtx);
@@ -197,7 +215,8 @@ T('T-prior-8', function() {
 
   var mockRawResult = {
     winRate: 0.6, wins: 6, losses: 4, draws: 0,
-    sampleSize: 10, allLogs: [], seeds: []
+    sampleSize: 10, allLogs: [], seeds: [],
+    requestedBattles: 10, outcome_records: terminalRecords(6, 4)
   };
   var result = engineCtx.buildAnalysisPayload(mockRawResult, {});
   truthy(result.hidden_info_priors, 'result must have hidden_info_priors');
@@ -217,6 +236,7 @@ T('T-prior-9', function() {
     winRate: 0.65,
     wins: 65, losses: 35, draws: 0,
     sampleSize: 100,
+    requestedBattles: 100, outcome_records: terminalRecords(65, 35),
     allLogs: [], seeds: [],
     avgTurns: 8.5, avgTrTurns: 1.2,
     policy: 'greedy-vs-greedy'
@@ -237,6 +257,7 @@ T('T-prior-10', function() {
     winRate: 0.65,
     wins: 65, losses: 35, draws: 0,
     sampleSize: 100,
+    requestedBattles: 100, outcome_records: terminalRecords(65, 35),
     allLogs: [], seeds: [],
     avgTurns: 8.5, avgTrTurns: 1.2,
     policy: 'greedy-vs-greedy'

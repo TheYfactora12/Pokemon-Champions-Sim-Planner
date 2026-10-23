@@ -39,6 +39,12 @@ jobs:
           cd ..
           bash poke-sim/tools/check-bundle.sh
 
+      - name: Require competitive release evidence (no Practice fallback)
+        working-directory: poke-sim
+        run: |
+          npm run test:accuracy:standard
+          npm run release:competitive:check -- --predeployment
+
       - uses: actions/configure-pages@v6
         with:
           enablement: true
@@ -52,8 +58,8 @@ jobs:
           runtime_files=(
             index.html pokemon-champion-2026.html style.css manifest.json sw.js
             icon-192.png icon-512.png release_manifest.js
-            app_shell.js data.js engine.js legality_evidence_package.js legality.js
-            logger.js move_legality.js move_support.js regmb_source_conversion.js mc_review.js
+            app_shell.js data.js outcome_policy.js engine.js legality_evidence_package.js legality.js
+            logger.js move_legality.js move_support.js regmb_source_conversion.js mc_review.js own_state_policy.js
             replay_coach.js replay_import_service.js replay_learning.js rulesets.js
             runtime_data.js sim_evidence.js source_truth.js storage_adapter.js
             strategy-injectable.js supabase_adapter.js team_lab.js ui.js

@@ -2775,3 +2775,5 @@ table{border-collapse:collapse;width:100%}
 .pokemon-news-feed .pokemon-news-headline{min-height:100px;overflow-wrap:anywhere}
 @media(max-width:720px){.pokemon-news-feed{scroll-margin-top:200px}.pokemon-news-feed .pokemon-news-slide{min-height:520px;align-content:start}.pokemon-news-feed .pokemon-news-headlines{grid-template-columns:repeat(2,minmax(0,1fr))}.pokemon-news-feed .pokemon-news-copy h4{font-size:22px}}
 @media(prefers-reduced-motion:reduce){.pokemon-news-slide.active{animation:none}}
+
+.replay-card-hdr:focus-visible{outline:2px solid var(--accent);outline-offset:3px;border-radius:6px}

@@ -1,5 +1,182 @@
 # Improvement Log
 
+## IMP-0128: Bound Weather Restoration and Hosted Release Proof
+
+- Respect effective weather abilities under Neutralizing Gas, ordered restoration, last-Gas transitions and residual duration. Preserve bounded reference receipts and remaining gaps.
+- Restrict service-worker cleanup to app-owned cache prefixes.
+- Separate actual preview evidence and final production smoke/rollback from loopback CI and predeployment eligibility. No deployment performed.
+- [Weather scope](release/WEATHER_GAS_2026-10-21.md) and [hosted plan](release/HOSTED_VALIDATION_2026-10-21.md).
+
+## IMP-0127: Correct Bounded Charge Special Attack Timing
+
+- Move Meteor Beam/Electro Shot boosts to preparation, without duplicate release boosts.
+- Apply effective Simple/Contrary and clear interrupted charge state for these two moves.
+- Preserve eight original failures, causal interruption controls, reversal tests and historical tracker versions.
+- [Scope and evidence](release/CHARGE_SPA_2026-10-21.md). No Fly admission or release authorization.
+
+## IMP-0125: Repair Official Source Observation
+
+- Add exact official M-C notice/roster and Nintendo update hosts, preserving redirect rejection.
+- Parse the official roster data without script execution; bind surrounding rules and keep candidates quarantined.
+- Independent narrow review: 41 Node tests, including 39 offline staging checks, passed. Operational watcher remains disabled.
+- [Candidate and remaining gates](release/OFFICIAL_WATCH_REPAIR_2026-10-20.md).
+
+## IMP-0124: Contain Fly Airborne and Abort Repairs
+
+- Repair scoped airborne eligibility, effective ability/item gates, final damage doubling, abort and grounding cleanup behind public rejection.
+- Preserve original failures, add reversal controls, and retain unsupported Eject Button discrepancy.
+- Invalidate prior bounded runtime receipts instead of silently carrying green status forward.
+- [Readiness and evidence](release/FLY_REPAIR_2026-10-20.md).
+
+## IMP-0123: Preserve Fly Admission Counterexamples
+
+- Keep Fly rejected: a quarantined minimal prototype exposes seven airborne exceptions on both sides (14 disagreements in 24 probes).
+- Add admission negative controls, source-bound structured receipts and a dependency-specific readiness map.
+- [Assessment](release/FLY_ASSESSMENT_2026-10-20.md).
+
+## IMP-0122: Reject Unsupported Bounded Capture Inputs
+
+- Independent target-slot mutation exposed both damage adapters silently calculating the original target. Preserve the direct reference counterexample: maximum 31 versus 36.
+- Reject unsupported fixed-case actions, actors, targets, draw/bucket mappings and other ignored inputs before either runtime loads. Preserve supported stage sensitivity and versioned receipt IDs.
+- Recapture and independently review v2 assertions after the runner change; retain v1 receipts as stale history.
+- [Repair evidence](../poke-sim/reports/current-bounded-input-repair-2026-10-20/).
+
+## IMP-0121: Enroll Current Bounded Mechanics Receipts
+
+- Independently replay six exact current-runtime cases and retain structured inputs, outcomes, timestamps and source fingerprints.
+- Bind freshness to runtime/rule/checker dependencies so documentation-only commits retain evidence while implementation changes invalidate it.
+- Export six current bounded passes and one preserved stale historical assertion; no whole-move or client promotion.
+- [Scope, canonical exports and validation](release/CURRENT_BOUNDED_RECEIPTS_2026-10-20.md).
+
+## IMP-0120: Bind Current Strategy Observations to Execution Context
+
+- Reproduced old-build/regulation attempts labelled current despite matching roster.
+- Require captured execution and both-team identity; keep Practice/reference
+  observations separate from competitive promotion. Preserve archived exports.
+- [Focused, browser and release receipts](release/STRATEGY_CONTEXT_2026-10-20.md).
+
+## IMP-0119: Make Replay Expansion and Read Recovery Usable
+
+- Browser inspection reproduced keyboard-inaccessible replay expansion. Add focus,
+  Enter/Space activation and synchronized expanded state to replay headers.
+- Mocked rapid history opens reproduced duplicate pending reads. Coalesce requests
+  and show a visible retry message on failure, keeping failed loads retryable.
+- [Final local resilience and candidate receipts](release/CONTINUATION_ACCEPTANCE_2026-10-20.md).
+
+## IMP-0118: Repair Shared Switch-Out Ability Effects
+
+- Pinned probes reproduced 18/36 failures: missing Natural Cure and Regenerator
+  healing under Neutralizing Gas. Add status/counter cure and scoped hook suppression.
+- Intact Ability Shield protects the hook; consumed Shield does not. Both sides,
+  burn/poison/toxic and no-status controls now pass 64/64 reference tests.
+- Extend diagnostic admission only after proving Natural Cure sleep/freeze/paralysis
+  switch-out; diagnostic suite now63/63. Independent mechanics review passed.
+- [Scope](release/SWITCH_OUT_HOOKS_2026-10-20.md); broader suppression remains unproved.
+
+## IMP-0117: Isolate Scripted One-Switch Reference Diagnostics
+
+- Explicit stable outgoing/incoming identity replaces heuristic bench selection only
+  in an injected development harness. Public and aggregate paths reject it.
+- Both sides choose first; ally/enemy targets follow their slots; switcher and
+  incoming member gain no move or PP spend. Unsupported contexts fail closed.
+- Independent review found a delayed-action allowlist bypass; every diagnostic
+  turn now checks actions, with hazard and post-switch negative controls.
+- 51 reference/admission tests pass independently. This is not Champions client
+  validation or automatic switching. [Scope](release/SCRIPTED_SWITCH_2026-10-20.md).
+
+## IMP-0116: Reconstruct Evidenced Mid-Turn Sitrus/Unburden Ordering
+
+- Final stress exposed two stale turn-start Speed comparisons after Sitrus Berry
+  activated Unburden. Engine ordering was correct; the validator was incomplete.
+- Require stable identity, prior exact consumption, unchanged ability/item and
+  sufficient recomputed Speed. Decline ambiguous names and mixed modifiers.
+- Focused suite 32/32, both retained failures and eight independent negative
+  mutations passed. Final 4,624-run cross-format sweep has zero findings.
+- Lesson: a later faint does not erase an earlier activation; end-turn state must
+  not be substituted for the action-time evidence boundary.
+- [Final receipts and limits](release/OVERNIGHT_ACCEPTANCE_GATES_2026-10-20.md).
+
+## IMP-0115: Put the Actual Default Behind an Information Boundary
+
+- Default v4 receives frozen own-state, public-field and living target-slot inputs.
+  Opponent damage estimates, inventory, stats and ability queries are removed.
+- Mega candidate choice uses own slot order instead of hidden weather suppression
+  through effective Speed. Simultaneous Mega execution ordering remains unproved.
+- Preserve mechanics fixtures with explicit actions/targets; independently replay
+  old and new golden traces before accepting intentional policy/RNG changes.
+- Fixed priors are conservative and can choose ineffective moves. This is an
+  information-boundary correction, not competitive-strength certification.
+- [Candidate gates and remaining blockers](release/OVERNIGHT_ACCEPTANCE_GATES_2026-10-20.md).
+
+## IMP-0114: Resolve Rocky Helmet at Each Contact Hit
+
+- Apply active Helmet after the existing contact ability hook, with scoped
+  prevention, item ownership, KO and stable event provenance.
+- Restore fixed two-hit routing and keep fixed counts ahead of Skill Link.
+- The reference disproved the initial contact ordering assumption; retain the
+  low-HP Rough Skin/Helmet counterexample. 56 pinned-reference cases pass.
+- [Reference scope and exclusions](release/ROCKY_HELMET_2026-10-20.md).
+
+## IMP-0113: Isolate an Opt-In Own-State Diagnostic
+
+- Hidden ability and defensive-stat reads remain in the default selector. A pure
+  diagnostic provides a bounded comparison control without guessed opponent data.
+- Both sides receive detached frozen snapshots before choices; no live enemy
+  references, field callbacks or RNG enter the pure chooser.
+- Eight groups including 40 engine mutation runs and aggregate rejection passed.
+  Independent policy and release-wiring reviews passed.
+- Limited legality checks may select a move execution rejects. This is direct-API
+  experimental support, not stronger play or a human-visibility implementation.
+- [Scope and final gates](release/OWN_STATE_DIAGNOSTIC_2026-10-20.md).
+
+## IMP-0112: Distinguish Damaging Pivots From Voluntary Traps
+
+- Successful U-turn/Flip Turn/Volt Switch were incorrectly stopped by voluntary
+  trap checks. Add an explicit cause at the existing successful-damage caller.
+- Neighbor controls reproduced missing Water Absorb and consumed-Shield bypass;
+  scoped shared-hook corrections now have 101 pinned-reference checks.
+- Lesson: a force-switch request after user KO can mean faint replacement,
+  not a successful pivot. Compare cause, identity, PP and subsequent targeting.
+- Independent mechanics review passed. Synthetic reference proof is narrower
+  than client certification. Rocky Helmet and voluntary switches remain open.
+- [Scope and proof](release/PIVOT_TRAPPING_2026-10-20.md), local v219/engine1.1.23.
+
+## IMP-0111: Stop Utility Policy Reading Hidden Move Inventories
+
+- Four utility-scoring predicates queried unrevealed opponent moves; the
+  both-side Imprison mutation regression failed before repair.
+- v218 / engine 1.1.22 replaces those predicates with fixed heuristic priors.
+  Versioned policy v3 still declares full registered state and unverified strength.
+- Throwing-accessor, hidden-mutation, lock/PP and strong-damage checks cover seven
+  utilities. Existing Imprison redundancy handling remains intact.
+- Lesson: removing one knowledge channel is not a complete observation boundary
+  or proof of better decisions. Fixed priors can overuse guard/Taunt.
+- Local candidate only; remaining switching, visibility and release gates are
+  documented in [the dated report](release/UTILITY_INFORMATION_POLICY_2026-10-20.md).
+
+## IMP-0110: Prepare Observed-Information And Switch Contracts
+
+- Reproduced both-side selector dependence on unrevealed opponent moves.
+- Prepared isolated immutable observation and explicit switch-intent contracts;
+  no runtime integration or Champions visibility/order claim.
+- Independent review caught missing-identity admission and out-of-order reveals;
+  failing regressions now pass with explicit identity and chronological handling.
+- Lesson: test forbidden information access and malformed identity separately
+  from move strength; contract success is not gameplay integration.
+- [Scope, evidence gaps and next patches](release/SWITCHING_INFORMATION_PREPARATION_2026-10-18.md).
+
+## IMP-0109: Scope Current Move Corrections And Reject Unsupported Execution
+
+- Reproduced four current-Practice move admission discrepancies, two PP errors,
+  and six Fly paths that fabricated wins/losses.
+- Add a versioned overlay preserving historical pools; carry official versus
+  reference-only provenance into legality and editor choices.
+- Block unsupported Fly before battle construction, including bench, aliases
+  and forced actions; prevent rejected games from becoming sweep samples.
+- Lesson: admission, initialized PP, direct execution and aggregate reporting
+  require separate tests. A reference learnset does not prove engine support.
+- [Candidate evidence](release/CURRENT_MOVES_AND_FLY_2026-10-17.md).
+
 ## IMP-0108: Make Public Beta Feedback Discoverable
 
 - Observation: the v215 audit found no direct feedback route across 11 app tabs.
@@ -1554,3 +1731,86 @@ after. Structural success is not mechanics certification. Suppression, full
 parity and deployment remain separately tracked. See
 [scoped audit](release/ROCK_HEAD_MATRIX_2026-10-10.md), issues #260 and #242.
 
+
+
+## IMP-0121 — Effective contact protection and accuracy-method controls (2026-10-20)
+
+Environment: uncommitted v2.2.226-accuracy-gates / engine1.1.28; not deployed.
+The independent Rough Skin probe found8of12 disagreements: the hook checked contact
+but ignored effective attacker protections and defender suppression. Shared contact
+resolution now honors Gas/Shield, consumed items, Pads/Klutz, Long Reach and Magic
+Guard without changing established Helmet ordering.28boundary cases and2real-engine
+mutant controls pass; independent reviewer requested nonvacuous shielded-defender
+cases, which were added. Current-client parity remains unproved.
+
+The separate fixed-head audit exposed false confidence in broad invariants and
+replay Set/build-label comparisons. Repairs add one-sided elimination consistency,
+independent damage and information/switch mutant controls, explicit randomized-HP
+exclusions, repeated-action preservation, actual response-byte binding, shipped
+mechanics dependencies and an always-running methodology/readiness CI job.
+Missing package/human approval/open cases stay NO-GO in the strict deployment gate.
+No expected golden behavior was changed. Release identity expectations changed only
+for the new build. Failed aggregate results and browser capture attempts remain in
+the dated evidence; independent final retest and hosted checks are pending.
+
+Reusable lesson: test each claimed property with a fault it must detect, keep
+client/reference/self-consistency/policy verdicts separate, and bind approval to
+immutable evidence. Counts and signatures without source/reviewer controls cannot
+establish truth. The [current decision and failure-learning register](release/COMPETITIVE_READINESS_2026-10-20.md)
+owns exact proof, blockers and next actions; the [workflow](release/SEASON_AND_ACCURACY_WORKFLOW.md)
+reuses existing season intake/staging without auto-promotion.
+
+
+IMP-0121 follow-up: foundationF07 also exposed cutoff/timer-to-KO conversion and
+uncertainty loss through attachment/leaderboard. New importer quarantine, propagated
+gaps/outcome fields and aggregation exclusion pass10adversarial boundaries plus
+consumer checks. Independent reviewer first rejected contradictory survivor/winner
+cases and downstream leakage; these were reproduced and repaired without schema
+changes. Final independent retest remains pending. The actual clock model and eight
+other foundation findings remain open in the same register.
+
+## IMP-0122 — Amnesia self-stage and failure continuity (2026-10-20)
+
+A reference-admitted self-boost fell through to an opponent status path. Added a scoped handler, effective Contrary/Simple suppression, self action identity and explicit cap failure. Independent review caught that failure text alone did not set state used by next-turn Stomping Tantrum; four two-turn regressions now protect that consequence. Thirty focused cases pass. Base source and isolated exact-upstream probes agree; current-client parity remains unproved. General lesson: test downstream state consumers, not only the immediate number or log.
+
+
+## IMP-0123 - Preserve exclusions through every evidence consumer (2026-10-20)
+
+The original auditor proved that importer quarantine did not protect direct aggregate consumers. Shared terminal-outcome proof now gates all identified consumers and preserves rejection reasons through compact storage. Independent review then caught rejection-reason laundering, series winner mismatch and retained-log poison-guard inconsistency; negative controls reproduce and reject each. Replay comparison consumes every action/detail occurrence, while the renderer follows resolved actors rather than planned-action counts. Readiness parses typed source bodies and binds semantic fields, identities and protocols instead of trusting signed declarations. Browser tests hash executed external responses, block service workers and replace stale receipts on failure. The original exact-head auditor must still close R1–R5; development checks do not certify current-client mechanics. See [checkpoint receipt](release/EVIDENCE_BOUNDARIES_2026-10-20.md).
+
+## 2026-10-20: candidate move register
+
+Extended the existing move-support audit with immutable CSV/JSON reference inventory and semantic review queues. Source/runtime provenance and conservative claim boundaries retained. Six tests plus independent review passed; no regulation/client promotion. See poke-sim/docs/MOVE_REGISTER.md for counts, reproducibility and remaining anti-drift work.
+
+## IMP-2026-10-20-RESERVED-ITEMS — Red Card and White Herb lifecycle
+
+At base2769879d005f10102754d6fa539e5925bfe9a836, admitted full-six Red Card never consumed/dragged and White Herb retained Intimidate's Attack drop. Missing lifecycle hooks caused the defects. The isolated candidate restores boundary-based White Herb and whole-action Red Card with deferred move switches. Independent review found and repaired pivot-entry and cached event-speed mistakes.
+
+Proof: [dated receipt](release/RESERVED_ITEMS_2026-10-20.md), static versioned fixtures, current/shared runtime digest checks,148 focused expected outcomes per reference and9 assertion-killed mutants. Engine3ae31d3aef4e414b4aaa398e0c0516046b56eafb9f2a4ebe462dee39e6576bd9. Current upstream and historical npm differ; matching the latter is not the acceptance target for the two documented differences. Reusable lesson: consumption and switching are separate lifecycle events; reference version strings alone do not identify executed mechanics.
+
+Local only, unpushed; runtime candidatef88a073eef84f8d3ace8331bc74144cff32b94ec. Bundle-size gate still fails by4,480 bytes; current-client and broader interaction proof remain incomplete. Next action: reviewed integration/size resolution, exact-head gates and client evidence. No deployment or live DB claim.
+
+## IMP-0126 - Source health and aggregate evidence identity (2026-10-20)
+
+Independent4303684 review reproduced blocked roster fragments accepted as healthy and owning-test changes omitted from lifecycle identity. Specialized extraction returned too early; the original source digest covered selected bounded cases, not aggregate inputs. Common challenge/context rejection now preserves baseline and incomplete health. Versioned dynamic aggregate inventory binds test discovery, fixtures/runners/DB/source/workflow bytes. Independent review additionally found binary UTF-8 hash collisions; raw binary hashing and a negative control close that boundary. Prior receipts stay historical; no source or release promotion is implied. See [source gate receipt](release/OFFICIAL_WATCH_REPAIR_2026-10-20.md).
+
+IMP-0126 follow-up: external5e98c08 audit caught an asserted DB Markdown input omitted by v2. Aggregate v3 binds repository inputs regardless of extension; only the self-referential lifecycle ledger/view is excluded and separately validated. Keep bounded runtime identity precise, but never label a selected runtime digest as a whole-suite digest. Exact document mutation and unrelated-runtime preservation are now paired negative controls.
+
+## EVIO-ORDER-2026-10-21 - defensive stage/modifier rounding
+
+Exact-base custom-game reproduction identified fractional defensive stages leaking
+into Eviolite. Truncate stages and direct weather before the item multiplier;
+221 versioned pinned-reference damage cases plus a sand scalar boundary and four
+negative controls prevent recurrence. A failed damage-only sand mutation taught
+that equal final damage can conceal wrong intermediate stats: observe the owning
+stat boundary too. Independent battle_auditor review found no further demonstrated
+defect. Local source proof only; eligibility/suppression and offensive Body Press
+remain unresolved. See [dated evidence](release/EVIOLITE_ORDER_2026-10-21.md).
+
+## RELEASE-NEWS-RECONCILIATION-20261023 - preserve news and regenerate identity
+
+Main and the frozen accuracy candidate changed the same generated bundle identity fields. Preserve the exact current-main news blob and regenerate bundle/manifest together; do not choose a stale artifact side. Local news checks pass, but the checkout-filter test is blocked by sandbox Git-config write denial and Git transport is unavailable. This remains an unpublished content candidate, not merged ancestry or hosted proof. See [local evidence and remaining gates](release/LOCAL_NEWS_INTEGRATION_2026-10-23.md).
+
+## EVIO-ACT-2026-10-21 - activation and offensive Defense
+
+Exact-species eligibility and effective-item state prevent Eviolite activating on fully evolved, consumed or Klutz holders. Body Press retains staged Defense without defensive modifiers. Preserve 192 pinned vectors and seven wrong-implementation mutations. Direct oracle damage probes must initialize active-move context; an exploratory Unaware concern was retracted after fixing that context, not patched into the engine. See [evidence and limitations](release/EVIOLITE_ACTIVATION_2026-10-21.md).

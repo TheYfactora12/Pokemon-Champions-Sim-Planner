@@ -1,0 +1,44 @@
+Γ£ö Encore false/0/before (540.499ms)
+Γ£ö Encore false/0/herb (136.4579ms)
+Γ£ö Encore false/0/herb-unburden (144.5742ms)
+Γ£ö Encore false/0/after (160.1731ms)
+Γ£ö Encore false/0/priority (118.6267ms)
+Γ£ö Encore false/0/target (130.6641ms)
+Γ£ö Encore false/0/last-pp (130.0565ms)
+Γ£ö Encore false/0/changed-priority (133.8469ms)
+Γ£ö Encore false/0/ally (133.2038ms)
+Γ£ö Encore false/1/before (131.3911ms)
+Γ£ö Encore false/1/herb (134.7193ms)
+Γ£ö Encore false/1/herb-unburden (133.077ms)
+Γ£ö Encore false/1/after (136.1526ms)
+Γ£ö Encore false/1/priority (131.2419ms)
+Γ£ö Encore false/1/target (131.0546ms)
+Γ£ö Encore false/1/last-pp (165.1832ms)
+Γ£ö Encore false/1/changed-priority (115.9242ms)
+Γ£ö Encore false/1/ally (130.9862ms)
+Γ£ö Encore true/0/before (132.6548ms)
+Γ£ö Encore true/0/herb (138.465ms)
+Γ£ö Encore true/0/herb-unburden (134.698ms)
+Γ£ö Encore true/0/after (139.1548ms)
+Γ£ö Encore true/0/priority (134.7117ms)
+Γ£ö Encore true/0/target (144.172ms)
+Γ£ö Encore true/0/last-pp (134.164ms)
+Γ£ö Encore true/0/changed-priority (134.5455ms)
+Γ£ö Encore true/0/ally (133.0964ms)
+Γ£ö Encore true/1/before (137.2317ms)
+Γ£ö Encore true/1/herb (188.6722ms)
+Γ£ö Encore true/1/herb-unburden (134.0656ms)
+Γ£ö Encore true/1/after (143.9199ms)
+Γ£ö Encore true/1/priority (143.9963ms)
+Γ£ö Encore true/1/target (136.865ms)
+Γ£ö Encore true/1/last-pp (137.7814ms)
+Γ£ö Encore true/1/changed-priority (140.4465ms)
+Γ£ö Encore true/1/ally (142.2161ms)
+Γä╣ tests 36
+Γä╣ suites 0
+Γä╣ pass 36
+Γä╣ fail 0
+Γä╣ cancelled 0
+Γä╣ skipped 0
+Γä╣ todo 0
+Γä╣ duration_ms 5555.9676

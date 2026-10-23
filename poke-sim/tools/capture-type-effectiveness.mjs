@@ -1,0 +1,13 @@
+import fs from 'node:fs';import path from 'node:path';import {execFileSync} from 'node:child_process';
+import {fileURLToPath} from 'node:url';import {createHash} from 'node:crypto';
+import {typeMatrix,mismatches} from './type-effectiveness-probes.mjs';
+import {referenceIdentity} from './bounded-runtime-capture.mjs';
+const root=fileURLToPath(new URL('../',import.meta.url)),[upstream,output]=process.argv.slice(2);
+if(!upstream||!output)throw Error('Usage: capture-type-effectiveness.mjs PINNED_UPSTREAM OUTPUT');
+process.env.CHAMPIONS_REFERENCE_SIM=path.join(path.resolve(upstream),'dist/sim');
+const hash=file=>createHash('sha256').update(fs.readFileSync(path.join(root,file),'utf8').replaceAll('\r\n','\n')).digest('hex');
+const started_at=new Date().toISOString(),reference=referenceIdentity(path.resolve(upstream)),cases=typeMatrix();
+const receipt={schema_version:'type-effectiveness-reference-v1',started_at,executed_at:new Date().toISOString(),source_commit:execFileSync('git',['rev-parse','HEAD'],{cwd:root,encoding:'utf8'}).trim(),source_hashes:Object.fromEntries(['engine.js','data.js','tools/type-effectiveness-probes.mjs','tests/type_effectiveness_reference_tests.mjs'].map(f=>[f,hash(f)])),reference,scope:{battle_format:'doubles',kind:'synthetic baseline type matrix and direct damage',single_type_cases:324,ordered_dual_type_cases:5508,client_verified:false,official_regulation_verified:false,exclusions:['special move exceptions','ability/item overrides','tera/grounding','complete turn targeting','singles format']},mismatches:mismatches(cases),cases};
+fs.mkdirSync(path.dirname(output),{recursive:true});fs.writeFileSync(output,JSON.stringify(receipt,null,2)+'\n');
+console.log(JSON.stringify({cases:cases.length,mismatches:receipt.mismatches.length,executed_at:receipt.executed_at}));
+process.exitCode=receipt.mismatches.length?1:0;

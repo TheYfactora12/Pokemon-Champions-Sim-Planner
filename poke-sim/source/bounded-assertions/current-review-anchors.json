@@ -1,0 +1,53 @@
+{
+  "schema_version": "current-bounded-review-anchors-v1",
+  "reviews": [
+    {
+      "path": "source/bounded-assertions/reviews/1be9694a73b183ea87d0a06c022bdcc0fb04343c23f23b676a9e5420c9923e9a/review.json",
+      "sha256": "9cbab86503c6690b8119e40c8d5d806a669c9f489a7d2120429c1b7e94ed964d"
+    },
+    {
+      "path": "source/bounded-assertions/reviews/80148cce824693aaa0b1d6bbc5cd7ffc179812dc638dd0b73f56817dd0544668/review.json",
+      "sha256": "9119dafc3a147ef0ffd8d649d279d5396c0b5a86580feaf755f354499b6835f2"
+    },
+    {
+      "path": "source/bounded-assertions/reviews/a4d86d75995e0185dd5f78e336963cd0874e9d611fb3dd0cb6b78fe118a61878/review.json",
+      "sha256": "f255f973cd721db34b32084fcd5f571ff27493d50f326920a4d7e1c5a028e8e8"
+    },
+    {
+      "path": "source/bounded-assertions/reviews/b2a0603839d4cbcae681fb81cad71378c4f765cc0ecb207784bfc75506ef1867/review.json",
+      "sha256": "61fe82b35660a34710cdc4d38e909b9ace0eaf40cb6de08561f3716f05436d01"
+    },
+    {
+      "path": "source/bounded-assertions/reviews/86154cc62fc0ae738d2a8ccaa2a5403104ee326b26474058cf4d90f598f77aba/review.json",
+      "sha256": "2f11e2435ad4b49bb9003452cfdc77e09bccc79b08ec9fa1de28e3bfaf06b9b1"
+    },
+    {
+      "path": "source/bounded-assertions/reviews/938539fcf8da3bae0958107c66e376b643ae55181e482cfcd15703a414eb94ff/review.json",
+      "sha256": "fcc16c84af98eaaebe00f1917845d41010c815f295e4ab95dca8f975494d1d0c"
+    },
+    {
+      "path": "source/bounded-assertions/reviews/344d4c46430d61588eee7eef7dcf2ef46d7db06fc961b096a9819bb0952ae368/review.json",
+      "sha256": "5e3164ec55ef9985eddd024ee9c3e670de104afa133f4c94763715ec2ef8a624"
+    },
+    {
+      "path": "source/bounded-assertions/reviews/00b0fe33208adccb0a179c8bff076f4ef076b0c65607415e4721cd4d8f59cd02/review.json",
+      "sha256": "f02e52e784a3681753b36e1481f534819e52d40a08f2520151a0e6206780131d"
+    },
+    {
+      "path": "source/bounded-assertions/reviews/3e7d538f24a1e8048fe875d620cb7a47f308a09d0f84aaf5b2c6dda1298dbf08/review.json",
+      "sha256": "c996eb7d54025d7a823dec0dcd3ccb884371aa88dca48c758fe67bab8eb966a1"
+    },
+    {
+      "path": "source/bounded-assertions/reviews/1b3bd270e170c3cbdc0713c2133a4834044fe16f175e0058579512daacd8e87b/review.json",
+      "sha256": "4f03c82751974927aa5eb3ffc67d4731f8fe82db73018d6034396d49fba11946"
+    },
+    {
+      "path": "source/bounded-assertions/reviews/c096bc5439139adb0ac40d2d4958b336045c9445b3409b7213d3474bdaefb2c9/review.json",
+      "sha256": "03500ec91cb96e176dd12820ec4e7a8a024d4c024f17287fcca610ea443a2a85"
+    },
+    {
+      "path": "source/bounded-assertions/reviews/0022d883bbdca50920e3c4f5a5c21f2529ce9bf20bbc32f628cf116bac7f9254/review.json",
+      "sha256": "11bfe8e0bbeff16206b730d46d2dd93038d6f2ecad669ba4749c566fd1cc0cb5"
+    }
+  ]
+}

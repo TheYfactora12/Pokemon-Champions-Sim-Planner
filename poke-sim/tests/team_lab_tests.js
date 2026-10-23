@@ -370,8 +370,8 @@ T('8. leaderboard excludes illegal teams and treats needs_verification as experi
     { id: 'c', name: 'Needs Source C', format: 'doubles', regulation_id: 'reg-m-b', visibility: 'public', legality_status: 'needs_verification', archetype_tags: ['lab'] }
   ];
   const runs = [];
-  for (let i = 0; i < 40; i += 1) runs.push({ team_a_id: 'a', team_b_id: 'c', regulation_id: 'reg-m-b', format: 'doubles', engine_version: 'eng-1', ruleset_version: 'rules-1', winner_team_id: i < 24 ? 'a' : 'c', result_reason: 'ko' });
-  for (let i = 0; i < 40; i += 1) runs.push({ team_a_id: 'a', team_b_id: 'b', regulation_id: 'reg-m-b', format: 'doubles', engine_version: 'eng-1', ruleset_version: 'rules-1', winner_team_id: 'b', result_reason: 'ko' });
+  for (let i = 0; i < 40; i += 1) runs.push({ team_a_id: 'a', team_b_id: 'c', regulation_id: 'reg-m-b', format: 'doubles', engine_version: 'eng-1', ruleset_version: 'rules-1', winner_team_id: i < 24 ? 'a' : 'c', outcome_proof: {result:i < 24?'win':'loss',terminal:true,timerExpired:false,playerSurvivors:i < 24?1:0,oppSurvivors:i < 24?0:1}, result_reason: 'ko' });
+  for (let i = 0; i < 40; i += 1) runs.push({ team_a_id: 'a', team_b_id: 'b', regulation_id: 'reg-m-b', format: 'doubles', engine_version: 'eng-1', ruleset_version: 'rules-1', winner_team_id: 'b', outcome_proof: {result:'loss',terminal:true,timerExpired:false,playerSurvivors:0,oppSurvivors:1}, result_reason: 'ko' });
   const entries = TeamLab.buildLeaderboardEntries(teams, runs, { regulation_id: 'reg-m-b', format: 'doubles', engine_version: 'eng-1', ruleset_version: 'rules-1', min_sample_size: 30 });
   truthy(entries.some((entry) => entry.team_id === 'a'), 'verified team missing');
   truthy(!entries.some((entry) => entry.team_id === 'b'), 'illegal team should be excluded');
@@ -393,7 +393,7 @@ T('8b. official Top 25 promotion requires benchmark-approved current verified ev
     { id: 'b', name: 'Verified B', format: 'doubles', regulation_id: 'reg-m-b', visibility: 'public', legality_status: 'verified', archetype_tags: ['rain'] }
   ];
   const runs = [];
-  for (let i = 0; i < 80; i += 1) runs.push({ team_a_id: 'a', team_b_id: 'b', regulation_id: 'reg-m-b', format: 'doubles', engine_version: 'eng-1', ruleset_version: 'rules-1', winner_team_id: i < 50 ? 'a' : 'b', result_reason: 'ko' });
+  for (let i = 0; i < 80; i += 1) runs.push({ team_a_id: 'a', team_b_id: 'b', regulation_id: 'reg-m-b', format: 'doubles', engine_version: 'eng-1', ruleset_version: 'rules-1', winner_team_id: i < 50 ? 'a' : 'b', outcome_proof: {result:i < 50?'win':'loss',terminal:true,timerExpired:false,playerSurvivors:i < 50?1:0,oppSurvivors:i < 50?0:1}, result_reason: 'ko' });
   const entries = TeamLab.buildLeaderboardEntries(teams, runs, { regulation_id: 'reg-m-b', format: 'doubles', engine_version: 'eng-1', ruleset_version: 'rules-1', min_sample_size: 30, approved_benchmark_pool: true });
   const a = entries.find((entry) => entry.team_id === 'a');
   eq(a.leaderboard_scope, 'official_sim_top_25', 'approved verified evidence should promote to official scope');

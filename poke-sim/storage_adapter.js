@@ -17,9 +17,7 @@
 
 (function (root) {
 
-  // -------------------------------------------------------------------------
   // Internal helpers
-  // -------------------------------------------------------------------------
 
   /** Resolve the global localStorage (browser or injected mock in tests). */
   function _ls() {
@@ -28,9 +26,7 @@
       : (typeof global !== 'undefined' && global.localStorage ? global.localStorage : null);
   }
 
-  // -------------------------------------------------------------------------
   // Public API
-  // -------------------------------------------------------------------------
 
   var Storage = {
 
@@ -161,9 +157,7 @@
     },
   };
 
-  // -------------------------------------------------------------------------
   // Export
-  // -------------------------------------------------------------------------
   if (typeof module !== 'undefined' && module.exports) {
     module.exports = { Storage: Storage };
   } else {

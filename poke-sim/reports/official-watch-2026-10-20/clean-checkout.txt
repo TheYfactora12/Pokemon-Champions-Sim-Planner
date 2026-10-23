@@ -1,0 +1,166 @@
+Γ£ö six captured assertions remain historical passes without client promotion (3600.0989ms)
+Γ£ö Fly implementation invalidates all six earlier current assertions (2957.5724ms)
+Γ£ö real engine change invalidates: engine.js (2870.8667ms)
+Γ£ö real engine change invalidates: outcome_policy.js (2715.3124ms)
+Γ£ö real engine change invalidates: rulesets.js (2568.9827ms)
+Γ£ö real engine change invalidates: move_legality.js (2797.124ms)
+Γ£ö real engine change invalidates: mc_review.js (2579.4654ms)
+Γ£ö real engine change invalidates: legality.js (2488.857ms)
+Γ£ö real data change invalidates: data.js (2777.7856ms)
+Γ£ö real data change invalidates: runtime_data.js (2459.8819ms)
+Γ£ö real data change invalidates: generated/pokemon_showdown_legal_data.js (2480.298ms)
+Γ£ö real data change invalidates: generated/pokemon_showdown_species_weights.js (2817.3426ms)
+Γ£ö real data change invalidates: generated/champions_move_overrides.js (2883.0572ms)
+Γ£ö real data change invalidates: generated/champions_move_pools.js (2809.4027ms)
+Γ£ö real data change invalidates: generated/mc_review_reference.js (2808.3231ms)
+Γ£ö real data change invalidates: package-lock.json (2868.2775ms)
+Γ£ö real data change invalidates: source/bounded-assertions/reference-target.json (2828.321ms)
+Γ£ö real runner change invalidates: tools/bounded-runtime-capture.mjs (2820.0972ms)
+Γ£ö real runner change invalidates: tools/showdown-reference.mjs (2798.8611ms)
+Γ£ö real runner change invalidates: tools/prepare-mc-reference-candidate.mjs (2942.3715ms)
+Γ£ö real test change invalidates: tests/fixtures/bounded_runtime_cases.mjs (2868.3246ms)
+Γ£ö real checker change invalidates: tools/bounded-assertions.mjs (2834.5357ms)
+Γ£ö real checker change invalidates: tools/bounded-register.mjs (2764.9087ms)
+Γ£ö real checker change invalidates: tools/current-bounded-core.mjs (2457.6254ms)
+Γ£ö real checker change invalidates: tools/regulation-watch-core.mjs (2704.6871ms)
+Γ£ö documentation-only Git commit changes HEAD but not dependency identity (1062.8553ms)
+Γ£ö wrong item label (367.6998ms)
+Γ£ö wrong move label (375.3134ms)
+Γ£ö missing review (399.1436ms)
+Γ£ö future capture time (360.3908ms)
+Γ£ö missing dependency (371.2821ms)
+Γ£ö scope promotion (370.9574ms)
+Γ£ö changing a pinned review without changing its anchor rejects (423.2011ms)
+Γ£ö missing per-case review (401.6739ms)
+Γ£ö duplicate review case (414.3731ms)
+Γ£ö wrong independently observed value (425.829ms)
+Γ£ö opaque execution attachments (402.3888ms)
+Γ£ö notice and Nintendo heading changes are observed without turning mentions into rules (8.0117ms)
+Γ£ö official grid changes are detected even when visible text is unchanged (8.8133ms)
+Γ£ö missing, duplicate, unknown flag and executable roster payloads fail closed (1.8701ms)
+Γ£ö surrounding rules remain bound and cross-host roster redirects fail (2.3239ms)
+Γ£ö registered official hosts fetch but unknown redirects and lookalikes never fetch (3.6946ms)
+Γ£ö roster fetch failure retains prior facts and recovery detects removal without promotion (3.4961ms)
+PASS Core verifier and canonical wire payload agree exactly
+PASS Default dry run needs neither credentials nor network
+PASS Missing, malformed, uppercase and wrong expected digests fail before network
+PASS Mutated envelope and wrapper identity fail before network
+PASS Even correctly rehashed approved or competitive envelopes are rejected
+PASS Unapproved source hosts cannot be staged with a valid hash
+PASS Payload size is bounded in UTF-8 bytes before network
+PASS Canonical Unicode payload uses the same bytes on insert and readback
+PASS Insert uses only candidate table, no upsert, and reads exact digest
+PASS Duplicate digest is idempotent only after byte-exact readback
+PASS Same semantic JSON with different stored bytes is not accepted
+PASS Changed readback digest, schema, policy or payload is rejected
+PASS Empty, multiple, null and malformed readback rows are unverified
+PASS Non-unique conflict does not get idempotent success or a read
+PASS HTTP failure and redirect do not leak server error bodies
+PASS Transport error is sanitized and reports uncertain outcome
+PASS Readback failure never reports insertion as verified success
+PASS Malformed and oversized response bodies fail closed
+PASS Project URL cannot redirect credentials through URL components
+PASS Writing without a credential fails before network
+PASS Legacy service key fallback is explicit and never returned
+PASS CLI defaults dry-run and requires explicit path and digest
+PASS CLI help documents credential isolation gate without accessing DB
+PASS Neither staging nor service-role credentials alone activate writes
+PASS Missing envelope fields fail even with a matching candidate digest
+PASS Unknown envelope fields cannot smuggle approval metadata
+PASS Malformed hashes, lists, policy and bundled impact are rejected
+PASS Previous snapshots must be structurally valid and from the same official source
+PASS Actual core candidates with full snapshots and prior history remain compatible
+PASS Occurrence is a required positive safe integer, never coerced or defaulted by staging
+PASS Occurrence changes the exact digest but not the semantic transition key
+PASS Recurring core transitions stage separately while same-occurrence retries deduplicate
+PASS Policy re-extraction accepts extraction_policy with the previous snapshot retained
+PASS Protected staging workflow passes provisioning variable rather than hard-coding success
+PASS Migration hashes exact UTF-8 text using built-in SHA-256, no extension
+PASS Migration fixes unapproved state in columns and JSON with NULL-safe check
+PASS Migration explicitly denies public clients and enables RLS
+PASS Migration bounds service role to insert/read here and blocks all mutation
+PASS No migration statement targets approved rules, existing tables or runtime
+Regulation candidate staging: 39 offline checks passed. HTTP is mocked; SQL checks are static, not executed database/RLS proof.
+Γ£ö tests\regulation_candidate_staging_tests.mjs (525.7569ms)
+Γ£ö canonical encoding is key-order independent but binds every value (0.9697ms)
+Γ£ö extracts mentions and team candidates without asserting eligibility or effective dates (6.52ms)
+Γ£ö navigation changes do not become meaningful rule changes (1.8425ms)
+Γ£ö paragraph changes and removals are detected (1.2075ms)
+Γ£ö exact digest rejects mutated approval/staging evidence (0.9594ms)
+Γ£ö valid digest alone cannot permit competitive use (0.7676ms)
+Γ£ö first capture creates candidate, unchanged capture does not (5.5165ms)
+Γ£ö retry time does not change the candidate fingerprint (2.014ms)
+Γ£ö required source outage preserves last-known-good, reports unavailable and incomplete (1.4894ms)
+Γ£ö optional source failure is reported without claiming complete success (0.4389ms)
+Γ£ö policy/catalog changes force a new review instead of trusting old extraction (1.4954ms)
+Γ£ö catalog changes cannot remove previously discovered unavailable sources (2.6804ms)
+Γ£ö catalog change followed by fetch/archive failure retains per-source policy until recovery review (4.3536ms)
+Γ£ö relative rulebook links resolve against the final redirect URL, including approved host changes (1.5098ms)
+Γ£ö link-only PDF replacements change semantics and discover the new rulebook (1.288ms)
+Γ£ö branded challenge pages are failures even with long content after the heading (0.4193ms)
+Γ£ö A to B to A to B increments occurrence and reopens a closed semantic-change issue (3.0519ms)
+Γ£ö invalid baseline fails rather than silently resetting (0.1697ms)
+Γ£ö discovery follows new official announcements and rejects lookalike hosts (1.0026ms)
+Γ£ö empty discovery and challenge pages become unavailable, not unchanged (0.7103ms)
+Γ£ö official Next.js index discovers every article, not only the first (0.667ms)
+Γ£ö PDF bytes are preserved for hashing and require manual interpretation (0.1564ms)
+Γ£ö redirect SSRF and oversized responses are refused (4.1493ms)
+Γ£ö review issue explains uncertainty and never interprets closure as approval (0.8068ms)
+Γ£ö closed bot issues deduplicate exact candidate; user-made markers do not suppress alerts (1.0034ms)
+Γ£ö all issue pages are searched, not just open/first 100 (0.7487ms)
+Γ£ö nonsemantic raw changes on a retry reuse one review issue but retain distinct exact digests (1.1402ms)
+Γ£ö failed discovered articles remain watched even if removed from the next index (1.2714ms)
+Γ£ö failed issue requests cannot silently advance baseline (0.1488ms)
+Γ£ö workflow is daily, serial, default-branch-only, never carries DB secrets or approves (0.997ms)
+Γ£ö staging accepts exact completed watcher attempts, not arbitrary workflow/PR/branch artifacts (0.3282ms)
+Γ£ö staging workflow consumes retained evidence, not new upstream data (0.6715ms)
+Γ£ö encrypted source evidence reconstructs exact bytes without publishing plaintext bodies (60.9276ms)
+Γ£ö observer retains exactly the bytes it fingerprints, not a later source refetch (0.898ms)
+Γ£ö failed source retention is visible and cannot advance that source baseline (0.4595ms)
+Γ£ö checked-in canonical current/history exports are refreshed (5045.4117ms)
+Γ£ö new reviewed rerun becomes dated current and preserves prior stale record (0.1785ms)
+Γ£ö stale never checked (0.081ms)
+Γ£ö failed never checked (0.0566ms)
+Γ£ö blocked never checked (0.0569ms)
+Γ£ö missing independent evidence cannot yield green (0.5439ms)
+Γ£ö skipped refresh is rejected (2963.3973ms)
+Γ£ö changed runtime cannot retain stale green export (1464.1046ms)
+Γ£ö missing receipt fails closed (1376.4039ms)
+Γ£ö failed capture persists blocked attempt instead of old green (11.3703ms)
+Γ£ö exact validated checkpoint never means merged/deployed/competitive (0.4213ms)
+Γ£ö source change blocks prior completed status (0.1619ms)
+Γ£ö publication wrong commit rejects (0.4334ms)
+Γ£ö hosted wrong commit rejects (0.1359ms)
+Γ£ö failed CI and missing hosted job cannot complete (0.178ms)
+Γ£ö unsupported deployment promotion rejects (0.2117ms)
+Γ£ö canonical lifecycle export is refreshed when present (3388.0588ms)
+Γ£ö old unbound local or review evidence cannot complete new candidate (0.2884ms)
+Γ£ö single and doubles scope never share a current checkmark (0.2535ms)
+Γä╣ tests 98
+Γä╣ suites 0
+Γä╣ pass 98
+Γä╣ fail 0
+Γä╣ cancelled 0
+Γä╣ skipped 0
+Γä╣ todo 0
+Γä╣ duration_ms 75175.4069
+
+=== release manifest tests ===
+
+  PASS 1. manifest exposes canonical build and cache identity
+  PASS 2. visible header and app shell fallback mirror manifest build id
+  PASS 3. service worker derives cache from manifest and precaches manifest
+  PASS 4. bundle builder inlines release manifest before app runtime
+  PASS 5. release artifact records committed bundle sha and mirrors manifest identity
+  PASS 6. generator stdout reproduces file bytes, including on Windows
+  PASS 7. external move pools and intro sprites are bound to release bytes
+  PASS 8. missing or mismatched external asset identities fail closed
+  PASS 9. changed and missing deployed bytes are rejected
+  PASS 10. staged assets are verified before Pages upload
+  PASS 11. Windows Git checkout filters preserve generated asset bytes
+  PASS 12. exported reference identity matches committed bytes
+
+release manifest: 12 pass, 0 fail
+
+workflow governance: 29 pass, 0 fail
+PASS migration input: valid existing SQL accepted; 11 invalid/injection cases rejected without execution

@@ -1,0 +1,22 @@
+import assert from 'node:assert/strict';
+import fs from 'node:fs';
+const read=name=>fs.readFileSync(new URL('../../'+name,import.meta.url),'utf8').replace(/\r\n/g,'\n');
+const ci=read('.github/workflows/ci.yml'),pages=read('.github/workflows/pages.yml'),audit=read('.github/workflows/battle-audit.yml');
+assert.match(ci,/pull_request:\s+branches: \[main\]/);
+assert.match(ci,/push:\s+branches: \[main\]/);
+assert.match(ci,/name: Accuracy methodology and readiness report/);
+assert.match(ci,/npm run test:accuracy:standard/);
+assert.match(ci,/npm run test:accuracy\n/);
+assert(!ci.includes("if: needs.detect-changes.outputs.engine == 'true'"));
+assert.match(ci,/if-no-files-found: error/);assert.match(audit,/if-no-files-found: error/);
+assert(pages.indexOf('npm run release:competitive:check')>0);
+assert(pages.indexOf('npm run release:competitive:check')<pages.indexOf('actions/configure-pages'));
+assert(!pages.includes('continue-on-error'));
+assert(!ci.includes('permissions: write-all'));
+assert.match(ci,/name: Candidate browser replay evidence/);
+assert.match(ci,/npx --no-install playwright install chromium/);
+assert.match(ci,/npm run test:browser/);
+console.log('Accuracy workflow: existing triggers, recurring controls, mandatory evidence and strict pre-deploy readiness verified.');
+
+assert(!ci.includes('${{ runner.temp }}'), 'runner context is unavailable in job-level env');
+assert(ci.includes('PLAYWRIGHT_BROWSERS_PATH=$RUNNER_TEMP/champions-playwright'));

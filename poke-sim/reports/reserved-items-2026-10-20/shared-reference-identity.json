@@ -1,0 +1,11 @@
+{
+  "package": "pokemon-showdown",
+  "version": "0.11.11",
+  "integrity": "sha512-FdW7gt3TkG4AdXmpMTPYX2kx42VEfY8tQApjW9wEHOGzwH6Kn97wD0o5uIzAc4xpO1W+Tim70Ti9+FNkMNCA2w==",
+  "simulator_sha256": "315068a1549bc3a7f33e2f381a8058e6c7eb25bd666a2a5b3bafd3caaa80f388",
+  "champions_sha256": "06f22e35364210da17348ecc8334e925fcb1758e47e4d276ef1ae6d7ec8bc214",
+  "champions_learnsets_sha256": "b7c4f4e57eb081f17bcf9d692ee564fa4e1285f4bf6357eee091c87696a82793",
+  "champions_rulesets_sha256": "1f8c738c80cb8a219985226043976115dab7f2a4ef9c23f4629b3b40d64a6753",
+  "validator_sha256": "a68fdab12f445763c986affa764ac02a5d13da136124e293711d8be4bcd8e6c1",
+  "champions_ma_sha256": "68bbb07ed3a4f6aab0f04d4265bc191535e448017abc6f874716d128689d6089"
+}

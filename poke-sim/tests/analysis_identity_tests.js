@@ -9,6 +9,7 @@ ctx.window = ctx;
 ctx.ChampionsSim = { internal: {} };
 const root = path.join(__dirname, '..');
 vm.runInContext(fs.readFileSync(path.join(root, 'release_manifest.js'), 'utf8'), ctx);
+vm.runInContext(fs.readFileSync(path.join(root, 'outcome_policy.js'), 'utf8'), ctx);
 vm.runInContext(fs.readFileSync(path.join(root, 'rulesets.js'), 'utf8'), ctx);
 const ui = fs.readFileSync(path.join(root, 'ui.js'), 'utf8');
 vm.runInContext(ui.slice(ui.indexOf('// __M4_BUILD_PAYLOAD_BEGIN__'), ui.indexOf('// __M4_BUILD_PAYLOAD_END__')), ctx);
@@ -18,19 +19,31 @@ function envelope(format = 'doubles') {
     ruleset_id: id, opponent_ruleset_id: id, format, bo: 3, policy_model: 'deterministic-v1',
     ruleset_version: 'champions-reg-ma-2026-v1', regulation_id: 'champions_reg_m_a_2026',
     player_team_id: 'player', opp_team_id: 'opp', player_team_digest: 'a'.repeat(64), opp_team_digest: 'b'.repeat(64),
-    selection_policy: { player: 'manual', opponent: 'random', adaptive: true } };
+    selection_policy: { player: 'manual', opponent: 'random', adaptive: true }, outcome_count: 1 };
+}
+function terminalProof() {
+  return { schema_version: 'champions-outcome-v1', result: 'win', terminal: true,
+    timerExpired: false, playerSurvivors: 2, oppSurvivors: 0 };
+}
+// Storage/identity fixtures only: no assertion of game-client or battle parity.
+function sample(overrides = {}) {
+  const row = Object.assign({ outcome_records: [terminalProof()], requestedBattles: 1 }, overrides);
+  if (row.allLogs) row.allLogs = row.allLogs.map(log => Object.assign({
+    result: 'win', outcome_proof: terminalProof()
+  }, log));
+  return row;
 }
 let failed = 0;
 async function test(name, fn) { try { await fn(); console.log('PASS ' + name); } catch(e) { failed++; console.error('FAIL ' + name + ': ' + e.message); } }
 (async () => {
   await test('supplied move-policy provenance survives saved analysis', () => {
     const policy={id:'historical-custom',information_model:'unknown'};
-    const p=ctx._buildAnalysisPayload('player','opp',3,{policy_provenance:policy});
+    const p=ctx._buildAnalysisPayload('player','opp',3,sample({policy_provenance:policy}));
     assert.deepEqual(JSON.parse(JSON.stringify(p.analysis_json.policy_provenance)),policy);
   });
   await test('missing provenance stays unknown, not current selected team/version', () => {
     ctx.TEAMS = { player: { metadata: { ruleset_id: id } } };
-    const p = ctx._buildAnalysisPayload('player', 'opp', 3, {});
+    const p = ctx._buildAnalysisPayload('player', 'opp', 3, sample());
     assert.equal(p.engine_version, 'unknown');
     assert.equal(p.analysis_json.policy_provenance, null);
     assert.equal(p.ruleset_id, 'unknown');
@@ -38,8 +51,8 @@ async function test(name, fn) { try { await fn(); console.log('PASS ' + name); }
   });
   await test('execution-time identity survives payload JSON roundtrip and later edits', () => {
     const original = envelope();
-    const res = { provenance: original, wins: 1, allLogs: [{ result: 'win', format: 'doubles', provenance: original,
-      bring: { player: ['A'], opponent: ['B'] }, participants: { player: [{ stable_key: 'p:0' }] } }] };
+    const res = sample({ provenance: original, wins: 1, allLogs: [{ result: 'win', format: 'doubles', provenance: original,
+      bring: { player: ['A'], opponent: ['B'] }, participants: { player: [{ stable_key: 'p:0' }] } }] });
     ctx.TEAMS.player.metadata.ruleset_id = 'champions_reg_m_b_2026';
     ctx.ENGINE_VERSION = 'future-version';
     const p = JSON.parse(JSON.stringify(ctx._buildAnalysisPayload('player', 'opp', 3, res)));
@@ -50,16 +63,19 @@ async function test(name, fn) { try { await fn(); console.log('PASS ' + name); }
     assert.equal(p.logs[0].format, 'doubles');
     assert.equal(p.logs[0].participants.player[0].stable_key, 'p:0');
     assert.equal(p.analysis_json.evidence_policy.learning_eligibility, 'blocked_unapproved_regulation_data');
+    assert.deepEqual(p.analysis_json.evidence_policy.provenance_gaps, []);
+    assert.equal(p.analysis_json.game_provenance.length, original.outcome_count);
+    assert.deepEqual(p.analysis_json.game_provenance[0].outcome_proof, terminalProof());
   });
   await test('singles evidence is retained but not eligible for competitive doubles learning', () => {
-    const p = ctx._buildAnalysisPayload('player', 'opp', 3, { provenance: envelope('singles') });
+    const p = ctx._buildAnalysisPayload('player', 'opp', 3, sample({ provenance: envelope('singles') }));
     assert.equal(p.format, 'singles');
-    assert.notEqual(p.learning_eligibility, 'trusted_historical');
+    assert.equal(p.learning_eligibility, 'isolated_singles_regression');
   });
   await test('unknown rules or conflicting identity fail closed', () => {
     for (const override of [{ ruleset_id: 'typo' }, { opponent_ruleset_id: 'typo' }, { player_team_id: 'other' }, { bo: 1 }, { build_id: '' },
       { ruleset_version: 'unreviewed' }, { regulation_id: 'different' }, { stale: true }, { source_gaps: ['unverified'] }]) {
-      const p = ctx._buildAnalysisPayload('player', 'opp', 3, { provenance: Object.assign(envelope(), override) });
+      const p = ctx._buildAnalysisPayload('player', 'opp', 3, sample({ provenance: Object.assign(envelope(), override) }));
       assert.notEqual(p.poisoning_guard, 'trusted_stats_allowed');
     }
   });
@@ -67,10 +83,72 @@ async function test(name, fn) { try { await fn(); console.log('PASS ' + name); }
     for (const res of [{ format: 'singles' }, { policy_model: 'different' }, { allLogs: [{ format: 'singles', provenance: envelope() }] },
       { allLogs: [{ format: 'doubles', provenance: Object.assign(envelope(), { stale: true }) }] },
       { allLogs: [{ format: 'doubles', provenance: Object.assign(envelope(), { source_gaps: ['unverified'] }) }] }]) {
-      const p = ctx._buildAnalysisPayload('player', 'opp', 3, Object.assign({ provenance: envelope() }, res));
+      const p = ctx._buildAnalysisPayload('player', 'opp', 3, sample(Object.assign({ provenance: envelope() }, res)));
       assert.notEqual(p.poisoning_guard, 'trusted_stats_allowed');
       assert.equal(p.coaching_policy, 'review_only_no_matchup_learning');
     }
+  });
+  await test('game identity mismatches are independently diagnosed despite unapproved regulation', () => {
+    const provenance = envelope();
+    const game = { format: 'doubles', provenance, outcome_proof: terminalProof() };
+    const clean = ctx.getSimulationEvidencePolicy(provenance, [game]);
+    assert.equal(clean.provenance_gaps.length, 0);
+    for (const corrupt of [
+      { ...game, format: 'singles' },
+      { ...game, provenance: { ...provenance, stale: true } },
+      { ...game, provenance: { ...provenance, source_gaps: ['unverified'] } },
+      { ...game, provenance: { ...provenance, player_team_digest: 'c'.repeat(64) } }
+    ]) {
+      const policy = ctx.getSimulationEvidencePolicy(provenance, [corrupt]);
+      assert(policy.provenance_gaps.includes('game_provenance_mismatch'));
+      assert.equal(policy.learning_eligibility, 'blocked_missing_provenance');
+    }
+  });
+  await test('approved fixture detects retained-log identity corruption at the payload boundary', () => {
+    // Approval exists only in this VM fixture to remove the unrelated default blocker.
+    const profile = ctx.CHAMPIONS_RULESETS.champions_reg_m_a_2026;
+    const previous = profile.regulationDataApproved;
+    profile.regulationDataApproved = true;
+    try {
+      const provenance = envelope();
+      const game = { format: 'doubles', provenance, outcome_proof: terminalProof(), result: 'win' };
+      const clean = ctx._buildAnalysisPayload('player', 'opp', 3, sample({ provenance, allLogs: [game] }));
+      assert.equal(clean.poisoning_guard, 'trusted_stats_allowed');
+      assert.equal(clean.learning_eligibility, 'trusted_historical');
+      for (const key of ['allLogs', 'logs']) for (const corrupt of [
+        { ...game, format: 'singles' },
+        { ...game, provenance: { ...provenance, stale: true } },
+        { ...game, provenance: { ...provenance, source_gaps: ['unverified'] } },
+        { ...game, provenance: { ...provenance, player_team_digest: 'c'.repeat(64) } },
+        { ...game, provenance: null }
+      ]) {
+        const payload = ctx._buildAnalysisPayload('player', 'opp', 3, sample({ provenance, [key]: [corrupt] }));
+        assert(payload.analysis_json.evidence_policy.provenance_gaps.includes('game_provenance_mismatch'));
+        assert.equal(payload.learning_eligibility, 'blocked_identity_mismatch');
+        assert.equal(payload.coaching_policy, 'review_only_no_matchup_learning');
+        assert.notEqual(payload.poisoning_guard, 'trusted_stats_allowed');
+        assert.equal(payload.sample_size, 1, 'retained-log check does not rewrite the outcome denominator');
+      }
+    } finally {
+      if (previous === undefined) delete profile.regulationDataApproved;
+      else profile.regulationDataApproved = previous;
+    }
+  });
+  await test('empty, partial and unverified outcome inputs cannot build an analysis', () => {
+    for (const row of [
+      {},
+      sample({ outcome_records: [] }),
+      sample({ requestedBattles: 2 }),
+      sample({ outcome_records: [{ ...terminalProof(), timerExpired: true }] }),
+      sample({ outcome_records: [{ ...terminalProof(), terminal: false }] }),
+      sample({ outcome_records: [{ ...terminalProof(), oppSurvivors: 1 }] })
+    ]) {
+      assert.throws(() => ctx._buildAnalysisPayload('player', 'opp', 3, row), /Complete outcome evidence required/);
+    }
+    const provenance = envelope();
+    const game = { format: 'doubles', provenance, outcome_proof: terminalProof() };
+    assert(ctx.getSimulationEvidencePolicy({ ...provenance, outcome_count: 2 }, [game]).provenance_gaps.includes('outcome_evidence'));
+    assert(ctx.getSimulationEvidencePolicy(provenance, [{ ...game, outcome_proof: { ...terminalProof(), terminal: false } }]).provenance_gaps.includes('outcome_evidence'));
   });
   await test('capture fingerprints stat changes and does not retain private raw teams', async () => {
     const team = { metadata: { ruleset_id: id }, members: [{ name: 'Pikachu', evs: { spe: 10 }, moves: ['Protect'] }] };

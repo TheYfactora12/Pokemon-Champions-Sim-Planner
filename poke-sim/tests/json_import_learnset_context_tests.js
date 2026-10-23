@@ -240,3 +240,17 @@ test('bulk member containers skip explicitly and continue with valid teams', () 
     assert(result.skippedErrors.every(row => row.errors.length > 0));
   }
 });
+
+test('current Practice JSON intake agrees with official move overlay and preserves saved moves', () => {
+  const ctx = harness();
+  vm.runInContext("selectedRegulationId = 'champions_custom_practice';", ctx);
+  for (const [name, ability, move, added] of [
+    ['Archaludon','Stamina','Slash',1], ['Archaludon','Stamina','Mirror Coat',0],
+    ['Archaludon','Stamina','Metal Burst',0], ['Politoed','Drizzle','Pound',0],
+    ['Clefable','Magic Guard','Wish',1], ['Vileplume','Chlorophyll','Strength Sap',1]
+  ]) {
+    const result=ctx.importFromJsonText(json({candidate:{name:'Current '+move,format:'champions',members:[{...member(move),name,ability}]}}));
+    assert.equal(result.added,added,JSON.stringify({name,move,result}));
+    if(added) assert.equal(ctx.TEAMS[result.keys[0]].members[0].moves[0],move);
+  }
+});

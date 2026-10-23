@@ -1,0 +1,68 @@
+{
+  "scope": "DAMAGE-ROLL-DISCRETE-016; pinned-reference, not client certification",
+  "candidate": "v2.2.237-discrete-damage",
+  "engine": "1.1.38",
+  "reference_commit": "9b136a8c8cdb860a8ab96fa063f906604e352547",
+  "files": [
+    {
+      "path": "discrete-project.log",
+      "sha256": "432540916167bbdac9ccf5d5e652c8d597850739cf029f6a520bc84ca8a6acfb",
+      "bytes": 292072
+    },
+    {
+      "path": "discrete-battle.log",
+      "sha256": "295f2458ffb78e3435d9d7a024a84fb9865f83f323e6f937ec15118a479208f2",
+      "bytes": 169757
+    },
+    {
+      "path": "discrete-invariants.log",
+      "sha256": "f2b3f3845ab138fa1150ceebf6a18f6817b2cc6204db5715892025f3ee6816c8",
+      "bytes": 728
+    },
+    {
+      "path": "discrete-browser.log",
+      "sha256": "fe4f5a9ddfde5c2eff357bace5103db92fe5a91b5ed87c121b89557dedc90ae3",
+      "bytes": 209
+    },
+    {
+      "path": "discrete-damage-before.log",
+      "sha256": "c4d14e97badfca6913959c615fe3666fb7abf6e16052805d90c698685426e6d8",
+      "bytes": 2162
+    },
+    {
+      "path": "discrete-damage-shared.log",
+      "sha256": "38912024c0556a858a658a28d077f03ebba136603c4a9686903e2449be21f24e",
+      "bytes": 321
+    },
+    {
+      "path": "discrete-damage-current.log",
+      "sha256": "9ad1a23ee20f956e91869f6bdda935d94b4fef09642988497d0f654cf1f2eeea",
+      "bytes": 411
+    },
+    {
+      "path": "discrete-damage-mutants.log",
+      "sha256": "e0188c4fd2f0d83d1c74641f85cf761a4f6649a62885eac66dca1a70690e5d6f",
+      "bytes": 375
+    },
+    {
+      "path": "discrete-runtime-bridge.log",
+      "sha256": "05b339e05f8f00c5c102cd5c55f8442fd7ac8f6c3f384402c87abf538744798b",
+      "bytes": 547
+    },
+    {
+      "path": "discrete-pipeline.log",
+      "sha256": "4dff63f3c8799cb64041e4e326fb54524449937c88402b509ff73ffc1852929f",
+      "bytes": 452
+    },
+    {
+      "path": "discrete-register-export.log",
+      "sha256": "a711b081f0370e1adafe73ab9fc3121009f93ceec6113fd8a4eeae007ab59b35",
+      "bytes": 410
+    },
+    {
+      "path": "discrete-methodology.log",
+      "sha256": "bf1d57a53158a3da06a37edd1df9b2c022c2b49955ad2ee4bc35ec5340afc7cd",
+      "bytes": 1169
+    }
+  ]
+}

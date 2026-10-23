@@ -1,0 +1,15 @@
+import fs from 'node:fs';import path from 'node:path';import assert from 'node:assert/strict';
+import {execFileSync} from 'node:child_process';import {createHash} from 'node:crypto';import {fileURLToPath} from 'node:url';
+import {snowDamageProbe} from './snow-defense-probes.mjs';
+import {LOCAL_FILES,referenceIdentity} from './bounded-runtime-capture.mjs';
+const root=fileURLToPath(new URL('../',import.meta.url)),[upstream,output]=process.argv.slice(2);assert(upstream&&output);
+process.env.CHAMPIONS_REFERENCE_SIM=path.join(path.resolve(upstream),'dist/sim');
+const hash=b=>createHash('sha256').update(b.toString().replaceAll('\r\n','\n')).digest('hex');
+const started_at=new Date().toISOString(),configs=[];
+for(const side of ['player','opponent'])for(const weather of ['snow','none','sun'])for(const move of ['U-turn','Psyshock','Body Press','Ice Beam'])configs.push({side,weather,move});
+for(const def of [94,95,96,97,101])for(const stage of [-2,-1,0,1,2])configs.push({def,stage});
+for(const side of ['player','opponent'])for(const suppressor of ['Cloud Nine','Air Lock'])for(const shield of ['none','active','consumed'])configs.push({side,suppressor,shield,gas:true});
+const cases=configs.map((x,i)=>({case_id:'SNOW-DEF-CAPTURE-'+String(i+1).padStart(3,'0'),...snowDamageProbe(x)}));
+const receipt={schema_version:'snow-defense-reference-v1',started_at,executed_at:new Date().toISOString(),simulator_commit:execFileSync('git',['rev-parse','HEAD'],{cwd:root,encoding:'utf8'}).trim(),reference:referenceIdentity(path.resolve(upstream)),scope:{format:'gen9championsdoublescustomgame',synthetic_teams:true,client_verified:false,regulation_id:null,client_version:null},loaded_source_hashes:Object.fromEntries([...LOCAL_FILES,'tools/snow-defense-probes.mjs','tools/capture-snow-defense.mjs','tools/showdown-reference.mjs'].map(f=>[f,hash(fs.readFileSync(path.join(root,f)))])),cases};
+fs.mkdirSync(path.dirname(output),{recursive:true});fs.writeFileSync(output,JSON.stringify(receipt,null,2)+'\n');
+const failures=cases.filter(r=>JSON.stringify(r.candidate)!==JSON.stringify(r.reference));console.log(JSON.stringify({cases:cases.length,failures:failures.length,executed_at:receipt.executed_at}));assert.equal(failures.length,0);

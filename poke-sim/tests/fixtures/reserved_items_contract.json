@@ -1,0 +1,531 @@
+{
+  "schema_version": 1,
+  "case_version": "2026-10-20.1",
+  "baseline": "2769879d005f10102754d6fa539e5925bfe9a836",
+  "upstream_commit": "9b136a8c8cdb860a8ab96fa063f906604e352547",
+  "proof_scope": "Pinned reference; not fresh Champions client proof",
+  "upstream_files": {
+    "data/items.ts": "6a9c7eeb9cfda861d9fb22084b10af46d03da4729981424ff155399907b66ed4",
+    "data/mods/champions/scripts.ts": "ad8f41b53ee4ec256e442ba9c03ffd799ebe36fdd8e6c287ae03feea8ecc4666",
+    "data/mods/champions/abilities.ts": "5c10f24808e26605d2a104139cd25ae76cb9ba12c3cd5331e29cb70659b37bb0",
+    "dist/sim/battle.js": "40c53ff4c797b91af4bd684736d00d5065ec57e7ea036fbb4b30f67037b354ad",
+    "dist/data/items.js": "0a7b78a593192fed419e79dc6c674a75af4f603f9bcfeccd67a29cc446363f75",
+    "dist/data/mods/champions/scripts.js": "840119eab33c0085cd407e7c103aa4b5bc8aba715814e177b344e7b67906a76b"
+  },
+  "cases": [
+    {
+      "id": "ITEM-RED-CARD-FULL-SIX",
+      "expected": {
+        "holder_item_consumed": true,
+        "attacker_remains_active": false,
+        "holder_hp_loss": 50,
+        "replacement_in": [
+          "Garchomp",
+          "Incineroar"
+        ]
+      },
+      "seed": [
+        3,
+        7,
+        11,
+        13
+      ],
+      "registered": 6,
+      "setup": [
+        {
+          "format": "champions",
+          "members": [
+            {
+              "name": "Machamp",
+              "ability": "Guts",
+              "moves": [
+                "Seismic Toss"
+              ],
+              "item": "",
+              "nature": "Hardy",
+              "level": 50,
+              "evs": {
+                "hp": 0,
+                "atk": 0,
+                "def": 0,
+                "spa": 0,
+                "spd": 0,
+                "spe": 0
+              }
+            },
+            {
+              "name": "Pelipper",
+              "ability": "Drizzle",
+              "moves": [
+                "Protect"
+              ],
+              "item": "",
+              "nature": "Hardy",
+              "level": 50,
+              "evs": {
+                "hp": 0,
+                "atk": 0,
+                "def": 0,
+                "spa": 0,
+                "spd": 0,
+                "spe": 0
+              }
+            },
+            {
+              "name": "Garchomp",
+              "ability": "Rough Skin",
+              "moves": [
+                "Protect"
+              ],
+              "item": "",
+              "nature": "Hardy",
+              "level": 50,
+              "evs": {
+                "hp": 0,
+                "atk": 0,
+                "def": 0,
+                "spa": 0,
+                "spd": 0,
+                "spe": 0
+              }
+            },
+            {
+              "name": "Incineroar",
+              "ability": "Intimidate",
+              "moves": [
+                "Protect"
+              ],
+              "item": "",
+              "nature": "Hardy",
+              "level": 50,
+              "evs": {
+                "hp": 0,
+                "atk": 0,
+                "def": 0,
+                "spa": 0,
+                "spd": 0,
+                "spe": 0
+              }
+            },
+            {
+              "name": "Venusaur",
+              "ability": "Overgrow",
+              "moves": [
+                "Protect"
+              ],
+              "item": "",
+              "nature": "Hardy",
+              "level": 50,
+              "evs": {
+                "hp": 0,
+                "atk": 0,
+                "def": 0,
+                "spa": 0,
+                "spd": 0,
+                "spe": 0
+              }
+            },
+            {
+              "name": "Tyranitar",
+              "ability": "Sand Stream",
+              "moves": [
+                "Protect"
+              ],
+              "item": "",
+              "nature": "Hardy",
+              "level": 50,
+              "evs": {
+                "hp": 0,
+                "atk": 0,
+                "def": 0,
+                "spa": 0,
+                "spd": 0,
+                "spe": 0
+              }
+            }
+          ]
+        },
+        {
+          "format": "champions",
+          "members": [
+            {
+              "name": "Snorlax",
+              "ability": "Immunity",
+              "moves": [
+                "Amnesia"
+              ],
+              "item": "Red Card",
+              "nature": "Hardy",
+              "level": 50,
+              "evs": {
+                "hp": 0,
+                "atk": 0,
+                "def": 0,
+                "spa": 0,
+                "spd": 0,
+                "spe": 0
+              }
+            },
+            {
+              "name": "Farigiraf",
+              "ability": "Armor Tail",
+              "moves": [
+                "Protect"
+              ],
+              "item": "",
+              "nature": "Hardy",
+              "level": 50,
+              "evs": {
+                "hp": 0,
+                "atk": 0,
+                "def": 0,
+                "spa": 0,
+                "spd": 0,
+                "spe": 0
+              }
+            },
+            {
+              "name": "Gholdengo",
+              "ability": "Good as Gold",
+              "moves": [
+                "Protect"
+              ],
+              "item": "",
+              "nature": "Hardy",
+              "level": 50,
+              "evs": {
+                "hp": 0,
+                "atk": 0,
+                "def": 0,
+                "spa": 0,
+                "spd": 0,
+                "spe": 0
+              }
+            },
+            {
+              "name": "Dragonite",
+              "ability": "Inner Focus",
+              "moves": [
+                "Protect"
+              ],
+              "item": "",
+              "nature": "Hardy",
+              "level": 50,
+              "evs": {
+                "hp": 0,
+                "atk": 0,
+                "def": 0,
+                "spa": 0,
+                "spd": 0,
+                "spe": 0
+              }
+            },
+            {
+              "name": "Raichu",
+              "ability": "Static",
+              "moves": [
+                "Protect"
+              ],
+              "item": "",
+              "nature": "Hardy",
+              "level": 50,
+              "evs": {
+                "hp": 0,
+                "atk": 0,
+                "def": 0,
+                "spa": 0,
+                "spd": 0,
+                "spe": 0
+              }
+            },
+            {
+              "name": "Talonflame",
+              "ability": "Gale Wings",
+              "moves": [
+                "Protect"
+              ],
+              "item": "",
+              "nature": "Hardy",
+              "level": 50,
+              "evs": {
+                "hp": 0,
+                "atk": 0,
+                "def": 0,
+                "spa": 0,
+                "spd": 0,
+                "spe": 0
+              }
+            }
+          ]
+        }
+      ],
+      "leads": [
+        0,
+        1
+      ],
+      "brought": [
+        0,
+        1,
+        2,
+        3
+      ]
+    },
+    {
+      "id": "ITEM-WHITE-HERB-FULL-SIX",
+      "expected": {
+        "holder_item_consumed": true,
+        "attack_stage": 0
+      },
+      "seed": [
+        3,
+        7,
+        11,
+        13
+      ],
+      "registered": 6,
+      "setup": [
+        {
+          "format": "champions",
+          "members": [
+            {
+              "name": "Machamp",
+              "ability": "Guts",
+              "moves": [
+                "Seismic Toss"
+              ],
+              "item": "White Herb",
+              "nature": "Hardy",
+              "level": 50,
+              "evs": {
+                "hp": 0,
+                "atk": 0,
+                "def": 0,
+                "spa": 0,
+                "spd": 0,
+                "spe": 0
+              }
+            },
+            {
+              "name": "Pelipper",
+              "ability": "Drizzle",
+              "moves": [
+                "Protect"
+              ],
+              "item": "",
+              "nature": "Hardy",
+              "level": 50,
+              "evs": {
+                "hp": 0,
+                "atk": 0,
+                "def": 0,
+                "spa": 0,
+                "spd": 0,
+                "spe": 0
+              }
+            },
+            {
+              "name": "Garchomp",
+              "ability": "Rough Skin",
+              "moves": [
+                "Protect"
+              ],
+              "item": "",
+              "nature": "Hardy",
+              "level": 50,
+              "evs": {
+                "hp": 0,
+                "atk": 0,
+                "def": 0,
+                "spa": 0,
+                "spd": 0,
+                "spe": 0
+              }
+            },
+            {
+              "name": "Incineroar",
+              "ability": "Intimidate",
+              "moves": [
+                "Protect"
+              ],
+              "item": "",
+              "nature": "Hardy",
+              "level": 50,
+              "evs": {
+                "hp": 0,
+                "atk": 0,
+                "def": 0,
+                "spa": 0,
+                "spd": 0,
+                "spe": 0
+              }
+            },
+            {
+              "name": "Venusaur",
+              "ability": "Overgrow",
+              "moves": [
+                "Protect"
+              ],
+              "item": "",
+              "nature": "Hardy",
+              "level": 50,
+              "evs": {
+                "hp": 0,
+                "atk": 0,
+                "def": 0,
+                "spa": 0,
+                "spd": 0,
+                "spe": 0
+              }
+            },
+            {
+              "name": "Tyranitar",
+              "ability": "Sand Stream",
+              "moves": [
+                "Protect"
+              ],
+              "item": "",
+              "nature": "Hardy",
+              "level": 50,
+              "evs": {
+                "hp": 0,
+                "atk": 0,
+                "def": 0,
+                "spa": 0,
+                "spd": 0,
+                "spe": 0
+              }
+            }
+          ]
+        },
+        {
+          "format": "champions",
+          "members": [
+            {
+              "name": "Snorlax",
+              "ability": "Immunity",
+              "moves": [
+                "Amnesia"
+              ],
+              "item": "",
+              "nature": "Hardy",
+              "level": 50,
+              "evs": {
+                "hp": 0,
+                "atk": 0,
+                "def": 0,
+                "spa": 0,
+                "spd": 0,
+                "spe": 0
+              }
+            },
+            {
+              "name": "Incineroar",
+              "ability": "Intimidate",
+              "moves": [
+                "Protect"
+              ],
+              "item": "",
+              "nature": "Hardy",
+              "level": 50,
+              "evs": {
+                "hp": 0,
+                "atk": 0,
+                "def": 0,
+                "spa": 0,
+                "spd": 0,
+                "spe": 0
+              }
+            },
+            {
+              "name": "Gholdengo",
+              "ability": "Good as Gold",
+              "moves": [
+                "Protect"
+              ],
+              "item": "",
+              "nature": "Hardy",
+              "level": 50,
+              "evs": {
+                "hp": 0,
+                "atk": 0,
+                "def": 0,
+                "spa": 0,
+                "spd": 0,
+                "spe": 0
+              }
+            },
+            {
+              "name": "Dragonite",
+              "ability": "Inner Focus",
+              "moves": [
+                "Protect"
+              ],
+              "item": "",
+              "nature": "Hardy",
+              "level": 50,
+              "evs": {
+                "hp": 0,
+                "atk": 0,
+                "def": 0,
+                "spa": 0,
+                "spd": 0,
+                "spe": 0
+              }
+            },
+            {
+              "name": "Raichu",
+              "ability": "Static",
+              "moves": [
+                "Protect"
+              ],
+              "item": "",
+              "nature": "Hardy",
+              "level": 50,
+              "evs": {
+                "hp": 0,
+                "atk": 0,
+                "def": 0,
+                "spa": 0,
+                "spd": 0,
+                "spe": 0
+              }
+            },
+            {
+              "name": "Talonflame",
+              "ability": "Gale Wings",
+              "moves": [
+                "Protect"
+              ],
+              "item": "",
+              "nature": "Hardy",
+              "level": 50,
+              "evs": {
+                "hp": 0,
+                "atk": 0,
+                "def": 0,
+                "spa": 0,
+                "spd": 0,
+                "spe": 0
+              }
+            }
+          ]
+        }
+      ],
+      "leads": [
+        0,
+        1
+      ],
+      "brought": [
+        0,
+        1,
+        2,
+        3
+      ]
+    }
+  ],
+  "runtime_digests": {
+    "upstream": "58da20a619f4eae3c0b5766867ef3d4ee6ec0efae52f0366e4ff47ce20829827",
+    "shared": "427e76a4dd30f4d9e17ca6a21ceb51c790e10cbef126ad930c4130718891aa36"
+  },
+  "runtime_digest_algorithm": "SHA256 of sorted relative POSIX path + NUL + file SHA256 + LF for every dist/**/*.js"
+}

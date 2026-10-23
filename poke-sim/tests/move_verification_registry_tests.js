@@ -635,7 +635,7 @@ T('24. Solar Beam full paralysis on the release turn cancels the queued attack',
   }]);
   const battle = simulateBattle(player, opp, {
     format: 'singles',
-    seed: [8, 1025555898, 3429651764, 483484],
+    seed: [103, 127160401, 34711, 939681669],
     maxTurns: 2
   });
   const renderedLog = battle.log.map((line) => String(line)).join('\n');
@@ -649,7 +649,7 @@ T('24. Solar Beam full paralysis on the release turn cancels the queued attack',
     'Solar Beam should not still fire after release-turn full paralysis');
 });
 
-T('25. Electro Shot sleep interruption pauses the queued hit instead of canceling it', () => {
+T('25. Electro Shot sleep interruption cancels the queued hit and restarts on waking', () => {
   const player = team('Electro Shot Sleep Pause', [{
     name: 'Archaludon',
     ability: '',
@@ -677,9 +677,10 @@ T('25. Electro Shot sleep interruption pauses the queued hit instead of cancelin
   const damageIndex = battle.log.findIndex((line) => includes(line, 'Archaludon used Electro Shot! →'));
   truthy(battle.log.some((line) => includes(line, 'Archaludon is fast asleep!')),
     'Electro Shot sleep-pause log missing');
-  truthy(damageIndex > turnTwoIndex, 'Electro Shot should still fire on the later wake-up turn');
-  truthy(!battle.log.some((line) => includes(line, 'Archaludon began charging Electro Shot!')),
-    'Electro Shot should remain queued rather than restarting its charge after sleep');
+  // Corrected against pinned9b136a8 causal interruption cases; no golden refresh.
+  eq(damageIndex, -1, 'Electro Shot cannot release a charge cancelled by sleep');
+  truthy(battle.log.findIndex((line) => includes(line, 'Archaludon began charging Electro Shot!')) > turnTwoIndex,
+    'Electro Shot must prepare again on waking');
 });
 
 T('26. stored charge keeps the original target slot when the locked foe is gone', () => {
@@ -3007,7 +3008,7 @@ T('103. Hurricane confusion and Throat Chop sound lock alter future state', () =
     moves: ['Hyper Voice'],
     throatChopTurns: 1,
     evs: { hp: 252, spa: 252, spe: 4, atk: 0, def: 0, spd: 0 }
-  }]), { format: 'singles', seed: [1, 2, 3, 4], maxTurns: 1 });
+  }]), { format: 'singles', seed: [1, 2, 3, 4], maxTurns: 1, forcedActions:[{turn:1,side:'opponent',slot:0,move:'Hyper Voice',targetSlot:0}] });
   truthy(battle.log.some((line) => includes(line, 'Sylveon used Hyper Voice! But it failed because of Throat Chop!')),
     'sound move should fail while Throat Chop lock is active');
 });
@@ -3072,7 +3073,7 @@ T('105. move failures are exported as structured effect_events', () => {
     level: 50,
     moves: ['Tackle'],
     evs: { hp: 252, def: 252, spd: 4, atk: 0, spa: 0, spe: 0 }
-  }]), { format: 'singles', seed: [1, 2, 3, 4], maxTurns: 1 });
+  }]), { format: 'singles', seed: [1, 2, 3, 4], maxTurns: 1, forcedActions:[{turn:1,side:'player',slot:0,move:'Hyper Voice',targetSlot:0}] });
   const throatEvent = ((throatBattle.turnLog[0] || {}).effect_events || [])
     .find((row) => row.effect_kind === 'move-failure' && row.failed_move === 'Hyper Voice');
   truthy(throatEvent, 'Throat Chop move-failure event missing');

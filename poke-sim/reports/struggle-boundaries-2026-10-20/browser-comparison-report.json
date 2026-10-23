@@ -1,0 +1,122 @@
+{
+  "schema_version": "champions-visual-ingestion-v1",
+  "generated_at": "2026-10-20T18:50:29.308Z",
+  "evidence_scope": "local downloaded JSON versus visible DOM; not trusted promotion",
+  "expected_game_count": 2,
+  "pairs": 3,
+  "declared_simulation_captures": 2,
+  "unique_scenarios": 2,
+  "unique_observations": 2,
+  "unique_capture_pairs": 3,
+  "repeated_captures": 1,
+  "verified_execution_count": null,
+  "count_limitations": [
+    "Inventory IDs declare captures, not independently verified executions.",
+    "Scenario counts use retained metadata only; missing fields cannot establish distinct scenarios.",
+    "Repeated captures and permutations do not establish independent mechanics or accuracy percentages."
+  ],
+  "mismatch_pairs": 0,
+  "turns": 20,
+  "issue_counts": {},
+  "reports": [
+    {
+      "scenario_sha256": "b309c036a61def485f76f146d66e2e737ba0d888e9b5a15d0f2f837c7c9344a9",
+      "observation_sha256": "7b3fe77846b5ec90d0aee9d810f189c3eb1ffcd016c92478ec040b34596eb4a7",
+      "schema_version": "champions-visual-comparison-v1",
+      "seed": [
+        54481108,
+        4247087019,
+        2475884906,
+        2031629223
+      ],
+      "build_id": "v2.2.239-struggle-evidence",
+      "team_ids": [
+        "mega_dragonite",
+        "mega_altaria"
+      ],
+      "status": "matched_observable_fields",
+      "checks": 574,
+      "turns": 7,
+      "issues": [],
+      "not_checked": [
+        "Independent real-game mechanics parity",
+        "Hidden stable IDs and exact stats not printed in replay cards",
+        "Hidden actor IDs/targets, effect tooltips and coach claims",
+        "Cross-action attribution of legacy damage without action IDs",
+        "Pixel layout outside inspected screenshots; lazy sprites outside viewport",
+        "Production DB persistence"
+      ],
+      "case_kind": "continuity",
+      "log_file": "after-swap-continuity.log.json",
+      "visual_file": "after-swap-continuity.visual.json",
+      "log_sha256": "c28b5ea72d2c2eb2bce03dbf2b247ee35c9ea969f6675a7087767ddbafee0df3",
+      "visual_sha256": "2520369d398cf06f27d8fe443fd6bf0ebce4d7f418e9037301298c87c09bcb6f"
+    },
+    {
+      "scenario_sha256": "b309c036a61def485f76f146d66e2e737ba0d888e9b5a15d0f2f837c7c9344a9",
+      "observation_sha256": "7b3fe77846b5ec90d0aee9d810f189c3eb1ffcd016c92478ec040b34596eb4a7",
+      "schema_version": "champions-visual-comparison-v1",
+      "seed": [
+        54481108,
+        4247087019,
+        2475884906,
+        2031629223
+      ],
+      "build_id": "v2.2.239-struggle-evidence",
+      "team_ids": [
+        "mega_dragonite",
+        "mega_altaria"
+      ],
+      "status": "matched_observable_fields",
+      "checks": 574,
+      "turns": 7,
+      "issues": [],
+      "not_checked": [
+        "Independent real-game mechanics parity",
+        "Hidden stable IDs and exact stats not printed in replay cards",
+        "Hidden actor IDs/targets, effect tooltips and coach claims",
+        "Cross-action attribution of legacy damage without action IDs",
+        "Pixel layout outside inspected screenshots; lazy sprites outside viewport",
+        "Production DB persistence"
+      ],
+      "case_kind": "simulation",
+      "log_file": "baseline.log.json",
+      "visual_file": "baseline.visual.json",
+      "log_sha256": "f499d063058aea5cb35f4e111b84a2212f38e7d5ce57e5d40be96260ee3ae6c6",
+      "visual_sha256": "8eba328eeb90c352bd651762b729cc594ee3f79bb0021541816c347f7108ba7a"
+    },
+    {
+      "scenario_sha256": "57a71e15942141759d27046f5787745bc78fc701da1b1165895025722de780be",
+      "observation_sha256": "c509a1a23c377b927015be8ba21fdc2c5fb0d92d5de277854b8eec540e73087c",
+      "schema_version": "champions-visual-comparison-v1",
+      "seed": [
+        2434317044,
+        2823719603,
+        2383631935,
+        796939735
+      ],
+      "build_id": "v2.2.239-struggle-evidence",
+      "team_ids": [
+        "mega_altaria",
+        "mega_dragonite"
+      ],
+      "status": "matched_observable_fields",
+      "checks": 511,
+      "turns": 6,
+      "issues": [],
+      "not_checked": [
+        "Independent real-game mechanics parity",
+        "Hidden stable IDs and exact stats not printed in replay cards",
+        "Hidden actor IDs/targets, effect tooltips and coach claims",
+        "Cross-action attribution of legacy damage without action IDs",
+        "Pixel layout outside inspected screenshots; lazy sprites outside viewport",
+        "Production DB persistence"
+      ],
+      "case_kind": "simulation",
+      "log_file": "swapped.log.json",
+      "visual_file": "swapped.visual.json",
+      "log_sha256": "9785dbd200169f4f7527e53db5b4cba7007fd098fc58971a62e2e17626221765",
+      "visual_sha256": "daf34f0ffa1a79ad0d508682dcdeab49e54453b13b82b15d708e8fb997f5328c"
+    }
+  ]
+}

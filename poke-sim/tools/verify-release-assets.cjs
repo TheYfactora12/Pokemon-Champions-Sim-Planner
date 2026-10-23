@@ -3,7 +3,7 @@ const fs = require('node:fs');
 const path = require('node:path');
 const crypto = require('node:crypto');
 
-const REQUIRED = ['generated/champions_move_pools.js', 'generated/mc_review_reference.js', 'mc_review.js',
+const REQUIRED = ['generated/source_sync_status.js', 'generated/champions_move_pools.js', 'generated/mc_review_reference.js', 'mc_review.js', 'own_state_policy.js',
   'assets/retro-intro/gengar.png', 'assets/retro-intro/nidorino.png'];
 
 function verify(root, artifact) {

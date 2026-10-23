@@ -1,0 +1,9 @@
+{
+  "schema_version": "bounded-reference-target-v1",
+  "pin": "9b136a8c8cdb860a8ab96fa063f906604e352547",
+  "compiled_fingerprint": "de66162a28b270bdf17ea17a804a7ec65c6d2f286815ae17eaa3336273405f61",
+  "source_fingerprint": "6ee47d5009706b808a9d079aab9b1a2fa0493edb98b4dd7feee189679d3951a8",
+  "source_url": "https://github.com/smogon/pokemon-showdown/tree/9b136a8c8cdb860a8ab96fa063f906604e352547",
+  "scope": "Champions custom doubles reference comparison; no official eligibility or client proof",
+  "competitive_use": false
+}

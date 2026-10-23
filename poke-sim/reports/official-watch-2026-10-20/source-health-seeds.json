@@ -1,0 +1,171 @@
+{
+  "schema_version": "registered-source-health-v1",
+  "started_at": "2026-10-20T23:09:45.542Z",
+  "finished_at": "2026-10-20T23:09:47.020Z",
+  "registry_sha256": "8fdd2521992bbb6b5712222a9ed29dd3659a3f6028620d94bcd3ba9ff37ad529",
+  "scope": "15 registered seed URLs only; discovered links not traversed. No state advancement, alerts, approval or operational monitoring activation.",
+  "health": [
+    {
+      "source_id": "nintendo_champions_updates",
+      "url": "https://en-americas-support.nintendo.com/app/answers/detail/a_id/71525/~/how-to-update-pok%C3%A9mon-champions",
+      "kind": "official_patch_notes",
+      "required": true,
+      "checked_at": "2026-10-20T23:09:45.543Z",
+      "status": "parsed_review_candidate",
+      "final_url": "https://en-americas-support.nintendo.com/app/answers/detail/a_id/71525/~/how-to-update-pok%C3%A9mon-champions",
+      "raw_sha256": "3ca33a249feccfc281a2572a5853839ef008d99e32177e438ef0dcbcdcbeb0bf",
+      "semantic_sha256": "d0945b4ea3a8a6bb0b04856237275338d7ba5d3c5b3db20f2bd473a356d80c0b",
+      "discovered_links": 0
+    },
+    {
+      "source_id": "champions_official_home",
+      "url": "https://champions.pokemon.com/en-us/",
+      "kind": "official_product",
+      "required": true,
+      "checked_at": "2026-10-20T23:09:45.552Z",
+      "status": "parsed_review_candidate",
+      "final_url": "https://champions.pokemon.com/en-us/",
+      "raw_sha256": "a0c0a850e464e814010c511a4c967f84bb369f8c037ce4177ce813951a417995",
+      "semantic_sha256": "dd599042bdbf0ad82603870261f6bc5664b503c0eb9f3fc506ad6b318c2b4393",
+      "discovered_links": 0
+    },
+    {
+      "source_id": "champions_official_gameplay",
+      "url": "https://champions.pokemon.com/en-us/gameplay/",
+      "kind": "official_gameplay",
+      "required": true,
+      "checked_at": "2026-10-20T23:09:45.552Z",
+      "status": "parsed_review_candidate",
+      "final_url": "https://champions.pokemon.com/en-us/gameplay/",
+      "raw_sha256": "debb804dfd5a34d2a4434b3b08018da89d60d5ea0209d1a337f15ebf5fe21620",
+      "semantic_sha256": "bcff2cae6e488e10acd2733cfd9cf621ae11fda6178b23450e7fd3b0d62ce63f",
+      "discovered_links": 0
+    },
+    {
+      "source_id": "champions_official_pokemon",
+      "url": "https://champions.pokemon.com/en-us/pokemon/",
+      "kind": "official_roster_policy",
+      "required": true,
+      "checked_at": "2026-10-20T23:09:45.553Z",
+      "status": "parsed_review_candidate",
+      "final_url": "https://champions.pokemon.com/en-us/pokemon/",
+      "raw_sha256": "047b6397aa30ba9cbd0297c550e9d93857e6cca8f3b8006b341db4417470c272",
+      "semantic_sha256": "bfa97422ef050f6cec4db81af2f8b960202b98603a5a7b3a73272007b3173db1",
+      "discovered_links": 0
+    },
+    {
+      "source_id": "champions_official_news",
+      "url": "https://champions.pokemon.com/en-us/news/",
+      "kind": "official_news_index",
+      "required": true,
+      "checked_at": "2026-10-20T23:09:45.553Z",
+      "status": "parsed_review_candidate",
+      "final_url": "https://champions.pokemon.com/en-us/news/",
+      "raw_sha256": "588c08dcb69f87c8fa99c0a24075a969ef5ad16a256421ff652d1c0641240eeb",
+      "semantic_sha256": "0aa16f4f5fe998180fc3ce7413cd367c8814ef189622ebb86212823f698cd350",
+      "discovered_links": 28
+    },
+    {
+      "source_id": "pokemon_reg_m_b_notice",
+      "url": "https://www.pokemon.com/us/pokemon-news/regulation-set-m-b-kicks-off-a-new-ranked-battles-season-and-battle-pass-in-pokemon-champions",
+      "kind": "official_regulation_notice",
+      "required": true,
+      "checked_at": "2026-10-20T23:09:45.554Z",
+      "status": "unavailable",
+      "error": "Error: Source layout/content unavailable; manual parser review required"
+    },
+    {
+      "source_id": "pokemon_reg_m_b_strategy",
+      "url": "https://www.pokemon.com/us/features/pokemon-champions-regulation-m-b-double-battles-overview",
+      "kind": "official_strategy",
+      "required": true,
+      "checked_at": "2026-10-20T23:09:45.554Z",
+      "status": "unavailable",
+      "error": "Error: Source layout/content unavailable; manual parser review required"
+    },
+    {
+      "source_id": "pokemon_reg_m_c_notice",
+      "url": "https://www.pokemon.com/us/news/get-ready-for-regulation-set-m-c-in-pokemon-champions",
+      "kind": "official_regulation_notice",
+      "required": true,
+      "checked_at": "2026-10-20T23:09:45.554Z",
+      "status": "unavailable",
+      "error": "Error: Source layout/content unavailable; manual parser review required"
+    },
+    {
+      "source_id": "champions_reg_mc_game_notice",
+      "url": "https://champions-news.pokemon-home.com/en/page/816.html",
+      "kind": "official_regulation_notice",
+      "required": true,
+      "checked_at": "2026-10-20T23:09:45.555Z",
+      "status": "parsed_review_candidate",
+      "final_url": "https://champions-news.pokemon-home.com/en/page/816.html",
+      "raw_sha256": "c195592cdf52c8ce193cc02d444b19c3272234be66a04764356064be35ff1985",
+      "semantic_sha256": "5b52910d7452d31f50bd65a70e64a78ba30b10672ba766a2801614da26f97205",
+      "discovered_links": 0
+    },
+    {
+      "source_id": "champions_reg_mc_official_roster",
+      "url": "https://web-view.app.pokemonchampions.jp/battle/pages/events/rs178713870219xeaaio/en/pokemon.html",
+      "kind": "official_roster",
+      "required": true,
+      "checked_at": "2026-10-20T23:09:45.555Z",
+      "status": "parsed_review_candidate",
+      "final_url": "https://web-view.app.pokemonchampions.jp/battle/pages/events/rs178713870219xeaaio/en/pokemon.html",
+      "raw_sha256": "122529cebbc15cd2a22c781e0fb43ca814be86a18951f1ceaf37cf65297a3627",
+      "semantic_sha256": "1dc4e003829f856c5bb60f285aa3403b0ac4b37b7f51dd7a2ee684dfeb2c5e9b",
+      "discovered_links": 0
+    },
+    {
+      "source_id": "play_pokemon_vgc_handbook",
+      "url": "https://mcdn.pokemon.com/pokemon-prod/raw/upload/v1/live/static-assets/content-assets/cms2/pdf/play-pokemon/rules/play-pokemon-vgc-tournament-handbook-en.pdf",
+      "kind": "official_rules_pdf",
+      "required": true,
+      "checked_at": "2026-10-20T23:09:45.556Z",
+      "status": "parsed_review_candidate",
+      "final_url": "https://mcdn.pokemon.com/pokemon-prod/raw/upload/v1/live/static-assets/content-assets/cms2/pdf/play-pokemon/rules/play-pokemon-vgc-tournament-handbook-en.pdf",
+      "raw_sha256": "152ff4de657ee0f001bd8fd5f1290272782798836701ed72c4b311c974404e24",
+      "semantic_sha256": "152ff4de657ee0f001bd8fd5f1290272782798836701ed72c4b311c974404e24",
+      "discovered_links": 0
+    },
+    {
+      "source_id": "pokemon_home_move",
+      "url": "https://home.pokemon.com/en-us/move/",
+      "kind": "official_transfer_policy",
+      "required": true,
+      "checked_at": "2026-10-20T23:09:45.557Z",
+      "status": "parsed_review_candidate",
+      "final_url": "https://home.pokemon.com/en-us/move/",
+      "raw_sha256": "cf74cad5e73a6224d0570e78575254e3345915f07fb5dd160ce2aa9f41416b00",
+      "semantic_sha256": "43d7395578ef474b9f6f0b9c9633364f94b3bfb1e62a47b2fbd91397a77e1192",
+      "discovered_links": 0
+    },
+    {
+      "source_id": "pokemon_support_champions",
+      "url": "https://support.pokemon.com/hc/en-us/articles/34698966331668-Pok%C3%A9mon-Champions-Support",
+      "kind": "official_support",
+      "required": false,
+      "checked_at": "2026-10-20T23:09:45.557Z",
+      "status": "unavailable",
+      "error": "Error: HTTP 403"
+    },
+    {
+      "source_id": "pokemon_support_home_moves",
+      "url": "https://support.pokemon.com/hc/en-us/articles/6372731346452-Why-did-my-Pok%C3%A9mon-s-moves-change",
+      "kind": "official_support",
+      "required": false,
+      "checked_at": "2026-10-20T23:09:45.557Z",
+      "status": "unavailable",
+      "error": "Error: HTTP 403"
+    },
+    {
+      "source_id": "championships_official",
+      "url": "https://championships.pokemon.com/",
+      "kind": "official_competition",
+      "required": false,
+      "checked_at": "2026-10-20T23:09:45.558Z",
+      "status": "unavailable",
+      "error": "Error: Source layout/content unavailable; manual parser review required"
+    }
+  ]
+}

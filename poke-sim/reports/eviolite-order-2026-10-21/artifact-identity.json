@@ -1,0 +1,42 @@
+{
+  "base": "5c93802893a15bb9716f9143fe20f2cfc5a7c345",
+  "engine_commit": "0aa4640f40c364fab46f561f03ce9a44b3bfe2e5",
+  "implementation_head": "8fb70b4c4cb6453eec55c0040cfb4e28c6676a5f",
+  "files": {
+    "poke-sim/engine.js": {
+      "working_sha256": "4b1e9561fdeb6c6953a859a342f25b35a1d1e626565c64af14e44ebb435ae1e0",
+      "committed_sha256": "190aca25d892d61ae6a9bbe73019cbb1ea1bffa857b2724f8c070e848e97736f",
+      "lf_normalized_sha256": "190aca25d892d61ae6a9bbe73019cbb1ea1bffa857b2724f8c070e848e97736f"
+    },
+    "poke-sim/pokemon-champion-2026.html": {
+      "working_sha256": "8cfdf1b982e61acb88b406f71abcb7fbb32fdb41ba9251e953dbf3c905a86ccd",
+      "committed_sha256": "8cfdf1b982e61acb88b406f71abcb7fbb32fdb41ba9251e953dbf3c905a86ccd",
+      "lf_normalized_sha256": "8cfdf1b982e61acb88b406f71abcb7fbb32fdb41ba9251e953dbf3c905a86ccd"
+    },
+    "poke-sim/tools/eviolite-order-probes.mjs": {
+      "working_sha256": "25aac02f11f681cbb34fc56cb564d411564feb16b30ca7cc2489d9d79a3083e3",
+      "committed_sha256": "7bff1bab2eec4dc934293e3ef071ff8f0327c4761e64f139d47c0a70b74126a0",
+      "lf_normalized_sha256": "7bff1bab2eec4dc934293e3ef071ff8f0327c4761e64f139d47c0a70b74126a0"
+    },
+    "poke-sim/tools/eviolite-reference-pin.mjs": {
+      "working_sha256": "1f90fa83363713011f2bc001e7e68cfea2618e63fa94e51fb6667b5c016cdb1c",
+      "committed_sha256": "ca70919ee2bc0698da22a3a643d18aa25f74b08f130dbf864b83e1938000060a",
+      "lf_normalized_sha256": "ca70919ee2bc0698da22a3a643d18aa25f74b08f130dbf864b83e1938000060a"
+    },
+    "poke-sim/tests/eviolite_order_tests.mjs": {
+      "working_sha256": "a13f149af5a2ba437cf5188ef89c14ac56360008835ea7038bff3f7971240b26",
+      "committed_sha256": "64f776a312d5e033b0ca0874cb6396525f2fa814aa471ee0f788d9f7605c1eb6",
+      "lf_normalized_sha256": "64f776a312d5e033b0ca0874cb6396525f2fa814aa471ee0f788d9f7605c1eb6"
+    },
+    "poke-sim/tests/fixtures/eviolite_order_v1.json": {
+      "working_sha256": "6c8102687948141cc3ba5d934ee3d5924375f6db7d58d17fef4262761a665863",
+      "committed_sha256": "e57226bbb158b4eab1c0f9779299a3cab656c8b860ed591aa94978b9464ca344",
+      "lf_normalized_sha256": "e57226bbb158b4eab1c0f9779299a3cab656c8b860ed591aa94978b9464ca344"
+    },
+    "poke-sim/tests/fixtures/eviolite_reference_v1.json": {
+      "working_sha256": "34d8d44f3879c168a810af92910aed1356136efa2c5e4e9d85b1de41325307bf",
+      "committed_sha256": "2fc4e69b6f91f76dacd27d37e6d846f36483cd3b147cb7fd689691c6f37673b1",
+      "lf_normalized_sha256": "2fc4e69b6f91f76dacd27d37e6d846f36483cd3b147cb7fd689691c6f37673b1"
+    }
+  }
+}

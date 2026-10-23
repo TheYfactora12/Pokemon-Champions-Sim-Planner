@@ -1,0 +1,178 @@
+{
+  "executed_at": "2026-10-21T01:07:43.065Z",
+  "cases": [
+    {
+      "move": "Meteor Beam",
+      "events": [
+        {
+          "type": "log",
+          "text": "Venusaur used Protect!",
+          "actor": "Venusaur",
+          "actor_key": "player:slot:1:Venusaur",
+          "side": "player",
+          "move": "Protect",
+          "target": "Blastoise",
+          "target_key": "opponent:slot:0:Blastoise",
+          "target_side": "opponent",
+          "log_index": 0,
+          "called_by": null
+        },
+        {
+          "type": "log",
+          "text": "Snorlax used Protect!",
+          "actor": "Snorlax",
+          "actor_key": "opponent:slot:1:Snorlax",
+          "side": "opponent",
+          "move": "Protect",
+          "target": "Aerodactyl",
+          "target_key": "player:slot:0:Aerodactyl",
+          "target_side": "player",
+          "log_index": 1,
+          "called_by": null
+        },
+        {
+          "type": "log",
+          "text": "Aerodactyl used Sleep Talk!",
+          "actor": "Aerodactyl",
+          "actor_key": "player:slot:0:Aerodactyl",
+          "side": "player",
+          "move": "Sleep Talk",
+          "target": "Blastoise",
+          "target_key": "opponent:slot:0:Blastoise",
+          "target_side": "opponent",
+          "log_index": 2,
+          "called_by": null
+        },
+        {
+          "type": "log",
+          "text": "Aerodactyl used Sleep Talk!"
+        },
+        {
+          "type": "log",
+          "text": "Aerodactyl's Special Attack rose!"
+        },
+        {
+          "type": "log",
+          "text": "Aerodactyl used Meteor Beam!",
+          "actor": "Aerodactyl",
+          "actor_key": "player:slot:0:Aerodactyl",
+          "side": "player",
+          "move": "Meteor Beam",
+          "target": "Blastoise",
+          "target_key": "opponent:slot:0:Blastoise",
+          "target_side": "opponent",
+          "log_index": 5,
+          "called_by": "Sleep Talk"
+        },
+        {
+          "type": "log",
+          "text": "Aerodactyl began charging Meteor Beam!"
+        },
+        {
+          "type": "log",
+          "text": "Blastoise used Tackle!",
+          "actor": "Blastoise",
+          "actor_key": "opponent:slot:0:Blastoise",
+          "side": "opponent",
+          "move": "Tackle",
+          "target": "Aerodactyl",
+          "target_key": "player:slot:0:Aerodactyl",
+          "target_side": "player",
+          "log_index": 7,
+          "called_by": null
+        },
+        {
+          "type": "damage",
+          "text": "Blastoise used Tackle! → Aerodactyl [11 dmg, 144/155 HP]"
+        }
+      ]
+    },
+    {
+      "move": "Electro Shot",
+      "events": [
+        {
+          "type": "log",
+          "text": "Venusaur used Protect!",
+          "actor": "Venusaur",
+          "actor_key": "player:slot:1:Venusaur",
+          "side": "player",
+          "move": "Protect",
+          "target": "Blastoise",
+          "target_key": "opponent:slot:0:Blastoise",
+          "target_side": "opponent",
+          "log_index": 0,
+          "called_by": null
+        },
+        {
+          "type": "log",
+          "text": "Snorlax used Protect!",
+          "actor": "Snorlax",
+          "actor_key": "opponent:slot:1:Snorlax",
+          "side": "opponent",
+          "move": "Protect",
+          "target": "Aerodactyl",
+          "target_key": "player:slot:0:Aerodactyl",
+          "target_side": "player",
+          "log_index": 1,
+          "called_by": null
+        },
+        {
+          "type": "log",
+          "text": "Aerodactyl used Sleep Talk!",
+          "actor": "Aerodactyl",
+          "actor_key": "player:slot:0:Aerodactyl",
+          "side": "player",
+          "move": "Sleep Talk",
+          "target": "Blastoise",
+          "target_key": "opponent:slot:0:Blastoise",
+          "target_side": "opponent",
+          "log_index": 2,
+          "called_by": null
+        },
+        {
+          "type": "log",
+          "text": "Aerodactyl used Sleep Talk!"
+        },
+        {
+          "type": "log",
+          "text": "Aerodactyl's Special Attack rose!"
+        },
+        {
+          "type": "log",
+          "text": "Aerodactyl used Electro Shot!",
+          "actor": "Aerodactyl",
+          "actor_key": "player:slot:0:Aerodactyl",
+          "side": "player",
+          "move": "Electro Shot",
+          "target": "Blastoise",
+          "target_key": "opponent:slot:0:Blastoise",
+          "target_side": "opponent",
+          "log_index": 5,
+          "called_by": "Sleep Talk"
+        },
+        {
+          "type": "log",
+          "text": "Aerodactyl began charging Electro Shot!"
+        },
+        {
+          "type": "log",
+          "text": "Blastoise used Tackle!",
+          "actor": "Blastoise",
+          "actor_key": "opponent:slot:0:Blastoise",
+          "side": "opponent",
+          "move": "Tackle",
+          "target": "Aerodactyl",
+          "target_key": "player:slot:0:Aerodactyl",
+          "target_side": "player",
+          "log_index": 7,
+          "called_by": null
+        },
+        {
+          "type": "damage",
+          "text": "Blastoise used Tackle! → Aerodactyl [11 dmg, 144/155 HP]"
+        }
+      ]
+    }
+  ],
+  "scope": "Local event ownership only; does not validate Sleep Talk charge-move eligibility against reference"
+}

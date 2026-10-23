@@ -1,0 +1,1485 @@
+{
+  "local_result": {
+    "observations": {
+      "attack_stage": 0,
+      "defense_stage": 0,
+      "special_attack_stage": 3,
+      "item_consumed": true
+    },
+    "raw": {
+      "log": [
+        "Machamp's White Herb restored its lowered stats!",
+        "--- Turn 1 ---",
+        "Blastoise used Protect!",
+        "Blastoise used Protect!",
+        "Machamp used Protect!",
+        "Snorlax used Amnesia!",
+        "Snorlax's Special Defense sharply rose!"
+      ],
+      "turnLog": [
+        {
+          "turn": 1,
+          "initial": {
+            "active": {
+              "player": [
+                "Machamp",
+                "Blastoise"
+              ],
+              "opponent": [
+                "Snorlax",
+                "Blastoise"
+              ]
+            },
+            "bench": {
+              "player": [],
+              "opponent": []
+            },
+            "active_keys": {
+              "player": [
+                "player:active:0:Machamp",
+                "player:active:1:Blastoise"
+              ],
+              "opponent": [
+                "opponent:active:0:Snorlax",
+                "opponent:active:1:Blastoise"
+              ]
+            },
+            "bench_keys": {
+              "player": [],
+              "opponent": []
+            },
+            "active_stable_keys": {
+              "player": [
+                "player:slot:0:Machamp",
+                "player:slot:1:Blastoise"
+              ],
+              "opponent": [
+                "opponent:slot:0:Snorlax",
+                "opponent:slot:1:Blastoise"
+              ]
+            },
+            "bench_stable_keys": {
+              "player": [],
+              "opponent": []
+            },
+            "hp_pct": {
+              "player:active:0:Machamp": 1,
+              "player:active:1:Blastoise": 1,
+              "opponent:active:0:Snorlax": 1,
+              "opponent:active:1:Blastoise": 1
+            },
+            "hp_pct_stable": {
+              "player:slot:0:Machamp": 1,
+              "player:slot:1:Blastoise": 1,
+              "opponent:slot:0:Snorlax": 1,
+              "opponent:slot:1:Blastoise": 1
+            },
+            "score_state": {
+              "player": {
+                "active": [
+                  "Machamp",
+                  "Blastoise"
+                ],
+                "bench": [],
+                "active_keys": [
+                  "player:active:0:Machamp",
+                  "player:active:1:Blastoise"
+                ],
+                "bench_keys": [],
+                "active_stable_keys": [
+                  "player:slot:0:Machamp",
+                  "player:slot:1:Blastoise"
+                ],
+                "bench_stable_keys": [],
+                "alive_count": 2,
+                "hp_total": 2,
+                "max_count": 2
+              },
+              "opponent": {
+                "active": [
+                  "Snorlax",
+                  "Blastoise"
+                ],
+                "bench": [],
+                "active_keys": [
+                  "opponent:active:0:Snorlax",
+                  "opponent:active:1:Blastoise"
+                ],
+                "bench_keys": [],
+                "active_stable_keys": [
+                  "opponent:slot:0:Snorlax",
+                  "opponent:slot:1:Blastoise"
+                ],
+                "bench_stable_keys": [],
+                "alive_count": 2,
+                "hp_total": 2,
+                "max_count": 2
+              }
+            },
+            "roster": {
+              "player": [
+                {
+                  "key": "player:active:0:Machamp",
+                  "stableKey": "player:slot:0:Machamp",
+                  "teamSlot": 0,
+                  "zone": "active",
+                  "zoneIndex": 0,
+                  "side": "player",
+                  "status": "active",
+                  "displayName": "Machamp",
+                  "species": "Machamp",
+                  "types": [
+                    "Fighting"
+                  ],
+                  "hp": 100,
+                  "hp_current": 165,
+                  "substitute_hp": 0,
+                  "perish_song_turns": 0,
+                  "hp_max": 165,
+                  "hpLabel": "100%",
+                  "level": 50,
+                  "item": "White Herb",
+                  "itemConsumed": true,
+                  "electric_charge": false,
+                  "mc_syrup_turns": 0,
+                  "mc_trap_turns": 0,
+                  "mc_partially_trapped": false,
+                  "ability": "Guts",
+                  "moves": [
+                    "Protect"
+                  ],
+                  "move_pp": {
+                    "Protect": {
+                      "current": 8,
+                      "max": 8
+                    }
+                  },
+                  "baseStatsLabel": "90/130/80/65/85/55",
+                  "calculatedStats": "165/150/100/85/105/75"
+                },
+                {
+                  "key": "player:active:1:Blastoise",
+                  "stableKey": "player:slot:1:Blastoise",
+                  "teamSlot": 1,
+                  "zone": "active",
+                  "zoneIndex": 1,
+                  "side": "player",
+                  "status": "active",
+                  "displayName": "Blastoise",
+                  "species": "Blastoise",
+                  "types": [
+                    "Water"
+                  ],
+                  "hp": 100,
+                  "hp_current": 154,
+                  "substitute_hp": 0,
+                  "perish_song_turns": 0,
+                  "hp_max": 154,
+                  "hpLabel": "100%",
+                  "level": 50,
+                  "item": "",
+                  "itemConsumed": false,
+                  "electric_charge": false,
+                  "mc_syrup_turns": 0,
+                  "mc_trap_turns": 0,
+                  "mc_partially_trapped": false,
+                  "ability": "Torrent",
+                  "moves": [
+                    "Protect"
+                  ],
+                  "move_pp": {
+                    "Protect": {
+                      "current": 8,
+                      "max": 8
+                    }
+                  },
+                  "baseStatsLabel": "79/83/100/85/105/78",
+                  "calculatedStats": "154/103/120/105/125/98"
+                }
+              ],
+              "opponent": [
+                {
+                  "key": "opponent:active:0:Snorlax",
+                  "stableKey": "opponent:slot:0:Snorlax",
+                  "teamSlot": 0,
+                  "zone": "active",
+                  "zoneIndex": 0,
+                  "side": "opponent",
+                  "status": "active",
+                  "displayName": "Snorlax",
+                  "species": "Snorlax",
+                  "types": [
+                    "Normal"
+                  ],
+                  "hp": 100,
+                  "hp_current": 235,
+                  "substitute_hp": 0,
+                  "perish_song_turns": 0,
+                  "hp_max": 235,
+                  "hpLabel": "100%",
+                  "level": 50,
+                  "item": "",
+                  "itemConsumed": false,
+                  "electric_charge": false,
+                  "mc_syrup_turns": 0,
+                  "mc_trap_turns": 0,
+                  "mc_partially_trapped": false,
+                  "ability": "Immunity",
+                  "moves": [
+                    "Amnesia"
+                  ],
+                  "move_pp": {
+                    "Amnesia": {
+                      "current": 20,
+                      "max": 20
+                    }
+                  },
+                  "baseStatsLabel": "160/110/65/65/110/30",
+                  "calculatedStats": "235/130/85/85/130/50"
+                },
+                {
+                  "key": "opponent:active:1:Blastoise",
+                  "stableKey": "opponent:slot:1:Blastoise",
+                  "teamSlot": 1,
+                  "zone": "active",
+                  "zoneIndex": 1,
+                  "side": "opponent",
+                  "status": "active",
+                  "displayName": "Blastoise",
+                  "species": "Blastoise",
+                  "types": [
+                    "Water"
+                  ],
+                  "hp": 100,
+                  "hp_current": 154,
+                  "substitute_hp": 0,
+                  "perish_song_turns": 0,
+                  "hp_max": 154,
+                  "hpLabel": "100%",
+                  "level": 50,
+                  "item": "",
+                  "itemConsumed": false,
+                  "electric_charge": false,
+                  "mc_syrup_turns": 0,
+                  "mc_trap_turns": 0,
+                  "mc_partially_trapped": false,
+                  "ability": "Torrent",
+                  "moves": [
+                    "Protect"
+                  ],
+                  "move_pp": {
+                    "Protect": {
+                      "current": 8,
+                      "max": 8
+                    }
+                  },
+                  "baseStatsLabel": "79/83/100/85/105/78",
+                  "calculatedStats": "154/103/120/105/125/98"
+                }
+              ]
+            },
+            "status": {},
+            "status_stable": {},
+            "stat_boosts": {
+              "player:active:0:Machamp": {
+                "atk": 0,
+                "def": 0,
+                "spa": 3,
+                "spd": 0,
+                "spe": 0,
+                "acc": 0,
+                "eva": 0
+              }
+            },
+            "stat_boosts_stable": {
+              "player:slot:0:Machamp": {
+                "atk": 0,
+                "def": 0,
+                "spa": 3,
+                "spd": 0,
+                "spe": 0,
+                "acc": 0,
+                "eva": 0
+              }
+            },
+            "field": {
+              "weather": null,
+              "weather_turns": 0,
+              "gravity_turns": 0,
+              "terrain": null,
+              "terrain_turns": 0,
+              "trick_room": 0
+            },
+            "speed_control": {
+              "player": {
+                "tailwind_turns": 0,
+                "screens": {
+                  "reflect": 0,
+                  "light": 0,
+                  "aurora": 0
+                }
+              },
+              "opponent": {
+                "tailwind_turns": 0,
+                "screens": {
+                  "reflect": 0,
+                  "light": 0,
+                  "aurora": 0
+                }
+              }
+            },
+            "speed_order": [
+              "Blastoise",
+              "Blastoise",
+              "Machamp",
+              "Snorlax"
+            ],
+            "speed_order_keys": [
+              "player:active:1:Blastoise",
+              "opponent:active:1:Blastoise",
+              "player:active:0:Machamp",
+              "opponent:active:0:Snorlax"
+            ],
+            "speed_order_stable_keys": [
+              "player:slot:1:Blastoise",
+              "opponent:slot:1:Blastoise",
+              "player:slot:0:Machamp",
+              "opponent:slot:0:Snorlax"
+            ],
+            "speed_order_details": [
+              {
+                "side": "player",
+                "key": "player:active:1:Blastoise",
+                "stableKey": "player:slot:1:Blastoise",
+                "pokemon": "Blastoise",
+                "stat_format": "champions",
+                "nature": "Hardy",
+                "speed_points": 0,
+                "species_base_speed": 78,
+                "base_speed": 98,
+                "calculated_speed": 98,
+                "speed_stage": 0,
+                "effective_speed": 98,
+                "item": "",
+                "ability": "Torrent",
+                "status": "",
+                "tailwind": false,
+                "trick_room": false,
+                "weather": "none",
+                "exact_speed_tie": true
+              },
+              {
+                "side": "opponent",
+                "key": "opponent:active:1:Blastoise",
+                "stableKey": "opponent:slot:1:Blastoise",
+                "pokemon": "Blastoise",
+                "stat_format": "champions",
+                "nature": "Hardy",
+                "speed_points": 0,
+                "species_base_speed": 78,
+                "base_speed": 98,
+                "calculated_speed": 98,
+                "speed_stage": 0,
+                "effective_speed": 98,
+                "item": "",
+                "ability": "Torrent",
+                "status": "",
+                "tailwind": false,
+                "trick_room": false,
+                "weather": "none",
+                "exact_speed_tie": true
+              },
+              {
+                "side": "player",
+                "key": "player:active:0:Machamp",
+                "stableKey": "player:slot:0:Machamp",
+                "pokemon": "Machamp",
+                "stat_format": "champions",
+                "nature": "Hardy",
+                "speed_points": 0,
+                "species_base_speed": 55,
+                "base_speed": 75,
+                "calculated_speed": 75,
+                "speed_stage": 0,
+                "effective_speed": 75,
+                "item": "White Herb",
+                "ability": "Guts",
+                "status": "",
+                "tailwind": false,
+                "trick_room": false,
+                "weather": "none",
+                "exact_speed_tie": false
+              },
+              {
+                "side": "opponent",
+                "key": "opponent:active:0:Snorlax",
+                "stableKey": "opponent:slot:0:Snorlax",
+                "pokemon": "Snorlax",
+                "stat_format": "champions",
+                "nature": "Hardy",
+                "speed_points": 0,
+                "species_base_speed": 30,
+                "base_speed": 50,
+                "calculated_speed": 50,
+                "speed_stage": 0,
+                "effective_speed": 50,
+                "item": "",
+                "ability": "Immunity",
+                "status": "",
+                "tailwind": false,
+                "trick_room": false,
+                "weather": "none",
+                "exact_speed_tie": false
+              }
+            ],
+            "legal_options": {},
+            "position_score": 0.507,
+            "win_probability": null
+          },
+          "playerHP": [
+            1,
+            1
+          ],
+          "oppHP": [
+            1,
+            1
+          ],
+          "activePair": [
+            "Machamp",
+            "Blastoise",
+            "Snorlax",
+            "Blastoise"
+          ],
+          "action": "Machamp:Protect | Blastoise:Protect | Snorlax:Amnesia | Blastoise:Protect",
+          "positionScore": 0.507,
+          "pre": {
+            "active": {
+              "player": [
+                "Machamp",
+                "Blastoise"
+              ],
+              "opponent": [
+                "Snorlax",
+                "Blastoise"
+              ]
+            },
+            "bench": {
+              "player": [],
+              "opponent": []
+            },
+            "active_keys": {
+              "player": [
+                "player:active:0:Machamp",
+                "player:active:1:Blastoise"
+              ],
+              "opponent": [
+                "opponent:active:0:Snorlax",
+                "opponent:active:1:Blastoise"
+              ]
+            },
+            "bench_keys": {
+              "player": [],
+              "opponent": []
+            },
+            "active_stable_keys": {
+              "player": [
+                "player:slot:0:Machamp",
+                "player:slot:1:Blastoise"
+              ],
+              "opponent": [
+                "opponent:slot:0:Snorlax",
+                "opponent:slot:1:Blastoise"
+              ]
+            },
+            "bench_stable_keys": {
+              "player": [],
+              "opponent": []
+            },
+            "hp_pct": {
+              "player:active:0:Machamp": 1,
+              "player:active:1:Blastoise": 1,
+              "opponent:active:0:Snorlax": 1,
+              "opponent:active:1:Blastoise": 1
+            },
+            "hp_pct_stable": {
+              "player:slot:0:Machamp": 1,
+              "player:slot:1:Blastoise": 1,
+              "opponent:slot:0:Snorlax": 1,
+              "opponent:slot:1:Blastoise": 1
+            },
+            "score_state": {
+              "player": {
+                "active": [
+                  "Machamp",
+                  "Blastoise"
+                ],
+                "bench": [],
+                "active_keys": [
+                  "player:active:0:Machamp",
+                  "player:active:1:Blastoise"
+                ],
+                "bench_keys": [],
+                "active_stable_keys": [
+                  "player:slot:0:Machamp",
+                  "player:slot:1:Blastoise"
+                ],
+                "bench_stable_keys": [],
+                "alive_count": 2,
+                "hp_total": 2,
+                "max_count": 2
+              },
+              "opponent": {
+                "active": [
+                  "Snorlax",
+                  "Blastoise"
+                ],
+                "bench": [],
+                "active_keys": [
+                  "opponent:active:0:Snorlax",
+                  "opponent:active:1:Blastoise"
+                ],
+                "bench_keys": [],
+                "active_stable_keys": [
+                  "opponent:slot:0:Snorlax",
+                  "opponent:slot:1:Blastoise"
+                ],
+                "bench_stable_keys": [],
+                "alive_count": 2,
+                "hp_total": 2,
+                "max_count": 2
+              }
+            },
+            "roster": {
+              "player": [
+                {
+                  "key": "player:active:0:Machamp",
+                  "stableKey": "player:slot:0:Machamp",
+                  "teamSlot": 0,
+                  "zone": "active",
+                  "zoneIndex": 0,
+                  "side": "player",
+                  "status": "active",
+                  "displayName": "Machamp",
+                  "species": "Machamp",
+                  "types": [
+                    "Fighting"
+                  ],
+                  "hp": 100,
+                  "hp_current": 165,
+                  "substitute_hp": 0,
+                  "perish_song_turns": 0,
+                  "hp_max": 165,
+                  "hpLabel": "100%",
+                  "level": 50,
+                  "item": "White Herb",
+                  "itemConsumed": true,
+                  "electric_charge": false,
+                  "mc_syrup_turns": 0,
+                  "mc_trap_turns": 0,
+                  "mc_partially_trapped": false,
+                  "ability": "Guts",
+                  "moves": [
+                    "Protect"
+                  ],
+                  "move_pp": {
+                    "Protect": {
+                      "current": 8,
+                      "max": 8
+                    }
+                  },
+                  "baseStatsLabel": "90/130/80/65/85/55",
+                  "calculatedStats": "165/150/100/85/105/75"
+                },
+                {
+                  "key": "player:active:1:Blastoise",
+                  "stableKey": "player:slot:1:Blastoise",
+                  "teamSlot": 1,
+                  "zone": "active",
+                  "zoneIndex": 1,
+                  "side": "player",
+                  "status": "active",
+                  "displayName": "Blastoise",
+                  "species": "Blastoise",
+                  "types": [
+                    "Water"
+                  ],
+                  "hp": 100,
+                  "hp_current": 154,
+                  "substitute_hp": 0,
+                  "perish_song_turns": 0,
+                  "hp_max": 154,
+                  "hpLabel": "100%",
+                  "level": 50,
+                  "item": "",
+                  "itemConsumed": false,
+                  "electric_charge": false,
+                  "mc_syrup_turns": 0,
+                  "mc_trap_turns": 0,
+                  "mc_partially_trapped": false,
+                  "ability": "Torrent",
+                  "moves": [
+                    "Protect"
+                  ],
+                  "move_pp": {
+                    "Protect": {
+                      "current": 8,
+                      "max": 8
+                    }
+                  },
+                  "baseStatsLabel": "79/83/100/85/105/78",
+                  "calculatedStats": "154/103/120/105/125/98"
+                }
+              ],
+              "opponent": [
+                {
+                  "key": "opponent:active:0:Snorlax",
+                  "stableKey": "opponent:slot:0:Snorlax",
+                  "teamSlot": 0,
+                  "zone": "active",
+                  "zoneIndex": 0,
+                  "side": "opponent",
+                  "status": "active",
+                  "displayName": "Snorlax",
+                  "species": "Snorlax",
+                  "types": [
+                    "Normal"
+                  ],
+                  "hp": 100,
+                  "hp_current": 235,
+                  "substitute_hp": 0,
+                  "perish_song_turns": 0,
+                  "hp_max": 235,
+                  "hpLabel": "100%",
+                  "level": 50,
+                  "item": "",
+                  "itemConsumed": false,
+                  "electric_charge": false,
+                  "mc_syrup_turns": 0,
+                  "mc_trap_turns": 0,
+                  "mc_partially_trapped": false,
+                  "ability": "Immunity",
+                  "moves": [
+                    "Amnesia"
+                  ],
+                  "move_pp": {
+                    "Amnesia": {
+                      "current": 20,
+                      "max": 20
+                    }
+                  },
+                  "baseStatsLabel": "160/110/65/65/110/30",
+                  "calculatedStats": "235/130/85/85/130/50"
+                },
+                {
+                  "key": "opponent:active:1:Blastoise",
+                  "stableKey": "opponent:slot:1:Blastoise",
+                  "teamSlot": 1,
+                  "zone": "active",
+                  "zoneIndex": 1,
+                  "side": "opponent",
+                  "status": "active",
+                  "displayName": "Blastoise",
+                  "species": "Blastoise",
+                  "types": [
+                    "Water"
+                  ],
+                  "hp": 100,
+                  "hp_current": 154,
+                  "substitute_hp": 0,
+                  "perish_song_turns": 0,
+                  "hp_max": 154,
+                  "hpLabel": "100%",
+                  "level": 50,
+                  "item": "",
+                  "itemConsumed": false,
+                  "electric_charge": false,
+                  "mc_syrup_turns": 0,
+                  "mc_trap_turns": 0,
+                  "mc_partially_trapped": false,
+                  "ability": "Torrent",
+                  "moves": [
+                    "Protect"
+                  ],
+                  "move_pp": {
+                    "Protect": {
+                      "current": 8,
+                      "max": 8
+                    }
+                  },
+                  "baseStatsLabel": "79/83/100/85/105/78",
+                  "calculatedStats": "154/103/120/105/125/98"
+                }
+              ]
+            },
+            "status": {},
+            "status_stable": {},
+            "stat_boosts": {
+              "player:active:0:Machamp": {
+                "atk": 0,
+                "def": 0,
+                "spa": 3,
+                "spd": 0,
+                "spe": 0,
+                "acc": 0,
+                "eva": 0
+              }
+            },
+            "stat_boosts_stable": {
+              "player:slot:0:Machamp": {
+                "atk": 0,
+                "def": 0,
+                "spa": 3,
+                "spd": 0,
+                "spe": 0,
+                "acc": 0,
+                "eva": 0
+              }
+            },
+            "field": {
+              "weather": null,
+              "weather_turns": 0,
+              "gravity_turns": 0,
+              "terrain": null,
+              "terrain_turns": 0,
+              "trick_room": 0
+            },
+            "speed_control": {
+              "player": {
+                "tailwind_turns": 0,
+                "screens": {
+                  "reflect": 0,
+                  "light": 0,
+                  "aurora": 0
+                }
+              },
+              "opponent": {
+                "tailwind_turns": 0,
+                "screens": {
+                  "reflect": 0,
+                  "light": 0,
+                  "aurora": 0
+                }
+              }
+            },
+            "speed_order": [
+              "Blastoise",
+              "Blastoise",
+              "Machamp",
+              "Snorlax"
+            ],
+            "speed_order_keys": [
+              "player:active:1:Blastoise",
+              "opponent:active:1:Blastoise",
+              "player:active:0:Machamp",
+              "opponent:active:0:Snorlax"
+            ],
+            "speed_order_stable_keys": [
+              "player:slot:1:Blastoise",
+              "opponent:slot:1:Blastoise",
+              "player:slot:0:Machamp",
+              "opponent:slot:0:Snorlax"
+            ],
+            "speed_order_details": [
+              {
+                "side": "player",
+                "key": "player:active:1:Blastoise",
+                "stableKey": "player:slot:1:Blastoise",
+                "pokemon": "Blastoise",
+                "stat_format": "champions",
+                "nature": "Hardy",
+                "speed_points": 0,
+                "species_base_speed": 78,
+                "base_speed": 98,
+                "calculated_speed": 98,
+                "speed_stage": 0,
+                "effective_speed": 98,
+                "item": "",
+                "ability": "Torrent",
+                "status": "",
+                "tailwind": false,
+                "trick_room": false,
+                "weather": "none",
+                "exact_speed_tie": true
+              },
+              {
+                "side": "opponent",
+                "key": "opponent:active:1:Blastoise",
+                "stableKey": "opponent:slot:1:Blastoise",
+                "pokemon": "Blastoise",
+                "stat_format": "champions",
+                "nature": "Hardy",
+                "speed_points": 0,
+                "species_base_speed": 78,
+                "base_speed": 98,
+                "calculated_speed": 98,
+                "speed_stage": 0,
+                "effective_speed": 98,
+                "item": "",
+                "ability": "Torrent",
+                "status": "",
+                "tailwind": false,
+                "trick_room": false,
+                "weather": "none",
+                "exact_speed_tie": true
+              },
+              {
+                "side": "player",
+                "key": "player:active:0:Machamp",
+                "stableKey": "player:slot:0:Machamp",
+                "pokemon": "Machamp",
+                "stat_format": "champions",
+                "nature": "Hardy",
+                "speed_points": 0,
+                "species_base_speed": 55,
+                "base_speed": 75,
+                "calculated_speed": 75,
+                "speed_stage": 0,
+                "effective_speed": 75,
+                "item": "White Herb",
+                "ability": "Guts",
+                "status": "",
+                "tailwind": false,
+                "trick_room": false,
+                "weather": "none",
+                "exact_speed_tie": false
+              },
+              {
+                "side": "opponent",
+                "key": "opponent:active:0:Snorlax",
+                "stableKey": "opponent:slot:0:Snorlax",
+                "pokemon": "Snorlax",
+                "stat_format": "champions",
+                "nature": "Hardy",
+                "speed_points": 0,
+                "species_base_speed": 30,
+                "base_speed": 50,
+                "calculated_speed": 50,
+                "speed_stage": 0,
+                "effective_speed": 50,
+                "item": "",
+                "ability": "Immunity",
+                "status": "",
+                "tailwind": false,
+                "trick_room": false,
+                "weather": "none",
+                "exact_speed_tie": false
+              }
+            ],
+            "legal_options": {
+              "Machamp": [
+                "Protect -> Snorlax"
+              ],
+              "Blastoise": [
+                "Protect -> Snorlax"
+              ]
+            },
+            "position_score": 0.507,
+            "win_probability": null
+          },
+          "actions": {
+            "player": [
+              {
+                "actor": "Machamp",
+                "actor_key": "player:slot:0:Machamp",
+                "kind": "move",
+                "move": "Protect",
+                "target": "Snorlax",
+                "target_key": "opponent:slot:0:Snorlax",
+                "target_side": "opponent"
+              },
+              {
+                "actor": "Blastoise",
+                "actor_key": "player:slot:1:Blastoise",
+                "kind": "move",
+                "move": "Protect",
+                "target": "Snorlax",
+                "target_key": "opponent:slot:0:Snorlax",
+                "target_side": "opponent"
+              }
+            ],
+            "opponent": [
+              {
+                "actor": "Snorlax",
+                "actor_key": "opponent:slot:0:Snorlax",
+                "kind": "move",
+                "move": "Amnesia",
+                "target": "Machamp",
+                "target_key": "player:slot:0:Machamp",
+                "target_side": "player"
+              },
+              {
+                "actor": "Blastoise",
+                "actor_key": "opponent:slot:1:Blastoise",
+                "kind": "move",
+                "move": "Protect",
+                "target": "Machamp",
+                "target_key": "player:slot:0:Machamp",
+                "target_side": "player"
+              }
+            ]
+          },
+          "events": [
+            {
+              "type": "log",
+              "text": "Blastoise used Protect!",
+              "actor": "Blastoise",
+              "actor_key": "opponent:slot:1:Blastoise",
+              "side": "opponent",
+              "move": "Protect",
+              "target": "Machamp",
+              "target_key": "player:slot:0:Machamp",
+              "target_side": "player",
+              "log_index": 0,
+              "called_by": null
+            },
+            {
+              "type": "log",
+              "text": "Blastoise used Protect!",
+              "actor": "Blastoise",
+              "actor_key": "player:slot:1:Blastoise",
+              "side": "player",
+              "move": "Protect",
+              "target": "Snorlax",
+              "target_key": "opponent:slot:0:Snorlax",
+              "target_side": "opponent",
+              "log_index": 1,
+              "called_by": null
+            },
+            {
+              "type": "log",
+              "text": "Machamp used Protect!",
+              "actor": "Machamp",
+              "actor_key": "player:slot:0:Machamp",
+              "side": "player",
+              "move": "Protect",
+              "target": "Snorlax",
+              "target_key": "opponent:slot:0:Snorlax",
+              "target_side": "opponent",
+              "log_index": 2,
+              "called_by": null
+            },
+            {
+              "type": "log",
+              "text": "Snorlax used Amnesia!",
+              "actor": "Snorlax",
+              "actor_key": "opponent:slot:0:Snorlax",
+              "side": "opponent",
+              "move": "Amnesia",
+              "target": "Snorlax",
+              "target_key": "opponent:slot:0:Snorlax",
+              "target_side": "opponent",
+              "log_index": 3,
+              "called_by": null
+            },
+            {
+              "type": "log",
+              "text": "Snorlax's Special Defense sharply rose!"
+            }
+          ],
+          "damage_events": [],
+          "effect_events": [],
+          "post": {
+            "active": {
+              "player": [
+                "Machamp",
+                "Blastoise"
+              ],
+              "opponent": [
+                "Snorlax",
+                "Blastoise"
+              ]
+            },
+            "bench": {
+              "player": [],
+              "opponent": []
+            },
+            "active_keys": {
+              "player": [
+                "player:active:0:Machamp",
+                "player:active:1:Blastoise"
+              ],
+              "opponent": [
+                "opponent:active:0:Snorlax",
+                "opponent:active:1:Blastoise"
+              ]
+            },
+            "bench_keys": {
+              "player": [],
+              "opponent": []
+            },
+            "active_stable_keys": {
+              "player": [
+                "player:slot:0:Machamp",
+                "player:slot:1:Blastoise"
+              ],
+              "opponent": [
+                "opponent:slot:0:Snorlax",
+                "opponent:slot:1:Blastoise"
+              ]
+            },
+            "bench_stable_keys": {
+              "player": [],
+              "opponent": []
+            },
+            "hp_pct": {
+              "player:active:0:Machamp": 1,
+              "player:active:1:Blastoise": 1,
+              "opponent:active:0:Snorlax": 1,
+              "opponent:active:1:Blastoise": 1
+            },
+            "hp_pct_stable": {
+              "player:slot:0:Machamp": 1,
+              "player:slot:1:Blastoise": 1,
+              "opponent:slot:0:Snorlax": 1,
+              "opponent:slot:1:Blastoise": 1
+            },
+            "score_state": {
+              "player": {
+                "active": [
+                  "Machamp",
+                  "Blastoise"
+                ],
+                "bench": [],
+                "active_keys": [
+                  "player:active:0:Machamp",
+                  "player:active:1:Blastoise"
+                ],
+                "bench_keys": [],
+                "active_stable_keys": [
+                  "player:slot:0:Machamp",
+                  "player:slot:1:Blastoise"
+                ],
+                "bench_stable_keys": [],
+                "alive_count": 2,
+                "hp_total": 2,
+                "max_count": 2
+              },
+              "opponent": {
+                "active": [
+                  "Snorlax",
+                  "Blastoise"
+                ],
+                "bench": [],
+                "active_keys": [
+                  "opponent:active:0:Snorlax",
+                  "opponent:active:1:Blastoise"
+                ],
+                "bench_keys": [],
+                "active_stable_keys": [
+                  "opponent:slot:0:Snorlax",
+                  "opponent:slot:1:Blastoise"
+                ],
+                "bench_stable_keys": [],
+                "alive_count": 2,
+                "hp_total": 2,
+                "max_count": 2
+              }
+            },
+            "roster": {
+              "player": [
+                {
+                  "key": "player:active:0:Machamp",
+                  "stableKey": "player:slot:0:Machamp",
+                  "teamSlot": 0,
+                  "zone": "active",
+                  "zoneIndex": 0,
+                  "side": "player",
+                  "status": "active",
+                  "displayName": "Machamp",
+                  "species": "Machamp",
+                  "types": [
+                    "Fighting"
+                  ],
+                  "hp": 100,
+                  "hp_current": 165,
+                  "substitute_hp": 0,
+                  "perish_song_turns": 0,
+                  "hp_max": 165,
+                  "hpLabel": "100%",
+                  "level": 50,
+                  "item": "White Herb",
+                  "itemConsumed": true,
+                  "electric_charge": false,
+                  "mc_syrup_turns": 0,
+                  "mc_trap_turns": 0,
+                  "mc_partially_trapped": false,
+                  "ability": "Guts",
+                  "moves": [
+                    "Protect"
+                  ],
+                  "move_pp": {
+                    "Protect": {
+                      "current": 7,
+                      "max": 8
+                    }
+                  },
+                  "baseStatsLabel": "90/130/80/65/85/55",
+                  "calculatedStats": "165/150/100/85/105/75"
+                },
+                {
+                  "key": "player:active:1:Blastoise",
+                  "stableKey": "player:slot:1:Blastoise",
+                  "teamSlot": 1,
+                  "zone": "active",
+                  "zoneIndex": 1,
+                  "side": "player",
+                  "status": "active",
+                  "displayName": "Blastoise",
+                  "species": "Blastoise",
+                  "types": [
+                    "Water"
+                  ],
+                  "hp": 100,
+                  "hp_current": 154,
+                  "substitute_hp": 0,
+                  "perish_song_turns": 0,
+                  "hp_max": 154,
+                  "hpLabel": "100%",
+                  "level": 50,
+                  "item": "",
+                  "itemConsumed": false,
+                  "electric_charge": false,
+                  "mc_syrup_turns": 0,
+                  "mc_trap_turns": 0,
+                  "mc_partially_trapped": false,
+                  "ability": "Torrent",
+                  "moves": [
+                    "Protect"
+                  ],
+                  "move_pp": {
+                    "Protect": {
+                      "current": 7,
+                      "max": 8
+                    }
+                  },
+                  "baseStatsLabel": "79/83/100/85/105/78",
+                  "calculatedStats": "154/103/120/105/125/98"
+                }
+              ],
+              "opponent": [
+                {
+                  "key": "opponent:active:0:Snorlax",
+                  "stableKey": "opponent:slot:0:Snorlax",
+                  "teamSlot": 0,
+                  "zone": "active",
+                  "zoneIndex": 0,
+                  "side": "opponent",
+                  "status": "active",
+                  "displayName": "Snorlax",
+                  "species": "Snorlax",
+                  "types": [
+                    "Normal"
+                  ],
+                  "hp": 100,
+                  "hp_current": 235,
+                  "substitute_hp": 0,
+                  "perish_song_turns": 0,
+                  "hp_max": 235,
+                  "hpLabel": "100%",
+                  "level": 50,
+                  "item": "",
+                  "itemConsumed": false,
+                  "electric_charge": false,
+                  "mc_syrup_turns": 0,
+                  "mc_trap_turns": 0,
+                  "mc_partially_trapped": false,
+                  "ability": "Immunity",
+                  "moves": [
+                    "Amnesia"
+                  ],
+                  "move_pp": {
+                    "Amnesia": {
+                      "current": 19,
+                      "max": 20
+                    }
+                  },
+                  "baseStatsLabel": "160/110/65/65/110/30",
+                  "calculatedStats": "235/130/85/85/130/50"
+                },
+                {
+                  "key": "opponent:active:1:Blastoise",
+                  "stableKey": "opponent:slot:1:Blastoise",
+                  "teamSlot": 1,
+                  "zone": "active",
+                  "zoneIndex": 1,
+                  "side": "opponent",
+                  "status": "active",
+                  "displayName": "Blastoise",
+                  "species": "Blastoise",
+                  "types": [
+                    "Water"
+                  ],
+                  "hp": 100,
+                  "hp_current": 154,
+                  "substitute_hp": 0,
+                  "perish_song_turns": 0,
+                  "hp_max": 154,
+                  "hpLabel": "100%",
+                  "level": 50,
+                  "item": "",
+                  "itemConsumed": false,
+                  "electric_charge": false,
+                  "mc_syrup_turns": 0,
+                  "mc_trap_turns": 0,
+                  "mc_partially_trapped": false,
+                  "ability": "Torrent",
+                  "moves": [
+                    "Protect"
+                  ],
+                  "move_pp": {
+                    "Protect": {
+                      "current": 7,
+                      "max": 8
+                    }
+                  },
+                  "baseStatsLabel": "79/83/100/85/105/78",
+                  "calculatedStats": "154/103/120/105/125/98"
+                }
+              ]
+            },
+            "status": {},
+            "status_stable": {},
+            "stat_boosts": {
+              "player:active:0:Machamp": {
+                "atk": 0,
+                "def": 0,
+                "spa": 3,
+                "spd": 0,
+                "spe": 0,
+                "acc": 0,
+                "eva": 0
+              },
+              "opponent:active:0:Snorlax": {
+                "atk": 0,
+                "def": 0,
+                "spa": 0,
+                "spd": 2,
+                "spe": 0,
+                "acc": 0,
+                "eva": 0
+              }
+            },
+            "stat_boosts_stable": {
+              "player:slot:0:Machamp": {
+                "atk": 0,
+                "def": 0,
+                "spa": 3,
+                "spd": 0,
+                "spe": 0,
+                "acc": 0,
+                "eva": 0
+              },
+              "opponent:slot:0:Snorlax": {
+                "atk": 0,
+                "def": 0,
+                "spa": 0,
+                "spd": 2,
+                "spe": 0,
+                "acc": 0,
+                "eva": 0
+              }
+            },
+            "field": {
+              "weather": null,
+              "weather_turns": 0,
+              "gravity_turns": 0,
+              "terrain": null,
+              "terrain_turns": 0,
+              "trick_room": 0
+            },
+            "speed_control": {
+              "player": {
+                "tailwind_turns": 0,
+                "screens": {
+                  "reflect": 0,
+                  "light": 0,
+                  "aurora": 0
+                }
+              },
+              "opponent": {
+                "tailwind_turns": 0,
+                "screens": {
+                  "reflect": 0,
+                  "light": 0,
+                  "aurora": 0
+                }
+              }
+            },
+            "speed_order": [
+              "Blastoise",
+              "Blastoise",
+              "Machamp",
+              "Snorlax"
+            ],
+            "speed_order_keys": [
+              "player:active:1:Blastoise",
+              "opponent:active:1:Blastoise",
+              "player:active:0:Machamp",
+              "opponent:active:0:Snorlax"
+            ],
+            "speed_order_stable_keys": [
+              "player:slot:1:Blastoise",
+              "opponent:slot:1:Blastoise",
+              "player:slot:0:Machamp",
+              "opponent:slot:0:Snorlax"
+            ],
+            "speed_order_details": [
+              {
+                "side": "player",
+                "key": "player:active:1:Blastoise",
+                "stableKey": "player:slot:1:Blastoise",
+                "pokemon": "Blastoise",
+                "stat_format": "champions",
+                "nature": "Hardy",
+                "speed_points": 0,
+                "species_base_speed": 78,
+                "base_speed": 98,
+                "calculated_speed": 98,
+                "speed_stage": 0,
+                "effective_speed": 98,
+                "item": "",
+                "ability": "Torrent",
+                "status": "",
+                "tailwind": false,
+                "trick_room": false,
+                "weather": "none",
+                "exact_speed_tie": true
+              },
+              {
+                "side": "opponent",
+                "key": "opponent:active:1:Blastoise",
+                "stableKey": "opponent:slot:1:Blastoise",
+                "pokemon": "Blastoise",
+                "stat_format": "champions",
+                "nature": "Hardy",
+                "speed_points": 0,
+                "species_base_speed": 78,
+                "base_speed": 98,
+                "calculated_speed": 98,
+                "speed_stage": 0,
+                "effective_speed": 98,
+                "item": "",
+                "ability": "Torrent",
+                "status": "",
+                "tailwind": false,
+                "trick_room": false,
+                "weather": "none",
+                "exact_speed_tie": true
+              },
+              {
+                "side": "player",
+                "key": "player:active:0:Machamp",
+                "stableKey": "player:slot:0:Machamp",
+                "pokemon": "Machamp",
+                "stat_format": "champions",
+                "nature": "Hardy",
+                "speed_points": 0,
+                "species_base_speed": 55,
+                "base_speed": 75,
+                "calculated_speed": 75,
+                "speed_stage": 0,
+                "effective_speed": 75,
+                "item": "White Herb",
+                "ability": "Guts",
+                "status": "",
+                "tailwind": false,
+                "trick_room": false,
+                "weather": "none",
+                "exact_speed_tie": false
+              },
+              {
+                "side": "opponent",
+                "key": "opponent:active:0:Snorlax",
+                "stableKey": "opponent:slot:0:Snorlax",
+                "pokemon": "Snorlax",
+                "stat_format": "champions",
+                "nature": "Hardy",
+                "speed_points": 0,
+                "species_base_speed": 30,
+                "base_speed": 50,
+                "calculated_speed": 50,
+                "speed_stage": 0,
+                "effective_speed": 50,
+                "item": "",
+                "ability": "Immunity",
+                "status": "",
+                "tailwind": false,
+                "trick_room": false,
+                "weather": "none",
+                "exact_speed_tie": false
+              }
+            ],
+            "legal_options": {},
+            "position_score": 0.507,
+            "win_probability": null
+          },
+          "delta": {
+            "position_score": 0,
+            "win_probability": null,
+            "primary_cause": "position_improved",
+            "explanation": ""
+          }
+        }
+      ]
+    }
+  },
+  "reference_result": {
+    "observations": {
+      "attack_stage": 0,
+      "defense_stage": 0,
+      "special_attack_stage": 3,
+      "item_consumed": true
+    },
+    "raw": {
+      "log": [
+        "|t:|1792564408",
+        "|gametype|doubles",
+        "|player|p1|Player 1||",
+        "|player|p2|Player 2||",
+        "|gen|9",
+        "|tier|[Gen 9 Champions] Doubles Custom Game",
+        "|clearpoke",
+        "|poke|p1|Machamp, L50, M|",
+        "|poke|p1|Blastoise, L50, M|",
+        "|poke|p2|Snorlax, L50, F|",
+        "|poke|p2|Blastoise, L50, M|",
+        "|teampreview",
+        "|",
+        "|t:|1792564408",
+        "|teamsize|p1|2",
+        "|teamsize|p2|2",
+        "|start",
+        "|split|p1",
+        "|switch|p1a: p1m1|Machamp, L50, M|165/165",
+        "|switch|p1a: p1m1|Machamp, L50, M|165/165",
+        "|split|p1",
+        "|switch|p1b: p1m2|Blastoise, L50, M|154/154",
+        "|switch|p1b: p1m2|Blastoise, L50, M|154/154",
+        "|split|p2",
+        "|switch|p2a: p2m1|Snorlax, L50, F|235/235",
+        "|switch|p2a: p2m1|Snorlax, L50, F|235/235",
+        "|split|p2",
+        "|switch|p2b: p2m2|Blastoise, L50, M|154/154",
+        "|switch|p2b: p2m2|Blastoise, L50, M|154/154",
+        "|-enditem|p1a: p1m1|White Herb",
+        "|-clearnegativeboost|p1a: p1m1|[silent]",
+        "|turn|1",
+        "|",
+        "|t:|1792564408",
+        "|move|p1b: p1m2|Protect|p1b: p1m2",
+        "|-singleturn|p1b: p1m2|Protect",
+        "|move|p2b: p2m2|Protect|p2b: p2m2",
+        "|-singleturn|p2b: p2m2|Protect",
+        "|move|p1a: p1m1|Protect|p1a: p1m1",
+        "|-singleturn|p1a: p1m1|Protect",
+        "|move|p2a: p2m1|Amnesia|p2a: p2m1",
+        "|-boost|p2a: p2m1|spd|2",
+        "|",
+        "|upkeep",
+        "|turn|2"
+      ],
+      "mod": "champions",
+      "format_mod": "champions"
+    }
+  }
+}

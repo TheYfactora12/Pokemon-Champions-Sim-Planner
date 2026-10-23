@@ -197,7 +197,7 @@ await test('Unknown envelope fields cannot smuggle approval metadata', async () 
 });
 await test('Malformed hashes, lists, policy and bundled impact are rejected', async () => {
   const changes = [
-    { source_policy_sha256: 'bad' }, { change_key: 'a'.repeat(64) }, { parser_version: '2' },
+    { source_policy_sha256: 'bad' }, { change_key: 'a'.repeat(64) }, { parser_version: 'unsupported' },
     { source: { ...envelope.source, raw_sha256: null } },
     { source: { ...envelope.source, paragraph_hashes: ['not-a-hash'] } },
     { source: { ...envelope.source, mentions: { ...envelope.source.mentions, dates: 'today' } } },

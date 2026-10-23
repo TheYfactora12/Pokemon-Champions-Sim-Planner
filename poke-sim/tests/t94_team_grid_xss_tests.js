@@ -70,6 +70,7 @@ function load(file) {
 load('data.js');
 load('generated/pokemon_showdown_legal_data.js');
 load('generated/champions_move_pools.js');
+load('generated/mc_review_reference.js');
 load('move_legality.js');
 load('engine.js');
 load('storage_adapter.js');

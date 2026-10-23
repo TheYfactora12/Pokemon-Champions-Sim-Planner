@@ -1,0 +1,3722 @@
+Battle audit manifest 2026-09-02.1: 15 families
+Coverage: 3 regression-covered, 10 partial, 2 gap
+Inventories: 0 regression-covered, 3 partial, 2 gap
+Edge cases: 17 covered, 49 partial, 5 open
+Universal accuracy proven: false
+
+RUN tests/ability_coverage_audit_tests.js
+
+=== ability coverage audit tests ===
+
+  PASS 1. every unmodeled curated-team or mega ability has a classification entry
+  PASS 2. classification catalog does not contain stale abilities that are no longer unmodeled
+  PASS 3. every classification uses an allowed category and a non-empty rationale
+  PASS 4. formerly high-impact shipped ability gaps stay modeled
+  PASS 5. Pressure stays modeled through PP and Frisk remains an explicit information-only ability
+Curated+mega ability inventory: 84
+Modeled by engine: 84
+Still unmodeled: 0
+Category counts: {}
+
+ability coverage audit: 5 pass, 0 fail
+
+
+RUN tests/ability_damage_parity_tests.js
+
+=== ability damage parity tests ===
+
+  PASS 1. Sturdy survives a lethal hit from full HP
+  PASS 2. Sturdy does not trigger once the holder is chipped below full HP
+  PASS 3. Rough Skin damages a contact attacker by one eighth max HP
+  PASS 4. Rough Skin does not damage non-contact attackers
+  PASS 5. Rough Skin can KO a weakened contact attacker after damage is dealt
+  PASS 6. Earth Eater blocks Ground damage and heals the target
+  PASS 7. Mold Breaker bypasses Sturdy survival
+  PASS 8. Sheer Force suppresses modeled secondary stat drops
+  PASS 9. Infiltrator damages the target instead of its Substitute
+  PASS 10. Bulletproof blocks ballistic moves
+  PASS 11. Shell Armor prevents forced critical hits
+  PASS 12. Mind Eye lets Normal and Fighting moves hit Ghost targets
+  PASS 13. Unnerve suppresses opposing berry activation
+  PASS 14. Berserk raises Special Attack after crossing half HP from damage
+  PASS 15. Stamina raises Defense after taking a damaging hit
+  PASS 16. Mummy overwrites a contact attacker ability
+  PASS 17. Innards Out damages the attacker by the target pre-hit HP on KO
+  PASS 18. Skill Link makes supported multi-hit moves hit five times
+
+ability damage parity: 18 pass, 0 fail
+
+
+RUN tests/ability_priority_targeting_tests.js
+
+=== ability priority / targeting tests ===
+
+  PASS 1. Prankster gives Taunt priority over a faster foe
+  PASS 2. Dark-type foes are immune to Prankster-boosted status moves
+  PASS 3. Armor Tail blocks opposing priority moves for the side
+  PASS 3b. Dazzling blocks opposing priority moves for the side
+  PASS 3c. Queenly Majesty blocks opposing priority moves for the side
+  PASS 4. Good as Gold blocks targeted status moves
+  PASS 5. Magic Bounce reflects targeted status moves back to the user
+  PASS 6. Intimidate activation is visible in the battle log
+  PASS 7. Clear Body blocks Intimidate drops
+  PASS 8. Defiant punishes Intimidate with a net Attack boost
+  PASS 9. Competitive punishes Intimidate with a Special Attack boost
+  PASS 10. Cloud Nine suppresses Swift Swim speed boosts
+  PASS 11. Solar Power recoil is logged at end of turn under sun
+  PASS 12. Scrappy ignores Intimidate Attack drops when active on entry
+  PASS 13. Gale Wings gives Flying moves priority only at full HP
+  PASS 14. Flower Veil blocks opponent stat drops and status on allied Grass Pokemon
+  PASS 15. Mind Eye blocks accuracy drops and ignores target evasion
+  PASS 16. Compound Eyes, No Guard, and weather evasion affect accuracy checks
+  PASS 17. Insomnia and Limber block sleep and paralysis status gates
+  PASS 18. Stalwart ignores Follow Me redirection
+  PASS 19. Shadow Tag blocks voluntary pivoting while a replacement exists
+  PASS 20. Protean changes the user type once before attacking
+  PASS 21. Trace copies the first eligible opposing active ability
+  PASS 22. Prankster boosts Tailwind to +1 and Trick Room from -7 to -6
+  PASS 23. Prankster Tailwind fires before a faster opponent using a normal-priority move
+  PASS 24. Under Trick Room, Prankster Tailwind (+1) still acts before normal priority moves (0)
+  PASS 25. Fake Out (+3) acts before Prankster-boosted Tailwind (+1), including under Trick Room
+
+ability priority / targeting: 27 pass, 0 fail
+
+
+RUN tests/accuracy_boundary_tests.mjs
+PASS hospitality-both-sides
+PASS hospitality-full-hp-and-no-ally
+PASS hospitality-heal-block-and-fainted-ally
+PASS hospitality-switch-entry-evidence
+PASS thousand-arrows-first-hit-neutral
+PASS thousand-arrows-spread-grounding-followup
+PASS thousand-arrows-protect-no-grounding
+PASS thousand-arrows-substitute-no-grounding
+PASS thousand-arrows-grounding-ends-on-switch
+PASS priority-multihit-side-ability-blockers
+PASS priority-multihit-terrain-and-quick-guard
+PASS priority-multihit-block-before-accuracy
+PASS thousand-arrows-tera-flying
+PASS thousand-arrows-roost-defensive-type
+PASS thousand-arrows-no-grounding-before-protean-flying
+Accuracy boundaries: 15 passed, 0 failed.
+
+RUN tests/amnesia_reference_tests.mjs
+Γ£ö normal swap=false (525.6602ms)
+Γ£ö cap5 swap=false (129.9186ms)
+Γ£ö cap6 swap=false (150.2402ms)
+Γ£ö contrary swap=false (163.9851ms)
+Γ£ö simple swap=false (128.7978ms)
+Γ£ö contrary-gas swap=false (150.0426ms)
+Γ£ö simple-gas swap=false (144.9629ms)
+Γ£ö contrary-gas-shield swap=false (139.9315ms)
+Γ£ö simple-gas-shield swap=false (135.8434ms)
+Γ£ö contrary-gas-shield-consumed swap=false (137.0927ms)
+Γ£ö simple-gas-shield-consumed swap=false (141.1743ms)
+Γ£ö contrary-cap swap=false (138.9986ms)
+Γ£ö simple-cap5 swap=false (139.5588ms)
+Γ£ö normal swap=true (140.506ms)
+Γ£ö cap5 swap=true (135.8156ms)
+Γ£ö cap6 swap=true (137.3416ms)
+Γ£ö contrary swap=true (156.0993ms)
+Γ£ö simple swap=true (124.2004ms)
+Γ£ö contrary-gas swap=true (179.457ms)
+Γ£ö simple-gas swap=true (163.6714ms)
+Γ£ö contrary-gas-shield swap=true (182.2061ms)
+Γ£ö simple-gas-shield swap=true (165.029ms)
+Γ£ö contrary-gas-shield-consumed swap=true (189.2918ms)
+Γ£ö simple-gas-shield-consumed swap=true (177.3691ms)
+Γ£ö contrary-cap swap=true (161.2494ms)
+Γ£ö simple-cap5 swap=true (183.8938ms)
+Γ£ö next Stomping Tantrum capped=false swap=false (194.0684ms)
+Γ£ö next Stomping Tantrum capped=true swap=false (160.1806ms)
+Γ£ö next Stomping Tantrum capped=false swap=true (143.3278ms)
+Γ£ö next Stomping Tantrum capped=true swap=true (184.5471ms)
+Γä╣ tests 30
+Γä╣ suites 0
+Γä╣ pass 30
+Γä╣ fail 0
+Γä╣ cancelled 0
+Γä╣ skipped 0
+Γä╣ todo 0
+Γä╣ duration_ms 5010.5876
+
+RUN tests/battle_edge_case_behavior_tests.js
+
+=== battle edge-case behavior tests ===
+
+  PASS 1. accuracy uses a strict threshold boundary
+  PASS 2. accuracy stages use the Showdown ladder and clamp the combined stage
+  PASS 3. Regenerator heals one third max HP only after a successful switch
+  PASS 4. Regenerator does not activate when a switch has no replacement
+  PASS 5. spread accuracy can hit one target and miss the other
+  PASS 6. four-way exact Speed ties are shuffled once as a stable seeded group
+  PASS 7. ability immunity resolves before spread accuracy
+  PASS 8. simultaneous replacements both receive opposing Intimidate
+  PASS 9. executed attacks preserve Scrappy and Minds Eye Ghost bypass
+  PASS 10. ordinary Normal attacks still fail against Ghost targets
+  PASS 11. simultaneous replacement weather uses Speed, not side or Trick Room
+
+battle edge-case behavior: 11 pass, 0 fail
+
+
+RUN tests/battle_system_mechanics_tests.js
+
+=== SECTION 1: Burn mechanics ===
+Expected: burn halves physical Atk (Guts bypasses), does NOT halve SpA.
+  PASS 1. Burned attacker deals roughly half physical damage vs healthy attacker
+  PASS 2. Burned attacker special damage is NOT reduced
+  PASS 3. Guts ability negates burn physical damage penalty
+
+=== SECTION 2: Paralysis speed cut ===
+Expected: paralysis halves effective speed via getStat(spe).
+  PASS 4. getStat("spe") is halved when paralyzed
+  PASS 5. Paralyzed fast mon (Dragapult) acts after slower healthy mon (Garchomp) in live battle
+
+=== SECTION 3: Redirection (Follow Me / Rage Powder) ===
+Expected: Follow Me / Rage Powder sets redirectTo. Stalwart, Grass type, Overcoat bypass Rage Powder.
+  PASS 6. Follow Me sets "center of attention" log in a live doubles battle
+  PASS 7. Rage Powder sets redirection and "drawn to" appears when a non-Grass attacker is redirected
+  PASS 8. Rage Powder: Grass-type attacker (Whimsicott) bypasses redirection
+  PASS 9. Stalwart ability bypasses Follow Me / Rage Powder redirection
+
+=== SECTION 4: Wide Guard / Quick Guard ===
+Expected: Wide Guard blocks spread moves. Quick Guard blocks +1 priority moves.
+  PASS 10. Wide Guard blocks a spread move (Rock Slide) for the whole team
+  PASS 11. Quick Guard blocks a +1 priority move (Fake Out) for the team
+
+=== SECTION 5: Protect family secondary effects ===
+Expected: Spiky Shield chips contact attackers. Baneful Bunker poisons them.
+  PASS 12. Spiky Shield deals chip damage to a contact-move attacker
+  PASS 13. Baneful Bunker poisons a contact-move attacker
+
+=== SECTION 6: Pivot mechanics (U-turn / Parting Shot) ===
+Expected: U-turn deals damage then switches out. Parting Shot lowers stats then switches out.
+  PASS 14. U-turn deals damage and logs a switchout
+  PASS 15. Parting Shot is used and logs the move
+
+=== SECTION 7: Edge cases and interaction boundaries ===
+Expected: type immunities block status, Frozen prevents action, Ice-type immune to freeze, Feint pierces Quick Guard, Wide Guard does not block single-target moves.
+  PASS 16. Fire-type mon cannot be burned by Will-O-Wisp in live battle
+  PASS 17. Frozen status prevents the afflicted mon from acting that turn
+  PASS 18. Ice-type mon is immune to being frozen (canInflictStatus)
+  PASS 19. Feint (priority +2) bypasses Quick Guard and deals damage
+  PASS 20. Wide Guard does NOT block single-target moves ΓÇö only spread
+
+ΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉ
+DIAGNOSTIC RESULTS: 20 PASS  /  0 FAIL  /  20 total
+ΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉ
+
+INTERPRETATION GUIDE:
+  PASS = mechanic is wired and behaves as expected
+  FAIL = mechanic is missing or has unexpected behavior
+  ΓåÆ Use FAIL messages to identify what to fix next
+  ΓåÆ All failures should be addressed before next release gate
+
+RUN tests/champion_pack_legality_tests.js
+
+=== champion pack legality tests ===
+
+  PASS 1. champions_arena_2nd Sinistcha item uses verified Champions pool correction
+  PASS 2. no curated shipped team has an Item Clause violation
+  PASS 3. champions_arena_2nd validates without Item Clause drift
+  PASS 4. curated shipped teams validate against the Champions item pool
+  PASS 5. Champion legality rejects Tera fields and Tera Blast
+  PASS 6. Charizardite Y shipped rows use active Mega Y Drought weather data
+
+champion pack legality: 6 pass, 0 fail
+
+
+RUN tests/charge_herb_suppression_tests.mjs
+Γ£ö CHARGE-HERB-Solar Beam-player-0-0 (538.979ms)
+Γ£ö CHARGE-HERB-Solar Beam-player-0-1 (131.7568ms)
+Γ£ö CHARGE-HERB-Solar Beam-player-0-2 (137.7052ms)
+Γ£ö CHARGE-HERB-Solar Beam-player-0-3 (138.7374ms)
+Γ£ö CHARGE-HERB-Solar Beam-player-1-0 (142.1387ms)
+Γ£ö CHARGE-HERB-Solar Beam-player-1-1 (145.4476ms)
+Γ£ö CHARGE-HERB-Solar Beam-player-1-2 (138.1785ms)
+Γ£ö CHARGE-HERB-Solar Beam-player-1-3 (140.7754ms)
+Γ£ö CHARGE-HERB-Solar Beam-opponent-0-0 (171.2936ms)
+Γ£ö CHARGE-HERB-Solar Beam-opponent-0-1 (118.5759ms)
+Γ£ö CHARGE-HERB-Solar Beam-opponent-0-2 (135.3091ms)
+Γ£ö CHARGE-HERB-Solar Beam-opponent-0-3 (134.9164ms)
+Γ£ö CHARGE-HERB-Solar Beam-opponent-1-0 (136.4326ms)
+Γ£ö CHARGE-HERB-Solar Beam-opponent-1-1 (137.8831ms)
+Γ£ö CHARGE-HERB-Solar Beam-opponent-1-2 (135.7982ms)
+Γ£ö CHARGE-HERB-Solar Beam-opponent-1-3 (132.1492ms)
+Γ£ö CHARGE-HERB-Solar Blade-player-0-0 (138.6344ms)
+Γ£ö CHARGE-HERB-Solar Blade-player-0-1 (146.4874ms)
+Γ£ö CHARGE-HERB-Solar Blade-player-0-2 (150.5206ms)
+Γ£ö CHARGE-HERB-Solar Blade-player-0-3 (155.218ms)
+Γ£ö CHARGE-HERB-Solar Blade-player-1-0 (167.3222ms)
+Γ£ö CHARGE-HERB-Solar Blade-player-1-1 (212.3337ms)
+Γ£ö CHARGE-HERB-Solar Blade-player-1-2 (146.9856ms)
+Γ£ö CHARGE-HERB-Solar Blade-player-1-3 (172.7211ms)
+Γ£ö CHARGE-HERB-Solar Blade-opponent-0-0 (167.5161ms)
+Γ£ö CHARGE-HERB-Solar Blade-opponent-0-1 (173.7869ms)
+Γ£ö CHARGE-HERB-Solar Blade-opponent-0-2 (174.6308ms)
+Γ£ö CHARGE-HERB-Solar Blade-opponent-0-3 (166.9867ms)
+Γ£ö CHARGE-HERB-Solar Blade-opponent-1-0 (175.147ms)
+Γ£ö CHARGE-HERB-Solar Blade-opponent-1-1 (181.9231ms)
+Γ£ö CHARGE-HERB-Solar Blade-opponent-1-2 (170.4385ms)
+Γ£ö CHARGE-HERB-Solar Blade-opponent-1-3 (140.2305ms)
+Γ£ö CHARGE-HERB-Meteor Beam-player-0-0 (135.4516ms)
+Γ£ö CHARGE-HERB-Meteor Beam-player-0-1 (137.3807ms)
+Γ£ö CHARGE-HERB-Meteor Beam-player-0-2 (183.734ms)
+Γ£ö CHARGE-HERB-Meteor Beam-player-0-3 (121.8663ms)
+Γ£ö CHARGE-HERB-Meteor Beam-player-1-0 (139.2303ms)
+Γ£ö CHARGE-HERB-Meteor Beam-player-1-1 (140.9652ms)
+Γ£ö CHARGE-HERB-Meteor Beam-player-1-2 (138.7148ms)
+Γ£ö CHARGE-HERB-Meteor Beam-player-1-3 (139.7865ms)
+Γ£ö CHARGE-HERB-Meteor Beam-opponent-0-0 (143.7559ms)
+Γ£ö CHARGE-HERB-Meteor Beam-opponent-0-1 (145.9993ms)
+Γ£ö CHARGE-HERB-Meteor Beam-opponent-0-2 (141.5571ms)
+Γ£ö CHARGE-HERB-Meteor Beam-opponent-0-3 (138.3005ms)
+Γ£ö CHARGE-HERB-Meteor Beam-opponent-1-0 (144.0291ms)
+Γ£ö CHARGE-HERB-Meteor Beam-opponent-1-1 (139.7744ms)
+Γ£ö CHARGE-HERB-Meteor Beam-opponent-1-2 (140.7708ms)
+Γ£ö CHARGE-HERB-Meteor Beam-opponent-1-3 (179.2034ms)
+Γ£ö CHARGE-HERB-Electro Shot-player-0-0 (124.4001ms)
+Γ£ö CHARGE-HERB-Electro Shot-player-0-1 (144.5478ms)
+Γ£ö CHARGE-HERB-Electro Shot-player-0-2 (138.8853ms)
+Γ£ö CHARGE-HERB-Electro Shot-player-0-3 (137.4411ms)
+Γ£ö CHARGE-HERB-Electro Shot-player-1-0 (134.7233ms)
+Γ£ö CHARGE-HERB-Electro Shot-player-1-1 (140.1657ms)
+Γ£ö CHARGE-HERB-Electro Shot-player-1-2 (142.0058ms)
+Γ£ö CHARGE-HERB-Electro Shot-player-1-3 (142.7996ms)
+Γ£ö CHARGE-HERB-Electro Shot-opponent-0-0 (140.8343ms)
+Γ£ö CHARGE-HERB-Electro Shot-opponent-0-1 (134.1742ms)
+Γ£ö CHARGE-HERB-Electro Shot-opponent-0-2 (139.5064ms)
+Γ£ö CHARGE-HERB-Electro Shot-opponent-0-3 (179.5289ms)
+Γ£ö CHARGE-HERB-Electro Shot-opponent-1-0 (122.015ms)
+Γ£ö CHARGE-HERB-Electro Shot-opponent-1-1 (140.2305ms)
+Γ£ö CHARGE-HERB-Electro Shot-opponent-1-2 (139.2181ms)
+Γ£ö CHARGE-HERB-Electro Shot-opponent-1-3 (137.7842ms)
+Γ£ö CHARGE-HERB-Phantom Force-player-0-0 (140.2393ms)
+Γ£ö CHARGE-HERB-Phantom Force-player-0-1 (136.4151ms)
+Γ£ö CHARGE-HERB-Phantom Force-player-0-2 (139.9887ms)
+Γ£ö CHARGE-HERB-Phantom Force-player-0-3 (132.6998ms)
+Γ£ö CHARGE-HERB-Phantom Force-player-1-0 (131.1186ms)
+Γ£ö CHARGE-HERB-Phantom Force-player-1-1 (135.5431ms)
+Γ£ö CHARGE-HERB-Phantom Force-player-1-2 (134.7022ms)
+Γ£ö CHARGE-HERB-Phantom Force-player-1-3 (179.0842ms)
+Γ£ö CHARGE-HERB-Phantom Force-opponent-0-0 (114.5194ms)
+Γ£ö CHARGE-HERB-Phantom Force-opponent-0-1 (129.5039ms)
+Γ£ö CHARGE-HERB-Phantom Force-opponent-0-2 (126.5056ms)
+Γ£ö CHARGE-HERB-Phantom Force-opponent-0-3 (133.323ms)
+Γ£ö CHARGE-HERB-Phantom Force-opponent-1-0 (132.2956ms)
+Γ£ö CHARGE-HERB-Phantom Force-opponent-1-1 (135.5031ms)
+Γ£ö CHARGE-HERB-Phantom Force-opponent-1-2 (136.8818ms)
+Γ£ö CHARGE-HERB-Phantom Force-opponent-1-3 (142.349ms)
+Γ£ö CHARGE-HERB-raw-Klutz-reversal-Solar Beam (152.8037ms)
+Γ£ö CHARGE-HERB-raw-Klutz-reversal-Solar Blade (172.5844ms)
+Γ£ö CHARGE-HERB-raw-Klutz-reversal-Meteor Beam (154.8069ms)
+Γ£ö CHARGE-HERB-raw-Klutz-reversal-Electro Shot (183.1936ms)
+Γ£ö CHARGE-HERB-raw-Klutz-reversal-Phantom Force (119.7111ms)
+Γ£ö CHARGE-HERB-suppression-restoration-Fly (130.5677ms)
+Γ£ö CHARGE-HERB-suppression-restoration-Solar Beam (131.3384ms)
+Γ£ö CHARGE-HERB-suppression-restoration-Solar Blade (137.4377ms)
+Γ£ö CHARGE-HERB-suppression-restoration-Meteor Beam (126.9842ms)
+Γ£ö CHARGE-HERB-suppression-restoration-Electro Shot (144.9667ms)
+Γ£ö CHARGE-HERB-suppression-restoration-Phantom Force (126.2143ms)
+Γä╣ tests 91
+Γä╣ suites 0
+Γä╣ pass 91
+Γä╣ fail 0
+Γä╣ cancelled 0
+Γä╣ skipped 0
+Γä╣ todo 0
+Γä╣ duration_ms 13577.793
+
+RUN tests/company_audit_regressions.mjs
+Γ£ö AUD-1901 Leftovers precedes Toxic at full HP and later ticks on either side (686.8831ms)
+Γ£ö AUD-1902 supplied plans never authenticate team identity or permit calibration (1.1728ms)
+Γ£ö AUD-1902 UI does not manufacture plans from current team selections (2.9341ms)
+Γ£ö AUD-1903 residual-only damage cannot earn speed-control conversion praise or points (7.955ms)
+Γ£ö AUD-1905 tested news publishing replaces obsolete PR discovery safely (0.5628ms)
+Γ£ö AUD-1903 setup and protection cannot earn credit from later poison ticks (0.6633ms)
+Γä╣ tests 6
+Γä╣ suites 0
+Γä╣ pass 6
+Γä╣ fail 0
+Γä╣ cancelled 0
+Γä╣ skipped 0
+Γä╣ todo 0
+Γä╣ duration_ms 703.6863
+
+RUN tests/damage_pipeline_tests.js
+
+=== damage pipeline tests ===
+
+  PASS 1. damage follows explicit staged rounding instead of one-shot modifier lumping
+  PASS 2. sand does not boost Rock-type move damage
+  PASS 3. Rock-types gain special defense in sand against special hits
+  PASS 4. electric terrain boost keys off attacker grounded state, not target grounded state
+  PASS 5. flying attackers do not receive electric terrain damage boost
+
+damage pipeline: 5 pass, 0 fail
+
+
+RUN tests/damage_pivot_trapping_tests.mjs
+Γ£ö U-turn swap=false slot=0 tag (230.7055ms)
+Γ£ö U-turn swap=false slot=0 ordinary (7.9525ms)
+Γ£ö U-turn swap=false slot=1 tag (6.3509ms)
+Γ£ö U-turn swap=false slot=1 ordinary (6.0162ms)
+Γ£ö U-turn swap=true slot=0 tag (17.5501ms)
+Γ£ö U-turn swap=true slot=0 ordinary (4.7319ms)
+Γ£ö U-turn swap=true slot=1 tag (5.2604ms)
+Γ£ö U-turn swap=true slot=1 ordinary (4.5152ms)
+Γ£ö U-turn swap=false protected (4.0961ms)
+Γ£ö U-turn swap=false no-bench (4.347ms)
+Γ£ö U-turn swap=false substitute (5.6033ms)
+Γ£ö U-turn swap=false contact-ko (4.8488ms)
+Γ£ö U-turn swap=false miss (5.1049ms)
+Γ£ö U-turn swap=false move-trap (5.4855ms)
+Γ£ö U-turn swap=false spirit-trap (4.6253ms)
+Γ£ö U-turn swap=false burn-status (4.7979ms)
+Γ£ö U-turn swap=false entry (4.9311ms)
+Γ£ö U-turn swap=true protected (4.0118ms)
+Γ£ö U-turn swap=true no-bench (4.1174ms)
+Γ£ö U-turn swap=true substitute (4.7642ms)
+Γ£ö U-turn swap=true contact-ko (4.6102ms)
+Γ£ö U-turn swap=true miss (4.2703ms)
+Γ£ö U-turn swap=true move-trap (5.239ms)
+Γ£ö U-turn swap=true spirit-trap (5.003ms)
+Γ£ö U-turn swap=true burn-status (4.7548ms)
+Γ£ö U-turn swap=true entry (4.989ms)
+Γ£ö Flip Turn swap=false slot=0 tag (4.8914ms)
+Γ£ö Flip Turn swap=false slot=0 ordinary (4.4644ms)
+Γ£ö Flip Turn swap=false slot=1 tag (5.0987ms)
+Γ£ö Flip Turn swap=false slot=1 ordinary (4.6327ms)
+Γ£ö Flip Turn swap=true slot=0 tag (5.0673ms)
+Γ£ö Flip Turn swap=true slot=0 ordinary (7.4264ms)
+Γ£ö Flip Turn swap=true slot=1 tag (4.3916ms)
+Γ£ö Flip Turn swap=true slot=1 ordinary (4.0319ms)
+Γ£ö Flip Turn swap=false protected (3.389ms)
+Γ£ö Flip Turn swap=false no-bench (3.5727ms)
+Γ£ö Flip Turn swap=false substitute (5.9624ms)
+Γ£ö Flip Turn swap=false contact-ko (3.8399ms)
+Γ£ö Flip Turn swap=false miss (3.6199ms)
+Γ£ö Flip Turn swap=false move-trap (6.1345ms)
+Γ£ö Flip Turn swap=false spirit-trap (5.9946ms)
+Γ£ö Flip Turn swap=false burn-status (4.5544ms)
+Γ£ö Flip Turn swap=false entry (4.7736ms)
+Γ£ö Flip Turn swap=true protected (3.4278ms)
+Γ£ö Flip Turn swap=true no-bench (3.3029ms)
+Γ£ö Flip Turn swap=true substitute (4.1051ms)
+Γ£ö Flip Turn swap=true contact-ko (4.0495ms)
+Γ£ö Flip Turn swap=true miss (3.5834ms)
+Γ£ö Flip Turn swap=true move-trap (4.5452ms)
+Γ£ö Flip Turn swap=true spirit-trap (4.4772ms)
+Γ£ö Flip Turn swap=true burn-status (4.283ms)
+Γ£ö Flip Turn swap=true entry (4.3616ms)
+Γ£ö Flip Turn immune swap=false (4.0384ms)
+Γ£ö Flip Turn immune swap=true (3.4095ms)
+Γ£ö Volt Switch swap=false slot=0 tag (5.4809ms)
+Γ£ö Volt Switch swap=false slot=0 ordinary (4.1643ms)
+Γ£ö Volt Switch swap=false slot=1 tag (4.2629ms)
+Γ£ö Volt Switch swap=false slot=1 ordinary (4.3946ms)
+Γ£ö Volt Switch swap=true slot=0 tag (4.5588ms)
+Γ£ö Volt Switch swap=true slot=0 ordinary (4.365ms)
+Γ£ö Volt Switch swap=true slot=1 tag (6.0014ms)
+Γ£ö Volt Switch swap=true slot=1 ordinary (4.5736ms)
+Γ£ö Volt Switch swap=false protected (3.2464ms)
+Γ£ö Volt Switch swap=false no-bench (3.5588ms)
+Γ£ö Volt Switch swap=false substitute (3.9927ms)
+Γ£ö Volt Switch swap=false contact-ko (4.2876ms)
+Γ£ö Volt Switch swap=false miss (3.9104ms)
+Γ£ö Volt Switch swap=false move-trap (4.8711ms)
+Γ£ö Volt Switch swap=false spirit-trap (5.2265ms)
+Γ£ö Volt Switch swap=false burn-status (4.4484ms)
+Γ£ö Volt Switch swap=false entry (3.981ms)
+Γ£ö Volt Switch swap=true protected (3.1515ms)
+Γ£ö Volt Switch swap=true no-bench (3.3932ms)
+Γ£ö Volt Switch swap=true substitute (3.9187ms)
+Γ£ö Volt Switch swap=true contact-ko (3.562ms)
+Γ£ö Volt Switch swap=true miss (3.3159ms)
+Γ£ö Volt Switch swap=true move-trap (4.1865ms)
+Γ£ö Volt Switch swap=true spirit-trap (4.0889ms)
+Γ£ö Volt Switch swap=true burn-status (4.2497ms)
+Γ£ö Volt Switch swap=true entry (4.582ms)
+Γ£ö Volt Switch immune swap=false (5.0048ms)
+Γ£ö Volt Switch immune swap=true (4.0583ms)
+Γ£ö Water Absorb absorb-half swap=false (4.1707ms)
+Γ£ö Water Absorb absorb-half swap=true (3.6099ms)
+Γ£ö Water Absorb absorb-protect swap=false (3.3729ms)
+Γ£ö Water Absorb absorb-protect swap=true (3.1044ms)
+Γ£ö Water Absorb absorb-substitute swap=false (3.9118ms)
+Γ£ö Water Absorb absorb-substitute swap=true (4.1267ms)
+Γ£ö Water Absorb absorb-healblock swap=false (5.6539ms)
+Γ£ö Water Absorb absorb-healblock swap=true (4.2536ms)
+Γ£ö Water Absorb absorb-gas swap=false (5.2333ms)
+Γ£ö Water Absorb absorb-gas swap=true (4.1044ms)
+Γ£ö Water Absorb absorb-gas-shield swap=false (5.675ms)
+Γ£ö Water Absorb absorb-gas-shield swap=true (3.8263ms)
+Γ£ö Water Absorb absorb-break swap=false (4.5259ms)
+Γ£ö Water Absorb absorb-break swap=true (3.9582ms)
+Γ£ö Water Absorb absorb-break-shield swap=false (3.9768ms)
+Γ£ö Water Absorb absorb-break-shield swap=true (3.4986ms)
+Γ£ö Water Absorb absorb-break-consumed-shield swap=false (5.6462ms)
+Γ£ö Water Absorb absorb-break-consumed-shield swap=true (6.1187ms)
+Γ£ö Water Absorb absorb-gas-consumed-shield swap=false (4.2626ms)
+Γ£ö Water Absorb absorb-gas-consumed-shield swap=true (4.1099ms)
+Γ£ö Water Absorb absorb-turboblaze swap=false (4.0859ms)
+Γ£ö Water Absorb absorb-turboblaze swap=true (4.5212ms)
+Γ£ö Water Absorb absorb-teravolt swap=false (4.157ms)
+Γ£ö Water Absorb absorb-teravolt swap=true (4.0234ms)
+Γ£ö unclassified switch causes retain voluntary trap gates without mutation (1.8602ms)
+Γä╣ tests 107
+Γä╣ suites 0
+Γä╣ pass 107
+Γä╣ fail 0
+Γä╣ cancelled 0
+Γä╣ skipped 0
+Γä╣ todo 0
+Γä╣ duration_ms 728.6599
+
+RUN tests/db_m7_golden_battles_tests.js
+
+Γû╢ Module 7 ΓÇö Golden battles regression (8 cases)
+  Γ£ö T-golden-1
+  Γ£ö T-golden-2
+  Γ£ö T-golden-3
+  Γ£ö T-golden-4
+  Γ£ö T-golden-5
+  Γ£ö T-golden-6
+  Γ£ö T-golden-7
+  Γ£ö T-golden-8
+
+==================================================
+Module 7 Golden Battles Results: 8/8 passed
+Γ£à All tests passed
+
+RUN tests/default_policy_boundary_tests.js
+4 default boundary groups, 40 production mutation runs, aggregate default/provenance passed
+
+RUN tests/discrete_damage_reference_tests.mjs
+Γ£ö Champions damage has sixteen independent discrete percentage buckets (325.1115ms)
+Γ£ö discrete damage executed reference gen9doublescustomgame (359.8701ms)
+Γä╣ tests 2
+Γä╣ suites 0
+Γä╣ pass 2
+Γä╣ fail 0
+Γä╣ cancelled 0
+Γä╣ skipped 0
+Γä╣ todo 0
+Γä╣ duration_ms 688.3485
+
+RUN tests/electromorphosis_lifecycle_tests.js
+PASS real hit doubles next Electric attack once
+PASS non-Electric Soak preserves charge for following attack
+PASS Parabolic Charge boosts all spread targets before consumption
+PASS Substitute damage does not activate Electromorphosis
+PASS protected Electric move consumes charge
+PASS Electric immunity still consumes charge
+PASS successful pivot clears charge
+PASS Electric status moves consume charge too
+PASS sleep denial of selected Electric move consumes charge
+PASS failed pivot retains charge
+PASS multiple damaging hits do not stack charge
+PASS pure previews do not spend charge or grant Special Defense
+PASS fainting removes an existing charge
+PASS sleep abort uses original type: Terrain Pulse
+PASS sleep abort uses original type: Thunderbolt
+PASS completed Terrain Pulse uses resolved Electric type and consumes charge
+PASS Electro Shot windup consumes charge before the following turn
+PASS Sleep Talk called Electric move consumes charge
+Electromorphosis lifecycle: 0 failure(s)
+
+RUN tests/encore_reference_tests.mjs
+Γ£ö Encore false/0/before (562.5588ms)
+Γ£ö Encore false/0/herb (144.6649ms)
+Γ£ö Encore false/0/herb-unburden (154.8632ms)
+Γ£ö Encore false/0/after (180.3324ms)
+Γ£ö Encore false/0/priority (130.5265ms)
+Γ£ö Encore false/0/target (141.8735ms)
+Γ£ö Encore false/0/last-pp (146.6905ms)
+Γ£ö Encore false/0/changed-priority (138.2521ms)
+Γ£ö Encore false/0/ally (141.2072ms)
+Γ£ö Encore false/1/before (140.4037ms)
+Γ£ö Encore false/1/herb (142.3987ms)
+Γ£ö Encore false/1/herb-unburden (138.2188ms)
+Γ£ö Encore false/1/after (139.7181ms)
+Γ£ö Encore false/1/priority (137.0027ms)
+Γ£ö Encore false/1/target (137.0302ms)
+Γ£ö Encore false/1/last-pp (169.4914ms)
+Γ£ö Encore false/1/changed-priority (123.0223ms)
+Γ£ö Encore false/1/ally (166.0555ms)
+Γ£ö Encore true/0/before (173.9764ms)
+Γ£ö Encore true/0/herb (172.8991ms)
+Γ£ö Encore true/0/herb-unburden (185.4246ms)
+Γ£ö Encore true/0/after (156.7771ms)
+Γ£ö Encore true/0/priority (174.4004ms)
+Γ£ö Encore true/0/target (197.4011ms)
+Γ£ö Encore true/0/last-pp (188.912ms)
+Γ£ö Encore true/0/changed-priority (168.1472ms)
+Γ£ö Encore true/0/ally (169.8561ms)
+Γ£ö Encore true/1/before (181.9854ms)
+Γ£ö Encore true/1/herb (235.4994ms)
+Γ£ö Encore true/1/herb-unburden (193.752ms)
+Γ£ö Encore true/1/after (198.0903ms)
+Γ£ö Encore true/1/priority (168.4824ms)
+Γ£ö Encore true/1/target (195.9842ms)
+Γ£ö Encore true/1/last-pp (179.7385ms)
+Γ£ö Encore true/1/changed-priority (188.4002ms)
+Γ£ö Encore true/1/ally (189.1945ms)
+Γä╣ tests 36
+Γä╣ suites 0
+Γä╣ pass 36
+Γä╣ fail 0
+Γä╣ cancelled 0
+Γä╣ skipped 0
+Γä╣ todo 0
+Γä╣ duration_ms 6359.6521
+
+RUN tests/engine_terrain_tests.js
+
+Grassy Surge on-entry:
+  PASS 1. Grassy Surge sets field.terrain via battle log on entry
+
+applyTerrainAbility unit tests:
+  PASS 2. applyTerrainAbility sets field.terrain=grassy and terrainTurns=5 for Grassy Surge
+
+Grassy Terrain end-of-turn recovery:
+  PASS 3. Grassy Terrain restores 1/16 max HP at end of turn for grounded mons
+
+Electric Surge on-entry:
+  PASS 4. Electric Surge sets field.terrain=electric via battle log on entry
+
+Misty Surge on-entry:
+  PASS 5. Misty Surge sets field.terrain=misty via battle log on entry
+
+Electric Terrain status block:
+  PASS 6. Electric Terrain blocks sleep on grounded mons, allows other statuses
+
+Psychic Terrain priority block:
+  PASS 7. Psychic Terrain blocks priority moves from hitting grounded mons
+
+Seed Sower on-damage terrain activation:
+  PASS 8. Seed Sower sets Grassy Terrain after the Pokemon takes damage
+
+RESULT: 8/8 PASS
+
+RUN tests/fake_out_flinch_tests.js
+PASS Fake Out denies action on player
+PASS Fake Out denies action on opponent
+PASS Inner Focus prevents flinch
+PASS Shield Dust prevents flinch
+PASS Covert Cloak prevents flinch
+PASS Substitute prevents flinch
+PASS broken Substitute prevents flinch
+PASS Sheer Force prevents flinch
+PASS Protect prevents flinch
+PASS Ghost immunity prevents flinch
+PASS Mold Breaker / Inner Focus permits flinch
+PASS Mold Breaker / Shield Dust permits flinch
+PASS Klutz / Covert Cloak permits flinch
+PASS Infiltrator / Substitute permits flinch
+PASS Ability Shield preserves Inner Focus against Mold Breaker
+PASS flinch clears next turn
+PASS Sheer Force boosts Fake Out base power while removing flinch
+PASS spread flinch guards are independent per target
+
+RUN tests/fake_out_reference_tests.mjs
+Γ£ö Fake Out oracle: ordinary, swap=false (233.0936ms)
+Γ£ö Fake Out oracle: ordinary, swap=true (12.1008ms)
+Γ£ö Fake Out oracle: Inner Focus, swap=false (12.057ms)
+Γ£ö Fake Out oracle: Inner Focus, swap=true (18.2437ms)
+Γ£ö Fake Out oracle: Shield Dust, swap=false (10.2876ms)
+Γ£ö Fake Out oracle: Shield Dust, swap=true (8.8711ms)
+Γ£ö Fake Out oracle: Cloak, swap=false (8.3586ms)
+Γ£ö Fake Out oracle: Cloak, swap=true (8.4524ms)
+Γ£ö Fake Out oracle: Klutz Cloak, swap=false (8.0183ms)
+Γ£ö Fake Out oracle: Klutz Cloak, swap=true (9.3316ms)
+Γ£ö Fake Out oracle: Mold Breaker, swap=false (9.8782ms)
+Γ£ö Fake Out oracle: Mold Breaker, swap=true (9.4708ms)
+Γ£ö Fake Out oracle: Ability Shield, swap=false (10.1411ms)
+Γ£ö Fake Out oracle: Ability Shield, swap=true (9.363ms)
+Γ£ö Fake Out oracle: Sheer Force, swap=false (8.9149ms)
+Γ£ö Fake Out oracle: Sheer Force, swap=true (9.0917ms)
+Γä╣ tests 16
+Γä╣ suites 0
+Γä╣ pass 16
+Γä╣ fail 0
+Γä╣ cancelled 0
+Γä╣ skipped 0
+Γä╣ todo 0
+Γä╣ duration_ms 390.7873
+
+RUN tests/fly_lifecycle_tests.mjs
+Γ£ö FLY-LIFE-no-guard-user-player-0 (541.5542ms)
+Γ£ö FLY-LIFE-no-guard-flyer-player-0 (145.455ms)
+Γ£ö FLY-LIFE-no-guard-gas-player-0 (145.4413ms)
+Γ£ö FLY-LIFE-no-guard-shield-player-0 (141.0525ms)
+Γ£ö FLY-LIFE-no-guard-shield-consumed-player-0 (139.0682ms)
+Γ£ö FLY-LIFE-herb-player-0 (139.357ms)
+Γ£ö FLY-LIFE-herb-klutz-player-0 (160.6116ms)
+Γ£ö FLY-LIFE-herb-klutz-gas-player-0 (122.4872ms)
+Γ£ö FLY-LIFE-herb-consumed-player-0 (135.7848ms)
+Γ£ö FLY-LIFE-herb-protect-player-0 (135.0677ms)
+Γ£ö FLY-LIFE-Soak-no-guard-player-0 (137.9528ms)
+Γ£ö FLY-LIFE-Soak-ordinary-player-0 (131.6532ms)
+Γ£ö FLY-LIFE-Strength Sap-no-guard-player-0 (135.2769ms)
+Γ£ö FLY-LIFE-Strength Sap-ordinary-player-0 (134.6156ms)
+Γ£ö FLY-LIFE-Dragon Darts-no-guard-player-0 (135.4407ms)
+Γ£ö FLY-LIFE-Dragon Darts-ordinary-player-0 (135.2751ms)
+Γ£ö FLY-LIFE-toxic-player-0 (141.4603ms)
+Γ£ö FLY-LIFE-poison-toxic-player-0 (146.8407ms)
+Γ£ö FLY-LIFE-helping-hand-player-0 (157.309ms)
+Γ£ö FLY-LIFE-abort-sleep-player-0 (194.6466ms)
+Γ£ö FLY-LIFE-abort-frozen-player-0 (148.0089ms)
+Γ£ö FLY-LIFE-abort-paralysis-player-0 (164.7755ms)
+Γ£ö FLY-LIFE-abort-flinch-player-0 (160.9587ms)
+Γ£ö FLY-LIFE-abort-confusion-player-0 (166.215ms)
+Γ£ö FLY-LIFE-abort-imprison-player-0 (166.7768ms)
+Γ£ö FLY-LIFE-ground-before-Smack Down-player-0 (172.0921ms)
+Γ£ö FLY-LIFE-ground-before-Thousand Arrows-player-0 (183.6422ms)
+Γ£ö FLY-LIFE-ground-before-Gravity-player-0 (183.2183ms)
+Γ£ö FLY-LIFE-ground-after-Smack Down-player-0 (176.6133ms)
+Γ£ö FLY-LIFE-ground-after-Thousand Arrows-player-0 (173.9379ms)
+Γ£ö FLY-LIFE-drampa-ground-player-0 (168.8921ms)
+Γ£ö FLY-LIFE-redirect-charge-player-0 (170.9857ms)
+Γ£ö FLY-LIFE-redirect-release-player-0 (226.4492ms)
+Γ£ö FLY-LIFE-stored-slot-one-player-0 (160.7293ms)
+Γ£ö FLY-LIFE-no-guard-user-player-1 (174.3604ms)
+Γ£ö FLY-LIFE-no-guard-flyer-player-1 (164.4481ms)
+Γ£ö FLY-LIFE-no-guard-gas-player-1 (162.882ms)
+Γ£ö FLY-LIFE-no-guard-shield-player-1 (171.2942ms)
+Γ£ö FLY-LIFE-no-guard-shield-consumed-player-1 (170.9367ms)
+Γ£ö FLY-LIFE-herb-player-1 (152.7594ms)
+Γ£ö FLY-LIFE-herb-klutz-player-1 (161.9452ms)
+Γ£ö FLY-LIFE-herb-klutz-gas-player-1 (148.8123ms)
+Γ£ö FLY-LIFE-herb-consumed-player-1 (162.1579ms)
+Γ£ö FLY-LIFE-herb-protect-player-1 (173.7945ms)
+Γ£ö FLY-LIFE-Soak-no-guard-player-1 (165.1703ms)
+Γ£ö FLY-LIFE-Soak-ordinary-player-1 (198.1636ms)
+Γ£ö FLY-LIFE-Strength Sap-no-guard-player-1 (151.1063ms)
+Γ£ö FLY-LIFE-Strength Sap-ordinary-player-1 (172.1744ms)
+Γ£ö FLY-LIFE-Dragon Darts-no-guard-player-1 (165.5351ms)
+Γ£ö FLY-LIFE-Dragon Darts-ordinary-player-1 (157.137ms)
+Γ£ö FLY-LIFE-toxic-player-1 (160.0619ms)
+Γ£ö FLY-LIFE-poison-toxic-player-1 (165.2107ms)
+Γ£ö FLY-LIFE-helping-hand-player-1 (162.091ms)
+Γ£ö FLY-LIFE-abort-sleep-player-1 (165.3659ms)
+Γ£ö FLY-LIFE-abort-frozen-player-1 (155.2478ms)
+Γ£ö FLY-LIFE-abort-paralysis-player-1 (164.3326ms)
+Γ£ö FLY-LIFE-abort-flinch-player-1 (174.791ms)
+Γ£ö FLY-LIFE-abort-confusion-player-1 (196.2165ms)
+Γ£ö FLY-LIFE-abort-imprison-player-1 (147.8375ms)
+Γ£ö FLY-LIFE-ground-before-Smack Down-player-1 (169.4245ms)
+Γ£ö FLY-LIFE-ground-before-Thousand Arrows-player-1 (160.883ms)
+Γ£ö FLY-LIFE-ground-before-Gravity-player-1 (167.6608ms)
+Γ£ö FLY-LIFE-ground-after-Smack Down-player-1 (160.6185ms)
+Γ£ö FLY-LIFE-ground-after-Thousand Arrows-player-1 (163.4265ms)
+Γ£ö FLY-LIFE-drampa-ground-player-1 (163.2357ms)
+Γ£ö FLY-LIFE-redirect-charge-player-1 (164.8371ms)
+Γ£ö FLY-LIFE-redirect-release-player-1 (152.7335ms)
+Γ£ö FLY-LIFE-stored-slot-one-player-1 (162.5732ms)
+Γ£ö FLY-LIFE-no-guard-user-opponent-0 (157.6274ms)
+Γ£ö FLY-LIFE-no-guard-flyer-opponent-0 (201.9654ms)
+Γ£ö FLY-LIFE-no-guard-gas-opponent-0 (147.255ms)
+Γ£ö FLY-LIFE-no-guard-shield-opponent-0 (154.2671ms)
+Γ£ö FLY-LIFE-no-guard-shield-consumed-opponent-0 (157.3057ms)
+Γ£ö FLY-LIFE-herb-opponent-0 (164.3846ms)
+Γ£ö FLY-LIFE-herb-klutz-opponent-0 (160.6168ms)
+Γ£ö FLY-LIFE-herb-klutz-gas-opponent-0 (160.4929ms)
+Γ£ö FLY-LIFE-herb-consumed-opponent-0 (146.6772ms)
+Γ£ö FLY-LIFE-herb-protect-opponent-0 (164.5196ms)
+Γ£ö FLY-LIFE-Soak-no-guard-opponent-0 (162.2592ms)
+Γ£ö FLY-LIFE-Soak-ordinary-opponent-0 (158.1118ms)
+Γ£ö FLY-LIFE-Strength Sap-no-guard-opponent-0 (163.488ms)
+Γ£ö FLY-LIFE-Strength Sap-ordinary-opponent-0 (208.0711ms)
+Γ£ö FLY-LIFE-Dragon Darts-no-guard-opponent-0 (152ms)
+Γ£ö FLY-LIFE-Dragon Darts-ordinary-opponent-0 (164.059ms)
+Γ£ö FLY-LIFE-toxic-opponent-0 (163.7274ms)
+Γ£ö FLY-LIFE-poison-toxic-opponent-0 (153.9996ms)
+Γ£ö FLY-LIFE-helping-hand-opponent-0 (178.3928ms)
+Γ£ö FLY-LIFE-abort-sleep-opponent-0 (156.0147ms)
+Γ£ö FLY-LIFE-abort-frozen-opponent-0 (157.6971ms)
+Γ£ö FLY-LIFE-abort-paralysis-opponent-0 (158.2595ms)
+Γ£ö FLY-LIFE-abort-flinch-opponent-0 (163.5941ms)
+Γ£ö FLY-LIFE-abort-confusion-opponent-0 (164.1313ms)
+Γ£ö FLY-LIFE-abort-imprison-opponent-0 (161.7559ms)
+Γ£ö FLY-LIFE-ground-before-Smack Down-opponent-0 (204.7395ms)
+Γ£ö FLY-LIFE-ground-before-Thousand Arrows-opponent-0 (152.6544ms)
+Γ£ö FLY-LIFE-ground-before-Gravity-opponent-0 (156.0275ms)
+Γ£ö FLY-LIFE-ground-after-Smack Down-opponent-0 (162.8895ms)
+Γ£ö FLY-LIFE-ground-after-Thousand Arrows-opponent-0 (160.6099ms)
+Γ£ö FLY-LIFE-drampa-ground-opponent-0 (161.6786ms)
+Γ£ö FLY-LIFE-redirect-charge-opponent-0 (157.3102ms)
+Γ£ö FLY-LIFE-redirect-release-opponent-0 (155.1019ms)
+Γ£ö FLY-LIFE-stored-slot-one-opponent-0 (160.2483ms)
+Γ£ö FLY-LIFE-no-guard-user-opponent-1 (159.4899ms)
+Γ£ö FLY-LIFE-no-guard-flyer-opponent-1 (149.9392ms)
+Γ£ö FLY-LIFE-no-guard-gas-opponent-1 (152.0445ms)
+Γ£ö FLY-LIFE-no-guard-shield-opponent-1 (196.626ms)
+Γ£ö FLY-LIFE-no-guard-shield-consumed-opponent-1 (157.9301ms)
+Γ£ö FLY-LIFE-herb-opponent-1 (155.1963ms)
+Γ£ö FLY-LIFE-herb-klutz-opponent-1 (151.8524ms)
+Γ£ö FLY-LIFE-herb-klutz-gas-opponent-1 (165.4613ms)
+Γ£ö FLY-LIFE-herb-consumed-opponent-1 (155.1099ms)
+Γ£ö FLY-LIFE-herb-protect-opponent-1 (166.4482ms)
+Γ£ö FLY-LIFE-Soak-no-guard-opponent-1 (167.7599ms)
+Γ£ö FLY-LIFE-Soak-ordinary-opponent-1 (167.0192ms)
+Γ£ö FLY-LIFE-Strength Sap-no-guard-opponent-1 (160.2197ms)
+Γ£ö FLY-LIFE-Strength Sap-ordinary-opponent-1 (166.5422ms)
+Γ£ö FLY-LIFE-Dragon Darts-no-guard-opponent-1 (155.829ms)
+Γ£ö FLY-LIFE-Dragon Darts-ordinary-opponent-1 (206.5742ms)
+Γ£ö FLY-LIFE-toxic-opponent-1 (150.2268ms)
+Γ£ö FLY-LIFE-poison-toxic-opponent-1 (161.8458ms)
+Γ£ö FLY-LIFE-helping-hand-opponent-1 (159.2247ms)
+Γ£ö FLY-LIFE-abort-sleep-opponent-1 (164.0322ms)
+Γ£ö FLY-LIFE-abort-frozen-opponent-1 (156.3537ms)
+Γ£ö FLY-LIFE-abort-paralysis-opponent-1 (167.8933ms)
+Γ£ö FLY-LIFE-abort-flinch-opponent-1 (157.4741ms)
+Γ£ö FLY-LIFE-abort-confusion-opponent-1 (156.6578ms)
+Γ£ö FLY-LIFE-abort-imprison-opponent-1 (165.8961ms)
+Γ£ö FLY-LIFE-ground-before-Smack Down-opponent-1 (161.522ms)
+Γ£ö FLY-LIFE-ground-before-Thousand Arrows-opponent-1 (161.6771ms)
+Γ£ö FLY-LIFE-ground-before-Gravity-opponent-1 (216.1653ms)
+Γ£ö FLY-LIFE-ground-after-Smack Down-opponent-1 (156.8239ms)
+Γ£ö FLY-LIFE-ground-after-Thousand Arrows-opponent-1 (159.7628ms)
+Γ£ö FLY-LIFE-drampa-ground-opponent-1 (169.7673ms)
+Γ£ö FLY-LIFE-redirect-charge-opponent-1 (167.7118ms)
+Γ£ö FLY-LIFE-redirect-release-opponent-1 (161.7772ms)
+Γ£ö FLY-LIFE-stored-slot-one-opponent-1 (161.1332ms)
+Γ£ö FLY-DAMAGE-Gust-85 (309.4022ms)
+Γ£ö FLY-DAMAGE-Gust-86 (319.9853ms)
+Γ£ö FLY-DAMAGE-Gust-87 (377.3454ms)
+Γ£ö FLY-DAMAGE-Gust-88 (305.7848ms)
+Γ£ö FLY-DAMAGE-Gust-89 (335.7013ms)
+Γ£ö FLY-DAMAGE-Gust-90 (317.8897ms)
+Γ£ö FLY-DAMAGE-Gust-91 (349.9359ms)
+Γ£ö FLY-DAMAGE-Gust-92 (344.276ms)
+Γ£ö FLY-DAMAGE-Gust-93 (318.3205ms)
+Γ£ö FLY-DAMAGE-Gust-94 (403.2056ms)
+Γ£ö FLY-DAMAGE-Gust-95 (357.813ms)
+Γ£ö FLY-DAMAGE-Gust-96 (356.6658ms)
+Γ£ö FLY-DAMAGE-Gust-97 (338.3163ms)
+Γ£ö FLY-DAMAGE-Gust-98 (354.1325ms)
+Γ£ö FLY-DAMAGE-Gust-99 (350.2775ms)
+Γ£ö FLY-DAMAGE-Gust-100 (355.5501ms)
+Γ£ö FLY-DAMAGE-Twister-85 (407.1089ms)
+Γ£ö FLY-DAMAGE-Twister-86 (325.9461ms)
+Γ£ö FLY-DAMAGE-Twister-87 (363.6451ms)
+Γ£ö FLY-DAMAGE-Twister-88 (334.3598ms)
+Γ£ö FLY-DAMAGE-Twister-89 (352.4996ms)
+Γ£ö FLY-DAMAGE-Twister-90 (339.9731ms)
+Γ£ö FLY-DAMAGE-Twister-91 (389.3217ms)
+Γ£ö FLY-DAMAGE-Twister-92 (429.3868ms)
+Γ£ö FLY-DAMAGE-Twister-93 (379.2438ms)
+Γ£ö FLY-DAMAGE-Twister-94 (386.6787ms)
+Γ£ö FLY-DAMAGE-Twister-95 (375.5639ms)
+Γ£ö FLY-DAMAGE-Twister-96 (392.4009ms)
+Γ£ö FLY-DAMAGE-Twister-97 (377.413ms)
+Γ£ö FLY-DAMAGE-Twister-98 (387.2491ms)
+Γ£ö FLY-DAMAGE-Twister-99 (440.8496ms)
+Γ£ö FLY-DAMAGE-Twister-100 (379.197ms)
+Γ£ö FLY-GAP-eject-button-player-0 (192.2704ms)
+Γ£ö FLY-GAP-eject-button-player-1 (189.0867ms)
+Γ£ö FLY-GAP-eject-button-opponent-0 (195.7953ms)
+Γ£ö FLY-GAP-eject-button-opponent-1 (185.3635ms)
+Γä╣ tests 172
+Γä╣ suites 0
+Γä╣ pass 172
+Γä╣ fail 0
+Γä╣ cancelled 0
+Γä╣ skipped 0
+Γä╣ todo 0
+Γä╣ duration_ms 34768.3034
+
+RUN tests/fly_mutation_tests.mjs
+Γ£ö FLY-ACCURACY-attacker-normal (344.593ms)
+Γ£ö FLY-ACCURACY-attacker-gas (147.8258ms)
+Γ£ö FLY-ACCURACY-attacker-shield (148.2894ms)
+Γ£ö FLY-ACCURACY-attacker-spent-shield (174.9389ms)
+Γ£ö FLY-ACCURACY-target-normal (127.2723ms)
+Γ£ö FLY-ACCURACY-target-gas (153.4122ms)
+Γ£ö FLY-ACCURACY-target-shield (148.2594ms)
+Γ£ö FLY-ACCURACY-target-spent-shield (140.8695ms)
+Γ£ö FLY-MUTANT-exception-gust (418.118ms)
+Γ£ö FLY-MUTANT-double-final (159.7912ms)
+Γ£ö FLY-MUTANT-abort-sleep (159.7893ms)
+Γ£ö FLY-MUTANT-ground-cancel (165.3886ms)
+Γ£ö FLY-MUTANT-effective-herb (189.1529ms)
+Γ£ö FLY-MUTANT-effective-no-guard (138.8847ms)
+Γ£ö FLY-CONFUSION-event-player-0-2 (205.4764ms)
+Γ£ö FLY-CONFUSION-event-player-0-3 (198.5821ms)
+Γ£ö FLY-CONFUSION-event-player-1-2 (193.389ms)
+Γ£ö FLY-CONFUSION-event-player-1-3 (192.4552ms)
+Γ£ö FLY-CONFUSION-event-opponent-0-2 (196.0055ms)
+Γ£ö FLY-CONFUSION-event-opponent-0-3 (199.0674ms)
+Γ£ö FLY-CONFUSION-event-opponent-1-2 (194.7395ms)
+Γ£ö FLY-CONFUSION-event-opponent-1-3 (195.2849ms)
+Γ£ö old confusion false-positive receipt fails causal interruption control (9.8259ms)
+Γ£ö confusion-specific cancellation reversal is caught by charge state (206.3981ms)
+Γ£ö unsupported longer continuation rejected {"turns":4} (0.1675ms)
+Γ£ö unsupported longer continuation rejected {"turns":3,"item":"Power Herb","ability":"Klutz","gas":true} (0.1308ms)
+Γ£ö unsupported longer continuation rejected {"turns":3,"chargeMove":"Solar Beam"} (0.1328ms)
+Γä╣ tests 27
+Γä╣ suites 0
+Γä╣ pass 27
+Γä╣ fail 0
+Γä╣ cancelled 0
+Γä╣ skipped 0
+Γä╣ todo 0
+Γä╣ duration_ms 4414.3433
+
+RUN tests/fly_repair_tests.mjs
+Γ£ö FLY-REPAIR-001 player Tackle (0.8239ms)
+Γ£ö FLY-REPAIR-002 player Gust (0.0832ms)
+Γ£ö FLY-REPAIR-003 player Twister (0.0645ms)
+Γ£ö FLY-REPAIR-004 player Sky Uppercut (0.0573ms)
+Γ£ö FLY-REPAIR-005 player Thunder (0.0959ms)
+Γ£ö FLY-REPAIR-006 player Hurricane (0.0629ms)
+Γ£ö FLY-REPAIR-007 player Smack Down (0.0627ms)
+Γ£ö FLY-REPAIR-008 player Thousand Arrows (0.0579ms)
+Γ£ö FLY-REPAIR-009 player Tackle (0.0749ms)
+Γ£ö FLY-REPAIR-010 player Tackle (0.1302ms)
+Γ£ö FLY-REPAIR-011 player Tackle (0.0661ms)
+Γ£ö FLY-REPAIR-012 player Tackle (0.0518ms)
+Γ£ö FLY-REPAIR-013 opponent Tackle (0.0883ms)
+Γ£ö FLY-REPAIR-014 opponent Gust (0.0683ms)
+Γ£ö FLY-REPAIR-015 opponent Twister (0.0585ms)
+Γ£ö FLY-REPAIR-016 opponent Sky Uppercut (0.0366ms)
+Γ£ö FLY-REPAIR-017 opponent Thunder (0.0321ms)
+Γ£ö FLY-REPAIR-018 opponent Hurricane (0.0675ms)
+Γ£ö FLY-REPAIR-019 opponent Smack Down (0.074ms)
+Γ£ö FLY-REPAIR-020 opponent Thousand Arrows (0.0319ms)
+Γ£ö FLY-REPAIR-021 opponent Tackle (0.0271ms)
+Γ£ö FLY-REPAIR-022 opponent Tackle (0.0296ms)
+Γ£ö FLY-REPAIR-023 opponent Tackle (0.0258ms)
+Γ£ö FLY-REPAIR-024 opponent Tackle (0.0272ms)
+Γä╣ tests 24
+Γä╣ suites 0
+Γä╣ pass 24
+Γä╣ fail 0
+Γä╣ cancelled 0
+Γä╣ skipped 0
+Γä╣ todo 0
+Γä╣ duration_ms 22.3457
+
+RUN tests/golden_runtime_profile_tests.mjs
+Γ£ö current profile includes and executes runtime bridge (355.6527ms)
+Γ£ö missing runtime bridge rejected before VM execution (9.7921ms)
+Γ£ö changed bridge bytes rejected against independent snapshot (17.6759ms)
+Γ£ö wrong engine bytes reject before execution (18.5743ms)
+Γ£ö historical profile cannot stand in for current (7.2024ms)
+Γ£ö reordered current runtime rejects (12.5447ms)
+Γ£ö historical expectation reuse cannot certify current bytes (14.1271ms)
+Γ£ö generation cannot overwrite historical fixtures (1.4401ms)
+Γ£ö comparison retains unresolved current expectations and first differences (374.1767ms)
+Γä╣ tests 9
+Γä╣ suites 0
+Γä╣ pass 9
+Γä╣ fail 0
+Γä╣ cancelled 0
+Γä╣ skipped 0
+Γä╣ todo 0
+Γä╣ duration_ms 834.4636
+
+RUN tests/growl_leer_stage_tests.mjs
+Γ£ö reflectable stage moves resolve Magic Bounce, accuracy, then Substitute (1.8173ms)
+Γ£ö seismic-toss-fixed-damage Growl/Leer stages agree with Showdown on normal sides (259.602ms)
+Γ£ö seismic-toss-fixed-damage Growl/Leer stages agree with Showdown on reversed sides (13.0858ms)
+Γ£ö earthquake-flying-ally Growl/Leer stages agree with Showdown on normal sides (13.73ms)
+Γ£ö earthquake-flying-ally Growl/Leer stages agree with Showdown on reversed sides (18.2501ms)
+Γ£ö Growl lowers each unprotected adjacent foe and does not lower its ally (10.0855ms)
+Γ£ö Growl resolves Clear Body and Defiant per target (9.2767ms)
+Γ£ö Growl resolves Clear Amulet and ordinary target per target (10.1098ms)
+Γ£ö Growl resolves Good as Gold and Magic Bounce per target (10.8784ms)
+Γ£ö Growl bypasses Substitute as a sound move while Leer does not (15.8936ms)
+Γ£ö growl-soundproof agrees with per-target Showdown behavior (10.2609ms)
+Γ£ö growl-hyper-cutter-contrary agrees with per-target Showdown behavior (11.008ms)
+Γ£ö growl-white-smoke-mirror-armor agrees with per-target Showdown behavior (10.9769ms)
+Γ£ö growl-magic-bounce-spread agrees with per-target Showdown behavior (9.8801ms)
+Γ£ö growl-magic-bounce-clear-amulet agrees with per-target Showdown behavior (10.4423ms)
+Γ£ö growl-mold-breaker agrees with per-target Showdown behavior (10.7471ms)
+Γ£ö Clear Amulet blocks an allied Bulldoze stage drop but not its damage (12.2923ms)
+Γ£ö Protect stops Magic Bounce from reflecting Growl for that target (12.1911ms)
+Γ£ö Each Magic Bounce target independently reflects a spread Growl (11.9248ms)
+Γ£ö Clear Body blocks an allied Bulldoze stage drop but not its damage (10.1788ms)
+Γä╣ tests 20
+Γä╣ suites 0
+Γä╣ pass 20
+Γä╣ fail 0
+Γä╣ cancelled 0
+Γä╣ skipped 0
+Γä╣ todo 0
+Γä╣ duration_ms 481.7897
+
+RUN tests/imprison_policy_tests.js
+PASS player: establish seal, then prefer productive damage
+PASS player: expired seal becomes useful again
+PASS player: another owner or changed move set is not redundant
+PASS player: sole usable move remains selectable without fabricated Struggle
+PASS player: Encore and Choice lock still control selection
+PASS player: redundant scoring does not inspect unrevealed opponent moves
+PASS opponent: establish seal, then prefer productive damage
+PASS opponent: expired seal becomes useful again
+PASS opponent: another owner or changed move set is not redundant
+PASS opponent: sole usable move remains selectable without fabricated Struggle
+PASS opponent: Encore and Choice lock still control selection
+PASS opponent: redundant scoring does not inspect unrevealed opponent moves
+PASS player: seeded doubles establishes once and attacks next turn
+PASS opponent: seeded doubles establishes once and attacks next turn
+14 Imprison policy checks passed.
+
+RUN tests/item_lifecycle_reference_tests.mjs
+Γ£ö Full-six admitted player Red Card (626.9371ms)
+Γ£ö Full-six admitted player White Herb (145.9461ms)
+Γ£ö Full-six admitted opponent Red Card (152.634ms)
+Γ£ö Full-six admitted opponent White Herb (146.7018ms)
+Γ£ö Parting Shot Herb precedes replacement Intimidate player (161.3412ms)
+Γ£ö Parting Shot Herb precedes replacement Intimidate opponent (122.5093ms)
+Γ£ö Red Card spread handler uses pre-action speed despite Icy Wind drop (144.5169ms)
+Γ£ö Red Card samples both eligible reserves across deterministic seeds (156.5892ms)
+Γä╣ tests 8
+Γä╣ suites 0
+Γä╣ pass 8
+Γä╣ fail 0
+Γä╣ cancelled 0
+Γä╣ skipped 0
+Γä╣ todo 0
+Γä╣ duration_ms 1661.7268
+
+RUN tests/item_speed_causality_tests.mjs
+Independent item proof causality: 2 orientations and 6 negative controls passed
+
+RUN tests/item_speed_evidence_tests.mjs
+Γ£ö CI item speed evidence doubles-00465 (341.5927ms)
+Γ£ö CI item speed evidence doubles-01037 (160.3367ms)
+Γ£ö CI item speed evidence doubles-01917 (163.8171ms)
+Γ£ö CI item speed evidence doubles-02885 (155.0047ms)
+Γ£ö nested Sleep Talk records one item transition false (142.5308ms)
+Γ£ö nested Sleep Talk records one item transition true (142.2405ms)
+Γä╣ tests 6
+Γä╣ suites 0
+Γä╣ pass 6
+Γä╣ fail 0
+Γä╣ cancelled 0
+Γä╣ skipped 0
+Γä╣ todo 0
+Γä╣ duration_ms 1132.3581
+
+RUN tests/items_tests.js
+
+Leftovers (#29):
+  PASS 1. Leftovers heal formula = floor(maxHp/16), min 1
+  PASS 2. Leftovers does not over-heal past maxHp
+  PASS 3. Leftovers does not tick at full HP
+  PASS 4. Leftovers does not tick on fainted mon
+
+Focus Sash (#8):
+  PASS 5. Focus Sash survives KO from full HP, saved at 1 HP, item consumed
+  PASS 6. Focus Sash does NOT save if already below full HP
+  PASS 7. Focus Sash consumed only once (second full-HP KO would not trigger)
+
+Damage-trigger berries:
+  PASS 8. Sitrus Berry heals after surviving damage at half HP or lower
+  PASS 9. Sitrus Berry does not restore from 0 HP after lethal damage
+  PASS 10. Oran Berry does not restore from 0 HP after lethal damage
+  PASS 11. Battle log records lethal damage faint before any Sitrus restore
+
+Choice Scarf (#18):
+  PASS 12. Choice Scarf multiplies Speed by 1.5 via getStat
+  PASS 13. choiceLock initializes null on construction
+  PASS 14. choiceLock clears on switch-in logic (replaceOnField resets)
+
+Stat-stage reset on switch (#29):
+  PASS 15. Stat boosts reset to all zeros on switch-in
+
+Removed placeholders (#11 WONTFIX):
+  PASS 16. Choice Band does NOT multiply Attack (absent from Champions)
+  PASS 17. Choice Specs does NOT multiply SpA (absent from Champions)
+  PASS 18. Assault Vest does NOT multiply SpD (absent from Champions)
+
+18 pass, 0 fail, 18 total
+
+RUN tests/klutz_item_paths_tests.js
+PASS Choice Scarf move lock, Klutz=false
+PASS Choice Scarf speed, Klutz=false
+PASS Power Herb charging and consumption, Klutz=false
+PASS Focus Sash survival and consumption, Klutz=false
+PASS Choice Scarf move lock, Klutz=true
+PASS Choice Scarf speed, Klutz=true
+PASS Power Herb charging and consumption, Klutz=true
+PASS Focus Sash survival and consumption, Klutz=true
+PASS natural sunlight still skips Solar Beam charge under Klutz
+PASS Klutz Solar Beam completes on turn two without consuming Herb
+PASS sunlight executes Solar Beam immediately without consuming suppressed Herb
+
+RUN tests/klutz_item_reference_tests.mjs
+Γ£ö Choice Scarf Champions reference, Klutz=false (249.938ms)
+Γ£ö Power Herb Champions reference, Klutz=false (14.0047ms)
+Γ£ö Focus Sash Champions reference, Klutz=false (13.1677ms)
+Γ£ö Choice Scarf Champions reference, Klutz=true (18.4669ms)
+Γ£ö Power Herb Champions reference, Klutz=true (9.1023ms)
+Γ£ö Focus Sash Champions reference, Klutz=true (10.5005ms)
+Γä╣ tests 6
+Γä╣ suites 0
+Γä╣ pass 6
+Γä╣ fail 0
+Γä╣ cancelled 0
+Γä╣ skipped 0
+Γä╣ todo 0
+Γä╣ duration_ms 319.1304
+
+RUN tests/mc_draft_import_tests.js
+Γ£ö exact reference aliases import without changing historical descriptors or saved identities (912.6231ms)
+Γ£ö M-C draft intake saves reference-compatible sets without approving execution (336.8674ms)
+Γ£ö draft restrictions still reject malformed or mismatched sets (316.0884ms)
+Γ£ö missing reference and forged saved flags cannot authorize admission or execution (327.8039ms)
+Γ£ö selected M-C paste preview and save agree, preserve sets locally and do not write DB (317.5723ms)
+Γ£ö M-C bulk and JSON intake share paste checks and discard forged approval metadata (349.9519ms)
+Γ£ö existing M-C draft paste replacement retains identity and source context (313.2319ms)
+Γ£ö save-only restriction persists across reload, edits and direct battle validation (398.882ms)
+Γ£ö JSON roundtrip preserves restrictive context even outside selected M-C (443.5345ms)
+Γ£ö direct engine refuses saved drafts regardless of side or strict option (429.3352ms)
+Γ£ö M-C editor choices use M-C reference and never promise approved legality (433.5079ms)
+Γ£ö actual M-C editor accepts valid changes but rejects invalid moves without changing identity (432.185ms)
+Γ£ö unsupported stored draft context fails closed instead of using a historical pool (438.1704ms)
+Γ£ö new draft provenance hashes actual reference bytes (447.6003ms)
+Γ£ö legacy Meowstic Mega preview keeps type and exact sprite identity (429.7023ms)
+Γä╣ tests 15
+Γä╣ suites 0
+Γä╣ pass 15
+Γä╣ fail 0
+Γä╣ cancelled 0
+Γä╣ skipped 0
+Γä╣ todo 0
+Γä╣ duration_ms 6332.9534
+
+RUN tests/mc_expanded_mega_tests.js
+PASS Raichu registration/transition isolation
+PASS Raichu-Mega-Y registration/transition isolation
+PASS raichumegay registration/transition isolation
+PASS Raichu-Mega-Y wrong stone rejected
+PASS Raichu-Mega-Y delayed actual doubles false
+PASS Raichu-Mega-Y delayed actual doubles true
+PASS Salamence registration/transition isolation
+PASS Salamence-Mega registration/transition isolation
+PASS salamencemega registration/transition isolation
+PASS Salamence-Mega wrong stone rejected
+PASS Salamence-Mega delayed actual doubles false
+PASS Salamence-Mega delayed actual doubles true
+PASS one Mega per side and stable registration with both candidates
+PASS Aerilate converts Normal against Ghost after evolution
+PASS No Guard applies as attacker and target only after evolution
+15 scoped Mega lifecycle checks passed
+69 expanded descriptor/lifecycle/admission checks passed; unsupported abilities remain gated
+
+RUN tests/mc_mega_ability_tests.js
+PASS Strength Sap heals from pre-drop Attack and drops Attack
+PASS Strength Sap ignores Attack damage modifier Huge Power
+PASS Strength Sap ignores Attack damage modifier Pure Power
+PASS Strength Sap stage boundary Clear Body
+PASS Strength Sap stage boundary Contrary
+PASS Strength Sap stage boundary Simple
+PASS Strength Sap fails at minus six even with Contrary
+PASS Strength Sap blocked {"protect":true}
+PASS Strength Sap blocked {"sub":true}
+PASS Strength Sap blocked {"ability":"Good as Gold"}
+PASS Strength Sap heals at full HP only through successful drop
+PASS Strength Sap Big Root uses pinned fixed point rounding
+PASS Strength Sap Klutz suppresses Big Root
+PASS Strength Sap Liquid Ooze can KO the healer
+PASS Strength Sap Magic Guard blocks Liquid Ooze damage
+PASS Strength Sap Magic Bounce swaps healer and weakened target
+PASS Strength Sap Sap Sipper grants Attack instead of healing
+PASS Syrup Bomb drops on three residuals and expires before the fourth
+PASS Syrup Bomb residual Contrary
+PASS Syrup Bomb residual Simple
+PASS Syrup Bomb residual Clear Body
+PASS Syrup Bomb repeated application does not refresh or change source
+PASS Syrup Bomb source departure clears state even if a same-name replacement enters
+PASS Syrup Bomb successful switch cleanup prevents re-entry revival
+PASS Snap Trap repeated application does not refresh or change source
+PASS Snap Trap source departure clears state even if a same-name replacement enters
+PASS Snap Trap successful switch cleanup prevents re-entry revival
+PASS Snap Trap duration 0
+PASS Snap Trap duration 0.99
+PASS Snap Trap duration Grip Claw0
+PASS Snap Trap Binding Band captures one sixth damage
+PASS Snap Trap Magic Guard prevents residual damage
+PASS Snap Trap Ghost can escape but still receives residual damage
+PASS Snap Trap Shed Shell permits escape only when active
+PASS Gravity expires after five ticks and cannot refresh while active
+PASS Gravity grounds Charizard
+PASS Gravity grounds GengarLevitate
+PASS Gravity grounds MewAir Balloon
+PASS Grav Apple chains the Gravity power modifier
+PASS Gravity makes a 60 percent move reach the rounded 100 percent threshold
+PASS Gravity prohibits flagged moves and cancels airborne charge
+PASS Strength Sap real doubles action heals and lowers target false
+PASS Strength Sap real doubles action heals and lowers target true
+PASS Syrup Bomb real action secondary classification Shield Dust
+PASS Syrup Bomb real action secondary classification Covert Cloak
+PASS Syrup Bomb real action secondary classification Sheer Force
+PASS Snap Trap real action secondary classification Shield Dust
+PASS Snap Trap real action secondary classification Covert Cloak
+PASS Snap Trap real action secondary classification Sheer Force
+PASS Beak Blast prepares before contact attack and burns attacker false
+PASS Beak Blast prepares before contact attack and burns attacker true
+PASS Beak Blast contact bypass Long Reach
+PASS Beak Blast contact bypass Protective Pads
+PASS Beak Blast does not burn a non-contact attacker
+PASS Beak Blast burn immunity Comatose
+PASS Beak Blast burn immunity Purifying Salt
+PASS Beak Blast burn immunity Thermal Exchange
+PASS Beak Blast burn immunity Water Bubble
+PASS Beak Blast burn immunity Water Veil
+PASS Strength Sap no-heal no-drop records failure rather than success
+PASS Syrup Bomb actual source pivot clears the target volatile
+PASS Syrup Bomb actual target pivot clears its own volatile
+PASS Syrup Bomb source faint before residual clears the effect
+PASS Snap Trap actual source pivot clears the target volatile
+PASS Snap Trap actual target pivot clears its own volatile
+PASS Snap Trap source faint before residual clears the effect
+PASS Beak Blast preparation survives sleep denial until turn expiry
+PASS Beak Blast does not burn contact after it has fired
+PASS Beak Blast Substitute shields preparation from contact
+PASS Gravity makes Ground damage connect against Flying and Levitate
+PASS Gravity grounding exposes Flying targets to Misty Terrain status prevention
+PASS Strength Sap Heal Block denies action without consuming PP
+PASS Beak Blast Leaf Guard effective sun No Guard
+PASS Beak Blast Leaf Guard effective sun Cloud Nine
+74 remaining-effect checks passed.
+PASS Speed Boost active turns false
+PASS Thermal Exchange Ember false
+PASS Thermal Exchange Tackle false
+PASS Thermal Exchange Will-O-Wisp false
+PASS Lightning Rod immunity Thunderbolt false
+PASS Lightning Rod immunity Thunder Wave false
+PASS Lightning Rod ally redirection false
+PASS Speed Boost active turns true
+PASS Thermal Exchange Ember true
+PASS Thermal Exchange Tackle true
+PASS Thermal Exchange Will-O-Wisp true
+PASS Lightning Rod immunity Thunderbolt true
+PASS Lightning Rod immunity Thunder Wave true
+PASS Lightning Rod ally redirection true
+PASS Eelevate ignores stages and ties choose Attack
+PASS Eelevate Ground immunity respects Gravity and Mold Breaker
+PASS Trace excludes forbidden abilities and samples both eligible foes
+PASS Thermal Exchange is reference-only and Mold Breaker can initially burn
+PASS Emergency Exit threshold/berry {"swap":false,"hp":125,"item":""}
+PASS Emergency Exit threshold/berry {"swap":false,"hp":126,"item":""}
+PASS Emergency Exit threshold/berry {"swap":false,"hp":75,"item":""}
+PASS Emergency Exit threshold/berry {"swap":false,"hp":125,"item":"Sitrus Berry"}
+PASS Emergency Exit threshold/berry {"swap":false,"hp":50,"item":""}
+PASS Emergency Exit threshold/berry {"swap":true,"hp":125,"item":""}
+PASS Emergency Exit threshold/berry {"swap":true,"hp":126,"item":""}
+PASS Emergency Exit threshold/berry {"swap":true,"hp":75,"item":""}
+PASS Emergency Exit threshold/berry {"swap":true,"hp":125,"item":"Sitrus Berry"}
+PASS Emergency Exit threshold/berry {"swap":true,"hp":50,"item":""}
+PASS Mega evolution clears previously copied Trace bookkeeping
+PASS Traced base Mega keeps Pixilate after actual pivot and re-entry false
+PASS Traced base Mega keeps Pixilate after actual pivot and re-entry true
+PASS Trace applies copied entry ability exactly once false
+PASS Trace applies copied entry ability exactly once true
+PASS entry Ability Shield blocks Trace until a new entry despite Knock Off false
+PASS entry Ability Shield blocks Trace until a new entry despite Knock Off true
+35 expanded Mega ability checks passed
+
+RUN tests/mc_mega_lifecycle_tests.js
+PASS Raichu registration/transition isolation
+PASS Raichu-Mega-Y registration/transition isolation
+PASS raichumegay registration/transition isolation
+PASS Raichu-Mega-Y wrong stone rejected
+PASS Raichu-Mega-Y delayed actual doubles false
+PASS Raichu-Mega-Y delayed actual doubles true
+PASS Salamence registration/transition isolation
+PASS Salamence-Mega registration/transition isolation
+PASS salamencemega registration/transition isolation
+PASS Salamence-Mega wrong stone rejected
+PASS Salamence-Mega delayed actual doubles false
+PASS Salamence-Mega delayed actual doubles true
+PASS one Mega per side and stable registration with both candidates
+PASS Aerilate converts Normal against Ghost after evolution
+PASS No Guard applies as attacker and target only after evolution
+15 scoped Mega lifecycle checks passed
+
+RUN tests/mc_move_effects_tests.js
+PASS Make It Rain drops once, swap=false, protects=0
+PASS Make It Rain drops once, swap=false, protects=1
+PASS Make It Rain drops once, swap=false, protects=2
+PASS First Impression fails after the first active turn, swap=false
+PASS First Impression works on the first active turn, swap=false
+PASS Make It Rain drops once, swap=true, protects=0
+PASS Make It Rain drops once, swap=true, protects=1
+PASS Make It Rain drops once, swap=true, protects=2
+PASS First Impression fails after the first active turn, swap=true
+PASS First Impression works on the first active turn, swap=true
+PASS Infernal Parade power, status=null
+PASS Infernal Parade power, status=burn
+PASS Infernal Parade power, status=paralysis
+PASS Infernal Parade power, status=poison
+PASS Infernal Parade power, status=toxic
+PASS Infernal Parade power, status=sleep
+PASS Infernal Parade power, status=freeze
+PASS Apple Acid target effect 
+PASS Apple Acid target effect Clear Body
+PASS Apple Acid target effect Contrary
+PASS Apple Acid target effect Shield Dust
+PASS Fire Lash target effect 
+PASS Fire Lash target effect Clear Body
+PASS Fire Lash target effect Contrary
+PASS Fire Lash target effect Shield Dust
+PASS Grav Apple target effect 
+PASS Grav Apple target effect Clear Body
+PASS Grav Apple target effect Contrary
+PASS Grav Apple target effect Shield Dust
+PASS Growth boosts both attack stats in a real action
+PASS Snipe Shot bypasses Follow Me, swap=false
+PASS Snipe Shot bypasses Follow Me, swap=true
+PASS Make It Rain handles Simple
+PASS Make It Rain handles Contrary
+PASS Infernal Parade doubles against unignorable Comatose, source=No Guard
+PASS Infernal Parade doubles against unignorable Comatose, source=Mold Breaker
+PASS Growth weather boundary Drought
+PASS Growth weather boundary Cloud Nine
+PASS Mountain Gale applies flinch and denies the target action
+PASS Mountain Gale guarded secondary {"targetAbility":"Inner Focus"}
+PASS Mountain Gale guarded secondary {"targetAbility":"Shield Dust"}
+PASS Mountain Gale guarded secondary {"targetItem":"Covert Cloak"}
+PASS Mountain Gale guarded secondary {"sourceAbility":"Sheer Force"}
+PASS Apple Acid real action secondary boundary {"targetItem":"Covert Cloak"}
+PASS Apple Acid real action secondary boundary {"sourceAbility":"Sheer Force"}
+PASS Fire Lash real action secondary boundary {"targetItem":"Covert Cloak"}
+PASS Fire Lash real action secondary boundary {"sourceAbility":"Sheer Force"}
+PASS Grav Apple real action secondary boundary {"targetItem":"Covert Cloak"}
+PASS Grav Apple real action secondary boundary {"sourceAbility":"Sheer Force"}
+PASS First Impression becomes selectable again on fresh entry; sole disabled move yields Struggle
+50 M-C effect regression checks passed.
+
+RUN tests/mc_move_metadata_tests.js
+PASS Apple Acid scoped base power
+PASS Beak Blast scoped base power
+PASS Bone Rush scoped base power
+PASS Fire Lash scoped base power
+PASS First Impression scoped base power
+PASS Grav Apple scoped base power
+PASS Infernal Parade scoped base power
+PASS Mountain Gale scoped base power
+PASS Night Daze scoped base power
+PASS Psyshield Bash scoped base power
+PASS Slash scoped base power
+PASS Snipe Shot scoped base power
+PASS Spirit Shackle scoped base power
+PASS Trop Kick scoped base power
+PASS Crabhammer scoped accuracy
+PASS Make It Rain scoped accuracy
+PASS Syrup Bomb scoped accuracy
+PASS Growth scoped type
+PASS Snap Trap scoped type
+PASS Clangorous Soul never-miss metadata
+PASS Strength Sap constructor maximum PP
+PASS Wish constructor maximum PP
+PASS unrecognized reference contexts cannot change metadata
+PASS runtime accuracy obeys the M-C threshold rather than stale caller accuracy
+24 scoped M-C metadata checks passed.
+
+RUN tests/mc_reference_execution_tests.js
+Γ£ö Mega admission is invariant to case and normalized identifiers (617.9368ms)
+Γ£ö null stone metadata does not crash ordinary non-Mega admission (130.5928ms)
+Γ£ö base plus stone resolves supported lifecycle or explicitly rejects unsupported form (172.6604ms)
+Γ£ö base/stone battle keeps registration, delays evolution and limits each side to one (125.1123ms)
+Γ£ö reference selection allows checked draft but official, historical and missing opt-in do not (134.9936ms)
+Γ£ö Raichu reference transition preserves registration and activates terrain/seed once (134.5901ms)
+Γ£ö invalid sets, unsupported Mega, wrong stone, scope and missing pin fail closed (133.6898ms)
+Γ£ö base Raichu registration retains selected base ability until Mega (131.3295ms)
+Γ£ö reference replay is repeatable and caller cannot enable trusted evidence (136.6504ms)
+Γ£ö run-all partitions opponents, reports skips and avoids database writes (511.3425ms)
+Γ£ö delayed Mega does not activate terrain or seed on the earlier turn (119.4561ms)
+Γä╣ tests 11
+Γä╣ suites 0
+Γä╣ pass 11
+Γä╣ fail 0
+Γä╣ cancelled 0
+Γä╣ skipped 0
+Γä╣ todo 0
+Γä╣ duration_ms 2352.2594
+
+RUN tests/mc_reference_registration_tests.js
+Γ£ö practice and full registered-team scope are explicit (602.8461ms)
+Γä╣ tests 1
+Γä╣ suites 0
+Γä╣ pass 1
+Γä╣ fail 0
+Γä╣ cancelled 0
+Γä╣ skipped 0
+Γä╣ todo 0
+Γä╣ duration_ms 627.02
+
+RUN tests/mc_remaining_effects_tests.js
+PASS Strength Sap heals from pre-drop Attack and drops Attack
+PASS Strength Sap ignores Attack damage modifier Huge Power
+PASS Strength Sap ignores Attack damage modifier Pure Power
+PASS Strength Sap stage boundary Clear Body
+PASS Strength Sap stage boundary Contrary
+PASS Strength Sap stage boundary Simple
+PASS Strength Sap fails at minus six even with Contrary
+PASS Strength Sap blocked {"protect":true}
+PASS Strength Sap blocked {"sub":true}
+PASS Strength Sap blocked {"ability":"Good as Gold"}
+PASS Strength Sap heals at full HP only through successful drop
+PASS Strength Sap Big Root uses pinned fixed point rounding
+PASS Strength Sap Klutz suppresses Big Root
+PASS Strength Sap Liquid Ooze can KO the healer
+PASS Strength Sap Magic Guard blocks Liquid Ooze damage
+PASS Strength Sap Magic Bounce swaps healer and weakened target
+PASS Strength Sap Sap Sipper grants Attack instead of healing
+PASS Syrup Bomb drops on three residuals and expires before the fourth
+PASS Syrup Bomb residual Contrary
+PASS Syrup Bomb residual Simple
+PASS Syrup Bomb residual Clear Body
+PASS Syrup Bomb repeated application does not refresh or change source
+PASS Syrup Bomb source departure clears state even if a same-name replacement enters
+PASS Syrup Bomb successful switch cleanup prevents re-entry revival
+PASS Snap Trap repeated application does not refresh or change source
+PASS Snap Trap source departure clears state even if a same-name replacement enters
+PASS Snap Trap successful switch cleanup prevents re-entry revival
+PASS Snap Trap duration 0
+PASS Snap Trap duration 0.99
+PASS Snap Trap duration Grip Claw0
+PASS Snap Trap Binding Band captures one sixth damage
+PASS Snap Trap Magic Guard prevents residual damage
+PASS Snap Trap Ghost can escape but still receives residual damage
+PASS Snap Trap Shed Shell permits escape only when active
+PASS Gravity expires after five ticks and cannot refresh while active
+PASS Gravity grounds Charizard
+PASS Gravity grounds GengarLevitate
+PASS Gravity grounds MewAir Balloon
+PASS Grav Apple chains the Gravity power modifier
+PASS Gravity makes a 60 percent move reach the rounded 100 percent threshold
+PASS Gravity prohibits flagged moves and cancels airborne charge
+PASS Strength Sap real doubles action heals and lowers target false
+PASS Strength Sap real doubles action heals and lowers target true
+PASS Syrup Bomb real action secondary classification Shield Dust
+PASS Syrup Bomb real action secondary classification Covert Cloak
+PASS Syrup Bomb real action secondary classification Sheer Force
+PASS Snap Trap real action secondary classification Shield Dust
+PASS Snap Trap real action secondary classification Covert Cloak
+PASS Snap Trap real action secondary classification Sheer Force
+PASS Beak Blast prepares before contact attack and burns attacker false
+PASS Beak Blast prepares before contact attack and burns attacker true
+PASS Beak Blast contact bypass Long Reach
+PASS Beak Blast contact bypass Protective Pads
+PASS Beak Blast does not burn a non-contact attacker
+PASS Beak Blast burn immunity Comatose
+PASS Beak Blast burn immunity Purifying Salt
+PASS Beak Blast burn immunity Thermal Exchange
+PASS Beak Blast burn immunity Water Bubble
+PASS Beak Blast burn immunity Water Veil
+PASS Strength Sap no-heal no-drop records failure rather than success
+PASS Syrup Bomb actual source pivot clears the target volatile
+PASS Syrup Bomb actual target pivot clears its own volatile
+PASS Syrup Bomb source faint before residual clears the effect
+PASS Snap Trap actual source pivot clears the target volatile
+PASS Snap Trap actual target pivot clears its own volatile
+PASS Snap Trap source faint before residual clears the effect
+PASS Beak Blast preparation survives sleep denial until turn expiry
+PASS Beak Blast does not burn contact after it has fired
+PASS Beak Blast Substitute shields preparation from contact
+PASS Gravity makes Ground damage connect against Flying and Levitate
+PASS Gravity grounding exposes Flying targets to Misty Terrain status prevention
+PASS Strength Sap Heal Block denies action without consuming PP
+PASS Beak Blast Leaf Guard effective sun No Guard
+PASS Beak Blast Leaf Guard effective sun Cloud Nine
+74 remaining-effect checks passed.
+
+RUN tests/mega_runtime_battle_effect_tests.js
+
+=== Mega runtime battle-effect tests ===
+
+  PASS 1. Charizard-Mega-Y triggers Drought sun during battle Mega phase
+  PASS 2. Tyranitar-Mega triggers Sand Stream sand during battle Mega phase
+  PASS 3. Froslass-Mega triggers Snow Warning snow during battle Mega phase
+  PASS 4. Abomasnow-Mega triggers Snow Warning snow during battle Mega phase
+  PASS 5. base Charizard with Charizardite Y does not claim immediate Drought in current runtime model
+  PASS 6. Manectric-Mega re-fires Intimidate after Mega ability swap
+
+Mega runtime battle effects: 6 pass, 0 fail
+
+
+RUN tests/mega_runtime_form_guard_tests.js
+
+=== Mega runtime form guard tests ===
+
+  PASS 1. every known Champion Mega Stone can warn from base form without becoming a hard error
+  PASS 2. every known Champion Mega Stone normalizes to its active Mega form and ability
+  PASS 3. custom Charizardite Y import remains valid but carries a runtime-form warning
+  PASS 4. shipped Charizardite Y sun rows stay strict and active-form normalized
+  PASS 5. non-Mega items do not produce Mega runtime warnings or normalization side effects
+
+Mega runtime form guard: 5 pass, 0 fail
+
+
+RUN tests/mega_tests.js
+PASS: 1. Dragonite-Mega pre-trigger uses BASE stats (atk < Mega atk)
+PASS: 1b. Dragonite-Mega.name resolved to Dragonite for engine stat lookup
+PASS: 1c. Dragonite-Mega.displayName preserved for UI
+PASS: 1d. megaForm stored with Mega stats
+PASS: 1e. hasMegaEvolved starts false
+PASS: 2. Post-megaEvolve _base.atk swapped to Mega value (134->124)
+PASS: 2a. Post-megaEvolve _base.spa swapped to Mega value (100->145)
+PASS: 2b. hasMegaEvolved flipped to true
+PASS: 2c. displayName becomes Mega name
+PASS: 3. Altaria pre-trigger types = Dragon/Flying
+PASS: 3b. Altaria post-trigger types = Dragon/Fairy
+PASS: 4. Altaria pre-trigger ability = Natural Cure (base)
+PASS: 4b. Altaria post-trigger ability = Pixilate (Mega)
+PASS: 5. Field.playerMegaUsed initializes false
+PASS: 6. After Mega + simulated switch, hasMegaEvolved stays true
+PASS: 7. HP% preserved at 50% across Mega swap
+PASS: 8. Dragonite-Mega without Dragoninite = legacy behavior (megaForm null)
+PASS: 8b. Non-Mega with no stone: name stays Dragonite-Mega (legacy)
+PASS: 8c. Non-Mega Pokemon: megaForm null, hasMegaEvolved false
+PASS: 9. at_turn:3 returns false on turn 1
+PASS: 9b. at_turn:3 returns false on turn 2
+PASS: 9c. at_turn:3 returns true on turn 3
+PASS: 10. never policy returns false on turn 1
+PASS: 10b. never policy returns false on turn 30
+PASS: 11. MEGA_TRIGGER_POLICY enum has all three modes
+PASS: 12. runMegaTriggerSweep function is exported
+PASS: 12b. runMegaSweepCell returns {wr, n, ci95}
+
+=== RESULT: 27 pass, 0 fail (out of 27) ===
+
+RUN tests/move_contact_flag_audit_tests.js
+
+=== Move contact flag audit tests ===
+
+  PASS 1. supported local moves do not override Showdown contact flags incorrectly
+  PASS 2. known non-contact physical moves stay non-contact
+  PASS 3. known contact physical moves still trigger contact logic
+
+move contact flag audit: 3 pass, 0 fail
+
+
+RUN tests/move_legality_tests.js
+
+=== move legality tests ===
+
+  PASS 1. Arcanine and Arcanine-Hisui have distinct learnset data
+  PASS 2. Hisuian Arcanine alias resolves to Arcanine-Hisui
+  PASS 3. Hisuian-only move is not borrowed by plain Arcanine
+  PASS 4. Illegal known move returns legal=false with reason
+  PASS 5. Unknown move returns legal=false with reason
+  PASS 6. Mega Kangaskhan uses Kangaskhan learnset
+  PASS 7. gendered forms remain distinct
+  PASS 8. Rotom appliance forms keep form identity while accepting explicit shared Rotom learnset moves
+  PASS 9. historical virtual Eternal Flower Mega keeps app identity without Champions approval
+  PASS 10. legal move display list is species-specific for editor suggestions
+
+move legality: 10 pass, 0 fail
+
+
+RUN tests/move_secondary_effect_audit_tests.js
+
+=== Move secondary effect audit tests ===
+
+  PASS 1. electric damaging secondaries can paralyze
+  PASS 2. standard damaging secondaries apply status ailments
+  PASS 3. standard stat-drop secondaries use the correct target stat
+  PASS 4. guaranteed self secondary boosts apply to the user
+  PASS 5. complex state secondaries apply their explicit conditions
+  PASS 6. Spirit Shackle establishes a trap but successful U-turn bypasses it
+  PASS 7. Sparkling Aria cures burn after a successful damaging hit
+  PASS 8. local supported secondary table has no uncovered simple Showdown effects
+  PASS 9. local supported drain moves use generated Showdown drain rules
+
+move secondary effect audit: 9 pass, 0 fail
+
+
+RUN tests/move_support_audit_tests.js
+
+=== move support audit tests ===
+
+  PASS 1. shipped move surface has no incomplete registry gaps
+  PASS 2. key verified edge-case moves stay tagged verified
+  PASS 3. former baseline shipped moves are now verified
+  PASS 4. audit report exists and names the shipped move count
+  PASS 5. imported Showdown moves can be baseline-supported without local table rows
+
+move support audit: 5 pass, 0 fail
+
+
+RUN tests/move_verification_registry_tests.js
+
+=== move verification registry tests ===
+
+  PASS 1. Freeze-Dry keeps Water targets super effective
+  PASS 2. Giga Drain heals after dealing damage
+  PASS 3. Rock Tomb lowers target Speed after damage
+  PASS 4. Light Screen reduces special damage
+  PASS 5. Reflect reduces physical damage
+  PASS 6. verified registry exposes sources and tests for the promoted move slice
+  PASS 7. Weather Ball uses weather-driven typing in damage resolution
+  PASS 8. direct Electro Shot calc previews the SpA boost without mutating persistent boosts
+  PASS 9. Last Respects scales from the attacker side fainted count
+  PASS 10. battle execution applies Electro Shot's SpA rise before damage resolution
+  PASS 11. Terrain Pulse changes type and doubles base power for a grounded user in terrain
+  PASS 12. Rising Voltage doubles only against grounded targets in Electric Terrain
+  PASS 13. Solar Beam is halved by rain
+  PASS 14. Dragon Darts hits each opposing Pokemon once when both can be hit
+  PASS 15. Dragon Darts sends both hits into the Follow Me target
+  PASS 16. Dragon Darts retargets both hits away from a protected intended target
+  PASS 17. Meteor Beam charges on turn one before dealing damage
+  PASS 18. Solar Beam charges on turn one outside sun
+  PASS 19. Electro Shot still fires immediately in rain
+  PASS 20. simulateBattle respects opts.maxTurns
+  PASS 21. Phantom Force charges and makes the user untargetable on turn one
+  PASS 22. Phantom Force bypasses Protect with Power Herb on the hit turn
+  PASS 23. Phantom Force sleep interruption clears concealment instead of trapping the user off-field
+  PASS 24. Solar Beam full paralysis on the release turn cancels the queued attack
+  PASS 25. Electro Shot sleep interruption pauses the queued hit instead of canceling it
+  PASS 26. stored charge keeps the original target slot when the locked foe is gone
+  PASS 27. stored charge rechecks Follow Me before Protect on the release turn
+  PASS 28. stored charge respects Rage Powder immunity on the release turn
+  PASS 29. stored charge follows Ally Switch as a slot change on the release turn
+  PASS 30. U-turn switches immediately and later actions hit the replacement
+  PASS 31. U-turn does not switch if the attack is fully blocked
+  PASS 32. Volt Switch now pivots after dealing damage
+  PASS 33. Flip Turn now pivots after dealing damage
+  PASS 34. Parting Shot switches the user out after lowering offenses
+  PASS 35. Shed Tail switches out and leaves the Substitute with the replacement
+  PASS 36. Shed Tail fails when no replacement is available
+  PASS 37. Teleport switches the user out into a replacement in trainer battles
+  PASS 38. Baton Pass hands the substitute and speed boosts to the replacement
+  PASS 39. Wish heals the active user at the end of the next turn
+  PASS 40. Wish heals the switched-in replacement occupying the original slot
+  PASS 41. Swords Dance sharply raises the user Attack
+  PASS 42. Dragon Dance raises both Attack and Speed
+  PASS 43. Fake Tears harshly lowers the target Special Defense
+  PASS 44. Coaching boosts the ally Attack and Defense in doubles
+  PASS 45. Coaching fails when there is no ally to receive it
+  PASS 46. Clangorous Soul trades HP for boosts to all five combat stats
+  PASS 47. Clangorous Soul fails when the user does not have enough HP to pay the cost
+  PASS 48. Hypnosis can inflict sleep on a valid target
+  PASS 49. Spore inflicts sleep on a valid target
+  PASS 50. Leech Seed drains HP at end of turn
+  PASS 51. Perish Song sets the countdown on active battlers
+  PASS 52. Perish Song KOs battlers when the counter expires
+  PASS 53. Trick swaps items and the gained Choice Scarf changes later turn order
+  PASS 54. Heal Pulse restores half HP to a damaged ally
+  PASS 55. Heal Pulse fails on a full-HP target
+  PASS 56. Heal Bell cures active and bench ally status conditions
+  PASS 57. Aromatherapy cures active and bench ally status conditions
+  PASS 58. Jungle Healing restores ally HP and cures status
+  PASS 59. Snarl lowers target Special Attack after damage
+  PASS 60. Lunge lowers target Attack after damage
+  PASS 61. Noble Roar lowers the target Attack and Special Attack
+  PASS 62. Super Fang halves the target current HP
+  PASS 63. Pollen Puff heals a damaged ally
+  PASS 64. Psychic Noise blocks recovery for two turns
+  PASS 65. Matcha Gotcha damages, heals the user, and can burn
+  PASS 66. Dire Claw can inflict a major status effect
+  PASS 67. Air Slash can flinch the target
+  PASS 68. Dark Pulse can flinch the target
+  PASS 69. Iron Head can flinch the target
+  PASS 70. Rock Slide can flinch the target
+  PASS 71. Will-O-Wisp burns the target
+  PASS 72. Thunder Wave inflicts paralysis
+  PASS 73. Sleep Powder inflicts sleep
+  PASS 74. Helping Hand boosts an ally attack in doubles
+  PASS 75. Shore Up heals the user
+  PASS 76. Rain Dance sets rain before later damage checks use weather
+  PASS 77. Sunny Day sets sun before later damage checks use weather
+  PASS 78. Flare Blitz applies recoil after a successful hit
+  PASS 79. Wave Crash applies recoil after a successful hit
+  PASS 80. Head Smash applies heavy recoil after a successful hit
+  PASS 81. Aqua Jet lets a slower attacker move before a faster standard-priority target
+  PASS 82. Extreme Speed outranks Aqua Jet at the priority layer
+  PASS 83. Vacuum Wave carries priority through the special attacking path
+  PASS 84. Shadow Sneak carries priority through the physical attacking path
+  PASS 85. Draco Meteor harshly lowers the user Special Attack after damage
+  PASS 86. Overheat harshly lowers the user Special Attack after damage
+  PASS 87. Close Combat lowers the user defensive stats after damage
+  PASS 88. Headlong Rush lowers the user defensive stats after damage
+  PASS 89. Clanging Scales lowers the user Defense after spread damage
+  PASS 90. Showdown camelCase spread target data still hits both adjacent foes
+  PASS 91. single-target damage retargets when the intended opposing target fainted first
+  PASS 92. Knock Off gains base power against removable held items only
+  PASS 93. Knock Off removes a removable held item after a successful damaging hit
+  PASS 94. Knock Off does not boost or remove a corresponding Mega Stone before Mega activation
+  PASS 95. Sticky Hold blocks Knock Off item removal while still allowing the damage boost
+  PASS 96. Knock Off against a legal no-item target does not boost or remove anything
+  PASS 97. Dual Wingbeat executes exactly two damaging hits
+  PASS 98. Poltergeist fails against no-item targets and damages item holders
+  PASS 99. Leaf Storm drops the user Special Attack after successful damage
+  PASS 100. Stomping Tantrum doubles base power after the previous move failed
+  PASS 101. weather and true-accuracy move rules are deterministic
+  PASS 102. baseline secondary effects apply through the shared dispatcher
+  PASS 103. Hurricane confusion and Throat Chop sound lock alter future state
+  PASS 104. Light of Ruin recoil and Ice Shard priority are modeled
+  PASS 105. move failures are exported as structured effect_events
+
+move verification registry: 105 pass, 0 fail
+
+
+RUN tests/own_state_policy_tests.js
+PASS detached inputs, no live side/callback/method references and no RNG
+PASS own PP, locks, charge, Taunt, entry turn and sleep are explicit
+PASS side order and hidden live fields do not influence the pure turn adapter
+PASS both sides are snapshotted before the first choice
+PASS actual engine hidden-state mutation invariant side=false
+PASS actual engine hidden-state mutation invariant side=true
+PASS default uses conservative own/public policy; unknown or missing diagnostic module fails closed
+PASS explicit forced action is labeled and overrides only its selected actor
+8 own-state diagnostic groups passed; aggregate rejection passed
+
+RUN tests/participant_identity_tests.js
+PASS Champion omitted bring uses exactly four per side through double faint replacements
+PASS Champion legacy leads reorder registered identities and retain only four
+PASS explicit player selection also caps omitted opponent selection
+PASS duplicate/unknown short selections pad once using registered members
+PASS Champion singles defaults to three without changing doubles ownership
+PASS generic six-member fixtures remain six and report actual participants
+PASS seeded bring/identity evidence is reproducible
+PASS missing, empty, and short teams keep error/diagnostic paths usable
+PASS role-aware opening ranks only the selected roster
+PASS registered IDs keep their items when the registered roster itself is reordered
+PASS registered Mega names select the original slot on either side, not a filler
+PASS registered base form wins over an earlier Mega runtime-name alias
+
+RUN tests/perish_song_reference_tests.mjs
+Γ£ö Two-wave Perish Song resolves terminal faint order, Trick Room=false, swapped=false (266.6783ms)
+Γ£ö Two-wave Perish Song resolves terminal faint order, Trick Room=true, swapped=false (27.4642ms)
+Γ£ö Perish Song concealed Phantom Force recipient, No Guard=none, swapped=false (9.6418ms)
+Γ£ö Perish Song concealed Phantom Force recipient, No Guard=source, swapped=false (8.2427ms)
+Γ£ö Perish Song concealed Phantom Force recipient, No Guard=target, swapped=false (8.0275ms)
+Γ£ö Reusing Perish Song does not reset existing countdowns, swapped=false (15.665ms)
+Γ£ö Perish Song countdown and per-recipient immunity: Prankster/Flash Fire/, swapped=false (15.8969ms)
+Γ£ö Perish Song countdown and per-recipient immunity: Prankster/Soundproof/, swapped=false (16.978ms)
+Γ£ö Perish Song countdown and per-recipient immunity: Mold Breaker/Soundproof/, swapped=false (16.2597ms)
+Γ£ö Perish Song countdown and per-recipient immunity: Mold Breaker/Soundproof/Ability Shield, swapped=false (17.1415ms)
+Γ£ö Perish Song countdown and per-recipient immunity: Soundproof/Flash Fire/, swapped=false (17.9859ms)
+Γ£ö Two-wave Perish Song resolves terminal faint order, Trick Room=false, swapped=true (23.3586ms)
+Γ£ö Two-wave Perish Song resolves terminal faint order, Trick Room=true, swapped=true (23.0333ms)
+Γ£ö Perish Song concealed Phantom Force recipient, No Guard=none, swapped=true (8.1566ms)
+Γ£ö Perish Song concealed Phantom Force recipient, No Guard=source, swapped=true (7.7907ms)
+Γ£ö Perish Song concealed Phantom Force recipient, No Guard=target, swapped=true (8.1452ms)
+Γ£ö Reusing Perish Song does not reset existing countdowns, swapped=true (20.7648ms)
+Γ£ö Perish Song countdown and per-recipient immunity: Prankster/Flash Fire/, swapped=true (15.9421ms)
+Γ£ö Perish Song countdown and per-recipient immunity: Prankster/Soundproof/, swapped=true (17.4193ms)
+Γ£ö Perish Song countdown and per-recipient immunity: Mold Breaker/Soundproof/, swapped=true (15.9636ms)
+Γ£ö Perish Song countdown and per-recipient immunity: Mold Breaker/Soundproof/Ability Shield, swapped=true (14.0414ms)
+Γ£ö Perish Song countdown and per-recipient immunity: Soundproof/Flash Fire/, swapped=true (13.6454ms)
+Γä╣ tests 22
+Γä╣ suites 0
+Γä╣ pass 22
+Γä╣ fail 0
+Γä╣ cancelled 0
+Γä╣ skipped 0
+Γä╣ todo 0
+Γä╣ duration_ms 593.3346
+
+RUN tests/phase5_turn_log_tests.js
+
+=== Phase 5 turn log tests ===
+
+  FAIL T5a-1 turnLog is populated after simulateBattle - Complete outcome evidence required for analysis.
+  PASS T5a-1a live turn snapshots keep player/opponent side keys distinct
+  PASS T5a-1b exported turn snapshots can be rescored directly
+  PASS T5a-1c roster calculated stats include non-HP stats
+  PASS T5a-1d stable roster identity survives bench to active movement
+  PASS T5a-1e action summaries export stable actor and target identity
+  PASS T5a-2 turnLog clears on new sim run
+  PASS T5b-1 positionScore returns 0..1
+  PASS T5b-2 positionScore favors higher player HP
+  PASS T5b-2a positionScore uses actual turn order under Trick Room
+  PASS T5b-3 winProbabilityDelta length is turnLog.length - 1
+  PASS T5b-4 swing turn is flagged on known fixture
+  PASS T5c-1 Replay Log v2 renders turn rows
+  PASS T5c-1initial Replay Log uses true starting state before post-Mega pre-action state
+  PASS T5c-1a Replay Log v2 renders Turn 0 and both board sides
+  PASS T5c-1ab Replay Log v2 does not duplicate planned move lines when resolved events exist
+  PASS T5c-1ac Replay Log v2 groups spread damage and surfaces miss/failure details
+  PASS T5c-1ad Replay Log preserves status moves, resolved move order and Tailwind field tags
+  PASS T5c-1ae Replay Log preserves identical mirror-match move actions
+  PASS T5c-1aa Replay Log v2 supports singles and doubles field visibility
+  PASS T5c-1b Battle Sensei renders Turn 0 and both side boards
+  PASS T5c-1c replay snapshot surfaces field-state chips and impact summaries
+  PASS T5c-1ca replay impact deduplicates recoil represented by damage and effect evidence
+  PASS T5c-2 swing turn row is highlighted
+  PASS T5c-3 JSON download produces valid parseable file
+  PASS T5c-3identity download retains original run identity and snapshots
+  PASS T5c-3a QA coverage counts recoil occurrences once and keeps damage-row evidence separate
+  PASS T5c-4 Sparkline renders without error on 1-turn game
+  PASS T5c-4a replay HP bars hide snapshot side prefixes on mirror species
+  PASS T5c-5 move inventories do not prove an alternative was usable
+  PASS T5c-6 Replay Log does not render an unsupported better-line chip
+  PASS T5c-7 replay coaching does not diagnose execution from heuristic scores
+  PASS T5c-8 replay coaching summary does not fall back to strategy context in v1
+  PASS T5c-9 replay coaching summary supports not enough evidence
+  PASS T5c-10 replay coaching summary renderer prints the bounded output rows
+  PASS T5c-11 QA coverage counts blocked-priority families separately
+  PASS T5c-12 QA coverage counts status denial and move-lock families separately
+  PASS T5c-13 QA coverage counts status resolution pass-through families separately
+
+Phase 5 turn log: 37 pass, 1 fail
+
+
+RUN tests/pokemon_data_audit_tests.js
+
+=== Pokemon data audit tests ===
+
+  PASS 1. CSV, XLSX, and runtime generated data exist
+  PASS 2. CSV fallback exposes required sheet names and source version
+  PASS 3. required example species/forms exist separately
+  PASS 4. Form_Differences includes Arcanine vs Arcanine-Hisui
+  PASS 5. XLSX has a valid zip container signature
+  PASS 6. runtime move metadata preserves Showdown recoil and descriptions
+
+Pokemon data audit: 6 pass, 0 fail
+
+
+RUN tests/pp_drain_move_tests.mjs
+Γ£ö shared PP drain clamps at zero and records exact before/after evidence (1.6032ms)
+Γ£ö Spite fails before a slower target has used a move (8.6002ms)
+Γ£ö Protect prevents Spite from draining the protected move (1.6793ms)
+Γ£ö Spite bypasses Substitute after the target acts on the next turn (2.6399ms)
+Γä╣ tests 4
+Γä╣ suites 0
+Γä╣ pass 4
+Γä╣ fail 0
+Γä╣ cancelled 0
+Γä╣ skipped 0
+Γä╣ todo 0
+Γä╣ duration_ms 18.1822
+
+RUN tests/pp_pressure_tests.mjs
+Γ£ö moves initialize to Showdown-style maximum PP and consume one on selection (8.9802ms)
+Γ£ö one opposing Pressure target consumes one additional PP (2.4335ms)
+Γ£ö spread moves pay one additional PP for each opposing Pressure target (1.6106ms)
+Γ£ö self-targeted moves consume only one PP despite opposing Pressure (1.2612ms)
+Γ£ö a fully paralysed Pokemon does not spend PP for the denied action (72.2828ms)
+Γ£ö a flinched Pokemon does not spend PP for the denied action (3.4247ms)
+Γ£ö Throat Chop denial happens before PP consumption (1.895ms)
+Γ£ö mid-turn Taunt denial happens before PP consumption (1.2164ms)
+Γ£ö mid-turn Imprison blocks the shared move on the correct side before PP consumption (1.1285ms)
+Γ£ö a selected move with no PP falls back to Struggle (7.2783ms)
+Γ£ö dual Pressure spread PP agrees with the pinned Showdown reference (234.731ms)
+Γä╣ tests 11
+Γä╣ suites 0
+Γä╣ pass 11
+Γä╣ fail 0
+Γä╣ cancelled 0
+Γä╣ skipped 0
+Γä╣ todo 0
+Γä╣ duration_ms 340.2072
+
+RUN tests/pp_substitute_reference_tests.mjs
+Γ£ö Soundproof foe does not cancel Perish Song for the field, swapped=false (238.1019ms)
+Γ£ö Soundproof foe does not block Clangorous Soul, swapped=false (14.9842ms)
+Γ£ö Noble Roar stage/Protect boundary, protected=false, swapped=false (19.6537ms)
+Γ£ö Noble Roar stage/Protect boundary, protected=true, swapped=false (10.9505ms)
+Γ£ö Protect blocks Taunt behind Substitute, swapped=false (13.406ms)
+Γ£ö Protect blocks Encore behind Substitute, swapped=false (11.1852ms)
+Γ£ö Soundproof blocks Parting Shot through Substitute: Pressure/, swapped=false (9.9809ms)
+Γ£ö Soundproof blocks Parting Shot through Substitute: Mold Breaker/Ability Shield, swapped=false (10.8315ms)
+Γ£ö Taunt bypasses Substitute by mirrored flag, swapped=false (10.4407ms)
+Γ£ö Good as Gold blocks reflected Spite, sub=false, swapped=false (11.0998ms)
+Γ£ö Eerie Spell secondary gate: Pressure/Shield Dust/, sub=false, swapped=false (12.3967ms)
+Γ£ö Eerie Spell secondary gate: Mold Breaker/Shield Dust/, sub=false, swapped=false (11.312ms)
+Γ£ö Eerie Spell secondary gate: Mold Breaker/Shield Dust/Ability Shield, sub=false, swapped=false (10.8647ms)
+Γ£ö Eerie Spell secondary gate: Pressure/Static/Covert Cloak, sub=false, swapped=false (12.2425ms)
+Γ£ö Eerie Spell secondary gate: Mold Breaker/Static/Covert Cloak, sub=false, swapped=false (10.9457ms)
+Γ£ö Good as Gold blocks reflected Spite, sub=true, swapped=false (9.6556ms)
+Γ£ö Eerie Spell secondary gate: Pressure/Shield Dust/, sub=true, swapped=false (12.1214ms)
+Γ£ö Eerie Spell secondary gate: Mold Breaker/Shield Dust/, sub=true, swapped=false (10.3932ms)
+Γ£ö Eerie Spell secondary gate: Mold Breaker/Shield Dust/Ability Shield, sub=true, swapped=false (10.6392ms)
+Γ£ö Eerie Spell secondary gate: Pressure/Static/Covert Cloak, sub=true, swapped=false (9.1981ms)
+Γ£ö Eerie Spell secondary gate: Mold Breaker/Static/Covert Cloak, sub=true, swapped=false (9.698ms)
+Γ£ö Ability Shield preserves Good as Gold against Mold Breaker Spite, swapped=false (9.9127ms)
+Γ£ö Ability Shield preserves Magic Bounce against Mold Breaker Spite, swapped=false (9.0606ms)
+Γ£ö Sheer Force suppresses Eerie Spell PP drain, swapped=false (10.4129ms)
+Γ£ö Eerie Spell does not drain PP after a knockout, swapped=false (19.2183ms)
+Γ£ö Substitute and Soundproof negative control: Water Pulse/Static, swapped=false (11.4818ms)
+Γ£ö Substitute and Soundproof negative control: Eerie Spell/Soundproof, swapped=false (8.9775ms)
+Γ£ö Spite reference target gates: Pressure, Static, sub=true, swapped=false (9.1057ms)
+Γ£ö Spite reference target gates: Pressure, Good as Gold, sub=false, swapped=false (10.1661ms)
+Γ£ö Spite reference target gates: Pressure, Magic Bounce, sub=false, swapped=false (9.1225ms)
+Γ£ö Spite reference target gates: Prankster, Dark-type, sub=false, swapped=false (11.6151ms)
+Γ£ö Spite reference target gates: Pressure, Good as Gold, sub=true, swapped=false (12.1616ms)
+Γ£ö Spite reference target gates: Pressure, Magic Bounce, sub=true, swapped=false (9.1472ms)
+Γ£ö Spite reference target gates: Mold Breaker, Good as Gold, sub=false, swapped=false (9.9838ms)
+Γ£ö Spite reference target gates: Mold Breaker, Magic Bounce, sub=false, swapped=false (8.2869ms)
+Γ£ö Spite reference target gates: Infiltrator, Static, sub=true, swapped=false (8.4317ms)
+Γ£ö Protect prevents Spite reflection, swapped=false (9.7959ms)
+Γ£ö Eerie Spell bypasses Substitute, swapped=false (10.4871ms)
+Γ£ö Hyper Voice bypasses Substitute, swapped=false (10.0555ms)
+Γ£ö Boomburst bypasses Substitute, swapped=false (9.5061ms)
+Γ£ö Soundproof foe does not cancel Perish Song for the field, swapped=true (8.0973ms)
+Γ£ö Soundproof foe does not block Clangorous Soul, swapped=true (7.9611ms)
+Γ£ö Noble Roar stage/Protect boundary, protected=false, swapped=true (7.9545ms)
+Γ£ö Noble Roar stage/Protect boundary, protected=true, swapped=true (8.4715ms)
+Γ£ö Protect blocks Taunt behind Substitute, swapped=true (10.5059ms)
+Γ£ö Protect blocks Encore behind Substitute, swapped=true (12.7707ms)
+Γ£ö Soundproof blocks Parting Shot through Substitute: Pressure/, swapped=true (10.1558ms)
+Γ£ö Soundproof blocks Parting Shot through Substitute: Mold Breaker/Ability Shield, swapped=true (8.3735ms)
+Γ£ö Taunt bypasses Substitute by mirrored flag, swapped=true (8.4016ms)
+Γ£ö Good as Gold blocks reflected Spite, sub=false, swapped=true (8.8611ms)
+Γ£ö Eerie Spell secondary gate: Pressure/Shield Dust/, sub=false, swapped=true (10.1606ms)
+Γ£ö Eerie Spell secondary gate: Mold Breaker/Shield Dust/, sub=false, swapped=true (10.6654ms)
+Γ£ö Eerie Spell secondary gate: Mold Breaker/Shield Dust/Ability Shield, sub=false, swapped=true (9.4668ms)
+Γ£ö Eerie Spell secondary gate: Pressure/Static/Covert Cloak, sub=false, swapped=true (9.283ms)
+Γ£ö Eerie Spell secondary gate: Mold Breaker/Static/Covert Cloak, sub=false, swapped=true (8.5823ms)
+Γ£ö Good as Gold blocks reflected Spite, sub=true, swapped=true (7.857ms)
+Γ£ö Eerie Spell secondary gate: Pressure/Shield Dust/, sub=true, swapped=true (8.0591ms)
+Γ£ö Eerie Spell secondary gate: Mold Breaker/Shield Dust/, sub=true, swapped=true (8.1024ms)
+Γ£ö Eerie Spell secondary gate: Mold Breaker/Shield Dust/Ability Shield, sub=true, swapped=true (8.9437ms)
+Γ£ö Eerie Spell secondary gate: Pressure/Static/Covert Cloak, sub=true, swapped=true (9.7695ms)
+Γ£ö Eerie Spell secondary gate: Mold Breaker/Static/Covert Cloak, sub=true, swapped=true (14.183ms)
+Γ£ö Ability Shield preserves Good as Gold against Mold Breaker Spite, swapped=true (9.6179ms)
+Γ£ö Ability Shield preserves Magic Bounce against Mold Breaker Spite, swapped=true (10.6698ms)
+Γ£ö Sheer Force suppresses Eerie Spell PP drain, swapped=true (9.9532ms)
+Γ£ö Eerie Spell does not drain PP after a knockout, swapped=true (10.0396ms)
+Γ£ö Substitute and Soundproof negative control: Water Pulse/Static, swapped=true (9.1307ms)
+Γ£ö Substitute and Soundproof negative control: Eerie Spell/Soundproof, swapped=true (8.245ms)
+Γ£ö Spite reference target gates: Pressure, Static, sub=true, swapped=true (7.6995ms)
+Γ£ö Spite reference target gates: Pressure, Good as Gold, sub=false, swapped=true (7.7516ms)
+Γ£ö Spite reference target gates: Pressure, Magic Bounce, sub=false, swapped=true (7.5778ms)
+Γ£ö Spite reference target gates: Prankster, Dark-type, sub=false, swapped=true (8.1307ms)
+Γ£ö Spite reference target gates: Pressure, Good as Gold, sub=true, swapped=true (8.5163ms)
+Γ£ö Spite reference target gates: Pressure, Magic Bounce, sub=true, swapped=true (7.9526ms)
+Γ£ö Spite reference target gates: Mold Breaker, Good as Gold, sub=false, swapped=true (7.7272ms)
+Γ£ö Spite reference target gates: Mold Breaker, Magic Bounce, sub=false, swapped=true (8.2146ms)
+Γ£ö Spite reference target gates: Infiltrator, Static, sub=true, swapped=true (8.1189ms)
+Γ£ö Protect prevents Spite reflection, swapped=true (8.4669ms)
+Γ£ö Eerie Spell bypasses Substitute, swapped=true (10.3968ms)
+Γ£ö Hyper Voice bypasses Substitute, swapped=true (10.2159ms)
+Γ£ö Boomburst bypasses Substitute, swapped=true (8.6843ms)
+Γä╣ tests 80
+Γä╣ suites 0
+Γä╣ pass 80
+Γä╣ fail 0
+Γä╣ cancelled 0
+Γä╣ skipped 0
+Γä╣ todo 0
+Γä╣ duration_ms 1039.2948
+
+RUN tests/preloaded_team_legality_tests.js
+
+=== preloaded team legality tests ===
+
+  PASS 1. no preloaded Champions team has an illegal SP spread
+  PASS 2. preloaded Champions teams no longer rely on SV-spread runtime fallback
+  PASS 3. declared Champions teams with SV-shaped spreads are hard invalid
+  PASS 4. true Champions item-pool violations still remain hard errors
+  PASS 5. preloaded Champions legality tags match the validator
+
+preloaded team legality: 5 pass, 0 fail
+
+
+RUN tests/priority_selection_policy_tests.js
+6 side-swapped conservative priority decisions and execution helpers passed
+Legacy unknown and supplied policy provenance preserved
+78 execution-helper suppression assertions passed across three blockers and both sides
+
+RUN tests/priority_suppression_reference_tests.mjs
+Γ£ö Armor Tail: ordinary, direct=false, swap=false (233.3173ms)
+Γ£ö Armor Tail: ordinary, direct=false, swap=true (11.9446ms)
+Γ£ö Armor Tail: ordinary, direct=true, swap=false (9.6319ms)
+Γ£ö Armor Tail: ordinary, direct=true, swap=true (14.2929ms)
+Γ£ö Armor Tail: mold, direct=false, swap=false (9.8525ms)
+Γ£ö Armor Tail: mold, direct=false, swap=true (8.3748ms)
+Γ£ö Armor Tail: mold, direct=true, swap=false (8.4761ms)
+Γ£ö Armor Tail: mold, direct=true, swap=true (9.2922ms)
+Γ£ö Armor Tail: holder-shield, direct=false, swap=false (8.3453ms)
+Γ£ö Armor Tail: holder-shield, direct=false, swap=true (7.8937ms)
+Γ£ö Armor Tail: holder-shield, direct=true, swap=false (7.5728ms)
+Γ£ö Armor Tail: holder-shield, direct=true, swap=true (9.6912ms)
+Γ£ö Armor Tail: target-shield, direct=false, swap=false (9.2672ms)
+Γ£ö Armor Tail: target-shield, direct=false, swap=true (8.8665ms)
+Γ£ö Armor Tail: target-shield, direct=true, swap=false (8.1731ms)
+Γ£ö Armor Tail: target-shield, direct=true, swap=true (8.1243ms)
+Γ£ö Armor Tail: gas, direct=false, swap=false (8.791ms)
+Γ£ö Armor Tail: gas, direct=false, swap=true (8.1972ms)
+Γ£ö Armor Tail: gas, direct=true, swap=false (9.3914ms)
+Γ£ö Armor Tail: gas, direct=true, swap=true (8.2863ms)
+Γ£ö Armor Tail: gas-shield, direct=false, swap=false (8.0224ms)
+Γ£ö Armor Tail: gas-shield, direct=false, swap=true (8.7796ms)
+Γ£ö Armor Tail: gas-shield, direct=true, swap=false (9.0466ms)
+Γ£ö Armor Tail: gas-shield, direct=true, swap=true (8.6555ms)
+Γ£ö Armor Tail: turboblaze, direct=false, swap=false (11.0203ms)
+Γ£ö Armor Tail: turboblaze, direct=false, swap=true (8.3104ms)
+Γ£ö Armor Tail: turboblaze, direct=true, swap=false (9.6807ms)
+Γ£ö Armor Tail: turboblaze, direct=true, swap=true (8.1507ms)
+Γ£ö Armor Tail: teravolt, direct=false, swap=false (7.7397ms)
+Γ£ö Armor Tail: teravolt, direct=false, swap=true (7.3808ms)
+Γ£ö Armor Tail: teravolt, direct=true, swap=false (7.064ms)
+Γ£ö Armor Tail: teravolt, direct=true, swap=true (9.6094ms)
+Γ£ö Dazzling: ordinary, direct=false, swap=false (7.787ms)
+Γ£ö Dazzling: ordinary, direct=false, swap=true (7.9047ms)
+Γ£ö Dazzling: ordinary, direct=true, swap=false (7.7777ms)
+Γ£ö Dazzling: ordinary, direct=true, swap=true (7.7687ms)
+Γ£ö Dazzling: mold, direct=false, swap=false (8.3627ms)
+Γ£ö Dazzling: mold, direct=false, swap=true (8.5428ms)
+Γ£ö Dazzling: mold, direct=true, swap=false (8.3387ms)
+Γ£ö Dazzling: mold, direct=true, swap=true (7.6594ms)
+Γ£ö Dazzling: holder-shield, direct=false, swap=false (7.7723ms)
+Γ£ö Dazzling: holder-shield, direct=false, swap=true (9.7544ms)
+Γ£ö Dazzling: holder-shield, direct=true, swap=false (8.5688ms)
+Γ£ö Dazzling: holder-shield, direct=true, swap=true (7.7009ms)
+Γ£ö Dazzling: target-shield, direct=false, swap=false (7.6178ms)
+Γ£ö Dazzling: target-shield, direct=false, swap=true (7.8257ms)
+Γ£ö Dazzling: target-shield, direct=true, swap=false (10.3336ms)
+Γ£ö Dazzling: target-shield, direct=true, swap=true (7.536ms)
+Γ£ö Dazzling: gas, direct=false, swap=false (7.298ms)
+Γ£ö Dazzling: gas, direct=false, swap=true (8.299ms)
+Γ£ö Dazzling: gas, direct=true, swap=false (7.4259ms)
+Γ£ö Dazzling: gas, direct=true, swap=true (7.1134ms)
+Γ£ö Dazzling: gas-shield, direct=false, swap=false (7.5193ms)
+Γ£ö Dazzling: gas-shield, direct=false, swap=true (7.9969ms)
+Γ£ö Dazzling: gas-shield, direct=true, swap=false (7.0889ms)
+Γ£ö Dazzling: gas-shield, direct=true, swap=true (6.6809ms)
+Γ£ö Dazzling: turboblaze, direct=false, swap=false (6.8116ms)
+Γ£ö Dazzling: turboblaze, direct=false, swap=true (8.4221ms)
+Γ£ö Dazzling: turboblaze, direct=true, swap=false (9.0739ms)
+Γ£ö Dazzling: turboblaze, direct=true, swap=true (8.3284ms)
+Γ£ö Dazzling: teravolt, direct=false, swap=false (7.9826ms)
+Γ£ö Dazzling: teravolt, direct=false, swap=true (6.7419ms)
+Γ£ö Dazzling: teravolt, direct=true, swap=false (7.6671ms)
+Γ£ö Dazzling: teravolt, direct=true, swap=true (7.0209ms)
+Γ£ö Queenly Majesty: ordinary, direct=false, swap=false (7.6812ms)
+Γ£ö Queenly Majesty: ordinary, direct=false, swap=true (6.5584ms)
+Γ£ö Queenly Majesty: ordinary, direct=true, swap=false (6.5744ms)
+Γ£ö Queenly Majesty: ordinary, direct=true, swap=true (6.3358ms)
+Γ£ö Queenly Majesty: mold, direct=false, swap=false (6.9885ms)
+Γ£ö Queenly Majesty: mold, direct=false, swap=true (7.8399ms)
+Γ£ö Queenly Majesty: mold, direct=true, swap=false (15.1397ms)
+Γ£ö Queenly Majesty: mold, direct=true, swap=true (7.2068ms)
+Γ£ö Queenly Majesty: holder-shield, direct=false, swap=false (7.2362ms)
+Γ£ö Queenly Majesty: holder-shield, direct=false, swap=true (7.3304ms)
+Γ£ö Queenly Majesty: holder-shield, direct=true, swap=false (7.8052ms)
+Γ£ö Queenly Majesty: holder-shield, direct=true, swap=true (7.4989ms)
+Γ£ö Queenly Majesty: target-shield, direct=false, swap=false (7.0819ms)
+Γ£ö Queenly Majesty: target-shield, direct=false, swap=true (7.0002ms)
+Γ£ö Queenly Majesty: target-shield, direct=true, swap=false (6.9953ms)
+Γ£ö Queenly Majesty: target-shield, direct=true, swap=true (6.9696ms)
+Γ£ö Queenly Majesty: gas, direct=false, swap=false (7.4099ms)
+Γ£ö Queenly Majesty: gas, direct=false, swap=true (6.6413ms)
+Γ£ö Queenly Majesty: gas, direct=true, swap=false (6.5163ms)
+Γ£ö Queenly Majesty: gas, direct=true, swap=true (7.2822ms)
+Γ£ö Queenly Majesty: gas-shield, direct=false, swap=false (6.6815ms)
+Γ£ö Queenly Majesty: gas-shield, direct=false, swap=true (8.0228ms)
+Γ£ö Queenly Majesty: gas-shield, direct=true, swap=false (7.8208ms)
+Γ£ö Queenly Majesty: gas-shield, direct=true, swap=true (6.8598ms)
+Γ£ö Queenly Majesty: turboblaze, direct=false, swap=false (6.7761ms)
+Γ£ö Queenly Majesty: turboblaze, direct=false, swap=true (6.912ms)
+Γ£ö Queenly Majesty: turboblaze, direct=true, swap=false (7.4739ms)
+Γ£ö Queenly Majesty: turboblaze, direct=true, swap=true (7.4446ms)
+Γ£ö Queenly Majesty: teravolt, direct=false, swap=false (6.9915ms)
+Γ£ö Queenly Majesty: teravolt, direct=false, swap=true (6.5029ms)
+Γ£ö Queenly Majesty: teravolt, direct=true, swap=false (10.0453ms)
+Γ£ö Queenly Majesty: teravolt, direct=true, swap=true (7.0278ms)
+Γä╣ tests 96
+Γä╣ suites 0
+Γä╣ pass 96
+Γä╣ fail 0
+Γä╣ cancelled 0
+Γä╣ skipped 0
+Γä╣ todo 0
+Γä╣ duration_ms 1011.5842
+
+RUN tests/recoil_faint_turn_log_tests.js
+
+=== recoil faint turn-log tests ===
+
+  PASS 1. recoil KO marks attacker fainted before replacement snapshots
+  PASS 2. imported recoil moves use Showdown primary metadata
+  PASS 3. Showdown accuracy metadata wins over local fallback values
+  PASS 4. overkill damage logs applied HP loss and preserves calculated damage evidence
+
+recoil faint turn-log tests: 4 pass, 0 fail
+
+
+RUN tests/red_card_reference_tests.mjs
+Γ£ö Red Card player/0/normal (541.8189ms)
+Γ£ö Red Card player/0/status (142.8602ms)
+Γ£ö Red Card player/0/recoil-ko (163.9183ms)
+Γ£ö Red Card player/0/protect (120.0052ms)
+Γ£ö Red Card player/0/immune (142.7758ms)
+Γ£ö Red Card player/0/substitute (130.6625ms)
+Γ£ö Red Card player/0/holder-ko (135.7937ms)
+Γ£ö Red Card player/0/no-bench (133.1956ms)
+Γ£ö Red Card player/0/dead-bench (138.1996ms)
+Γ£ö Red Card player/0/klutz (134.6313ms)
+Γ£ö Red Card player/0/klutz-gas (136.7678ms)
+Γ£ö Red Card player/0/consumed (133.2874ms)
+Γ£ö Red Card player/0/suction (134.6193ms)
+Γ£ö Red Card player/0/guard-dog (135.3409ms)
+Γ£ö Red Card player/0/suction-gas (157.863ms)
+Γ£ö Red Card player/0/shadow-tag (116.3692ms)
+Γ£ö Red Card player/0/multi (136.473ms)
+Γ£ö Red Card player/0/spread (146.2058ms)
+Γ£ö Red Card player/0/sheer-force (174.8086ms)
+Γ£ö Red Card player/0/pivot (161.0504ms)
+Γ£ö Red Card player/0/herb-before-drag (169.7526ms)
+Γ£ö Red Card player/0/contact-ko (162.6417ms)
+Γ£ö Red Card player/0/knock-off (172.2227ms)
+Γ£ö Red Card player/1/normal (188.7194ms)
+Γ£ö Red Card player/1/status (168.5011ms)
+Γ£ö Red Card player/1/recoil-ko (173.6408ms)
+Γ£ö Red Card player/1/protect (232.9542ms)
+Γ£ö Red Card player/1/immune (163.872ms)
+Γ£ö Red Card player/1/substitute (156.8852ms)
+Γ£ö Red Card player/1/holder-ko (177.5331ms)
+Γ£ö Red Card player/1/no-bench (178.7197ms)
+Γ£ö Red Card player/1/dead-bench (170.6108ms)
+Γ£ö Red Card player/1/klutz (166.3359ms)
+Γ£ö Red Card player/1/klutz-gas (188.2941ms)
+Γ£ö Red Card player/1/consumed (169.4762ms)
+Γ£ö Red Card player/1/suction (155.9614ms)
+Γ£ö Red Card player/1/guard-dog (172.9937ms)
+Γ£ö Red Card player/1/suction-gas (160.4714ms)
+Γ£ö Red Card player/1/shadow-tag (160.5194ms)
+Γ£ö Red Card player/1/multi (212.8215ms)
+Γ£ö Red Card player/1/spread (177.7444ms)
+Γ£ö Red Card player/1/sheer-force (184.1156ms)
+Γ£ö Red Card player/1/pivot (178.707ms)
+Γ£ö Red Card player/1/herb-before-drag (168.6966ms)
+Γ£ö Red Card player/1/contact-ko (167.1602ms)
+Γ£ö Red Card player/1/knock-off (159.2829ms)
+Γ£ö Red Card opponent/0/normal (175.7236ms)
+Γ£ö Red Card opponent/0/status (155.1148ms)
+Γ£ö Red Card opponent/0/recoil-ko (175.9697ms)
+Γ£ö Red Card opponent/0/protect (180.7997ms)
+Γ£ö Red Card opponent/0/immune (173.9243ms)
+Γ£ö Red Card opponent/0/substitute (155.5746ms)
+Γ£ö Red Card opponent/0/holder-ko (183.0876ms)
+Γ£ö Red Card opponent/0/no-bench (160.6096ms)
+Γ£ö Red Card opponent/0/dead-bench (160.8424ms)
+Γ£ö Red Card opponent/0/klutz (183.8011ms)
+Γ£ö Red Card opponent/0/klutz-gas (179.1042ms)
+Γ£ö Red Card opponent/0/consumed (157.527ms)
+Γ£ö Red Card opponent/0/suction (163.1313ms)
+Γ£ö Red Card opponent/0/guard-dog (174.4539ms)
+Γ£ö Red Card opponent/0/suction-gas (170.1526ms)
+Γ£ö Red Card opponent/0/shadow-tag (182.862ms)
+Γ£ö Red Card opponent/0/multi (171.605ms)
+Γ£ö Red Card opponent/0/spread (191.2669ms)
+Γ£ö Red Card opponent/0/sheer-force (173.0932ms)
+Γ£ö Red Card opponent/0/pivot (171.8756ms)
+Γ£ö Red Card opponent/0/herb-before-drag (153.146ms)
+Γ£ö Red Card opponent/0/contact-ko (181.248ms)
+Γ£ö Red Card opponent/0/knock-off (163.6235ms)
+Γ£ö Red Card opponent/1/normal (180.7734ms)
+Γ£ö Red Card opponent/1/status (156.6451ms)
+Γ£ö Red Card opponent/1/recoil-ko (173.1606ms)
+Γ£ö Red Card opponent/1/protect (165.4427ms)
+Γ£ö Red Card opponent/1/immune (175.1341ms)
+Γ£ö Red Card opponent/1/substitute (181.1781ms)
+Γ£ö Red Card opponent/1/holder-ko (243.0522ms)
+Γ£ö Red Card opponent/1/no-bench (161.8759ms)
+Γ£ö Red Card opponent/1/dead-bench (161.4467ms)
+Γ£ö Red Card opponent/1/klutz (152.5937ms)
+Γ£ö Red Card opponent/1/klutz-gas (178.6997ms)
+Γ£ö Red Card opponent/1/consumed (166.7764ms)
+Γ£ö Red Card opponent/1/suction (163.8783ms)
+Γ£ö Red Card opponent/1/guard-dog (152.6126ms)
+Γ£ö Red Card opponent/1/suction-gas (169.9285ms)
+Γ£ö Red Card opponent/1/shadow-tag (168.6823ms)
+Γ£ö Red Card opponent/1/multi (172.7064ms)
+Γ£ö Red Card opponent/1/spread (177.3575ms)
+Γ£ö Red Card opponent/1/sheer-force (195.4729ms)
+Γ£ö Red Card opponent/1/pivot (146.4892ms)
+Γ£ö Red Card opponent/1/herb-before-drag (156.307ms)
+Γ£ö Red Card opponent/1/contact-ko (151.0669ms)
+Γ£ö Red Card opponent/1/knock-off (170.4027ms)
+Γä╣ tests 92
+Γä╣ suites 0
+Γä╣ pass 92
+Γä╣ fail 0
+Γä╣ cancelled 0
+Γä╣ skipped 0
+Γä╣ todo 0
+Γä╣ duration_ms 15636.2716
+
+RUN tests/reg_mb_roster_baseline_tests.mjs
+PASS 235 mapped roster rows match pinned Champions baseline stats/types/abilities/number; no learnset, regulation or in-game approval
+
+RUN tests/regional_variant_stats_tests.js
+
+=== regional variant stat tests ===
+
+  PASS 1. Typhlosion-Hisui matches Showdown canonical base stats and types
+  PASS 2. Ursaluna-Bloodmoon matches Showdown canonical base stats and types
+  PASS 3. Ninetales-Alola no longer falls back to placeholder stats
+  PASS 4. Corrected regional-form stats flow into derived battle stats
+  PASS 5. Arcanine-Hisui is distinct from normal Arcanine in stats and typing
+  PASS 6. Supported Hisui forms have concrete BASE_STATS instead of 80-all fallback
+  PASS 7. Mega Altaria shipped team no longer has invalid Typhlosion-Hisui SP total
+
+regional variant stat tests: 7 pass, 0 fail
+
+
+RUN tests/replay_import_service_tests.js
+
+=== replay import service tests ===
+
+  PASS 1. detects supported private import source types
+  PASS 2. converts Showdown text into private import row and event rows
+  PASS 3. converts Showdown HTML into the same private parser path
+  PASS 4. converts Champions turn-log JSON through SimEvidence without promoting it
+  PASS 5. unsupported files fail closed as needs review and do not create events
+  PASS 6. service wrapper returns built payload when no DB adapter is supplied
+  PASS 7. filename can map Showdown imports to a personal Pilot-room team without making it global truth
+  PASS 8. manual reference team dropdown can override filename matching privately
+  PASS 9. service wrapper can route through trusted replay import adapter path
+
+replay import service: 9 pass, 0 fail
+
+
+RUN tests/rest_reference_tests.mjs
+Γ£ö Rest normal player/0 (546.1215ms)
+Γ£ö Rest burn player/0 (136.1439ms)
+Γ£ö Rest fullhp player/0 (154.8442ms)
+Γ£ö Rest earlybird player/0 (166.7974ms)
+Γ£ö Rest earlybird-gas player/0 (123.9181ms)
+Γ£ö Rest earlybird-gas-shield player/0 (142.8212ms)
+Γ£ö Rest earlybird-gas-shield-consumed player/0 (142.2845ms)
+Γ£ö Rest normal player/1 (141.0504ms)
+Γ£ö Rest burn player/1 (139.5621ms)
+Γ£ö Rest fullhp player/1 (140.0168ms)
+Γ£ö Rest earlybird player/1 (141.7608ms)
+Γ£ö Rest earlybird-gas player/1 (139.9167ms)
+Γ£ö Rest earlybird-gas-shield player/1 (147.2553ms)
+Γ£ö Rest earlybird-gas-shield-consumed player/1 (143.9051ms)
+Γ£ö Rest normal opponent/0 (140.2134ms)
+Γ£ö Rest burn opponent/0 (143.4203ms)
+Γ£ö Rest fullhp opponent/0 (170.9316ms)
+Γ£ö Rest earlybird opponent/0 (152.6315ms)
+Γ£ö Rest earlybird-gas opponent/0 (184.7324ms)
+Γ£ö Rest earlybird-gas-shield opponent/0 (176.1791ms)
+Γ£ö Rest earlybird-gas-shield-consumed opponent/0 (160.9701ms)
+Γ£ö Rest normal opponent/1 (163.1453ms)
+Γ£ö Rest burn opponent/1 (141.5396ms)
+Γ£ö Rest fullhp opponent/1 (149.5381ms)
+Γ£ö Rest earlybird opponent/1 (143.6316ms)
+Γ£ö Rest earlybird-gas opponent/1 (140.9981ms)
+Γ£ö Rest earlybird-gas-shield opponent/1 (142.133ms)
+Γ£ö Rest earlybird-gas-shield-consumed opponent/1 (146.4149ms)
+Γ£ö Sleep Talk cannot reset Rest player/0 (150.643ms)
+Γ£ö Sleep Talk cannot reset Rest player/1 (181.2487ms)
+Γ£ö Sleep Talk cannot reset Rest opponent/0 (130.386ms)
+Γ£ö Sleep Talk cannot reset Rest opponent/1 (141.1024ms)
+Γ£ö Rest admission player/normal/Insomnia (137.9234ms)
+Γ£ö Rest admission player/normal/Vital Spirit (146.041ms)
+Γ£ö Rest admission player/normal/Comatose (143.4106ms)
+Γ£ö Rest admission player/gas/Insomnia (147.4582ms)
+Γ£ö Rest admission player/gas-shield/Vital Spirit (149.2299ms)
+Γ£ö Rest admission player/gas/Comatose (150.1408ms)
+Γ£ö Rest admission opponent/normal/Insomnia (149.0795ms)
+Γ£ö Rest admission opponent/normal/Vital Spirit (147.0033ms)
+Γ£ö Rest admission opponent/normal/Comatose (143.0758ms)
+Γ£ö Rest admission opponent/gas/Insomnia (141.0318ms)
+Γ£ö Rest admission opponent/gas-shield/Vital Spirit (167.018ms)
+Γ£ö Rest admission opponent/gas/Comatose (128.2647ms)
+Γ£ö Rest terrain and ally admission player/0/electric (155.9782ms)
+Γ£ö Rest terrain and ally admission player/0/misty (167.4186ms)
+Γ£ö Rest terrain and ally admission player/0/balloon (178.8759ms)
+Γ£ö Rest terrain and ally admission player/0/balloon-consumed (169.1865ms)
+Γ£ö Rest terrain and ally admission player/0/balloon-gravity (159.9229ms)
+Γ£ö Rest terrain and ally admission player/0/levitate-gravity (171.761ms)
+Γ£ö Rest terrain and ally admission player/0/ironball-flying (171.2941ms)
+Γ£ö Rest terrain and ally admission player/0/ironball-flying-klutz (174.664ms)
+Γ£ö Rest terrain and ally admission player/0/ironball-flying-consumed (144.502ms)
+Γ£ö Rest terrain and ally admission player/0/levitate (146.9683ms)
+Γ£ö Rest terrain and ally admission player/0/levitate-gas (145.0177ms)
+Γ£ö Rest terrain and ally admission player/0/levitate-gas-shield (185.0767ms)
+Γ£ö Rest terrain and ally admission player/0/balloon-klutz (123.5432ms)
+Γ£ö Rest terrain and ally admission player/0/balloon-klutz-gas (143.3954ms)
+Γ£ö Rest terrain and ally admission player/0/ally (146.6976ms)
+Γ£ö Rest terrain and ally admission player/0/ally-gas (138.1882ms)
+Γ£ö Rest terrain and ally admission player/0/ally-gas-shield (139.1373ms)
+Γ£ö Rest terrain and ally admission player/1/electric (147.4932ms)
+Γ£ö Rest terrain and ally admission player/1/misty (141.3062ms)
+Γ£ö Rest terrain and ally admission player/1/balloon (143.0032ms)
+Γ£ö Rest terrain and ally admission player/1/balloon-consumed (139.1747ms)
+Γ£ö Rest terrain and ally admission player/1/balloon-gravity (135.324ms)
+Γ£ö Rest terrain and ally admission player/1/levitate-gravity (136.4267ms)
+Γ£ö Rest terrain and ally admission player/1/ironball-flying (168.0786ms)
+Γ£ö Rest terrain and ally admission player/1/ironball-flying-klutz (121.572ms)
+Γ£ö Rest terrain and ally admission player/1/ironball-flying-consumed (150.3621ms)
+Γ£ö Rest terrain and ally admission player/1/levitate (141.0913ms)
+Γ£ö Rest terrain and ally admission player/1/levitate-gas (134.4618ms)
+Γ£ö Rest terrain and ally admission player/1/levitate-gas-shield (136.9856ms)
+Γ£ö Rest terrain and ally admission player/1/balloon-klutz (141.5982ms)
+Γ£ö Rest terrain and ally admission player/1/balloon-klutz-gas (140.8189ms)
+Γ£ö Rest terrain and ally admission player/1/ally (138.7161ms)
+Γ£ö Rest terrain and ally admission player/1/ally-gas (133.2904ms)
+Γ£ö Rest terrain and ally admission player/1/ally-gas-shield (138.1011ms)
+Γ£ö Rest terrain and ally admission opponent/0/electric (137.404ms)
+Γ£ö Rest terrain and ally admission opponent/0/misty (186.1236ms)
+Γ£ö Rest terrain and ally admission opponent/0/balloon (121.0711ms)
+Γ£ö Rest terrain and ally admission opponent/0/balloon-consumed (141.2624ms)
+Γ£ö Rest terrain and ally admission opponent/0/balloon-gravity (129.4311ms)
+Γ£ö Rest terrain and ally admission opponent/0/levitate-gravity (137.4139ms)
+Γ£ö Rest terrain and ally admission opponent/0/ironball-flying (131.8173ms)
+Γ£ö Rest terrain and ally admission opponent/0/ironball-flying-klutz (140.834ms)
+Γ£ö Rest terrain and ally admission opponent/0/ironball-flying-consumed (135.9337ms)
+Γ£ö Rest terrain and ally admission opponent/0/levitate (137.5067ms)
+Γ£ö Rest terrain and ally admission opponent/0/levitate-gas (137.4048ms)
+Γ£ö Rest terrain and ally admission opponent/0/levitate-gas-shield (135.0351ms)
+Γ£ö Rest terrain and ally admission opponent/0/balloon-klutz (134.8704ms)
+Γ£ö Rest terrain and ally admission opponent/0/balloon-klutz-gas (172.5935ms)
+Γ£ö Rest terrain and ally admission opponent/0/ally (122.8411ms)
+Γ£ö Rest terrain and ally admission opponent/0/ally-gas (141.1518ms)
+Γ£ö Rest terrain and ally admission opponent/0/ally-gas-shield (135.0353ms)
+Γ£ö Rest terrain and ally admission opponent/1/electric (141.9525ms)
+Γ£ö Rest terrain and ally admission opponent/1/misty (137.8497ms)
+Γ£ö Rest terrain and ally admission opponent/1/balloon (127.9725ms)
+Γ£ö Rest terrain and ally admission opponent/1/balloon-consumed (131.5647ms)
+Γ£ö Rest terrain and ally admission opponent/1/balloon-gravity (135.2818ms)
+Γ£ö Rest terrain and ally admission opponent/1/levitate-gravity (135.4678ms)
+Γ£ö Rest terrain and ally admission opponent/1/ironball-flying (133.7243ms)
+Γ£ö Rest terrain and ally admission opponent/1/ironball-flying-klutz (139.7191ms)
+Γ£ö Rest terrain and ally admission opponent/1/ironball-flying-consumed (179.1629ms)
+Γ£ö Rest terrain and ally admission opponent/1/levitate (121.0026ms)
+Γ£ö Rest terrain and ally admission opponent/1/levitate-gas (133.8243ms)
+Γ£ö Rest terrain and ally admission opponent/1/levitate-gas-shield (145.4163ms)
+Γ£ö Rest terrain and ally admission opponent/1/balloon-klutz (141.1318ms)
+Γ£ö Rest terrain and ally admission opponent/1/balloon-klutz-gas (130.8832ms)
+Γ£ö Rest terrain and ally admission opponent/1/ally (133.7975ms)
+Γ£ö Rest terrain and ally admission opponent/1/ally-gas (140.084ms)
+Γ£ö Rest terrain and ally admission opponent/1/ally-gas-shield (132.5409ms)
+Γ£ö Rejected Rest preserves next-action failure player (145.1054ms)
+Γ£ö Rejected Rest preserves next-action failure opponent (146.1345ms)
+Γ£ö Rest Leaf Guard player/0/sun (137.9568ms)
+Γ£ö Rest Leaf Guard player/0/clear (189.4974ms)
+Γ£ö Rest Leaf Guard player/0/sun-gas (119.6929ms)
+Γ£ö Rest Leaf Guard player/0/sun-gas-shield (137.4127ms)
+Γ£ö Rest Leaf Guard player/0/sun-gas-shield-consumed (153.9065ms)
+Γ£ö Rest Leaf Guard player/1/sun (160.5349ms)
+Γ£ö Rest Leaf Guard player/1/clear (135.153ms)
+Γ£ö Rest Leaf Guard player/1/sun-gas (137.1467ms)
+Γ£ö Rest Leaf Guard player/1/sun-gas-shield (141.428ms)
+Γ£ö Rest Leaf Guard player/1/sun-gas-shield-consumed (139.496ms)
+Γ£ö Rest Leaf Guard opponent/0/sun (142.0279ms)
+Γ£ö Rest Leaf Guard opponent/0/clear (135.8769ms)
+Γ£ö Rest Leaf Guard opponent/0/sun-gas (140.2999ms)
+Γ£ö Rest Leaf Guard opponent/0/sun-gas-shield (178.5818ms)
+Γ£ö Rest Leaf Guard opponent/0/sun-gas-shield-consumed (118.7187ms)
+Γ£ö Rest Leaf Guard opponent/1/sun (165.9504ms)
+Γ£ö Rest Leaf Guard opponent/1/clear (183.2166ms)
+Γ£ö Rest Leaf Guard opponent/1/sun-gas (191.8142ms)
+Γ£ö Rest Leaf Guard opponent/1/sun-gas-shield (162.1279ms)
+Γ£ö Rest Leaf Guard opponent/1/sun-gas-shield-consumed (168.7033ms)
+Γä╣ tests 134
+Γä╣ suites 0
+Γä╣ pass 134
+Γä╣ fail 0
+Γä╣ cancelled 0
+Γä╣ skipped 0
+Γä╣ todo 0
+Γä╣ duration_ms 20030.4192
+
+RUN tests/rocky_helmet_reference_tests.mjs
+Γ£ö contact swap=false (217.0377ms)
+Γ£ö noncontact swap=false (6.9704ms)
+Γ£ö protect swap=false (5.1652ms)
+Γ£ö substitute swap=false (4.7264ms)
+Γ£ö consumed swap=false (4.6405ms)
+Γ£ö pads swap=false (11.6277ms)
+Γ£ö pads-consumed swap=false (4.3965ms)
+Γ£ö long-reach swap=false (4.1453ms)
+Γ£ö magic-guard swap=false (3.9638ms)
+Γ£ö holder-klutz swap=false (3.6159ms)
+Γ£ö user-ko swap=false (4.3477ms)
+Γ£ö holder-ko swap=false (4.1297ms)
+Γ£ö multi-hit swap=false (4.6481ms)
+Γ£ö double-hit swap=false (3.9805ms)
+Γ£ö multi-ko swap=false (3.5623ms)
+Γ£ö skill-double-hit swap=false (4.0458ms)
+Γ£ö skill-double-kick swap=false (3.9344ms)
+Γ£ö skill-wingbeat swap=false (3.7046ms)
+Γ£ö rough-skin swap=false (3.3654ms)
+Γ£ö rough-skin-ko swap=false (3.4244ms)
+Γ£ö rough-skin-helmet-ko swap=false (3.9134ms)
+Γ£ö magic-guard-gas swap=false (3.8833ms)
+Γ£ö magic-guard-gas-shield swap=false (3.8334ms)
+Γ£ö long-reach-gas swap=false (3.6163ms)
+Γ£ö long-reach-gas-shield swap=false (3.6445ms)
+Γ£ö holder-klutz-gas swap=false (4.43ms)
+Γ£ö pads-klutz swap=false (3.4386ms)
+Γ£ö mold-breaker swap=false (4.2505ms)
+Γ£ö contact swap=true (3.9363ms)
+Γ£ö noncontact swap=true (4.2527ms)
+Γ£ö protect swap=true (3.4627ms)
+Γ£ö substitute swap=true (3.7771ms)
+Γ£ö consumed swap=true (3.3485ms)
+Γ£ö pads swap=true (3.6452ms)
+Γ£ö pads-consumed swap=true (3.1926ms)
+Γ£ö long-reach swap=true (3.2515ms)
+Γ£ö magic-guard swap=true (3.3769ms)
+Γ£ö holder-klutz swap=true (3.2569ms)
+Γ£ö user-ko swap=true (5.1032ms)
+Γ£ö holder-ko swap=true (3.1637ms)
+Γ£ö multi-hit swap=true (3.7692ms)
+Γ£ö double-hit swap=true (3.6517ms)
+Γ£ö multi-ko swap=true (3.2213ms)
+Γ£ö skill-double-hit swap=true (3.4695ms)
+Γ£ö skill-double-kick swap=true (3.3235ms)
+Γ£ö skill-wingbeat swap=true (3.9523ms)
+Γ£ö rough-skin swap=true (3.5088ms)
+Γ£ö rough-skin-ko swap=true (3.4596ms)
+Γ£ö rough-skin-helmet-ko swap=true (3.1313ms)
+Γ£ö magic-guard-gas swap=true (2.9266ms)
+Γ£ö magic-guard-gas-shield swap=true (2.7725ms)
+Γ£ö long-reach-gas swap=true (2.8749ms)
+Γ£ö long-reach-gas-shield swap=true (2.8227ms)
+Γ£ö holder-klutz-gas swap=true (2.7299ms)
+Γ£ö pads-klutz swap=true (3.0546ms)
+Γ£ö mold-breaker swap=true (3.3499ms)
+Γä╣ tests 56
+Γä╣ suites 0
+Γä╣ pass 56
+Γä╣ fail 0
+Γä╣ cancelled 0
+Γä╣ skipped 0
+Γä╣ todo 0
+Γä╣ duration_ms 438.0441
+
+RUN tests/roster_runtime_consumer_tests.mjs
+Γ£ö all official mapped keys use mirrored roster types and engine Speed stats (15.7834ms)
+Γ£ö speed nature and SP format follow the engine instead of a duplicate table (1.1183ms)
+Γ£ö supported Eternal Flower aliases resolve exactly with or without runtime bridge (131.7141ms)
+Γ£ö unknown roster facts remain unknown rather than Normal or zero (2.3301ms)
+Γ£ö species-only radar cannot infer speed advantage or matchup safety (0.346ms)
+Γ£ö Speed stat list discloses field/item exclusions and no unknown numeric rank (1.164ms)
+Γä╣ tests 6
+Γä╣ suites 0
+Γä╣ pass 6
+Γä╣ fail 0
+Γä╣ cancelled 0
+Γä╣ skipped 0
+Γä╣ todo 0
+Γä╣ duration_ms 156.2214
+
+RUN tests/rough_skin_reference_tests.mjs
+Γ£ö normal swap=false (542.8429ms)
+Γ£ö pads swap=false (131.1318ms)
+Γ£ö gas swap=false (151.5817ms)
+Γ£ö gas-shield swap=false (162.6676ms)
+Γ£ö magic-guard swap=false (121.3605ms)
+Γ£ö long-reach swap=false (137.1473ms)
+Γ£ö pads-consumed swap=false (140.3183ms)
+Γ£ö pads-klutz swap=false (140.711ms)
+Γ£ö gas-shield-consumed swap=false (138.9268ms)
+Γ£ö magic-guard-gas swap=false (141.2779ms)
+Γ£ö long-reach-gas swap=false (139.2114ms)
+Γ£ö pads-klutz-gas swap=false (139.5166ms)
+Γ£ö magic-guard-gas-actor-shield swap=false (141.3124ms)
+Γ£ö magic-guard-gas-actor-shield-consumed swap=false (141.831ms)
+Γ£ö pads-mutant swap=false (141.1586ms)
+Γ£ö normal swap=true (138.5057ms)
+Γ£ö pads swap=true (163.0831ms)
+Γ£ö gas swap=true (120.9873ms)
+Γ£ö gas-shield swap=true (141.0341ms)
+Γ£ö magic-guard swap=true (151.7543ms)
+Γ£ö long-reach swap=true (172.2306ms)
+Γ£ö pads-consumed swap=true (179.2429ms)
+Γ£ö pads-klutz swap=true (185.839ms)
+Γ£ö gas-shield-consumed swap=true (189.285ms)
+Γ£ö magic-guard-gas swap=true (187.6738ms)
+Γ£ö long-reach-gas swap=true (178.788ms)
+Γ£ö pads-klutz-gas swap=true (194.5122ms)
+Γ£ö magic-guard-gas-actor-shield swap=true (188.9098ms)
+Γ£ö magic-guard-gas-actor-shield-consumed swap=true (169.6646ms)
+Γ£ö pads-mutant swap=true (233.5242ms)
+Γä╣ tests 30
+Γä╣ suites 0
+Γä╣ pass 30
+Γä╣ fail 0
+Γä╣ cancelled 0
+Γä╣ skipped 0
+Γä╣ todo 0
+Γä╣ duration_ms 5112.3621
+
+RUN tests/screens_terrain_item_tests.js
+
+=== SECTION 1: Screens (Reflect / Light Screen / Aurora Veil) ===
+Expected: screens halve damage in singles. Aurora Veil halves both. Crits bypass.
+  PASS 1. Reflect halves incoming physical damage
+  PASS 2. Light Screen halves incoming special damage
+  PASS 3. Aurora Veil halves both physical and special damage
+  PASS 4. Critical hits bypass screens entirely
+
+=== SECTION 2: Terrain power modifiers ===
+Expected: Electric boosts Electric, Grassy boosts Grass/weakens EQ, Misty weakens Dragon.
+  PASS 5. Electric Terrain boosts Electric-type moves for grounded attackers
+  PASS 6. Grassy Terrain weakens Earthquake by 50%
+  PASS 7. Misty Terrain halves Dragon-type move damage
+
+=== SECTION 3: Terrain mechanics [implemented] ===
+These tests verify terrain status immunity and HP recovery are wired in.
+  PASS 8. [IMPLEMENTED] Misty Terrain blocks sleep infliction on grounded mons
+  PASS 9. [IMPLEMENTED] Grassy Terrain restores 1/16 max HP at end of each turn
+
+=== SECTION 4: Intimidate reduces actual combat damage ===
+Expected: Intimidate -1 Atk drop reduces physical damage by ~33%.
+  PASS 10. Intimidated mon deals less physical damage on its next move
+
+=== SECTION 5: Held items in live battle ===
+Expected: Leftovers restores HP. Choice Scarf boosts speed and locks first move.
+  PASS 11. Leftovers restores HP at end of each turn
+  PASS 12. Choice Scarf boosts effective speed by 50%
+  PASS 13. Choice Scarf locks the user into the first move it uses
+
+ΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉ
+DIAGNOSTIC RESULTS: 13 PASS  /  0 FAIL  /  13 total
+ΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉ
+
+LEGEND:
+  PASS         = mechanic is wired and correct
+  FAIL [GAP]   = mechanic not yet implemented ΓÇö needs future work
+  FAIL [BUG]   = mechanic exists but behaves incorrectly ΓÇö fix before release
+
+RUN tests/scripted_switch_reference_tests.mjs
+Γ£ö enemy player slot0 (534.0518ms)
+Γ£ö ally player slot0 (138.2023ms)
+Γ£ö spread player slot0 (149.0154ms)
+Γ£ö sleep player slot0 (144.6137ms)
+Γ£ö frozen player slot0 (163.0837ms)
+Γ£ö paralysis player slot0 (118.7806ms)
+Γ£ö roundtrip player slot0 (139.6389ms)
+Γ£ö consumed player slot0 (132.1422ms)
+Γ£ö regenerator player slot0 (137.7273ms)
+Γ£ö entry player slot0 (133.9957ms)
+Γ£ö trickroom player slot0 (137.2136ms)
+Γ£ö self player slot0 (136.2417ms)
+Γ£ö cure-sleep player slot0 (139.2205ms)
+Γ£ö cure-frozen player slot0 (135.9088ms)
+Γ£ö cure-paralysis player slot0 (134.8275ms)
+Γ£ö enemy player slot1 (143.1789ms)
+Γ£ö ally player slot1 (173.1641ms)
+Γ£ö spread player slot1 (124.7678ms)
+Γ£ö sleep player slot1 (145.4531ms)
+Γ£ö frozen player slot1 (143.818ms)
+Γ£ö paralysis player slot1 (152.7176ms)
+Γ£ö roundtrip player slot1 (144.7539ms)
+Γ£ö consumed player slot1 (145.5519ms)
+Γ£ö regenerator player slot1 (144.3758ms)
+Γ£ö entry player slot1 (140.698ms)
+Γ£ö trickroom player slot1 (143.8256ms)
+Γ£ö self player slot1 (141.6489ms)
+Γ£ö cure-sleep player slot1 (142.9668ms)
+Γ£ö cure-frozen player slot1 (183.3568ms)
+Γ£ö cure-paralysis player slot1 (124.5732ms)
+Γ£ö enemy opponent slot0 (145.8942ms)
+Γ£ö ally opponent slot0 (143.4659ms)
+Γ£ö spread opponent slot0 (149.8265ms)
+Γ£ö sleep opponent slot0 (142.5215ms)
+Γ£ö frozen opponent slot0 (146.1848ms)
+Γ£ö paralysis opponent slot0 (148.892ms)
+Γ£ö roundtrip opponent slot0 (144.8577ms)
+Γ£ö consumed opponent slot0 (145.7109ms)
+Γ£ö regenerator opponent slot0 (149.8615ms)
+Γ£ö entry opponent slot0 (143.7551ms)
+Γ£ö trickroom opponent slot0 (188.9798ms)
+Γ£ö self opponent slot0 (120.2178ms)
+Γ£ö cure-sleep opponent slot0 (148.5049ms)
+Γ£ö cure-frozen opponent slot0 (137.5988ms)
+Γ£ö cure-paralysis opponent slot0 (144.38ms)
+Γ£ö enemy opponent slot1 (138.2668ms)
+Γ£ö ally opponent slot1 (145.2164ms)
+Γ£ö spread opponent slot1 (142.7789ms)
+Γ£ö sleep opponent slot1 (146.0939ms)
+Γ£ö frozen opponent slot1 (136.7525ms)
+Γ£ö paralysis opponent slot1 (141.1494ms)
+Γ£ö roundtrip opponent slot1 (149.0432ms)
+Γ£ö consumed opponent slot1 (180.9825ms)
+Γ£ö regenerator opponent slot1 (125.7106ms)
+Γ£ö entry opponent slot1 (143.4835ms)
+Γ£ö trickroom opponent slot1 (138.8434ms)
+Γ£ö self opponent slot1 (143.284ms)
+Γ£ö cure-sleep opponent slot1 (142.9215ms)
+Γ£ö cure-frozen opponent slot1 (138.1684ms)
+Γ£ö cure-paralysis opponent slot1 (144.4334ms)
+Γ£ö admission rejects unsupported or conflicting scripts without mutating input (144.9721ms)
+Γ£ö delayed switch rejects unsupported earlier moves and injected hazard state (139.1787ms)
+Γ£ö remaining script rejection boundaries and aggregate exclusion (858.1412ms)
+Γä╣ tests 63
+Γä╣ suites 0
+Γä╣ pass 63
+Γä╣ fail 0
+Γä╣ cancelled 0
+Γä╣ skipped 0
+Γä╣ todo 0
+Γä╣ duration_ms 10177.7128
+
+RUN tests/seismic_toss_tests.mjs
+Γ£ö Seismic Toss ordinary, attacker on player (236.2287ms)
+Γ£ö Seismic Toss ordinary, attacker on opponent (11.7251ms)
+Γ£ö Seismic Toss ghost, attacker on player (10.2175ms)
+Γ£ö Seismic Toss ghost, attacker on opponent (14.9305ms)
+Γ£ö Seismic Toss protect, attacker on player (9.3593ms)
+Γ£ö Seismic Toss protect, attacker on opponent (8.4311ms)
+Γ£ö Seismic Toss unseen-fist, attacker on player (8.1911ms)
+Γ£ö Seismic Toss unseen-fist, attacker on opponent (8.8366ms)
+Γ£ö Seismic Toss parental-bond, attacker on player (9.0797ms)
+Γ£ö Seismic Toss parental-bond, attacker on opponent (8.649ms)
+Γ£ö level-based preview ignores ordinary damage modifiers and consumes no damage/crit RNG (1.8308ms)
+Γ£ö Ghost, Tera Ghost, Scrappy and type changes use the immunity boundary (0.2363ms)
+Γ£ö applied damage respects hp-cap, attacker on player (2.2568ms)
+Γ£ö applied damage respects hp-cap, attacker on opponent (2.3021ms)
+Γ£ö applied damage respects focus-sash, attacker on player (1.4041ms)
+Γ£ö applied damage respects focus-sash, attacker on opponent (1.3948ms)
+Γ£ö applied damage respects sturdy, attacker on player (1.3842ms)
+Γ£ö applied damage respects sturdy, attacker on opponent (1.2742ms)
+Γ£ö applied damage respects substitute, attacker on player (1.333ms)
+Γ£ö applied damage respects substitute, attacker on opponent (1.2843ms)
+Γä╣ tests 20
+Γä╣ suites 0
+Γä╣ pass 20
+Γä╣ fail 0
+Γä╣ cancelled 0
+Γä╣ skipped 0
+Γä╣ todo 0
+Γä╣ duration_ms 344.708
+
+RUN tests/showdown_complete_game_tests.mjs
+Γ£ö complete-game-fixed-damage-replacements completes in the pinned reference with forced replacements (233.139ms)
+Γ£ö complete-game-fixed-damage-replacements agrees with the local engine for declared deterministic state (40.4544ms)
+Γ£ö a max-turn tiebreak is explicitly non-terminal (2.2483ms)
+Γ£ö complete-game comparison rejects a non-terminal local result (20.3424ms)
+Γä╣ tests 4
+Γä╣ suites 0
+Γä╣ pass 4
+Γä╣ fail 0
+Γä╣ cancelled 0
+Γä╣ skipped 0
+Γä╣ todo 0
+Γä╣ duration_ms 299.5148
+
+RUN tests/showdown_damage_oracle_tests.js
+
+=== Showdown damage oracle tests ===
+
+  PASS 1. neutral special damage range matches Showdown exactly
+  PASS 2. sand special-defense interaction matches Showdown exactly
+  PASS 3. electric terrain damage range matches Showdown exactly
+  PASS 4. helping hand boost matches Showdown exactly
+  PASS 5. physical stab damage range matches Showdown exactly
+  PASS 6. burn penalty is applied at the same damage stage as Showdown
+  PASS 7. target Tera typing matches Showdown defensive typing
+  PASS 8. same-type attacker Tera upgrades STAB the same way as Showdown
+  PASS 9. off-type attacker Tera keeps original-type STAB like Showdown
+  PASS 10. Freeze-Dry matches Showdown Water effectiveness exactly
+  PASS 11. off-type Tera drops Adaptability back to Showdown's original-type STAB rules
+  PASS 12. Facade status power boost matches Showdown exactly
+  PASS 13. Guts physical boost matches Showdown exactly
+  PASS 14. Weather Ball in rain matches Showdown exactly
+  PASS 15. Weather Ball in sun matches Showdown exactly
+  PASS 16. Electro Shot in rain matches Showdown exactly
+  PASS 17. Terrain Pulse in electric terrain matches Showdown exactly
+  PASS 18. Rising Voltage against a grounded target matches Showdown exactly
+  PASS 19. Solar Beam under rain matches Showdown exactly
+  PASS 20. Tough Claws contact boost matches Showdown exactly
+  PASS 21. Pixilate Normal-to-Fairy conversion matches Showdown exactly
+  PASS 22. Solar Power in sun matches Showdown exactly
+  PASS 23. Supreme Overlord with three fainted allies matches Showdown exactly
+  PASS 24. Defender Cloud Nine suppresses rain Weather Ball like Showdown
+  PASS 25. defender Unaware ignores attacker offensive stat boosts exactly like Showdown
+  PASS 26. attacker Unaware ignores defender defensive stat boosts exactly like Showdown
+  PASS 27. Mega Launcher pulse boost matches Showdown exactly
+  PASS 28. Strong Jaw bite boost matches Showdown exactly
+  PASS 29. Blaze low-HP Fire boost matches Showdown exactly
+  PASS 30. Charcoal stacks with Blaze, sun, STAB, and super-effective Fire damage like Showdown
+  PASS 31. Overgrow low-HP Grass boost matches Showdown exactly
+  PASS 32. Iron Fist punch boost matches Showdown exactly
+  PASS 33. Technician low-BP boost matches Showdown exactly
+  PASS 34. Huge Power Attack boost matches Showdown exactly
+  PASS 35. Pure Power Attack boost matches Showdown exactly
+  PASS 36. Sand Force sand boost matches Showdown exactly
+  PASS 37. Thick Fat Fire reduction matches Showdown exactly
+  PASS 38. Filter super-effective reduction matches Showdown exactly
+  PASS 39. Tinted Lens resisted-hit boost matches Showdown exactly
+  PASS 40. Earth Eater Ground immunity matches Showdown zero damage
+  PASS 41. Levitate Ground immunity matches Showdown zero damage
+  PASS 42. Sheer Force damage boost matches Showdown exactly
+  PASS 43. Fairy Aura damage boost matches Showdown exactly
+  PASS 44. Scrappy Normal damage into Ghost matches Showdown exactly
+  PASS 45. Infiltrator bypasses Light Screen damage reduction like Showdown
+  PASS 46. Mold Breaker bypasses Levitate immunity like Showdown
+  PASS 47. Tera Blast before Tera remains Normal and special like Showdown
+  PASS 48. Tera Blast uses active Tera type and special category like Showdown
+  PASS 49. Tera Blast uses active Tera type and physical category like Showdown
+  PASS 50. Tera Blast category can flip from stat boosts like Showdown
+  PASS 51. DB-style tera_type feeds Tera Blast type and damage evidence
+  PASS 52. Active Tera Blast ignores Pixilate Normal-conversion boost like Showdown
+  PASS 53. Low Kick heavy-target base power matches Showdown exactly
+  PASS 54. Low Kick mid-weight base power matches Showdown exactly
+  PASS 55. former baseline direct and spread damage ranges match Showdown
+  PASS 56. baseline special-case damage rules match Showdown
+
+showdown damage oracle: 56 pass, 0 fail
+
+
+RUN tests/showdown_reference_tests.mjs
+PASS exact package pin and all declared doubles formats exist
+PASS SP translation preserves values, order and caller input
+PASS unknown species/moves, ambiguous stats and old EV units fail closed
+PASS synthetic scope cannot be mistaken for a rated-format probe
+PASS probe intake preserves unsupported input instead of inventing a legality rejection
+PASS completed reference rejection remains distinct, including mixed unsupported intake
+PASS reference executes real Protect events and keeps a bounded probe out of game totals
+PASS invalid scripted moves and ambiguous targets reject instead of falling back to a bot
+PASS reference seed repeats state and protocol excluding wall-clock messages
+PASS a deliberately invalid Incineroar U-turn set is rejected by the pinned validator
+PASS comparison rejects mirror-name ambiguity and incomplete bring-four mappings
+PASS missing, duplicate and incomplete roster evidence cannot pass
+PASS accepted stat-point aliases produce identical local and reference inputs
+PASS unsupported initial HP, status and other battle state reject explicitly
+PASS exact action order does not claim parity for independent random speed ties
+PASS the comparator catches injected HP and stat-stage corruption
+PASS spread probe actually checks damaged opponents and an unharmed flying ally
+PASS Eerie Spell and Spite PP totals agree with the pinned reference
+PASS comparison retains both logs and never converts disagreement into agreement
+Showdown reference: 19/19 passed
+
+RUN tests/shuca_lifecycle_tests.js
+PASS super-effective Ground hit is halved and consumes once
+PASS neutral Ground does not consume
+PASS non-Ground attack does not consume
+PASS Flying immunity does not consume
+PASS Protect does not consume
+PASS Substitute does not consume
+PASS Infiltrator bypass allows consumption
+PASS Klutz disables the berry
+PASS opposing Unnerve blocks eating
+PASS mid-battle Soak removes weakness before Ground damage
+PASS spread attack checks each holder independently
+PASS damage previews remain pure and use current typing
+PASS multi-hit Ground consumes on first eligible hit only
+PASS Ground resistance retains berry
+PASS Levitate immunity retains berry
+PASS consumption activates Unburden through shared item lifecycle
+PASS Substitute breaks before later multi-hit activates berry once
+PASS consumption stays with holder through switch out and return
+
+RUN tests/soak_lifecycle_tests.js
+PASS actual Soak replaces both types and records the state
+PASS Protect blocks Soak
+PASS Substitute blocks Soak
+PASS Infiltrator bypasses Substitute
+PASS Magic Bounce redirects the type change to its source
+PASS Good as Gold blocks the type change
+PASS Water Absorb blocks Soak
+PASS Dry Skin blocks Soak
+PASS Storm Drain blocks Soak
+PASS successful switch restores original types
+PASS failed pivot retains temporary type
+PASS locked species cannot be soaked
+PASS Magic Bounce still works behind Substitute
+PASS dual Water loses its second type
+PASS Mold Breaker bypasses Water Absorb
+PASS pure Water fails without a type-change event
+PASS Silvally type lock does not depend on its ability
+PASS Tera type is locked
+PASS removing Flying changes grounding but preserves HP/status/item
+PASS Levitate still prevents grounding after Soak
+PASS Water Absorb heals on Soak
+PASS Dry Skin heals on Soak
+PASS Storm Drain grants a special Attack stage
+PASS doubles Storm Drain redirects Soak away from selected target
+PASS allied Magic Bounce can reflect Soak
+PASS following Electric attack uses replaced Water typing
+PASS Prankster Soak reflects off Dark Magic Bounce
+PASS reflected Soak honors Follow Me on the new recipient side
+PASS Storm Drain respects Trick Room action ordering
+PASS Water Absorb on Dark behind Substitute precedes Prankster rejection
+PASS nonabsorbing Dark target still rejects Prankster Soak
+Soak lifecycle: 0 failure(s)
+
+RUN tests/species_ability_legality_tests.js
+species Ability legality: 8 pass, 0 fail
+
+RUN tests/stance_change_tests.js
+
+=== stance change tests ===
+
+  PASS 1. Aegislash starts in Shield Forme stats
+  PASS 2. imported Aegislash-Blade hydrates Blade Forme stats under the canonical name
+  PASS 3. setStanceForm swaps to Blade Forme and preserves HP
+  PASS 4. setStanceForm swaps back to Shield Forme and preserves HP
+  PASS 5. using an attacking move in battle logs the Blade Forme shift
+  PASS 6. engine resets Aegislash to Shield Forme on switch-in
+  PASS 7. engine wires King's Shield to Shield Forme before resolution
+
+stance change: 7 pass, 0 fail
+
+
+RUN tests/status_tests.js
+
+Poison:
+  PASS 1. Poison residual = floor(maxHp/8), min 1
+  PASS 2. Poison type immune via canInflictStatus
+  PASS 3. Steel type immune via canInflictStatus
+  PASS 4. Already-statused returns false
+
+Toxic:
+  PASS 5. Toxic inflict via move sets counter=1 is handled in spec (counter set on move path)
+  PASS 6. Tick 1 dmg = floor(maxHp*1/16)
+  PASS 7. Tick 3 dmg = floor(maxHp*3/16)
+  PASS 8. Cap at N=15
+  PASS 9. Poison type immune to toxic
+  PASS 10. Steel type immune to toxic
+  PASS 11. Normal target can be toxic-d
+
+Freeze:
+  PASS 12. Ice type immune
+  PASS 13. Sun blocks freeze
+  PASS 14. Magma Armor blocks
+  PASS 15. Non-ice without sun can be frozen
+  PASS 16. Guaranteed thaw at turn 3 (logic check)
+
+Weather / thaw:
+  PASS 17. Snow weather has no chip (no code path applies chip on snow)
+  PASS 18. No hail residual chip block in engine (Hail absent from Champions)
+
+Paralysis:
+  PASS 19. 12.5% full-para rate within 95% CI over 5000 trials
+  PASS 20. Electric type immune
+
+Sleep:
+  PASS 21. Sleep Powder path resets sleepTurns (via constructor=0)
+  PASS 22. Turn-3 guaranteed wake logic
+  PASS 23. Turn-2 early wake uses 33%
+
+Regression:
+  PASS 24. canInflictStatus returns false on non-alive
+  PASS 25. canInflictStatus returns false on null
+  PASS 26. Water Veil blocks burn
+  PASS 27. Constructor new fields exist on every mon
+
+Misty Terrain:
+  PASS 28. canInflictStatus returns false under Misty Terrain for grounded mon
+  PASS 29. canInflictStatus allows status on flying/ungrounded mon under Misty Terrain
+  PASS 30. canInflictStatus returns false for sleep under Electric Terrain for grounded mon
+
+RESULT: 30/30 PASS
+
+RUN tests/struggle_boundary_reference_tests.mjs
+Γ£ö Struggle boundary false/normal (535.9256ms)
+Γ£ö Struggle boundary false/burn (132.5982ms)
+Γ£ö Struggle boundary false/atk-plus2 (140.9647ms)
+Γ£ö Struggle boundary false/technician (156.6994ms)
+Γ£ö Struggle boundary false/hugepower (121.8033ms)
+Γ£ö Struggle boundary false/pixilate (135.2956ms)
+Γ£ö Struggle boundary false/normalize (138.8427ms)
+Γ£ö Struggle boundary false/substitute (141.8226ms)
+Γ£ö Struggle boundary false/roughskin-ko (139.647ms)
+Γ£ö Struggle boundary false/disguise (137.2984ms)
+Γ£ö Struggle boundary false/taunt (139.5328ms)
+Γ£ö Struggle boundary false/one-usable (143.0707ms)
+Γ£ö Struggle boundary false/imprison (143.5899ms)
+Γ£ö Struggle boundary false/spiky-shield (141.6706ms)
+Γ£ö Struggle boundary false/baneful-bunker (140.9239ms)
+Γ£ö Struggle boundary false/kings-shield (141.2335ms)
+Γ£ö Struggle boundary false/obstruct (160.6144ms)
+Γ£ö Struggle boundary false/gas-technician (120.1504ms)
+Γ£ö Struggle boundary false/unseenfist-protect (176.4418ms)
+Γ£ö Struggle boundary false/spiky-pads (184.1946ms)
+Γ£ö Struggle boundary false/spiky-magicguard (186.8812ms)
+Γ£ö Struggle boundary false/spiky-longreach (165.4951ms)
+Γ£ö Struggle boundary false/gas-shield (183.1891ms)
+Γ£ö Struggle boundary false/gas-consumed-shield (185.493ms)
+Γ£ö Struggle boundary false/unseen-gas (186.9701ms)
+Γ£ö Struggle boundary false/unseen-gas-shield (194.5361ms)
+Γ£ö Struggle boundary false/disguise-mold (196.7496ms)
+Γ£ö Struggle boundary false/disguise-mold-shield (190.4615ms)
+Γ£ö Struggle boundary false/disguise-gas (190.8198ms)
+Γ£ö Struggle boundary true/normal (230.3373ms)
+Γ£ö Struggle boundary true/burn (166.7868ms)
+Γ£ö Struggle boundary true/atk-plus2 (190.0554ms)
+Γ£ö Struggle boundary true/technician (160.9954ms)
+Γ£ö Struggle boundary true/hugepower (186.5018ms)
+Γ£ö Struggle boundary true/pixilate (191.5138ms)
+Γ£ö Struggle boundary true/normalize (180.8743ms)
+Γ£ö Struggle boundary true/substitute (179.8553ms)
+Γ£ö Struggle boundary true/roughskin-ko (186.4993ms)
+Γ£ö Struggle boundary true/disguise (184.8069ms)
+Γ£ö Struggle boundary true/taunt (182.4652ms)
+Γ£ö Struggle boundary true/one-usable (172.9147ms)
+Γ£ö Struggle boundary true/imprison (220.7963ms)
+Γ£ö Struggle boundary true/spiky-shield (151.4309ms)
+Γ£ö Struggle boundary true/baneful-bunker (197.2072ms)
+Γ£ö Struggle boundary true/kings-shield (174.1624ms)
+Γ£ö Struggle boundary true/obstruct (175.0503ms)
+Γ£ö Struggle boundary true/gas-technician (174.7149ms)
+Γ£ö Struggle boundary true/unseenfist-protect (188.8329ms)
+Γ£ö Struggle boundary true/spiky-pads (186.3355ms)
+Γ£ö Struggle boundary true/spiky-magicguard (172.0303ms)
+Γ£ö Struggle boundary true/spiky-longreach (192.7341ms)
+Γ£ö Struggle boundary true/gas-shield (145.2778ms)
+Γ£ö Struggle boundary true/gas-consumed-shield (174.7903ms)
+Γ£ö Struggle boundary true/unseen-gas (206.9718ms)
+Γ£ö Struggle boundary true/unseen-gas-shield (173.4104ms)
+Γ£ö Struggle boundary true/disguise-mold (177.7321ms)
+Γ£ö Struggle boundary true/disguise-mold-shield (170.6798ms)
+Γ£ö Struggle boundary true/disguise-gas (193.6766ms)
+Γ£ö Disguise cross-move lifecycle false/Struggle (172.894ms)
+Γ£ö Disguise cross-move lifecycle false/Bite (142.3407ms)
+Γ£ö Disguise cross-move lifecycle true/Struggle (135.43ms)
+Γ£ö Disguise cross-move lifecycle true/Bite (153.929ms)
+Γ£ö Struggle target draws cover eligible slots and exclude fainted targets (164.3714ms)
+Γ£ö Struggle actual target player/0/0 (168.891ms)
+Γ£ö Struggle actual target player/0/0.999 (145.4355ms)
+Γ£ö Struggle actual target player/1/0 (206.527ms)
+Γ£ö Struggle actual target player/1/0.999 (154.7875ms)
+Γ£ö Struggle actual target opponent/0/0 (174.9865ms)
+Γ£ö Struggle actual target opponent/0/0.999 (188.283ms)
+Γ£ö Struggle actual target opponent/1/0 (183.8468ms)
+Γ£ö Struggle actual target opponent/1/0.999 (169.3531ms)
+Γ£ö Disguise nonhit false/immune (197.7148ms)
+Γ£ö Disguise nonhit false/miss (167.3266ms)
+Γ£ö Disguise nonhit false/protect (188.3638ms)
+Γ£ö Disguise nonhit false/substitute (140.388ms)
+Γ£ö Disguise nonhit true/immune (139.361ms)
+Γ£ö Disguise nonhit true/miss (139.1337ms)
+Γ£ö Disguise nonhit true/protect (179.0495ms)
+Γ£ö Disguise nonhit true/substitute (123.2728ms)
+Γä╣ tests 79
+Γä╣ suites 0
+Γä╣ pass 79
+Γä╣ fail 0
+Γä╣ cancelled 0
+Γä╣ skipped 0
+Γä╣ todo 0
+Γä╣ duration_ms 13688.0626
+
+RUN tests/struggle_reference_tests.mjs
+Γ£ö Struggle false/0/0/normal (525.4528ms)
+Γ£ö Struggle false/0/0/ghost (131.4817ms)
+Γ£ö Struggle false/0/0/recoil-ko (145.8229ms)
+Γ£ö Struggle false/0/0/protect (158.6761ms)
+Γ£ö Struggle false/0/0/magicguard (121.3994ms)
+Γ£ö Struggle false/0/0/rockhead (135.4405ms)
+Γ£ö Struggle false/0/1/normal (137.1619ms)
+Γ£ö Struggle false/0/1/ghost (137.9042ms)
+Γ£ö Struggle false/0/1/recoil-ko (139.4833ms)
+Γ£ö Struggle false/0/1/protect (137.4496ms)
+Γ£ö Struggle false/0/1/magicguard (145.0938ms)
+Γ£ö Struggle false/0/1/rockhead (137.76ms)
+Γ£ö Struggle false/0/2/normal (139.2336ms)
+Γ£ö Struggle false/0/2/ghost (138.3447ms)
+Γ£ö Struggle false/0/2/recoil-ko (136.1621ms)
+Γ£ö Struggle false/0/2/protect (142.808ms)
+Γ£ö Struggle false/0/2/magicguard (153.2742ms)
+Γ£ö Struggle false/0/2/rockhead (118.0446ms)
+Γ£ö Struggle false/0/3/normal (139.8012ms)
+Γ£ö Struggle false/0/3/ghost (150.0067ms)
+Γ£ö Struggle false/0/3/recoil-ko (149.3776ms)
+Γ£ö Struggle false/0/3/protect (139.8786ms)
+Γ£ö Struggle false/0/3/magicguard (148.2291ms)
+Γ£ö Struggle false/0/3/rockhead (140.3938ms)
+Γ£ö Struggle false/1/0/normal (142.3104ms)
+Γ£ö Struggle false/1/0/ghost (143.5295ms)
+Γ£ö Struggle false/1/0/recoil-ko (140.2391ms)
+Γ£ö Struggle false/1/0/protect (144.2973ms)
+Γ£ö Struggle false/1/0/magicguard (146.0272ms)
+Γ£ö Struggle false/1/0/rockhead (161.1293ms)
+Γ£ö Struggle false/1/1/normal (121.8944ms)
+Γ£ö Struggle false/1/1/ghost (142.0689ms)
+Γ£ö Struggle false/1/1/recoil-ko (140.0663ms)
+Γ£ö Struggle false/1/1/protect (146.6764ms)
+Γ£ö Struggle false/1/1/magicguard (140.6959ms)
+Γ£ö Struggle false/1/1/rockhead (143.3291ms)
+Γ£ö Struggle false/1/2/normal (147.846ms)
+Γ£ö Struggle false/1/2/ghost (183.2471ms)
+Γ£ö Struggle false/1/2/recoil-ko (188.2306ms)
+Γ£ö Struggle false/1/2/protect (176.2179ms)
+Γ£ö Struggle false/1/2/magicguard (175.805ms)
+Γ£ö Struggle false/1/2/rockhead (218.1212ms)
+Γ£ö Struggle false/1/3/normal (159.0228ms)
+Γ£ö Struggle false/1/3/ghost (182.5232ms)
+Γ£ö Struggle false/1/3/recoil-ko (169.519ms)
+Γ£ö Struggle false/1/3/protect (176.2098ms)
+Γ£ö Struggle false/1/3/magicguard (158.5848ms)
+Γ£ö Struggle false/1/3/rockhead (139.7829ms)
+Γ£ö Struggle true/0/0/normal (141.3135ms)
+Γ£ö Struggle true/0/0/ghost (139.9383ms)
+Γ£ö Struggle true/0/0/recoil-ko (143.7576ms)
+Γ£ö Struggle true/0/0/protect (140.1851ms)
+Γ£ö Struggle true/0/0/magicguard (182.9442ms)
+Γ£ö Struggle true/0/0/rockhead (127.9966ms)
+Γ£ö Struggle true/0/1/normal (144.3734ms)
+Γ£ö Struggle true/0/1/ghost (136.917ms)
+Γ£ö Struggle true/0/1/recoil-ko (144.1578ms)
+Γ£ö Struggle true/0/1/protect (136.6115ms)
+Γ£ö Struggle true/0/1/magicguard (141.1058ms)
+Γ£ö Struggle true/0/1/rockhead (141.0717ms)
+Γ£ö Struggle true/0/2/normal (138.8223ms)
+Γ£ö Struggle true/0/2/ghost (145.0219ms)
+Γ£ö Struggle true/0/2/recoil-ko (141.0371ms)
+Γ£ö Struggle true/0/2/protect (136.884ms)
+Γ£ö Struggle true/0/2/magicguard (178.6168ms)
+Γ£ö Struggle true/0/2/rockhead (123.8552ms)
+Γ£ö Struggle true/0/3/normal (134.8093ms)
+Γ£ö Struggle true/0/3/ghost (138.3373ms)
+Γ£ö Struggle true/0/3/recoil-ko (147.0745ms)
+Γ£ö Struggle true/0/3/protect (137.7079ms)
+Γ£ö Struggle true/0/3/magicguard (143.6054ms)
+Γ£ö Struggle true/0/3/rockhead (139.5486ms)
+Γ£ö Struggle true/1/0/normal (137.7248ms)
+Γ£ö Struggle true/1/0/ghost (135.2581ms)
+Γ£ö Struggle true/1/0/recoil-ko (131.4125ms)
+Γ£ö Struggle true/1/0/protect (141.0791ms)
+Γ£ö Struggle true/1/0/magicguard (171.7048ms)
+Γ£ö Struggle true/1/0/rockhead (125.2681ms)
+Γ£ö Struggle true/1/1/normal (136.005ms)
+Γ£ö Struggle true/1/1/ghost (137.9809ms)
+Γ£ö Struggle true/1/1/recoil-ko (143.2109ms)
+Γ£ö Struggle true/1/1/protect (138.1325ms)
+Γ£ö Struggle true/1/1/magicguard (137.9988ms)
+Γ£ö Struggle true/1/1/rockhead (150.3775ms)
+Γ£ö Struggle true/1/2/normal (137.7802ms)
+Γ£ö Struggle true/1/2/ghost (133.9004ms)
+Γ£ö Struggle true/1/2/recoil-ko (134.2644ms)
+Γ£ö Struggle true/1/2/protect (133.7189ms)
+Γ£ö Struggle true/1/2/magicguard (169.0464ms)
+Γ£ö Struggle true/1/2/rockhead (114.6336ms)
+Γ£ö Struggle true/1/3/normal (141.8081ms)
+Γ£ö Struggle true/1/3/ghost (136.2255ms)
+Γ£ö Struggle true/1/3/recoil-ko (137.6455ms)
+Γ£ö Struggle true/1/3/protect (139.6963ms)
+Γ£ö Struggle true/1/3/magicguard (136.285ms)
+Γ£ö Struggle true/1/3/rockhead (139.3746ms)
+Γä╣ tests 96
+Γä╣ suites 0
+Γä╣ pass 96
+Γä╣ fail 0
+Γä╣ cancelled 0
+Γä╣ skipped 0
+Γä╣ todo 0
+Γä╣ duration_ms 14313.337
+
+RUN tests/switch_out_hooks_reference_tests.mjs
+Γ£ö Natural Cure normal burn swapfalse (529.5263ms)
+Γ£ö Natural Cure normal poison swapfalse (132.2033ms)
+Γ£ö Natural Cure normal toxic swapfalse (146.3425ms)
+Γ£ö Natural Cure normal  swapfalse (164.4276ms)
+Γ£ö Natural Cure gas burn swapfalse (122.777ms)
+Γ£ö Natural Cure gas poison swapfalse (141.0781ms)
+Γ£ö Natural Cure gas toxic swapfalse (140.2632ms)
+Γ£ö Natural Cure gas  swapfalse (139.6098ms)
+Γ£ö Natural Cure gas-shield burn swapfalse (136.6874ms)
+Γ£ö Natural Cure gas-shield poison swapfalse (138.4165ms)
+Γ£ö Natural Cure gas-shield toxic swapfalse (136.7762ms)
+Γ£ö Natural Cure gas-shield  swapfalse (138.6161ms)
+Γ£ö Natural Cure gas-shield-consumed burn swapfalse (140.3848ms)
+Γ£ö Natural Cure gas-shield-consumed poison swapfalse (137.7429ms)
+Γ£ö Natural Cure gas-shield-consumed toxic swapfalse (142.2396ms)
+Γ£ö Natural Cure gas-shield-consumed  swapfalse (137.8971ms)
+Γ£ö Regenerator normal burn swapfalse (157.4397ms)
+Γ£ö Regenerator normal poison swapfalse (117.7526ms)
+Γ£ö Regenerator normal toxic swapfalse (143.7944ms)
+Γ£ö Regenerator normal  swapfalse (145.2272ms)
+Γ£ö Regenerator gas burn swapfalse (142.9906ms)
+Γ£ö Regenerator gas poison swapfalse (136.1363ms)
+Γ£ö Regenerator gas toxic swapfalse (151.4285ms)
+Γ£ö Regenerator gas  swapfalse (146.3774ms)
+Γ£ö Regenerator gas-shield burn swapfalse (146.4208ms)
+Γ£ö Regenerator gas-shield poison swapfalse (142.1792ms)
+Γ£ö Regenerator gas-shield toxic swapfalse (144.5434ms)
+Γ£ö Regenerator gas-shield  swapfalse (143.0345ms)
+Γ£ö Regenerator gas-shield-consumed burn swapfalse (144.9377ms)
+Γ£ö Regenerator gas-shield-consumed poison swapfalse (183.4123ms)
+Γ£ö Regenerator gas-shield-consumed toxic swapfalse (126.9268ms)
+Γ£ö Regenerator gas-shield-consumed  swapfalse (145.4772ms)
+Γ£ö Natural Cure normal burn swaptrue (142.0455ms)
+Γ£ö Natural Cure normal poison swaptrue (148.2266ms)
+Γ£ö Natural Cure normal toxic swaptrue (150.5078ms)
+Γ£ö Natural Cure normal  swaptrue (180.0605ms)
+Γ£ö Natural Cure gas burn swaptrue (143.0887ms)
+Γ£ö Natural Cure gas poison swaptrue (145.8747ms)
+Γ£ö Natural Cure gas toxic swaptrue (141.8164ms)
+Γ£ö Natural Cure gas  swaptrue (140.3451ms)
+Γ£ö Natural Cure gas-shield burn swaptrue (143.6849ms)
+Γ£ö Natural Cure gas-shield poison swaptrue (189.9551ms)
+Γ£ö Natural Cure gas-shield toxic swaptrue (126.8694ms)
+Γ£ö Natural Cure gas-shield  swaptrue (146.788ms)
+Γ£ö Natural Cure gas-shield-consumed burn swaptrue (145.3014ms)
+Γ£ö Natural Cure gas-shield-consumed poison swaptrue (147.1989ms)
+Γ£ö Natural Cure gas-shield-consumed toxic swaptrue (141.4856ms)
+Γ£ö Natural Cure gas-shield-consumed  swaptrue (144.461ms)
+Γ£ö Regenerator normal burn swaptrue (167.6711ms)
+Γ£ö Regenerator normal poison swaptrue (153.2366ms)
+Γ£ö Regenerator normal toxic swaptrue (164.0705ms)
+Γ£ö Regenerator normal  swaptrue (183.5474ms)
+Γ£ö Regenerator gas burn swaptrue (182.863ms)
+Γ£ö Regenerator gas poison swaptrue (229.245ms)
+Γ£ö Regenerator gas toxic swaptrue (159.2377ms)
+Γ£ö Regenerator gas  swaptrue (185.7191ms)
+Γ£ö Regenerator gas-shield burn swaptrue (172.0343ms)
+Γ£ö Regenerator gas-shield poison swaptrue (181.2404ms)
+Γ£ö Regenerator gas-shield toxic swaptrue (153.6643ms)
+Γ£ö Regenerator gas-shield  swaptrue (170.1672ms)
+Γ£ö Regenerator gas-shield-consumed burn swaptrue (182.9193ms)
+Γ£ö Regenerator gas-shield-consumed poison swaptrue (185.744ms)
+Γ£ö Regenerator gas-shield-consumed toxic swaptrue (176.5932ms)
+Γ£ö Regenerator gas-shield-consumed  swaptrue (176.6621ms)
+Γä╣ tests 64
+Γä╣ suites 0
+Γä╣ pass 64
+Γä╣ fail 0
+Γä╣ cancelled 0
+Γä╣ skipped 0
+Γä╣ todo 0
+Γä╣ duration_ms 10154.7033
+
+RUN tests/t139_audit_mirror_hard_fail_tests.js
+
+=== audit mirror hard-fail tests ===
+
+  PASS 1. audit collects mirror hard-failure rows
+  PASS 2. audit hard-fails outside 15-85% mirror win-rate bounds
+  PASS 3. audit still preserves softer >25% off-50% flag text
+  PASS 4. audit matrix records mirrorFlags for postmortem analysis
+  PASS 5. audit fails when configured teams are missing or illegal
+  PASS 6. audit fails on simulation errors or incomplete planned matrix
+
+audit mirror hard-fail: 6 pass, 0 fail
+
+
+RUN tests/t152_tera_activation_tests.js
+
+=== Tera activation tests ===
+
+  PASS 1. explicit non-Champion parity context can trigger Tera activation log
+  PASS 2. Champion format ignores legacy Tera fields and does not Terastallize
+
+tera activation: 2 pass, 0 fail
+
+
+RUN tests/t155_speed_control_secondary_tests.js
+
+=== Speed control secondary tests ===
+
+  PASS 1. Icy Wind drops Speed on all hit foes
+  PASS 2. Muddy Water can drop accuracy with the expected ratio
+
+RUN tests/t192_regmb_source_audit_tests.js
+
+=== Reg M-B source audit tests ===
+
+  PASS 1. Reg M-B source facts are documented with source URLs
+  PASS 2. source-reviewed Reg M-B new Mega list is complete
+  PASS 3. Reg M-B audit is not silently promoted to runtime legality
+  PASS 4. Overview tells contributors the Reg M-B blocker clearly
+  PASS 5. unreviewed Reg M-B stones are not added by assumption
+  PASS 5b. Reg M-B item candidates are editor-review rows, not legal promotion rows
+  PASS 5c. Reg M-B ability candidates include all Champion new-ability rows
+  PASS 6. structured conversion ledger keeps Reg M-B rows blocked until fully sourced
+  PASS 7. conversion docs are linked and name required promotion fields
+  PASS 7b. Reg M-B addition rows are explicit but review-only
+  PASS 8. ruleset lifecycle blocks source-review teams from trusted legality
+  PASS 9. legacy historical catalog compatibility does not approve regulation evidence
+  PASS 10. analysis payload carries ruleset poisoning guard metadata
+  PASS 10b. visual allowlist rows are review-only with confidence labels
+  PASS 10c. Reg M-B promotion gate blocks runtime, learning, and trusted coaching
+  PASS 10d. Reg M-B Mega stone rows are source-verified but not runtime-promoted
+  PASS 10e. Reg M-B Mega implementation rows source stats, types, and abilities without promotion
+  PASS 10f. Reg M-B learnset policy inherits base species but stays review-only
+  PASS 11. Reg M-B review coverage sections remain blocked from runtime learning
+  PASS 12. Teams UI exposes ruleset sections, tags, and badges
+
+Reg M-B source audit: 20 pass, 0 fail
+
+RUN tests/t9j11_tests.js
+
+Persistence (T9j.11 Refs #73):
+  PASS 1. saveCustomTeamsToStorage + loadCustomTeamsFromStorage round-trip
+  PASS 2. schema version mismatch is rejected (no silent mis-import)
+
+Filter chips:
+  PASS 3. teamMatchesFilter: all / preloaded / custom
+  PASS 4. teamMatchesFilter: mega subset is keys starting with mega_
+  PASS 5. stale tournament moves remain reviewable but not runnable
+  PASS 6. countTeamsByFilter: custom count tracks inserts/deletes
+
+Export:
+  PASS 7. exportAllCustomAsJson produces the T9f schema
+  PASS 8. exportAllCustomAsJson excludes preloaded teams
+  PASS 9. exportAllCustomAsShowdown uses `=== [name] ===` markers and round-trips
+
+Import:
+  PASS 10. importFromJsonText round-trips a prior JSON export (parity)
+  PASS 11. parseMultiTeamShowdown: markers form
+  PASS 12. parseMultiTeamShowdown: double-blank-line separator fallback
+  PASS 13. parseMultiTeamShowdown: Windows CRLF line endings are normalized
+
+Collision handling:
+  PASS 14. duplicate team name gets `(2)` suffix on bulk import
+  PASS 15. two bulk imports in the same ms yield distinct keys (no clobber)
+  PASS 15b. imported teams block known illegal Showdown-backed moves
+  PASS 15b2. imported teams block real abilities assigned to the wrong species
+  PASS 15c. imported teams with hard rule errors are rejected
+  PASS 15c2. skipped bulk import returns actionable validation errors
+  PASS 15d. Champion SP import parses SPs and validates without EV/IV gate errors
+  PASS 15e. raw Showdown EV/IV imports are rejected for Champion mode
+  PASS 15e1. Reg M-B review candidate items can be saved for custom testing as warnings
+  PASS 15e2. over-cap Champion SP imports are rejected even when labeled SPs
+  PASS 15f. Champion text export uses SPs, not EVs
+  PASS 15f2. user-facing Showdown export uses EVs and re-imports when within Champion caps
+  PASS 15f3. single uploaded Showdown txt with six Pokemon parses as one team with moves
+  PASS 15f4. custom Charizardite Y imports stay editable but warn about active Mega Y Drought
+  PASS 15f5. Mega runtime normalize converts Charizardite Y set to active Mega Y Drought
+  PASS 15g. illegal existing custom teams are hidden from visible sim selectors
+  PASS 15g2. visible preloaded sim teams are approved Champion legal rows only
+  PASS 15h. stale DB teams cannot replace approved legal bundled teams
+  PASS 15i. stale DB teams with illegal Champion SPs cannot replace approved bundled teams
+  PASS 15j. malformed DB spread payloads cannot replace approved bundled teams
+  PASS 15k. DB rows require exact version identity before replacing bundled teams
+
+Misc:
+  PASS 16. parseMultiTeamShowdown: empty input yields []
+  Round-trip member checks: 408
+  PASS 17. catalog paste round trips preserve member sets in both supported spread labels
+  PASS 18. gender and nicknames preserve parenthetical species forms
+  PASS 19. sample button supplies a six-member importable practice team
+  PASS 20. unavailable sample preserves user input and does not claim success
+  PASS 21. changing selected team invalidates the editor draft before save or remove
+  PASS 22. same-key roster replacement invalidates stale editor values
+
+============================================================
+T9j.11 Results: 41 pass, 0 fail
+
+RUN tests/t9j13_tests.js
+  PASS 1. Empty spread fits Champions
+  PASS 2. All-zero spread fits Champions
+  PASS 3. Max SP spread 32/32/2 fits
+  PASS 4. SP 66 total three-way fits
+  PASS 5. SP 67 total fails (overflow by 1)
+  PASS 6. SP 33 per-stat fails
+  PASS 7. Classic 252/252/4 SV spread fails
+  PASS 8. SV 508-total spread fails
+  PASS 9. Edge: exactly 66 total, 32 max fits
+  PASS 10. Edge: 32 max but 68 total fails
+  PASS 11. Champions + valid SP spread -> statFormat=champions
+  PASS 12. Champions + SV spread -> falls back to sv + formatMismatch flag set
+  PASS 13. SV + SV spread -> statFormat=sv, no mismatch
+  PASS 14. No declared format + SP spread -> auto-detect champions
+  PASS 15. No declared format + SV spread -> auto-detect sv
+  PASS 16. Champions + empty spread -> stays champions (trivially valid)
+  PASS 17. Champions + exactly-at-cap spread stays champions
+  PASS 18. Champions + one-over-cap spread falls back to sv
+  PASS 19. Cofagrigus HP with corrected SP spread is 165 (60 base is wrong - actually 58)
+  PASS 20. Cofagrigus with pre-fix SV spread (252) now falls back to SV ΓÇö HP <= 200
+  PASS 21. Froslass HP with pre-fix SV spread (4) falls back to SV ΓÇö HP <= 150
+  PASS 22. Legit Champions Charizard stays at Champions HP formula
+  PASS 23. Legit SV Kingambit uses SV formula unchanged
+  PASS 24. Champions Cresselia SP 32 HP gives exact base+32+75
+  PASS 25. Dusclops SP-scale SP=32 HP gives base+32+75
+  PASS 26. Dragonite SP-scale SP=2 HP gives base+2+75
+  PASS 27. Sinistcha SP-scale SP=32 HP gives base+32+75
+  PASS 28. cofagrigus_tr total SP per mon <= 66
+  PASS 29. cofagrigus_tr per-stat SP <= 32
+  PASS 30. aurora_veil_froslass total SP per mon <= 66
+  PASS 31. aurora_veil_froslass per-stat SP <= 32
+  PASS 32. cofagrigus_tr still declared champions format
+  PASS 33. aurora_veil_froslass still declared champions format
+  PASS 34. cofagrigus_tr.members.length === 6
+  PASS 35. aurora_veil_froslass.members.length === 6
+  PASS 36. Other tournament teams unchanged ΓÇö mega_altaria still SP-scale
+  PASS 37. player now declares Champions format
+  PASS 38. player starter team now stays on Champions SP scale
+  PASS 39. cofagrigus_tr has SP=32 invested on HP for Cofagrigus + Sinistcha (TR bulk)
+  PASS 40. aurora_veil_froslass Mega has SP 32 SpA + 32 Spe
+  PASS 41. aurora_veil_froslass Dragonite has SP 32 Atk + 32 Spe
+  PASS 42. Building Pokemon from cofagrigus_tr does NOT set formatMismatch
+  PASS 43. Building Pokemon from aurora_veil_froslass does NOT set formatMismatch
+  PASS 44. cofagrigus_tr vs player no longer 100% WR (was 100% before fix)
+  PASS 45. cofagrigus_tr vs mega_altaria no longer 100% WR
+  PASS 46. aurora_veil_froslass vs player no longer 100% WR
+  PASS 47. aurora_veil_froslass vs mega_altaria no longer 100% WR
+
+============================================================
+T9j.13 Results: 47 pass, 0 fail
+
+RUN tests/t9j17_tests.js
+
+=== SECTION A: Parental Bond ===
+  PASS A1. _skipSecond Set excludes Fake Out, Dragon Darts, Bone Rush, U-turn, Flip Turn
+  PASS A2. Parental Bond bpMult on second strike is 0.25 (not 0.5)
+  PASS A3. field._ctx.bpMult resets to 1 after second strike fires
+  PASS A4. Parental Bond eligibility requires single-target damaging move
+  PASS A5. Champions nerf citation present in engine.js Parental Bond block
+
+=== SECTION B: Fake Out hard-gate ===
+  PASS B1. New Pokemon initializes _fakeDone = false
+  PASS B2. selectMove gate present for Fake Out (skips selection past turn 1)
+  PASS B3. Injected late Fake Out fails on both sides without invented Struggle
+  PASS B4. Late Fake Out failure has no damage or recoil events
+  PASS B5. Protect-blocked first Fake Out still consumes its timing window
+  PASS B6. _fakeDone resets on switch-in via replaceOnField
+  PASS B7. _fakeDone NOT reset per turn (only switch-in)
+  PASS B8. Fake Out user picks a non-Fake-Out move on its second turn out
+  PASS B9. Fake Out cannot be saved for a later turn in the same field stay
+
+=== SECTION C: Piercing Drill 25% miss ===
+  PASS C1. data.js Piercing Drill effect tag is miss-25pct
+  PASS C2. data.js no longer carries the contact-bypass-protect tag
+  PASS C3. ABILITIES Piercing Drill entry has no onProtectResolve hook
+  PASS C4. executeMove gates a 25% miss when attacker.ability === Piercing Drill
+  PASS C5. Piercing Drill miss happens AFTER the standard ACC_MAP check
+  PASS C6. Mega Excadrill with Piercing Drill misses some battles in 50-run seed sweep
+
+=== SECTION D: Expanding Force x Psychic Terrain ===
+  PASS D1. data.js MOVE_TARGETS Expanding Force = normal (default single-target)
+  PASS D2. engine.js executeMove flips targetCat to all-adjacent-foes under Psychic Terrain
+  PASS D3. Expanding Force BP boost is 1.5x via field._ctx.bpMult
+  PASS D4. Ungrounded (Flying or Levitate) attacker keeps default single-target
+  PASS D5. bpMult is restored after Expanding Force resolves
+  PASS D6. Psychic-Terrain helper citations present
+  PASS D7. Pokemon constructor sets flying=true for Flying-types
+
+=== SECTION E: Terrain Seeds ===
+  PASS E1. TERRAIN_SEEDS map covers all 4 seeds with correct stat targets
+  PASS E2. Grassy Seed +1 Def under Grassy Terrain (grounded user)
+  PASS E3. Electric Seed +1 Def under Electric Terrain
+  PASS E4. Psychic Seed +1 SpD under Psychic Terrain
+  PASS E5. Misty Seed +1 SpD under Misty Terrain
+  PASS E6. Seed does NOT trigger when terrain mismatches
+  PASS E7. Ungrounded user (Flying-type) receives seed boost
+  PASS E7b. All four seeds activate for Levitate holders
+  PASS E8. Seed consume flag prevents double-trigger
+
+=== SECTION F: Status weakening audit ===
+  PASS F1. Burn weakens physical damage without mutating raw attack stat
+  PASS F2. Burn chip damage is 1/16 maxHp end of turn (verified in source)
+  PASS F3. Paralysis halves speed via getStat
+  PASS F4. Paralysis 12.5% full-skip is wired in turn order
+  PASS F5. Toxic ramp cap is N=15
+  PASS F6. Toxic counter resets on switch-in
+  PASS F7. Frozen thaw is 25% per move attempt with 3-turn cap
+  PASS F8. canInflictStatus blocks burn on Fire-types and frozen on Ice-types
+
+=== SECTION G: Frostbite ===
+  PASS G1. Frostbite weakens special damage without mutating raw special attack stat
+  PASS G2. Frostbite chip damage line present in end-of-turn loop
+  PASS G3. canInflictStatus blocks frostbite on Ice-types and Magma Armor
+  PASS G4. canInflictStatus blocks frostbite under sun
+
+============================================================
+T9j.17 Results: 48 pass, 0 fail
+
+RUN tests/t9j9_tests.js
+
+Move Category (#3):
+  PASS 1. MOVE_CATEGORY defines Close Combat as physical
+  PASS 2. MOVE_CATEGORY defines Thunderbolt as special
+  PASS 3. MOVE_CATEGORY defines Protect as status
+  PASS 4. MOVE_CATEGORY: Foul Play is physical (uses atk stat)
+  PASS 5. MOVE_CATEGORY: Iron Head / Knock Off / U-turn are physical
+  PASS 6. MOVE_CATEGORY: Moonblast / Focus Blast / Hydro Pump are special
+  PASS 7. MOVE_CATEGORY: Trick Room / Will-O-Wisp are status
+  PASS 8. engine uses MOVE_CATEGORY: physical move reads atk boost
+  PASS 9. engine uses MOVE_CATEGORY: special move reads spa boost not atk
+  PASS 10. Category coverage: every MOVE_TYPES entry has a MOVE_CATEGORY row (or fallback warns)
+
+Base Power (#24):
+  PASS 11. MOVE_BP: Close Combat 120
+  PASS 12. MOVE_BP: Thunderbolt 90
+  PASS 13. MOVE_BP: Status moves are 0 (Protect, Will-O-Wisp, Trick Room)
+  PASS 14. MOVE_BP: Iron Head 80, Knock Off 65, U-turn 70
+  PASS 15. MOVE_BP: Champions additions present (Night Daze, Spirit Shackle, First Impression)
+  PASS 16. engine reads MOVE_BP: Flamethrower (90) > Ember (40 fallback)
+  PASS 17. BP fallback is 60 for unknown moves (no crash, warn once)
+
+Nature Verify (#4):
+  PASS 18. Adamant raises Atk, lowers SpA
+  PASS 19. Modest raises SpA, lowers Atk (NOT the other way round ΓÇö Issue #4 bug fix)
+  PASS 20. Jolly raises Spe, lowers SpA
+  PASS 21. Timid raises Spe, lowers Atk
+  PASS 22. Bold raises Def, lowers Atk
+  PASS 23. Neutral natures (Serious, Hardy) produce identical stats
+  PASS 24. Nature applies to correct stat: Adamant does NOT boost Def (regression for #4)
+
+24 pass, 0 fail, 24 total
+
+RUN tests/tailwind_dynamic_order_tests.mjs
+Γ£ö Tailwind reorders remaining equal-priority actions with setter on player (237.4285ms)
+Γ£ö Tailwind reorders remaining equal-priority actions with setter on opponent (12.6706ms)
+Γ£ö Tailwind does not move a normal-priority action ahead of an unexecuted higher-priority action (11.691ms)
+Γ£ö Tailwind re-evaluates remaining speed in the inverted Trick Room order (19.6855ms)
+Γ£ö pending priority is recalculated when Gale Wings loses full-HP eligibility (11.1287ms)
+Γä╣ tests 5
+Γä╣ suites 0
+Γä╣ pass 5
+Γä╣ fail 0
+Γä╣ cancelled 0
+Γä╣ skipped 0
+Γä╣ todo 0
+Γä╣ duration_ms 296.1005
+
+RUN tests/terrain_seed_lifecycle_tests.js
+PASS Electric Surge dispatches to both active sides, not bench or fainted
+PASS Grassy Surge dispatches to both active sides, not bench or fainted
+PASS Misty Surge dispatches to both active sides, not bench or fainted
+PASS Psychic Surge dispatches to both active sides, not bench or fainted
+PASS Seed Sower dispatches to an already-active opposing holder
+PASS capped Defense still consumes without falsely claiming a raise
+PASS Klutz retains the seed
+PASS zero HP before faint finalization retains seed while survivor activates
+PASS Simple uses the shared stage rules
+PASS Contrary uses the shared stage rules
+PASS later holder entry activates against existing terrain
+PASS actual doubles entry covers holder before/after setter and opposite sides
+PASS actual lethal hit sets Seed Sower terrain without consuming victim seed
+13 passed, 0 failed; synthetic entry/dispatch scope, not complete battle parity
+
+RUN tests/test_method_mutation_tests.mjs
+Γ£ö independent t9j17_tests.js kills fakeout_extra_attack with healthy control (2358.3268ms)
+Γ£ö independent default_policy_boundary_tests.js kills fakeout_choice_bypass with healthy control (500.1448ms)
+Γ£ö independent default_policy_boundary_tests.js kills fakeout_encore_usable with healthy control (504.2955ms)
+Γ£ö independent struggle_boundary_reference_tests.mjs kills struggle_imprison with healthy control (1339.6576ms)
+Γ£ö independent struggle_boundary_reference_tests.mjs kills struggle_shield with healthy control (1303.7345ms)
+Γ£ö independent struggle_boundary_reference_tests.mjs kills struggle_disguise with healthy control (1645.45ms)
+Γ£ö independent struggle_boundary_reference_tests.mjs kills struggle_target with healthy control (1216.8853ms)
+Γ£ö independent struggle_boundary_reference_tests.mjs kills struggle_suppression with healthy control (1289.315ms)
+Γ£ö independent encore_reference_tests.mjs kills encore_queue with healthy control (2272.8304ms)
+Γ£ö independent encore_reference_tests.mjs kills encore_herb with healthy control (2268.9205ms)
+Γ£ö independent encore_reference_tests.mjs kills encore_duration with healthy control (2279.5351ms)
+Γ£ö independent encore_reference_tests.mjs kills encore_priority with healthy control (2278.8328ms)
+Γ£ö independent discrete_damage_reference_tests.mjs kills roll_fifteen with healthy control (1586.6603ms)
+Γ£ö independent discrete_damage_reference_tests.mjs kills roll_continuous with healthy control (1581.2904ms)
+Γ£ö independent encore_reference_tests.mjs kills encore_unburden with healthy control (2294.9614ms)
+Γ£ö independent rest_reference_tests.mjs kills rest_leaf_guard with healthy control (1628.2058ms)
+Γ£ö independent rest_reference_tests.mjs kills rest_admission with healthy control (1629.539ms)
+Γ£ö independent struggle_reference_tests.mjs kills struggle_fixed with healthy control (1634.5783ms)
+Γ£ö independent struggle_reference_tests.mjs kills struggle_floor with healthy control (1631.7697ms)
+Γ£ö independent struggle_reference_tests.mjs kills struggle_normal with healthy control (1629.9225ms)
+Γ£ö independent showdown_damage_oracle_tests.js kills half_damage with healthy control (925.7451ms)
+Γ£ö independent amnesia_reference_tests.mjs kills tantrum_150_percent with healthy control (10303.8411ms)
+Γ£ö independent default_policy_boundary_tests.js kills hidden_read with healthy control (504.1011ms)
+Γ£ö independent scripted_switch_reference_tests.mjs kills switch_noop with healthy control (21957.9047ms)
+Γ£ö 16 actual doubles results reject flipped one-sided-elimination winners (635.3973ms)
+Γ£ö exact fixed-damage oracle rejects one-HP corruption; randomized probes disclose exclusions (893.0449ms)
+Γä╣ tests 26
+Γä╣ suites 0
+Γä╣ pass 26
+Γä╣ fail 0
+Γä╣ cancelled 0
+Γä╣ skipped 0
+Γä╣ todo 0
+Γä╣ duration_ms 68100.9138
+
+RUN tests/turn_log_export_validator_tests.js
+
+=== turn log export validator tests ===
+
+  PASS 1. stable identity export passes strict validation across replacement
+  PASS 2. legacy volatile-key exports warn without hard-failing
+  PASS 3. strict mode rejects legacy exports missing stable identity fields
+  PASS 4. item drift on a stable Pokemon is a hard error
+  PASS 5. observed action order respects priority before speed
+  PASS 6. observed action order allows exact same-Speed ties
+  PASS 6b. Gale Wings uses Showdown move type and exact full HP
+  PASS 6c. Pollen Puff cannot target its user after its ally faints
+  PASS 7. observed action order rejects non-tied same-priority reversals
+  PASS 7b. observed action order accepts a mid-turn Tailwind reorder supported by the post snapshot
+  PASS 7bb. a post-turn Speed snapshot cannot retroactively justify an impossible Agility order
+  PASS 7c. observed action order reconstructs Tailwind under Trick Room before end-turn expiry
+  PASS 7d. observed action order reconstructs a mid-turn paralysis Speed drop
+  PASS 7e. Thunder Wave paralysis changes order within Trick Room (accuracy seed 2775382101)
+  PASS 7f. mid-turn Sitrus Unburden requires prior consumption and stable identity
+  PASS 8. speed_order_details provide SP-aware order evidence over legacy name order
+  PASS 9. malformed speed_order_details fail validation
+  PASS 10. terminal no-valid-target skips pass when the target side is empty after earlier KO
+  PASS 11. no-valid-target skips fail when a target side still has a live active Pokemon
+  PASS 11b. no-valid-target skips ignore post-turn replacements sent after the skip
+  PASS 11c. structured event identity resolves mirror-name no-valid-target actions
+  PASS 11d. observed action order uses side and stable keys for mirror species
+  PASS 11e. identical mirror actions remain visible as an explicit identity ambiguity
+  PASS 11f. stable actor identity resolves identical mirror action text
+  PASS 11g. structured action identity ignores repeated damage-detail text
+  PASS 12. calculated damage_events pass validation with modifier evidence
+  PASS 13. malformed calculated damage_events fail validation
+  PASS 14. effect_events pass validation and malformed effect math fails
+  PASS 15. qa_coverage_summary passes when totals match turnLog evidence
+  PASS 16. qa_coverage_summary fails when totals drift from turnLog evidence
+  PASS 17. top-level turns fails when it drifts from turnLog evidence
+  PASS 18. champions-turn-log-v2 requires top-level turns
+
+turn log export validator: 32 pass, 0 fail
+
+
+RUN tests/turn_order_priority_tests.js
+
+=== turn order / priority tests ===
+
+  PASS 1. move priority acts before speed
+  PASS 2. normal turn order uses boosted Speed from getEffSpeed
+  PASS 3. Trick Room makes the slower same-priority Pokemon act first
+  PASS 4. Speed boosts, Tailwind, and Choice Scarf feed turn order
+  PASS 5. exact Speed ties are grouped before seeded shuffle
+  PASS 6. speed snapshots expose SP-aware effective Speed stacks and exact ties
+  PASS 7. Champions SP and nature differences break same-species Speed ties before RNG
+  PASS 8. stat-stage snapshots expose later damage and turn-order state
+  PASS 9. live battle order respects Trick Room after it is set
+  PASS 10. turn logs expose structured stacked damage evidence
+  PASS 11. Gap-A: higher priority brackets always act first regardless of attacker speed
+  PASS 12. Gap-A: negative priority tiers lose to zero and positive regardless of speed
+  PASS 13. Gap-B: 4-action doubles sort resolves priority bracket then speed descending
+  PASS 14. Gap-C: Trick Room reverses speed within a bracket but does not override bracket order
+  PASS 15. Gap-D: getPriority returns correct bracket values for shipped priority moves
+
+turn order / priority: 15 pass, 0 fail
+
+
+RUN tests/type_multiplier_audit_tests.js
+
+=== type multiplier audit tests ===
+
+  PASS 1. generator and report exist
+  PASS 2. report documents source, scope, and fixed chart examples
+  PASS 3. report includes base and declared Tera defender buckets
+  PASS 4. report names dynamic move-type cases and promoted Tera Blast behavior
+  PASS 5. generator keeps the engine-equivalent type chart examples visible
+
+type multiplier audit: 5 pass, 0 fail
+
+
+RUN tests/utility_information_policy_tests.js
+168 utility inventory-invariance and lock checks passed; conservative default provenance preserved.
+
+RUN tests/white_herb_reference_tests.mjs
+Γ£ö White Herb player/0/intimidate (528.5722ms)
+Γ£ö White Herb player/0/no-drop (142.8297ms)
+Γ£ö White Herb player/0/contrary (167.9896ms)
+Γ£ö White Herb player/0/defiant (125.1448ms)
+Γ£ö White Herb player/0/klutz (133.399ms)
+Γ£ö White Herb player/0/klutz-gas (139.5596ms)
+Γ£ö White Herb player/0/consumed (138.3179ms)
+Γ£ö White Herb player/0/multi (135.1286ms)
+Γ£ö White Herb player/0/positive (133.5108ms)
+Γ£ö White Herb player/0/cap (133.1361ms)
+Γ£ö White Herb player/0/fainted (137.0139ms)
+Γ£ö White Herb player/0/close-combat (137.3367ms)
+Γ£ö White Herb player/1/intimidate (136.1367ms)
+Γ£ö White Herb player/1/no-drop (133.0358ms)
+Γ£ö White Herb player/1/contrary (158.3152ms)
+Γ£ö White Herb player/1/defiant (112.5005ms)
+Γ£ö White Herb player/1/klutz (129.2164ms)
+Γ£ö White Herb player/1/klutz-gas (143.9545ms)
+Γ£ö White Herb player/1/consumed (161.64ms)
+Γ£ö White Herb player/1/multi (162.1304ms)
+Γ£ö White Herb player/1/positive (138.3063ms)
+Γ£ö White Herb player/1/cap (142.0193ms)
+Γ£ö White Herb player/1/fainted (139.1645ms)
+Γ£ö White Herb player/1/close-combat (136.1592ms)
+Γ£ö White Herb opponent/0/intimidate (138.5825ms)
+Γ£ö White Herb opponent/0/no-drop (139.2309ms)
+Γ£ö White Herb opponent/0/contrary (185.7935ms)
+Γ£ö White Herb opponent/0/defiant (122.5735ms)
+Γ£ö White Herb opponent/0/klutz (142.3416ms)
+Γ£ö White Herb opponent/0/klutz-gas (139.8485ms)
+Γ£ö White Herb opponent/0/consumed (143.3936ms)
+Γ£ö White Herb opponent/0/multi (138.9973ms)
+Γ£ö White Herb opponent/0/positive (140.0706ms)
+Γ£ö White Herb opponent/0/cap (139.2018ms)
+Γ£ö White Herb opponent/0/fainted (142.402ms)
+Γ£ö White Herb opponent/0/close-combat (143.3616ms)
+Γ£ö White Herb opponent/1/intimidate (141.8645ms)
+Γ£ö White Herb opponent/1/no-drop (140.41ms)
+Γ£ö White Herb opponent/1/contrary (141.3792ms)
+Γ£ö White Herb opponent/1/defiant (191.5202ms)
+Γ£ö White Herb opponent/1/klutz (135.1608ms)
+Γ£ö White Herb opponent/1/klutz-gas (174.7224ms)
+Γ£ö White Herb opponent/1/consumed (179.2781ms)
+Γ£ö White Herb opponent/1/multi (183.8449ms)
+Γ£ö White Herb opponent/1/positive (139.2352ms)
+Γ£ö White Herb opponent/1/cap (165.9482ms)
+Γ£ö White Herb opponent/1/fainted (173.7208ms)
+Γ£ö White Herb opponent/1/close-combat (173.2564ms)
+Γä╣ tests 48
+Γä╣ suites 0
+Γä╣ pass 48
+Γä╣ fail 0
+Γä╣ cancelled 0
+Γä╣ skipped 0
+Γä╣ todo 0
+Γä╣ duration_ms 7408.887
+
+RUN tests/golden_battles_runner.js
+Historical three-module Golden Battles Runner ΓÇö 3 battle(s)
+MODE: verify
+
+  Γ£ö [gb_001] Player (speed) vs Cofagrigus TR ΓÇö seed 1337
+  Γ£ö [gb_002] Player (speed) vs Sand Bulky Offense ΓÇö seed 2024
+  Γ£ö [gb_003] Cofagrigus TR vs Sand Bulky Offense ΓÇö seed 9999
+
+==================================================
+Golden Battles: 3 passed, 0 failed
+Γ£à All golden battles passed
+
+RUN tests/golden_runtime_profile_tests.mjs
+Γ£ö current profile includes and executes runtime bridge (322.7501ms)
+Γ£ö missing runtime bridge rejected before VM execution (8.0353ms)
+Γ£ö changed bridge bytes rejected against independent snapshot (16.2615ms)
+Γ£ö wrong engine bytes reject before execution (17.6983ms)
+Γ£ö historical profile cannot stand in for current (6.7071ms)
+Γ£ö reordered current runtime rejects (11.288ms)
+Γ£ö historical expectation reuse cannot certify current bytes (16.3485ms)
+Γ£ö generation cannot overwrite historical fixtures (1.6921ms)
+Γ£ö comparison retains unresolved current expectations and first differences (343.1107ms)
+Γä╣ tests 9
+Γä╣ suites 0
+Γä╣ pass 9
+Γä╣ fail 0
+Γä╣ cancelled 0
+Γä╣ skipped 0
+Γä╣ todo 0
+Γä╣ duration_ms 762.5764
+
+RUN tests/audit.js
+Available teams: 15 / 15
+Missing: []
+
+=== LEGALITY AUDIT ===
+  [CLEAN]   player
+  [CLEAN]   mega_altaria
+  [CLEAN]   mega_dragonite
+  [CLEAN]   mega_houndoom
+  [CLEAN]   rin_sand
+  [CLEAN]   suica_sun
+  [CLEAN]   cofagrigus_tr
+  [CLEAN]   champions_arena_1st
+  [CLEAN]   champions_arena_2nd
+  [CLEAN]   champions_arena_3rd
+  [CLEAN]   aurora_veil_froslass
+  [WARN]    fabulous_sunroom: 1 warnings
+    first 3: Floette (Eternal Flower)-Mega: legal in Reg M-A but requires HOME transfer to obtain
+  [CLEAN]   sand_bulky_offense
+  [CLEAN]   fire_ice_fullroom
+  [CLEAN]   zardx_snow_setup
+
+=== MATRIX SIM (15x15, N=20 per cell; 4500 planned) ===
+Completed 4500 battles in 7.1s, 0 JS errors
+
+=== WIN CONDITION DISTRIBUTION (all battles) ===
+  Opponent Win: 2236 (49.7%)
+  Opponent team defeated: 2166 (48.1%)
+  Timer Win (HP): 41 (0.9%)
+  Timer Loss (HP): 39 (0.9%)
+  Timer Win (pokemon): 9 (0.2%)
+  Timer Loss (pokemon): 9 (0.2%)
+
+=== WIN RATE MATRIX (% player wins) ===
+player\opp        player     mega_altar mega_drago mega_hound rin_sand   suica_sun  cofagrigus champions_ champions_ champions_ aurora_vei fabulous_s sand_bulky fire_ice_f zardx_snow 
+player            50         55         10         10         0          0          75         0          0          90         70         15         0          100        0          
+mega_altaria      50         80         30         15         85         100        100        25         5          85         100        80         85         100        90         
+mega_dragonite    75         55         65         50         40         5          30         50         100        5          95         20         80         20         0          
+mega_houndoom     100        70         90         45         0          20         100        10         60         100        100        65         0          55         85         
+rin_sand          100        10         35         30         50         55         5          30         0          90         20         15         5          95         10         
+suica_sun         100        5          75         85         45         40         100        60         65         85         95         100        95         95         25         
+cofagrigus_tr     15         0          90         0          95         0          50         0          55         90         0          0          100        15         15         
+champions_arena_1 100        75         15         95         80         20         100        45         0          70         25         100        100        100        50         
+champions_arena_2 100        100        20         50         100        80         80         100        45         15         100        100        65         100        55         
+champions_arena_3 10         0          80         0          15         25         20         10         75         35         100        0          90         100        10         
+aurora_veil_frosl 20         0          0          5          90         10         100        70         0          0          35         0          75         85         0          
+fabulous_sunroom  95         15         95         30         85         10         100        5          20         100        95         60         55         95         65         
+sand_bulky_offens 100        20         30         80         95         15         5          5          25         10         30         45         50         95         5          
+fire_ice_fullroom 0          0          75         50         10         5          85         0          0          5          10         0          5          35         80         
+zardx_snow_setup  100        20         100        35         25         80         90         20         45         90         100        5          45         10         35         
+
+=== MIRROR-MATCH WIN RATE CHECK (should be ~50%) ===
+  player                 50% (10w/10l/0d)
+  mega_altaria           80% (16w/4l/0d) [FLAG: >25% off 50%]
+  mega_dragonite         65% (13w/7l/0d)
+  mega_houndoom          45% (9w/11l/0d)
+  rin_sand               50% (10w/10l/0d)
+  suica_sun              40% (8w/12l/0d)
+  cofagrigus_tr          50% (10w/10l/0d)
+  champions_arena_1st    45% (9w/11l/0d)
+  champions_arena_2nd    45% (9w/11l/0d)
+  champions_arena_3rd    35% (7w/13l/0d)
+  aurora_veil_froslass   35% (7w/13l/0d)
+  fabulous_sunroom       60% (12w/8l/0d)
+  sand_bulky_offense     50% (10w/10l/0d)
+  fire_ice_fullroom      35% (7w/13l/0d)
+  zardx_snow_setup       35% (7w/13l/0d)
+
+=== TR USAGE BY TEAM (as player) ===
+  player                 TR set 8% of battles, avg 2.8 turns when set
+  mega_altaria           TR set 13% of battles, avg 4.5 turns when set
+  mega_dragonite         TR set 16% of battles, avg 4.6 turns when set
+  mega_houndoom          TR set 68% of battles, avg 3.3 turns when set
+  rin_sand               TR set 11% of battles, avg 4.0 turns when set
+  suica_sun              TR set 18% of battles, avg 3.5 turns when set
+  cofagrigus_tr          TR set 74% of battles, avg 4.3 turns when set
+  champions_arena_1st    TR set 13% of battles, avg 3.9 turns when set
+  champions_arena_2nd    TR set 13% of battles, avg 4.7 turns when set
+  champions_arena_3rd    TR set 7% of battles, avg 2.0 turns when set
+  aurora_veil_froslass   TR set 13% of battles, avg 4.7 turns when set
+  fabulous_sunroom       TR set 4% of battles, avg 2.3 turns when set
+  sand_bulky_offense     TR set 11% of battles, avg 3.8 turns when set
+  fire_ice_fullroom      TR set 28% of battles, avg 4.1 turns when set
+  zardx_snow_setup       TR set 18% of battles, avg 3.8 turns when set
+
+=== TAILWIND USAGE BY TEAM (as player) ===
+  player                 TW set 100% of battles, avg 3.9 turns when set
+  mega_altaria           TW set 93% of battles, avg 4.8 turns when set
+  mega_dragonite         TW set 23% of battles, avg 3.7 turns when set
+  mega_houndoom          TW set 25% of battles, avg 2.8 turns when set
+  rin_sand               TW set 27% of battles, avg 3.9 turns when set
+  suica_sun              TW set 27% of battles, avg 2.7 turns when set
+  cofagrigus_tr          TW set 19% of battles, avg 2.4 turns when set
+  champions_arena_1st    TW set 27% of battles, avg 2.6 turns when set
+  champions_arena_2nd    TW set 27% of battles, avg 3.6 turns when set
+  champions_arena_3rd    TW set 99% of battles, avg 4.0 turns when set
+  aurora_veil_froslass   TW set 23% of battles, avg 3.7 turns when set
+  fabulous_sunroom       TW set 82% of battles, avg 3.9 turns when set
+  sand_bulky_offense     TW set 27% of battles, avg 3.5 turns when set
+  fire_ice_fullroom      TW set 14% of battles, avg 2.8 turns when set
+  zardx_snow_setup       TW set 27% of battles, avg 2.9 turns when set
+
+=== SCREENS USAGE BY TEAM (as player) ===
+  player                 screens up 7% of battles
+  mega_altaria           screens up 4% of battles
+  mega_dragonite         screens up 1% of battles
+  mega_houndoom          screens up 12% of battles
+  rin_sand               screens up 9% of battles
+  suica_sun              screens up 7% of battles
+  cofagrigus_tr          screens up 8% of battles
+  champions_arena_1st    screens up 7% of battles
+  champions_arena_2nd    screens up 7% of battles
+  champions_arena_3rd    screens up 7% of battles
+  aurora_veil_froslass   screens up 57% of battles
+  fabulous_sunroom       screens up 7% of battles
+  sand_bulky_offense     screens up 13% of battles
+  fire_ice_fullroom      screens up 12% of battles
+  zardx_snow_setup       screens up 28% of battles
+
+=== TIMER / HP TIEBREAK OBSERVABILITY ===
+  timer expiries: 98 / 4500
+  HP tiebreaks:   0 / 4500
+
+=== AVG TURNS PER TEAM (as player) ===
+  player                 avg 6.7 turns
+  mega_altaria           avg 10.8 turns
+  mega_dragonite         avg 6.4 turns
+  mega_houndoom          avg 5.5 turns
+  rin_sand               avg 7.2 turns
+  suica_sun              avg 5.3 turns
+  cofagrigus_tr          avg 5.9 turns
+  champions_arena_1st    avg 7.5 turns
+  champions_arena_2nd    avg 9.1 turns
+  champions_arena_3rd    avg 6.6 turns
+  aurora_veil_froslass   avg 10.0 turns
+  fabulous_sunroom       avg 5.4 turns
+  sand_bulky_offense     avg 6.9 turns
+  fire_ice_fullroom      avg 5.6 turns
+  zardx_snow_setup       avg 7.2 turns
+
+[wrote tests/audit_matrix.json]
+
+Battle audit failed in 1 file(s).

@@ -1,0 +1,633 @@
+Γ£ö WEATHER-GAS-entry-Drizzle-player-none (674.1607ms)
+Γ£ö WEATHER-GAS-entry-Drizzle-player-active (140.5803ms)
+Γ£ö WEATHER-GAS-entry-Drizzle-player-consumed (133.2309ms)
+Γ£ö WEATHER-GAS-healthy-Drizzle-player (152.8106ms)
+Γ£ö WEATHER-GAS-pivot-Drizzle-player-none (115.0757ms)
+Γ£ö WEATHER-GAS-pivot-Drizzle-player-active (137.3166ms)
+Γ£ö WEATHER-GAS-pivot-Drizzle-player-consumed (129.6286ms)
+Γ£ö WEATHER-GAS-faint-Drizzle-player-none (129.2338ms)
+Γ£ö WEATHER-GAS-faint-Drizzle-player-active (130.6191ms)
+Γ£ö WEATHER-GAS-faint-Drizzle-player-consumed (129.8916ms)
+Γ£ö WEATHER-GAS-reentry-Drizzle-player-none (133.4504ms)
+Γ£ö WEATHER-GAS-reentry-Drizzle-player-active (137.7677ms)
+Γ£ö WEATHER-GAS-reentry-Drizzle-player-consumed (132.0167ms)
+Γ£ö WEATHER-GAS-two-Drizzle-player (130.4684ms)
+Γ£ö WEATHER-GAS-entry-Drought-player-none (130.2374ms)
+Γ£ö WEATHER-GAS-entry-Drought-player-active (126.8978ms)
+Γ£ö WEATHER-GAS-entry-Drought-player-consumed (132.2455ms)
+Γ£ö WEATHER-GAS-healthy-Drought-player (134.8032ms)
+Γ£ö WEATHER-GAS-pivot-Drought-player-none (188.832ms)
+Γ£ö WEATHER-GAS-pivot-Drought-player-active (119.506ms)
+Γ£ö WEATHER-GAS-pivot-Drought-player-consumed (135.1152ms)
+Γ£ö WEATHER-GAS-faint-Drought-player-none (133.6005ms)
+Γ£ö WEATHER-GAS-faint-Drought-player-active (134.4624ms)
+Γ£ö WEATHER-GAS-faint-Drought-player-consumed (130.8488ms)
+Γ£ö WEATHER-GAS-reentry-Drought-player-none (134.9898ms)
+Γ£ö WEATHER-GAS-reentry-Drought-player-active (136.9107ms)
+Γ£ö WEATHER-GAS-reentry-Drought-player-consumed (131.1988ms)
+Γ£ö WEATHER-GAS-two-Drought-player (129.7986ms)
+Γ£ö WEATHER-GAS-entry-Sand Stream-player-none (129.4641ms)
+Γ£ö WEATHER-GAS-entry-Sand Stream-player-active (136.0056ms)
+Γ£ö WEATHER-GAS-entry-Sand Stream-player-consumed (128.9048ms)
+Γ£ö WEATHER-GAS-healthy-Sand Stream-player (129.936ms)
+Γ£ö WEATHER-GAS-pivot-Sand Stream-player-none (130.7077ms)
+Γ£ö WEATHER-GAS-pivot-Sand Stream-player-active (180.2649ms)
+Γ£ö WEATHER-GAS-pivot-Sand Stream-player-consumed (120.1258ms)
+Γ£ö WEATHER-GAS-faint-Sand Stream-player-none (125.6522ms)
+Γ£ö WEATHER-GAS-faint-Sand Stream-player-active (131.0436ms)
+Γ£ö WEATHER-GAS-faint-Sand Stream-player-consumed (128.5516ms)
+Γ£ö WEATHER-GAS-reentry-Sand Stream-player-none (134.3918ms)
+Γ£ö WEATHER-GAS-reentry-Sand Stream-player-active (135.5587ms)
+Γ£ö WEATHER-GAS-reentry-Sand Stream-player-consumed (135.1205ms)
+Γ£ö WEATHER-GAS-two-Sand Stream-player (132.9793ms)
+Γ£ö WEATHER-GAS-entry-Snow Warning-player-none (130.933ms)
+Γ£û WEATHER-GAS-entry-Snow Warning-player-active (130.6125ms)
+Γ£ö WEATHER-GAS-entry-Snow Warning-player-consumed (133.3993ms)
+Γ£û WEATHER-GAS-healthy-Snow Warning-player (124.2551ms)
+Γ£û WEATHER-GAS-pivot-Snow Warning-player-none (132.2644ms)
+Γ£û WEATHER-GAS-pivot-Snow Warning-player-active (127.0404ms)
+Γ£û WEATHER-GAS-pivot-Snow Warning-player-consumed (171.7448ms)
+Γ£û WEATHER-GAS-faint-Snow Warning-player-none (114.9106ms)
+Γ£û WEATHER-GAS-faint-Snow Warning-player-active (129.3118ms)
+Γ£û WEATHER-GAS-faint-Snow Warning-player-consumed (124.0054ms)
+Γ£û WEATHER-GAS-reentry-Snow Warning-player-none (127.7971ms)
+Γ£û WEATHER-GAS-reentry-Snow Warning-player-active (125.2074ms)
+Γ£û WEATHER-GAS-reentry-Snow Warning-player-consumed (125.5805ms)
+Γ£ö WEATHER-GAS-two-Snow Warning-player (126.6151ms)
+Γ£ö WEATHER-GAS-entry-Drizzle-opponent-none (126.6965ms)
+Γ£ö WEATHER-GAS-entry-Drizzle-opponent-active (129.8298ms)
+Γ£ö WEATHER-GAS-entry-Drizzle-opponent-consumed (120.6811ms)
+Γ£ö WEATHER-GAS-healthy-Drizzle-opponent (125.7724ms)
+Γ£ö WEATHER-GAS-pivot-Drizzle-opponent-none (130.0935ms)
+Γ£ö WEATHER-GAS-pivot-Drizzle-opponent-active (124.9771ms)
+Γ£ö WEATHER-GAS-pivot-Drizzle-opponent-consumed (124.8224ms)
+Γ£ö WEATHER-GAS-faint-Drizzle-opponent-none (162.3267ms)
+Γ£ö WEATHER-GAS-faint-Drizzle-opponent-active (107.7359ms)
+Γ£ö WEATHER-GAS-faint-Drizzle-opponent-consumed (130.4389ms)
+Γ£ö WEATHER-GAS-reentry-Drizzle-opponent-none (134.0484ms)
+Γ£ö WEATHER-GAS-reentry-Drizzle-opponent-active (139.2299ms)
+Γ£ö WEATHER-GAS-reentry-Drizzle-opponent-consumed (136.015ms)
+Γ£ö WEATHER-GAS-two-Drizzle-opponent (127.653ms)
+Γ£ö WEATHER-GAS-entry-Drought-opponent-none (124.0515ms)
+Γ£ö WEATHER-GAS-entry-Drought-opponent-active (124.6079ms)
+Γ£ö WEATHER-GAS-entry-Drought-opponent-consumed (127.3417ms)
+Γ£ö WEATHER-GAS-healthy-Drought-opponent (130.2008ms)
+Γ£ö WEATHER-GAS-pivot-Drought-opponent-none (128.4277ms)
+Γ£ö WEATHER-GAS-pivot-Drought-opponent-active (125.3273ms)
+Γ£ö WEATHER-GAS-pivot-Drought-opponent-consumed (126.4692ms)
+Γ£ö WEATHER-GAS-faint-Drought-opponent-none (127.916ms)
+Γ£ö WEATHER-GAS-faint-Drought-opponent-active (160.2772ms)
+Γ£ö WEATHER-GAS-faint-Drought-opponent-consumed (109.6405ms)
+Γ£ö WEATHER-GAS-reentry-Drought-opponent-none (130.4416ms)
+Γ£ö WEATHER-GAS-reentry-Drought-opponent-active (135.9821ms)
+Γ£ö WEATHER-GAS-reentry-Drought-opponent-consumed (132.6745ms)
+Γ£ö WEATHER-GAS-two-Drought-opponent (126.1287ms)
+Γ£ö WEATHER-GAS-entry-Sand Stream-opponent-none (125.789ms)
+Γ£ö WEATHER-GAS-entry-Sand Stream-opponent-active (122.097ms)
+Γ£ö WEATHER-GAS-entry-Sand Stream-opponent-consumed (123.435ms)
+Γ£ö WEATHER-GAS-healthy-Sand Stream-opponent (126.3363ms)
+Γ£ö WEATHER-GAS-pivot-Sand Stream-opponent-none (128.3821ms)
+Γ£ö WEATHER-GAS-pivot-Sand Stream-opponent-active (130.0377ms)
+Γ£ö WEATHER-GAS-pivot-Sand Stream-opponent-consumed (126.645ms)
+Γ£ö WEATHER-GAS-faint-Sand Stream-opponent-none (129.4737ms)
+Γ£ö WEATHER-GAS-faint-Sand Stream-opponent-active (163.124ms)
+Γ£ö WEATHER-GAS-faint-Sand Stream-opponent-consumed (110.9991ms)
+Γ£ö WEATHER-GAS-reentry-Sand Stream-opponent-none (130.4943ms)
+Γ£ö WEATHER-GAS-reentry-Sand Stream-opponent-active (129.5681ms)
+Γ£ö WEATHER-GAS-reentry-Sand Stream-opponent-consumed (125.0079ms)
+Γ£ö WEATHER-GAS-two-Sand Stream-opponent (130.9548ms)
+Γ£ö WEATHER-GAS-entry-Snow Warning-opponent-none (130.4869ms)
+Γ£û WEATHER-GAS-entry-Snow Warning-opponent-active (124.3604ms)
+Γ£ö WEATHER-GAS-entry-Snow Warning-opponent-consumed (122.7303ms)
+Γ£û WEATHER-GAS-healthy-Snow Warning-opponent (127.4348ms)
+Γ£û WEATHER-GAS-pivot-Snow Warning-opponent-none (125.3947ms)
+Γ£û WEATHER-GAS-pivot-Snow Warning-opponent-active (127.1969ms)
+Γ£û WEATHER-GAS-pivot-Snow Warning-opponent-consumed (129.598ms)
+Γ£û WEATHER-GAS-faint-Snow Warning-opponent-none (124.3924ms)
+Γ£û WEATHER-GAS-faint-Snow Warning-opponent-active (169.0965ms)
+Γ£û WEATHER-GAS-faint-Snow Warning-opponent-consumed (108.308ms)
+Γ£û WEATHER-GAS-reentry-Snow Warning-opponent-none (130.2338ms)
+Γ£û WEATHER-GAS-reentry-Snow Warning-opponent-active (123.6927ms)
+Γ£û WEATHER-GAS-reentry-Snow Warning-opponent-consumed (130.903ms)
+Γ£ö WEATHER-GAS-two-Snow Warning-opponent (124.9992ms)
+Γ£ö WEATHER-GAS-order-player-true (124.2907ms)
+Γ£ö WEATHER-GAS-order-player-false (125.1269ms)
+Γ£ö WEATHER-GAS-order-opponent-true (135.1842ms)
+Γ£ö WEATHER-GAS-order-opponent-false (127.2608ms)
+Γ£ö WEATHER-GAS-same-weather-does-not-refresh (123.5307ms)
+Γä╣ tests 117
+Γä╣ suites 0
+Γä╣ pass 95
+Γä╣ fail 22
+Γä╣ cancelled 0
+Γä╣ skipped 0
+Γä╣ todo 0
+Γä╣ duration_ms 16311.7164
+
+Γ£û failing tests:
+
+test at tests\weather_gas_tests.mjs:11:51
+Γ£û WEATHER-GAS-entry-Snow Warning-player-active (130.6125ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  + actual - expected
+  
+  + undefined
+  - 'snow'
+  
+      at TestContext.<anonymous> (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-14/task-2/champions-moves-repair/poke-sim/tests/weather_gas_tests.mjs:13:10)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1201:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:831:18)
+      at Test.postRun (node:internal/test_runner/test:1330:19)
+      at Test.run (node:internal/test_runner/test:1258:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:831:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: undefined,
+    expected: 'snow',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests\weather_gas_tests.mjs:15:2
+Γ£û WEATHER-GAS-healthy-Snow Warning-player (124.2551ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  + actual - expected
+  
+  + undefined
+  - 'snow'
+  
+      at TestContext.<anonymous> (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-14/task-2/champions-moves-repair/poke-sim/tests/weather_gas_tests.mjs:15:107)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1201:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:831:18)
+      at Test.postRun (node:internal/test_runner/test:1330:19)
+      at Test.run (node:internal/test_runner/test:1258:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:831:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: undefined,
+    expected: 'snow',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests\weather_gas_tests.mjs:16:97
+Γ£û WEATHER-GAS-pivot-Snow Warning-player-none (132.2644ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  + actual - expected
+  
+  + undefined
+  - 'snow'
+  
+      at TestContext.<anonymous> (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-14/task-2/champions-moves-repair/poke-sim/tests/weather_gas_tests.mjs:18:10)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1201:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:831:18)
+      at Test.postRun (node:internal/test_runner/test:1330:19)
+      at Test.run (node:internal/test_runner/test:1258:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:831:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: undefined,
+    expected: 'snow',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests\weather_gas_tests.mjs:16:97
+Γ£û WEATHER-GAS-pivot-Snow Warning-player-active (127.0404ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  + actual - expected
+  
+  + undefined
+  - 'snow'
+  
+      at TestContext.<anonymous> (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-14/task-2/champions-moves-repair/poke-sim/tests/weather_gas_tests.mjs:18:10)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1201:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:831:18)
+      at Test.postRun (node:internal/test_runner/test:1330:19)
+      at Test.run (node:internal/test_runner/test:1258:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:831:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: undefined,
+    expected: 'snow',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests\weather_gas_tests.mjs:16:97
+Γ£û WEATHER-GAS-pivot-Snow Warning-player-consumed (171.7448ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  + actual - expected
+  
+  + undefined
+  - 'snow'
+  
+      at TestContext.<anonymous> (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-14/task-2/champions-moves-repair/poke-sim/tests/weather_gas_tests.mjs:18:10)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1201:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:831:18)
+      at Test.postRun (node:internal/test_runner/test:1330:19)
+      at Test.run (node:internal/test_runner/test:1258:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:831:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: undefined,
+    expected: 'snow',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests\weather_gas_tests.mjs:16:97
+Γ£û WEATHER-GAS-faint-Snow Warning-player-none (114.9106ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  + actual - expected
+  
+  + undefined
+  - 'snow'
+  
+      at TestContext.<anonymous> (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-14/task-2/champions-moves-repair/poke-sim/tests/weather_gas_tests.mjs:18:10)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1201:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:831:18)
+      at Test.postRun (node:internal/test_runner/test:1330:19)
+      at Test.run (node:internal/test_runner/test:1258:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:831:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: undefined,
+    expected: 'snow',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests\weather_gas_tests.mjs:16:97
+Γ£û WEATHER-GAS-faint-Snow Warning-player-active (129.3118ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  + actual - expected
+  
+  + undefined
+  - 'snow'
+  
+      at TestContext.<anonymous> (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-14/task-2/champions-moves-repair/poke-sim/tests/weather_gas_tests.mjs:18:10)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1201:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:831:18)
+      at Test.postRun (node:internal/test_runner/test:1330:19)
+      at Test.run (node:internal/test_runner/test:1258:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:831:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: undefined,
+    expected: 'snow',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests\weather_gas_tests.mjs:16:97
+Γ£û WEATHER-GAS-faint-Snow Warning-player-consumed (124.0054ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  + actual - expected
+  
+  + undefined
+  - 'snow'
+  
+      at TestContext.<anonymous> (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-14/task-2/champions-moves-repair/poke-sim/tests/weather_gas_tests.mjs:18:10)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1201:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:831:18)
+      at Test.postRun (node:internal/test_runner/test:1330:19)
+      at Test.run (node:internal/test_runner/test:1258:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:831:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: undefined,
+    expected: 'snow',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests\weather_gas_tests.mjs:16:97
+Γ£û WEATHER-GAS-reentry-Snow Warning-player-none (127.7971ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  + actual - expected
+  
+  + undefined
+  - 'snow'
+  
+      at TestContext.<anonymous> (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-14/task-2/champions-moves-repair/poke-sim/tests/weather_gas_tests.mjs:18:10)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1201:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:831:18)
+      at Test.postRun (node:internal/test_runner/test:1330:19)
+      at Test.run (node:internal/test_runner/test:1258:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:831:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: undefined,
+    expected: 'snow',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests\weather_gas_tests.mjs:16:97
+Γ£û WEATHER-GAS-reentry-Snow Warning-player-active (125.2074ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  + actual - expected
+  
+  + undefined
+  - 'snow'
+  
+      at TestContext.<anonymous> (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-14/task-2/champions-moves-repair/poke-sim/tests/weather_gas_tests.mjs:18:10)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1201:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:831:18)
+      at Test.postRun (node:internal/test_runner/test:1330:19)
+      at Test.run (node:internal/test_runner/test:1258:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:831:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: undefined,
+    expected: 'snow',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests\weather_gas_tests.mjs:16:97
+Γ£û WEATHER-GAS-reentry-Snow Warning-player-consumed (125.5805ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  + actual - expected
+  
+  + undefined
+  - 'snow'
+  
+      at TestContext.<anonymous> (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-14/task-2/champions-moves-repair/poke-sim/tests/weather_gas_tests.mjs:18:10)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1201:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:831:18)
+      at Test.postRun (node:internal/test_runner/test:1330:19)
+      at Test.run (node:internal/test_runner/test:1258:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:831:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: undefined,
+    expected: 'snow',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests\weather_gas_tests.mjs:11:51
+Γ£û WEATHER-GAS-entry-Snow Warning-opponent-active (124.3604ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  + actual - expected
+  
+  + undefined
+  - 'snow'
+  
+      at TestContext.<anonymous> (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-14/task-2/champions-moves-repair/poke-sim/tests/weather_gas_tests.mjs:13:10)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1201:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:831:18)
+      at Test.postRun (node:internal/test_runner/test:1330:19)
+      at Test.run (node:internal/test_runner/test:1258:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:831:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: undefined,
+    expected: 'snow',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests\weather_gas_tests.mjs:15:2
+Γ£û WEATHER-GAS-healthy-Snow Warning-opponent (127.4348ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  + actual - expected
+  
+  + undefined
+  - 'snow'
+  
+      at TestContext.<anonymous> (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-14/task-2/champions-moves-repair/poke-sim/tests/weather_gas_tests.mjs:15:107)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1201:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:831:18)
+      at Test.postRun (node:internal/test_runner/test:1330:19)
+      at Test.run (node:internal/test_runner/test:1258:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:831:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: undefined,
+    expected: 'snow',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests\weather_gas_tests.mjs:16:97
+Γ£û WEATHER-GAS-pivot-Snow Warning-opponent-none (125.3947ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  + actual - expected
+  
+  + undefined
+  - 'snow'
+  
+      at TestContext.<anonymous> (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-14/task-2/champions-moves-repair/poke-sim/tests/weather_gas_tests.mjs:18:10)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1201:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:831:18)
+      at Test.postRun (node:internal/test_runner/test:1330:19)
+      at Test.run (node:internal/test_runner/test:1258:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:831:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: undefined,
+    expected: 'snow',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests\weather_gas_tests.mjs:16:97
+Γ£û WEATHER-GAS-pivot-Snow Warning-opponent-active (127.1969ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  + actual - expected
+  
+  + undefined
+  - 'snow'
+  
+      at TestContext.<anonymous> (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-14/task-2/champions-moves-repair/poke-sim/tests/weather_gas_tests.mjs:18:10)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1201:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:831:18)
+      at Test.postRun (node:internal/test_runner/test:1330:19)
+      at Test.run (node:internal/test_runner/test:1258:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:831:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: undefined,
+    expected: 'snow',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests\weather_gas_tests.mjs:16:97
+Γ£û WEATHER-GAS-pivot-Snow Warning-opponent-consumed (129.598ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  + actual - expected
+  
+  + undefined
+  - 'snow'
+  
+      at TestContext.<anonymous> (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-14/task-2/champions-moves-repair/poke-sim/tests/weather_gas_tests.mjs:18:10)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1201:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:831:18)
+      at Test.postRun (node:internal/test_runner/test:1330:19)
+      at Test.run (node:internal/test_runner/test:1258:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:831:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: undefined,
+    expected: 'snow',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests\weather_gas_tests.mjs:16:97
+Γ£û WEATHER-GAS-faint-Snow Warning-opponent-none (124.3924ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  + actual - expected
+  
+  + undefined
+  - 'snow'
+  
+      at TestContext.<anonymous> (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-14/task-2/champions-moves-repair/poke-sim/tests/weather_gas_tests.mjs:18:10)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1201:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:831:18)
+      at Test.postRun (node:internal/test_runner/test:1330:19)
+      at Test.run (node:internal/test_runner/test:1258:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:831:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: undefined,
+    expected: 'snow',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests\weather_gas_tests.mjs:16:97
+Γ£û WEATHER-GAS-faint-Snow Warning-opponent-active (169.0965ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  + actual - expected
+  
+  + undefined
+  - 'snow'
+  
+      at TestContext.<anonymous> (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-14/task-2/champions-moves-repair/poke-sim/tests/weather_gas_tests.mjs:18:10)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1201:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:831:18)
+      at Test.postRun (node:internal/test_runner/test:1330:19)
+      at Test.run (node:internal/test_runner/test:1258:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:831:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: undefined,
+    expected: 'snow',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests\weather_gas_tests.mjs:16:97
+Γ£û WEATHER-GAS-faint-Snow Warning-opponent-consumed (108.308ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  + actual - expected
+  
+  + undefined
+  - 'snow'
+  
+      at TestContext.<anonymous> (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-14/task-2/champions-moves-repair/poke-sim/tests/weather_gas_tests.mjs:18:10)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1201:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:831:18)
+      at Test.postRun (node:internal/test_runner/test:1330:19)
+      at Test.run (node:internal/test_runner/test:1258:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:831:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: undefined,
+    expected: 'snow',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests\weather_gas_tests.mjs:16:97
+Γ£û WEATHER-GAS-reentry-Snow Warning-opponent-none (130.2338ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  + actual - expected
+  
+  + undefined
+  - 'snow'
+  
+      at TestContext.<anonymous> (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-14/task-2/champions-moves-repair/poke-sim/tests/weather_gas_tests.mjs:18:10)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1201:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:831:18)
+      at Test.postRun (node:internal/test_runner/test:1330:19)
+      at Test.run (node:internal/test_runner/test:1258:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:831:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: undefined,
+    expected: 'snow',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests\weather_gas_tests.mjs:16:97
+Γ£û WEATHER-GAS-reentry-Snow Warning-opponent-active (123.6927ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  + actual - expected
+  
+  + undefined
+  - 'snow'
+  
+      at TestContext.<anonymous> (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-14/task-2/champions-moves-repair/poke-sim/tests/weather_gas_tests.mjs:18:10)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1201:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:831:18)
+      at Test.postRun (node:internal/test_runner/test:1330:19)
+      at Test.run (node:internal/test_runner/test:1258:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:831:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: undefined,
+    expected: 'snow',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests\weather_gas_tests.mjs:16:97
+Γ£û WEATHER-GAS-reentry-Snow Warning-opponent-consumed (130.903ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  + actual - expected
+  
+  + undefined
+  - 'snow'
+  
+      at TestContext.<anonymous> (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-14/task-2/champions-moves-repair/poke-sim/tests/weather_gas_tests.mjs:18:10)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1201:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:831:18)
+      at Test.postRun (node:internal/test_runner/test:1330:19)
+      at Test.run (node:internal/test_runner/test:1258:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:831:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: undefined,
+    expected: 'snow',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }

@@ -213,7 +213,8 @@ function actorOrderFromEvents(events) {
       actor: String(event.actor),
       move: String(event.move),
       actor_key: event.actor_key ? String(event.actor_key) : null,
-      side: SIDES.includes(event.side) ? event.side : null
+      side: SIDES.includes(event.side) ? event.side : null,
+      log_index: event.log_index
     }));
   if (structured.length) return structured;
 
@@ -464,6 +465,75 @@ function paralysisAdjustedOrderSupports(first, second, turn) {
   return trickRoom ? firstSpeed < secondSpeed : firstSpeed > secondSpeed;
 }
 
+// Narrow legacy-log evidence: other item losses and mixed Speed changes remain unproved.
+function sitrusUnburdenAdjustedOrderSupports(first, second, turn) {
+  const events = Array.isArray(turn.events) ? turn.events : [];
+  const boundary = events.findIndex(e => cleanText(e && (e.text || e.message)) === `${first.actor} used ${first.move}!`);
+  if (boundary < 1) return false;
+  const prior = events.slice(0, boundary).map(e => cleanText(e && (e.text || e.message)));
+  const rows = SIDES.flatMap(side => (turn.pre.roster && turn.pre.roster[side] || []));
+  const active = rows.filter(row => row.zone === 'active');
+  // Decline cases requiring suppression, switch, item-transfer or mixed-modifier reconstruction.
+  if (active.some(row => row.ability === 'Neutralizing Gas')) return false;
+  if (prior.some(text => /switched|sent out|withdrew|replaced|ability|Skill Swap|Role Play|Simple Beam|Worry Seed|Gastro Acid|Entrainment|Trick!|Switcheroo|Speed |Tailwind|paraly|paralis|paralys|weather|sunlight|rain began|snow began|sandstorm/i.test(text))) return false;
+  let changed = false;
+  const adjusted = action => {
+    const row = action.row, speed = snapshotEffectiveSpeed(row, turn.pre);
+    if (speed == null) return null;
+    if (!row || !row.stableKey || row.ability !== 'Unburden' || row.item !== 'Sitrus Berry' || row.itemConsumed !== false) return speed;
+    if (active.filter(r => rowName(r) === action.actor).length !== 1) return speed;
+    if (prior.includes(`${action.actor} fainted!`)) return speed;
+    const post = (turn.post && turn.post.roster && turn.post.roster[action.side] || [])
+      .filter(r => r.stableKey === row.stableKey);
+    if (post.length !== 1 || !['active', 'fainted'].includes(post[0].zone) || post[0].ability !== 'Unburden' ||
+        post[0].item !== 'Sitrus Berry' || post[0].itemConsumed !== true) return speed;
+    if (prior.filter(text => text === `${action.actor}'s Sitrus Berry restored HP!`).length !== 1) return speed;
+    changed = true;
+    return speed * 2;
+  };
+  const a = adjusted(first), b = adjusted(second);
+  if (!changed || a == null || b == null) return false;
+  const preRoom = Number(turn.pre.field && (turn.pre.field.trick_room || turn.pre.field.trickRoom) || 0) > 0;
+  const room = actualTrickRoomToggleCount(turn, boundary) % 2 ? !preRoom : preRoom;
+  return a === b || (room ? a < b : a > b);
+}
+
+// Structured, identity-bound consumption proof handles mirror names and White Herb.
+// No inference from end-of-turn speed alone; mixed modifiers remain unproved.
+function itemUnburdenOrder(first, second, turn) {
+ const boundary=first.logIndex;if(!Number.isInteger(boundary))return null;
+ if((turn.events||[]).some((e,i)=>e.actor_key&&e.move&&Number.isInteger(e.log_index)&&e.log_index!==i))return false;
+ const active=SIDES.flatMap(side=>(turn.pre.roster?.[side]||[])).filter(r=>r.zone==='active');
+ const prior=(turn.events||[]).filter(e=>Number.isInteger(e.log_index)&&e.log_index<boundary);
+ if(active.some(r=>r.ability==='Neutralizing Gas'))return null;
+ const text=(turn.events||[]).slice(0,boundary).map(e=>cleanText(e.text||e.message)).join('\n');
+ if(/switched|sent out|withdrew|replaced|Skill Swap|Role Play|Gastro Acid|Entrainment|Trick!|Switcheroo|Speed |Tailwind|paraly|paralis|paralys/i.test(text))return null;
+ let changed=false;
+ const speed=action=>{
+  const row=action.row,base=snapshotEffectiveSpeed(row,turn.pre);
+  if(base==null||row.ability!=='Unburden'||row.itemConsumed!==false)return base;
+  const proofs=(turn.effect_events||[]).filter(e=>e.effect_kind==='item-speed-activation'&&e.actor_key===row.stableKey&&e.side===action.side);
+  if(proofs.length!==1)return base;
+  const e=proofs[0],post=(turn.post.roster?.[action.side]||[]).filter(r=>r.stableKey===row.stableKey);
+  if(e.ability!=='Unburden'||e.item!==row.item||e.item_consumed!==true||!Number.isInteger(e.log_index)||e.log_index<1||e.log_index>boundary||post.length!==1||post[0].item!==row.item||post[0].itemConsumed!==true||post[0].ability!=='Unburden')return base;
+  const causes=prior.filter(p=>p.actor_key&&p.move&&p.log_index<e.log_index);
+  const cause=causes[causes.length-1];
+  if(!cause||cause.actor_key!==e.source_actor_key||cause.move!==e.move)return base;
+  const interval=(turn.events||[]).slice(cause.log_index+1,e.log_index).map(p=>cleanText(p.text||p.message));
+  if(e.item==='White Herb') {
+   const clears=(turn.effect_events||[]).filter(p=>p.effect_kind==='item-clear-negative-stages'&&p.actor_key===row.stableKey&&p.side===action.side&&p.item_consumed===true&&Array.isArray(p.cleared_stats)&&p.cleared_stats.length);
+   if(clears.length!==1||!interval.includes(`${rowName(row)}'s White Herb restored its lowered stats!`)||!interval.some(line=>line.startsWith(`${rowName(row)}'s `)&&/ fell!$/.test(line)))return base;
+  } else if(e.item==='Sitrus Berry') {
+   if(!interval.includes(`${rowName(row)}'s Sitrus Berry restored HP!`)||!(turn.damage_events||[]).some(p=>p.attacker_key===cause.actor_key&&p.move===cause.move&&p.target_key===row.stableKey&&p.applied_damage>0&&p.target_hp_after>0&&p.target_hp_after<=p.target_max_hp/2))return base;
+  } else return base;
+
+  changed=true;return base*2;
+ };
+ const a=speed(first),b=speed(second);if(!changed||a==null||b==null)return null;
+ const room=actualTrickRoomToggleCount(turn,boundary)%2?!Number(turn.pre.field?.trick_room||0):Number(turn.pre.field?.trick_room||0)>0;
+ return a===b||(room?a<b:a>b);
+}
+
 function validateObservedActionOrder(turn, findings) {
   const observed = actorOrderFromEvents(turn.events);
   if (observed.length < 2 || !turn.pre || !turn.actions) return;
@@ -507,6 +577,7 @@ function validateObservedActionOrder(turn, findings) {
         side: matches[0].side,
         action: matches[0].action,
         row,
+        logIndex: o.log_index,
         speedIndex: speedOrderIndexForRow(row, turn.pre)
       };
     })
@@ -539,11 +610,14 @@ function validateObservedActionOrder(turn, findings) {
       if (firstPriority !== secondPriority) continue;
       if (first.speedIndex == null || second.speedIndex == null) continue;
 
+      const itemOrder=itemUnburdenOrder(first,second,turn);
+      if(itemOrder!==null){if(!itemOrder){failOrder('item-speed',second.key,first.key);return;}continue;}
       if (snapshotSupportsObservedSpeed(first, second, turn.pre)) continue;
       if (trickRoomAdjustedOrderSupports(first, second, turn, actual.slice(0, i))) continue;
       if (tailwindAdjustedOrderSupports(first, second, turn, actual.slice(0, i))) continue;
       if (paralysisAdjustedOrderSupports(first, second, turn)) continue;
       if (speedStageAdjustedOrderSupports(first, second, turn)) continue;
+      if (sitrusUnburdenAdjustedOrderSupports(first, second, turn)) continue;
 
       failOrder('speed', second.key, first.key);
       return;
