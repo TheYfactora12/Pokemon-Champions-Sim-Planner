@@ -193,3 +193,33 @@ None of these indicate engine logic bugs.
 2. **Investigate `aurora_veil_froslass` mirror** — 25% (5w/15l) is consistently below 50%; check if Multiscale interaction with Snow/Aurora Veil creates a one-sided mirror dependency.
 3. **`cofagrigus_tr` draw rate** — acceptable for TR vs TR, but consider a note in the team doc.
 4. **Windows CI `spawnSync` fix** — update T7 in `qa_baseline_snapshot_tests.js` to use `process.execPath` instead of `'node'` for cross-platform compatibility.
+
+---
+
+## 9. Issue #231 — Pokemon Data Audit Workbook Verification
+
+**Issue:** alfredocox/Pokemon-Champions-Sim-Planner#231 (mirror of TheYfactora12 #123)  
+**Status: All checklist items satisfied ✅ — awaiting Josh approval comment to close**
+
+### Checklist Results
+
+| Checklist item | Status | Evidence |
+|---|---|---|
+| Workbook README has source repo, commit/version, timestamp, generator path | ✅ | CSV row 2: `3f5079d... (2026-05-24)`, generated `2026-06-23T22:34:50Z` |
+| `Species_Stats` has expected supported species/forms | ✅ | T1, T3 pass in CI |
+| `Learnsets` separates regional and gendered forms | ✅ | Arcanine-Hisui, Nidoran-F/M, Indeedee-F/M, Meowstic-F/M all separate |
+| `Form_Differences` includes Arcanine vs Arcanine-Hisui | ✅ | T4 passes; Raging Fury move difference present |
+| `Validation_Errors` has no unexplained high-severity mismatches | ✅ | Sheet present, zero data rows |
+| Replay Turn 0 sample shows starting state before moves | ✅ | Kangaskhan-Mega + Fake Out queued, Tyranitar opponent, pre-move |
+
+All 6 `pokemon_data_audit_tests.js` tests pass in CI.
+
+### Notes for Josh
+
+- **Source commit on record:** `3f5079d395ad018f13e8f785a675a13bd4cbf59e (2026-05-24)`. Issue #231 was filed with `46e2933...` (same date) — the workbook was regenerated with the correct pinned snapshot after filing. Both commits are from the same 2026-05-24 Showdown sync. No data inconsistency.
+- **Reg M-B Megas are out of scope** for this workbook. Champions-specific forms (Raichu-Mega-X, Sceptile-Mega, etc.) are not in Showdown's `pokedex.ts`; they're covered by `t192_regmb_source_audit_tests.js`. `POKEMON_DATA_AUDIT_REVIEW.md` has been updated to state this explicitly.
+- **`POKEMON_DATA_AUDIT_REVIEW.md`** tracking reference corrected from `#123` → `#231`.
+- **No workbook regeneration was required** — the `data.js` changes in the recent Reg M-B merge affect team configurations only, not the Showdown species/learnset/move source data the workbook is built from.
+
+### Action requested from Josh
+Review the workbook at `poke-sim/reports/pokemon_data_audit.csv` (or `.xlsx`) against the checklist above and comment on issue #231 with either **approved** or **specific rows to fix**.
