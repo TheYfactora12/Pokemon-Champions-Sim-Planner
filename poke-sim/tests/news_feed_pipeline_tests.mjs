@@ -20,6 +20,15 @@ const config = { sources: [source], max_age_days: 90, max_per_source: 4, max_ite
 const rss = (title = 'Champions news', date = '2026-08-29', link = 'https://example.test/story?utm_source=rss') => `<rss><channel><item><title><![CDATA[${title}]]></title><link>${link}</link><pubDate>${date}</pubDate><description><![CDATA[<p>Details</p><img src="https://example.test/art.jpg">]]></description></item></channel></rss>`;
 const parse = text => parseSource(text, source, now);
 const entry = parse(rss())[0];
+const offHost = rss('Champions external event', '2026-08-29', 'https://external.test/event');
+const mixed = rss().replace('</channel>', offHost.match(/<item>[\s\S]*?<\/item>/)[0] + '</channel>');
+const mixedUpdate = await refreshFeed(config, {}, { now, fetcher: async () => new Response(mixed) });
+check('Mixed RSS quarantines the external article without losing approved stories', () => {
+  assert.deepEqual(mixedUpdate.payload.items.map(i => i.url), [entry.url]);
+  assert.equal(mixedUpdate.payload.source_health[0].status, 'partial');
+  assert.equal(mixedUpdate.payload.source_health[0].rejected_off_host, 1);
+});
+check('RSS with only external destinations cannot report healthy', () => assert.throws(() => parse(offHost), /off-host/));
 check('Publication date is independent of sync time', () => { assert.equal(entry.published_at, '2026-08-29T00:00:00.000Z'); assert.equal(entry.synced_at, now); });
 check('Tracking URLs normalize, images come from the publisher', () => { assert.equal(entry.url, 'https://example.test/story'); assert.equal(entry.image, 'https://example.test/art.jpg'); });
 check('Unsafe schemes and off-host article URLs are rejected', () => { for (const u of ['javascript:alert(1)', 'http://example.test', 'https://evil.test', 'https://example.test@evil.test', 'https://example.test:444']) assert.equal(safeUrl(u, undefined, source.link_hosts), ''); });
