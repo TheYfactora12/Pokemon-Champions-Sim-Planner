@@ -14,7 +14,7 @@ Josh (`jdoutt`) should review the workbook whenever a change affects any of thes
 - Set Editor move legality warnings
 - generated Pokemon data artifacts
 
-Tracking issue: #123.
+Tracking issue: #231 (mirror: alfredocox/Pokemon-Champions-Sim-Planner#231).
 
 Before handing the workbook to Josh, include the exact repo, branch, commit SHA, review target URL or local file path, and whether any local credential files are required. Use `docs/release/SIM_AND_DB_SNAPSHOT_2026-06-19.md` as the current branch snapshot and `docs/release/QA_ENVIRONMENT_HANDOFF_RULES_2026-06-19.md` for routing rules.
 
@@ -61,3 +61,7 @@ Josh should confirm:
 - Do not manually type broad stat or move tables unless there is no safer generated path.
 - If generated artifacts change, rerun the relevant parser, move-legality, audit, bundle, and diff checks before PR review.
 - `npm run test:source-truth` is the minimum grouped suite for source-truth changes.
+
+## Reg M-B Scope Boundary
+
+Champions-specific Reg M-B Mega forms (e.g. Raichu-Mega-X, Sceptile-Mega, Blaziken-Mega) are **out of scope** for this standard Showdown data audit workbook. They are not present in `pokedex.ts` / `learnsets.ts` and are not evaluated here. Their source accuracy is covered separately by `tests/t192_regmb_source_audit_tests.js` and `docs/REG_M_B_SOURCE_CONVERSION_TABLE.md`.
