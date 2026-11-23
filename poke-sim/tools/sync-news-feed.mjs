@@ -55,7 +55,9 @@ export async function refreshFeed(config, existing, { fetcher = fetch, now = new
   for (const source of config.sources.filter(s => s.enabled)) {
     try {
       const body = await fetchSource(source, fetcher);
-      results.push({ source_id: source.id, items: parseSource(body, source, now), sha256: crypto.createHash('sha256').update(body).digest('hex') });
+      const diagnostics = {};
+      const items = parseSource(body, source, now, diagnostics);
+      results.push({ source_id: source.id, items, ...diagnostics, sha256: crypto.createHash('sha256').update(body).digest('hex') });
     } catch (error) { results.push({ source_id: source.id, error: error.message }); }
   }
   const candidate = assembleFeed(config, existing, results, now);

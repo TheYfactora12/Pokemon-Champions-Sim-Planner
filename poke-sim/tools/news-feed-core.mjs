@@ -55,7 +55,7 @@ function normalize(raw, source, now) {
   };
 }
 
-export function parseSource(body, source, now) {
+export function parseSource(body, source, now, diagnostics = {}) {
   if (source.type === 'champions_index') {
     const $ = load(body);
     const cards = $('article');
@@ -80,22 +80,33 @@ export function parseSource(body, source, now) {
     const author = $('feed > author > uri').text();
     if (![source.channel_id, source.channel_id.slice(2)].includes(channel) || author !== `https://www.youtube.com/channel/${source.channel_id}`) throw new Error('YouTube channel identity mismatch');
   }
-  return $('item, entry').map((_, entry) => {
+  let rejected = 0;
+  const entries = $('item, entry');
+  const parsed = entries.map((_, entry) => {
     const el = $(entry);
     const alternate = el.find('link').filter((_, link) => !$(link).attr('rel') || $(link).attr('rel') === 'alternate').first();
     const videoId = el.find('yt\\:videoId').text();
     if (source.channel_id && (el.find('yt\\:channelId').text() !== source.channel_id || !/^[\w-]{11}$/.test(videoId) ||
       ![`https://www.youtube.com/watch?v=${videoId}`, `https://www.youtube.com/shorts/${videoId}`].includes(alternate.attr('href')))) throw new Error('YouTube entry identity mismatch');
+    const link = alternate.attr('href') || alternate.text();
+    const candidate = source.type === 'rss' && safeUrl(link, source.url);
+    if (candidate && source.link_hosts && !source.link_hosts.includes(new URL(candidate).hostname)) {
+      rejected++;
+      return null;
+    }
     return normalize({
       id: videoId ? `youtube:${videoId}` : undefined,
       title: el.find('title').first().text(),
-      url: alternate.attr('href') || alternate.text(),
+      url: link,
       published: el.find('published').first().text() || el.find('pubDate').first().text(),
       filter_text: source.filter_description ? plain(el.find('description, summary, media\\:description').first().text()) : '',
       image: el.find('media\\:thumbnail').first().attr('url') || el.find('media\\:content').first().attr('url') ||
         load(el.find('description, content\\:encoded').first().text())('img').first().attr('src')
     }, source, now);
   }).get().filter(Boolean);
+  if (rejected && rejected === entries.length) throw new Error('All RSS articles have off-host destinations: ' + rejected);
+  diagnostics.rejected_off_host = rejected;
+  return parsed;
 }
 
 export function assembleFeed(config, existing, results, now) {
@@ -109,7 +120,8 @@ export function assembleFeed(config, existing, results, now) {
     const candidates = failed ? (existing.items || []).filter(i => i.source_id === source.id && i.source_policy_sha256 === sourceFingerprint(source)) : result.items;
     const eligible = candidates.filter(i => safeUrl(i.url, undefined, source.link_hosts) && !(source.exclude_keywords || []).some(word => i.title.toLowerCase().includes(word.toLowerCase())) && Date.parse(i.published_at) >= cutoff && Date.parse(i.published_at) <= Date.parse(now))
       .sort((a, b) => Date.parse(b.published_at) - Date.parse(a.published_at) || a.url.localeCompare(b.url));
-    health.push({ source_id: source.id, status: failed ? 'unavailable' : eligible.length ? 'ok' : 'no_recent_matches',
+    health.push({ source_id: source.id, status: failed ? 'unavailable' : result.rejected_off_host ? 'partial' : eligible.length ? 'ok' : 'no_recent_matches',
+      ...(result?.rejected_off_host ? { rejected_off_host: result.rejected_off_host } : {}),
       checked_at: now, last_success_at: failed ? (existing.source_health || []).find(h => h.source_id === source.id)?.last_success_at || null : now,
       sha256: result?.sha256 || null, error: result?.error || null, eligible_count: eligible.length });
     for (const item of eligible.slice(0, config.max_per_source || 4)) {
